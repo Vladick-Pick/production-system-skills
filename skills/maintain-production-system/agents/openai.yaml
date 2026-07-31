@@ -1,0 +1,4 @@
+interface:
+  display_name: "Сопровождение производственной системы"
+  short_description: "Версионирует принятые изменения системы"
+  default_prompt: "Используй $maintain-production-system, чтобы безопасно внести принятое изменение в систему."

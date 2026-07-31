@@ -1,0 +1,31 @@
+title: Шаблон канонической модели производственных систем
+version: "0.1"
+spreadsheet_id: 1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k
+source_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/edit?usp=sharing
+copy_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy
+access_observed: anyone_with_link_writer
+exported_at: "2026-08-01"
+snapshot: templates/production-system-model-template-v0.1.xlsx
+sha256: c6b08e9b1d15b1192d470c765b9942c7f03c6e50087b4a6186c9bf304903ae21
+sheets:
+  - Инструкция
+  - Система
+  - Схема шаблона
+  - Источники
+  - Версии
+  - Позиции
+  - Назначения
+  - Процессы
+  - Действия
+  - Связи действий
+  - Объекты
+  - Состояния
+  - Переходы
+  - Элементы модели
+  - Контракты
+  - Связи модели
+  - Проверки
+  - Реестр процессов
+  - Рабочая панель
+  - Диаграммы
+  - Проекция draw.io

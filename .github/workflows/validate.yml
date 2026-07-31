@@ -1,0 +1,23 @@
+name: Проверка скиллов
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Получить репозиторий
+        uses: actions/checkout@v4
+      - name: Настроить Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Проверить структуру
+        run: python3 scripts/validate_repository.py
+      - name: Проверить маршрутизацию
+        run: python3 scripts/forward_test_fixtures.py
