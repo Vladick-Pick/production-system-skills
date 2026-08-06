@@ -50,6 +50,21 @@ EXPECTED_TEMPLATE_SHEETS = (
     "Диаграммы",
     "Проекция draw.io",
 )
+EXPECTED_VERSION_STATUSES = {
+    "черновик",
+    "принято",
+    "действует",
+    "заменено",
+    "выведено",
+}
+EXPECTED_VERSION_TRANSITIONS = {
+    "черновик → принято",
+    "черновик → выведено",
+    "принято → действует",
+    "принято → выведено",
+    "действует → заменено",
+    "действует → выведено",
+}
 
 
 def frontmatter(text: str) -> tuple[dict[str, str], int]:
@@ -149,6 +164,50 @@ def validate_template(errors: list[str]) -> None:
         )
 
 
+def validate_version_lifecycle(errors: list[str]) -> None:
+    language_path = ROOT / "references" / "LANGUAGE.md"
+    metaontology_path = ROOT / "references" / "METAONTOLOGY.md"
+    if not language_path.is_file() or not metaontology_path.is_file():
+        return
+
+    language = language_path.read_text(encoding="utf-8")
+    status_section = re.search(
+        r"^### Статус версии\n(?P<body>.*?)^### Слой модели и статус версии",
+        language,
+        re.MULTILINE | re.DOTALL,
+    )
+    statuses = (
+        set(
+            re.findall(
+                r"^#### [^\n]+ \(`([^`]+)`\)$",
+                status_section.group("body"),
+                re.MULTILINE,
+            )
+        )
+        if status_section
+        else set()
+    )
+    if statuses != EXPECTED_VERSION_STATUSES:
+        errors.append(
+            "LANGUAGE.md должен определять ровно пять статусов версии; "
+            f"найдено {sorted(statuses)}"
+        )
+
+    metaontology = metaontology_path.read_text(encoding="utf-8")
+    transitions = set(
+        re.findall(
+            r"^\| `([^`]+ → [^`]+)` \|",
+            metaontology,
+            re.MULTILINE,
+        )
+    )
+    if transitions != EXPECTED_VERSION_TRANSITIONS:
+        errors.append(
+            "METAONTOLOGY.md содержит неожиданный граф переходов версии; "
+            f"найдено {sorted(transitions)}"
+        )
+
+
 def validate() -> list[str]:
     errors: list[str] = []
     skills_root = ROOT / "skills"
@@ -163,6 +222,7 @@ def validate() -> list[str]:
         if not (ROOT / relative).is_file():
             errors.append(f"нет обязательного reference: {relative}")
 
+    validate_version_lifecycle(errors)
     validate_template(errors)
 
     for name in sorted(EXPECTED_SKILLS):
