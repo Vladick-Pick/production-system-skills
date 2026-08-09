@@ -7,7 +7,7 @@ access_observed: anyone_with_link_reader
 owner_observed: vladislav.vladimirovich.bogdan@gmail.com
 exported_at: "2026-08-09"
 snapshot: templates/production-system-model-template-v0.2.xlsx
-sha256: 20af7b0096f13a280473749d7837b33ee2ad6e1ef649797000f1ed4836339728
+sha256: ad65c32f49fb4be85c06997c46d4673bfd42c805ba325c787245b6c242f32508
 sheets:
   - Инструкция
   - Система

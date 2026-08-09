@@ -43,14 +43,49 @@ def main() -> int:
         raise AssertionError("builder не создаёт protected ranges")
     if not any("addConditionalFormatRule" in request for request in requests):
         raise AssertionError("builder не создаёт conditional formatting")
-    if "[id=" not in id_formula(2, 5):
-        raise AssertionError("ID formula не использует устойчивый ASCII selector marker")
+    expected_id_formula = '=IF(C5="","",IFERROR(REGEXEXTRACT(C5,"\\[id=([^\\]]+)\\]"),""))'
+    if id_formula(2, 5) != expected_id_formula:
+        raise AssertionError("ID formula должна использовать проверенный в Google Sheets REGEXEXTRACT-контракт")
+    declared_id_formula = schema["physical_contract"]["selector_id_formula"].replace("<selector>", "C5")
+    if declared_id_formula != expected_id_formula:
+        raise AssertionError("JSON physical contract расходится с исполняемой selector ID formula")
+
+    formulas = [formula for request in requests for formula in _formula_values(request)]
+    selector_formulas = [formula for formula in formulas if "REGEXEXTRACT" in formula]
+    if not selector_formulas or any("MID(" in formula for formula in formulas):
+        raise AssertionError("builder вернул старую непарсящуюся MID/FIND selector-формулу")
+
+    created_sheets = [request["addSheet"]["properties"] for request in requests if "addSheet" in request]
+    public_sheets = [properties for properties in created_sheets if properties["title"] != "__v02_migration__"]
+    if len(public_sheets) != 29 or not all(properties["gridProperties"].get("hideGridlines") for properties in public_sheets):
+        raise AssertionError("все 29 публичных листов должны создаваться со скрытой сеткой")
+    if request_types.count("mergeCells") < 80:
+        raise AssertionError("builder не создаёт заголовочные и секционные объединения v0.2")
+    if not any(
+        request.get("repeatCell", {}).get("cell", {}).get("userEnteredFormat", {}).get("textFormat", {}).get("fontSize") == 16
+        for request in requests
+    ):
+        raise AssertionError("builder не создаёт визуальную иерархию с заголовком 16 pt")
 
     # JSON roundtrip доказывает, что payload можно передать raw batchUpdate без
     # нестандартных Python-типов.
     json.loads(json.dumps(payload, ensure_ascii=False))
     print(f"[OK] Physical builder: {payload['request_count']} requests, {len(named)} named ranges")
     return 0
+
+
+def _formula_values(value: object) -> list[str]:
+    """Рекурсивно извлечь formulaValue без привязки к request type."""
+    found: list[str] = []
+    if isinstance(value, dict):
+        if isinstance(value.get("formulaValue"), str):
+            found.append(value["formulaValue"])
+        for nested in value.values():
+            found.extend(_formula_values(nested))
+    elif isinstance(value, list):
+        for nested in value:
+            found.extend(_formula_values(nested))
+    return found
 
 
 if __name__ == "__main__":

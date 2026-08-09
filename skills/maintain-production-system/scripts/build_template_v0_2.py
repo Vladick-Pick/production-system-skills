@@ -128,6 +128,66 @@ def repeat_format(sheet_id: int, start_row: int, end_row: int, start_column: int
     }
 
 
+def merge_range(sheet_id: int, start_row: int, end_row: int, start_column: int, end_column: int) -> dict[str, Any]:
+    return {
+        "mergeCells": {
+            "range": {
+                "sheetId": sheet_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": start_column,
+                "endColumnIndex": end_column,
+            },
+            "mergeType": "MERGE_ALL",
+        }
+    }
+
+
+def dimension_size(sheet_id: int, dimension: str, start: int, end: int, pixels: int) -> dict[str, Any]:
+    return {
+        "updateDimensionProperties": {
+            "range": {
+                "sheetId": sheet_id,
+                "dimension": dimension,
+                "startIndex": start,
+                "endIndex": end,
+            },
+            "properties": {"pixelSize": pixels},
+            "fields": "pixelSize",
+        }
+    }
+
+
+def visual_format(
+    background: str,
+    foreground: str = "#263238",
+    *,
+    size: int = 10,
+    bold: bool = False,
+    italic: bool = False,
+    horizontal: str = "LEFT",
+    vertical: str = "MIDDLE",
+    borders: bool = False,
+) -> dict[str, Any]:
+    fmt: dict[str, Any] = {
+        "backgroundColor": rgb(background),
+        "textFormat": {
+            "fontFamily": "Carlito",
+            "fontSize": size,
+            "foregroundColor": rgb(foreground),
+            "bold": bold,
+            "italic": italic,
+        },
+        "horizontalAlignment": horizontal,
+        "verticalAlignment": vertical,
+        "wrapStrategy": "WRAP",
+    }
+    if borders:
+        border = {"style": "SOLID", "color": rgb("#D9E1E8")}
+        fmt["borders"] = {side: border for side in ("top", "bottom", "left", "right")}
+    return fmt
+
+
 def display_field(sheet_name: str, sheet: dict[str, Any]) -> str | None:
     columns = sheet.get("columns", [])
     override = DISPLAY_FIELD_OVERRIDES.get(sheet_name)
@@ -170,7 +230,7 @@ def selector_source_sheet(target: str) -> str:
 
 def id_formula(selector_column: int, row_number: int) -> str:
     selector = f"{column_letter(selector_column)}{row_number}"
-    return f'=IF({selector}="","",IFERROR(MID({selector},FIND("[id=",{selector})+4,FIND("]",{selector},FIND("[id=",{selector}))-FIND("[id=",{selector})-4),""))'
+    return f'=IF({selector}="","",IFERROR(REGEXEXTRACT({selector},"\\[id=([^\\]]+)\\]"),""))'
 
 
 def width_for(column: str, default: dict[str, Any]) -> int:
@@ -212,21 +272,198 @@ def grouped_width_requests(sheet_id: int, columns: list[str], default: dict[str,
     return requests
 
 
+def contiguous_runs(indices: Iterable[int]) -> list[tuple[int, int]]:
+    values = sorted(set(indices))
+    if not values:
+        return []
+    runs: list[tuple[int, int]] = []
+    start = previous = values[0]
+    for value in values[1:]:
+        if value == previous + 1:
+            previous = value
+            continue
+        runs.append((start, previous + 1))
+        start = previous = value
+    runs.append((start, previous + 1))
+    return runs
+
+
+def layout_requests(schema: dict[str, Any], sheet_name: str, sheet_id: int) -> list[dict[str, Any]]:
+    """Собрать читаемый визуальный контракт, не затрагивая значения и validations."""
+    sheet = schema["sheets"][sheet_name]
+    default = schema["default_table"]
+    columns = sheet.get("columns", [])
+    column_count = 8 if sheet_name == "Инструкция" else 14 if sheet_name == "Рабочая панель" else max(1, len(columns))
+    row_count = 200 if sheet_name in {"Инструкция", "Рабочая панель"} else int(default["data_end_row"]) + 1
+    requests: list[dict[str, Any]] = [
+        repeat_format(sheet_id, 0, row_count, 0, column_count, visual_format("#FFFFFF", vertical="TOP")),
+    ]
+
+    if sheet_name == "Инструкция":
+        requests.extend(
+            [
+                merge_range(sheet_id, 0, 1, 0, 8),
+                merge_range(sheet_id, 1, 2, 0, 8),
+                merge_range(sheet_id, 3, 4, 0, 8),
+                merge_range(sheet_id, 12, 13, 0, 8),
+                merge_range(sheet_id, 17, 18, 1, 8),
+                repeat_format(sheet_id, 0, 1, 0, 8, visual_format("#D9EAF7", "#1F4E78", size=16, bold=True)),
+                repeat_format(sheet_id, 1, 2, 0, 8, visual_format("#FFFFFF", "#455A64", italic=True)),
+                repeat_format(sheet_id, 3, 4, 0, 8, visual_format("#BDD7EE", "#1F4E78", size=11, bold=True)),
+                repeat_format(sheet_id, 12, 13, 0, 8, visual_format("#BDD7EE", "#1F4E78", size=11, bold=True)),
+                repeat_format(sheet_id, 4, 11, 0, 1, visual_format("#D9EAF7", "#1F4E78", size=11, bold=True, horizontal="CENTER", borders=True)),
+                repeat_format(sheet_id, 4, 11, 1, 2, visual_format("#F3F9FD", "#1F4E78", bold=True, borders=True)),
+                repeat_format(sheet_id, 4, 11, 2, 8, visual_format("#FFFFFF", vertical="TOP", borders=True)),
+                repeat_format(sheet_id, 13, 16, 0, 8, visual_format("#FFFFFF", borders=True)),
+                repeat_format(sheet_id, 13, 14, 1, 2, visual_format("#FFF2CC", "#6D4C00", bold=True, borders=True)),
+                repeat_format(sheet_id, 14, 15, 1, 2, visual_format("#D9EAF7", "#1F4E78", bold=True, borders=True)),
+                repeat_format(sheet_id, 15, 16, 1, 2, visual_format("#F3F9FD", "#1F4E78", bold=True, borders=True)),
+                repeat_format(sheet_id, 17, 18, 0, 8, visual_format("#FCE8E6", "#8A1C1C", bold=True, borders=True)),
+                dimension_size(sheet_id, "COLUMNS", 0, 1, 55),
+                dimension_size(sheet_id, "COLUMNS", 1, 2, 190),
+                dimension_size(sheet_id, "COLUMNS", 2, 8, 125),
+                dimension_size(sheet_id, "ROWS", 0, 1, 42),
+                dimension_size(sheet_id, "ROWS", 1, 2, 42),
+                dimension_size(sheet_id, "ROWS", 3, 4, 34),
+                dimension_size(sheet_id, "ROWS", 4, 11, 62),
+                dimension_size(sheet_id, "ROWS", 12, 13, 34),
+                dimension_size(sheet_id, "ROWS", 13, 16, 42),
+                dimension_size(sheet_id, "ROWS", 17, 18, 50),
+            ]
+        )
+        requests.extend(merge_range(sheet_id, row_index, row_index + 1, 2, 8) for row_index in range(4, 11))
+        requests.extend(merge_range(sheet_id, row_index, row_index + 1, 2, 8) for row_index in range(13, 16))
+        return requests
+
+    if sheet_name == "Рабочая панель":
+        requests.extend(
+            [
+                merge_range(sheet_id, 0, 1, 0, 14),
+                merge_range(sheet_id, 1, 2, 0, 14),
+                merge_range(sheet_id, 6, 7, 0, 14),
+                repeat_format(sheet_id, 0, 1, 0, 14, visual_format("#D9EAF7", "#1F4E78", size=16, bold=True)),
+                repeat_format(sheet_id, 1, 2, 0, 14, visual_format("#FFFFFF", "#455A64", italic=True)),
+                repeat_format(sheet_id, 2, 5, 0, 1, visual_format("#BDD7EE", "#1F4E78", bold=True, borders=True)),
+                repeat_format(sheet_id, 2, 5, 1, 2, visual_format("#F3F9FD", bold=True, borders=True)),
+                repeat_format(sheet_id, 2, 5, 3, 4, visual_format("#F2F2F2", "#546E7A", size=9, bold=True, borders=True)),
+                repeat_format(sheet_id, 2, 5, 4, 5, visual_format("#F5F7F8", "#455A64", borders=True)),
+                repeat_format(sheet_id, 6, 7, 0, 14, visual_format("#BDD7EE", "#1F4E78", size=11, bold=True)),
+                dimension_size(sheet_id, "COLUMNS", 0, 1, 185),
+                dimension_size(sheet_id, "COLUMNS", 1, 2, 330),
+                dimension_size(sheet_id, "COLUMNS", 2, 3, 28),
+                dimension_size(sheet_id, "COLUMNS", 3, 4, 175),
+                dimension_size(sheet_id, "COLUMNS", 4, 5, 190),
+                dimension_size(sheet_id, "COLUMNS", 5, 14, 100),
+                dimension_size(sheet_id, "ROWS", 0, 1, 42),
+                dimension_size(sheet_id, "ROWS", 1, 2, 38),
+                dimension_size(sheet_id, "ROWS", 2, 5, 36),
+                dimension_size(sheet_id, "ROWS", 6, 7, 34),
+            ]
+        )
+        for row_index in range(7, 24, 2):
+            requests.extend(
+                [
+                    merge_range(sheet_id, row_index, row_index + 1, 0, 14),
+                    repeat_format(sheet_id, row_index, row_index + 1, 0, 14, visual_format("#EAF4FB", "#1F4E78", bold=True, borders=True)),
+                ]
+            )
+        return requests
+
+    header_row = int(sheet.get("header_row", default["header_row"])) - 1
+    data_start = int(sheet.get("data_start_row", default["data_start_row"])) - 1
+    data_end = int(default["data_end_row"])
+    requests.extend([merge_range(sheet_id, 0, 1, 0, column_count), merge_range(sheet_id, 1, 2, 0, column_count)])
+    if sheet_name != "Система":
+        requests.append(merge_range(sheet_id, 2, 3, 0, column_count))
+    requests.extend(
+        [
+            repeat_format(sheet_id, 0, 1, 0, column_count, visual_format("#D9EAF7", "#1F4E78", size=16, bold=True)),
+            repeat_format(sheet_id, 1, 2, 0, column_count, visual_format("#FFFFFF", "#455A64", italic=True)),
+            dimension_size(sheet_id, "ROWS", 0, 1, 40),
+            dimension_size(sheet_id, "ROWS", 1, 2, 34),
+            repeat_format(sheet_id, header_row, header_row + 1, 0, column_count, visual_format("#D9EAF7", "#1F4E78", bold=True, horizontal="CENTER", borders=True)),
+            dimension_size(sheet_id, "ROWS", header_row, header_row + 1, 56),
+            repeat_format(sheet_id, data_start, data_end, 0, column_count, visual_format("#FFFFFF", vertical="TOP", borders=True)),
+        ]
+    )
+    if sheet_name == "Система":
+        requests.extend(
+            [
+                repeat_format(sheet_id, 2, 5, 0, 4, visual_format("#F2F2F2", "#37474F", borders=True)),
+                repeat_format(sheet_id, 3, 5, 2, 3, visual_format("#EAF4FB", "#1F4E78", bold=True, borders=True)),
+                dimension_size(sheet_id, "ROWS", 2, 5, 32),
+            ]
+        )
+    else:
+        requests.extend(
+            [
+                repeat_format(sheet_id, 2, 3, 0, column_count, visual_format("#F2F2F2", "#546E7A")),
+                dimension_size(sheet_id, "ROWS", 2, 3, 38),
+            ]
+        )
+
+    required_indices = [columns.index(field) for field in sheet.get("required", []) if field in columns]
+    for start, end in contiguous_runs(required_indices):
+        requests.append(repeat_format(sheet_id, header_row, header_row + 1, start, end, visual_format("#FFF2CC", "#6D4C00", bold=True, horizontal="CENTER", borders=True)))
+
+    selectors = sheet.get("selectors", {})
+    selectors = selectors if isinstance(selectors, dict) else {}
+    computed_indices = [columns.index(field) for field in selectors if field in columns]
+    if sheet.get("kind") in {"versioned_authoring", "versioned_authoring_with_settings"} and "version_id" in columns:
+        computed_indices.append(columns.index("version_id"))
+    for start, end in contiguous_runs(computed_indices):
+        requests.extend(
+            [
+                repeat_format(sheet_id, header_row, header_row + 1, start, end, visual_format("#D9EAF7", "#1F4E78", bold=True, horizontal="CENTER", borders=True)),
+                repeat_format(sheet_id, data_start, data_end, start, end, visual_format("#F5F7F8", "#455A64", vertical="TOP", borders=True)),
+            ]
+        )
+    selector_indices = [columns.index(field) for field in selectors.values() if field in columns]
+    for start, end in contiguous_runs(selector_indices):
+        requests.extend(
+            [
+                repeat_format(sheet_id, header_row, header_row + 1, start, end, visual_format("#CFE2F3", "#1F4E78", bold=True, horizontal="CENTER", borders=True)),
+                repeat_format(sheet_id, data_start, data_end, start, end, visual_format("#F3F9FD", vertical="TOP", borders=True)),
+            ]
+        )
+    requests.extend(grouped_width_requests(sheet_id, columns, default))
+    return requests
+
+
 def sheet_static_rows(schema: dict[str, Any], sheet_name: str, sheet: dict[str, Any]) -> list[dict[str, Any]]:
     if sheet_name == "Инструкция":
-        sections = sheet.get("sections", [])
-        return [row(["Шаблон канонической модели бизнеса v0.2"]), row([DESCRIPTION_BY_KIND["guide"]])] + [
-            row([index, title]) for index, title in enumerate(sections, 1)
+        return [
+            row(["Шаблон канонической модели бизнеса v0.2"]),
+            row(["Одна книга хранит каноническую модель одного бизнеса: внутренние производственные системы, продукты, ресурсы и внешние контрактные границы."]),
+            row([]),
+            row(["Как работать с моделью"]),
+            row(["1", "Назначение", "Фиксируйте не произвольные слова, а различимые объекты, состояния, действия, материалы, системы, процессы, позиции, продукты и контрактные границы."]),
+            row(["2", "Порядок заполнения", "Начните с источников и версии, затем определите системы, позиции, продукты, процессы, действия, объекты, состояния и связи."]),
+            row(["3", "Интервью и подтверждение", "Сначала уточните, куда изменение встраивается, от чего зависит, какой эффект создаёт и как корректно сформулировать определение. Записывайте только после подтверждения."]),
+            row(["4", "Версии", "Новая версия хранит только изменения. Неизменённые элементы продолжают действовать из предыдущей версии; история принятых определений не стирается."]),
+            row(["5", "Человеко-читаемые списки", "В выпадающем списке выбирайте понятную подпись вида «Название [id=…]». Соседний ID вычисляется автоматически и остаётся видимым."]),
+            row(["6", "BPMN и SVG", "Диаграмма — производная проекция канонической модели. Исправляйте смысл в таблице, затем перестраивайте изображение."]),
+            row(["7", "Проверки и восстановление", "Перед вводом версии проверьте лист «Проверки». Решения и изменения модели сохраняют автора, дату, основание и состав обновления."]),
+            row([]),
+            row(["Цвета и правила"]),
+            row(["", "Обязательное поле", "Жёлтый заголовок: поле должно быть заполнено для принятой записи."]),
+            row(["", "Вычисляемое поле", "Голубой заголовок или серое тело: формулу не редактируют вручную."]),
+            row(["", "Selector", "Светло-голубая ячейка: человек выбирает читаемое значение из списка."]),
+            row([]),
+            row(["Важно", "Не вставляйте значения поверх формульных ID-столбцов. При ошибке сначала проверьте selector, рабочую версию и лист «Проверки»."]),
         ]
     if sheet_name == "Рабочая панель":
         values = [
             row(["Рабочая панель модели бизнеса v0.2"]),
-            row(["Выберите версию, систему и процесс человеко-читаемыми selectors."]),
-            row(["selected_version_selector", ""]),
-            row(["selected_system_selector", ""]),
-            row(["selected_process_selector", ""]),
+            row(["Выберите версию, систему и процесс человеко-читаемыми списками. Технический ID рассчитывается рядом и остаётся видимым."]),
+            row(["Рабочая версия", "", "", "selected_version_id", cell(formula=id_formula(1, 3))]),
+            row(["Система", "", "", "selected_system_id", cell(formula=id_formula(1, 4))]),
+            row(["Процесс", "", "", "selected_process_id", cell(formula=id_formula(1, 5))]),
+            row([]),
+            row(["Сводные представления"]),
         ]
-        values.extend(row([section]) for section in sheet.get("sections", []))
+        for section in sheet.get("sections", []):
+            values.extend([row([section]), row([])])
         return values
     header_row = int(sheet.get("header_row", schema["default_table"]["header_row"]))
     if sheet_name == "Система":
@@ -360,6 +597,7 @@ def build(
                             "rowCount": row_count,
                             "columnCount": max(10, len(columns), required_columns),
                             "frozenRowCount": int(sheet.get("freeze_rows", default["freeze_rows"])) if columns else 0,
+                            "hideGridlines": True,
                         },
                     }
                 }
@@ -400,6 +638,7 @@ def build(
         static_rows = sheet_static_rows(schema, sheet_name, sheet)
         if static_rows:
             requests.append(update_block(sheet_id, 0, 0, static_rows))
+        requests.extend(layout_requests(schema, sheet_name, sheet_id))
         if sheet_name == "Схема шаблона":
             rows = schema_registry_rows(schema)
             if rows:
@@ -411,16 +650,7 @@ def build(
             header_row = int(sheet.get("header_row", default["header_row"])) - 1
             data_start = int(sheet.get("data_start_row", default["data_start_row"])) - 1
             data_end = int(default["data_end_row"])
-            requests.append(repeat_format(sheet_id, 0, 1, 0, max(1, len(columns)), {"textFormat": {"bold": True, "fontSize": 14}}))
-            requests.append(repeat_format(sheet_id, header_row, header_row + 1, 0, len(columns), {"backgroundColor": rgb("#E6E6E6"), "textFormat": {"bold": True}, "wrapStrategy": "WRAP", "verticalAlignment": "MIDDLE"}))
             required = set(sheet.get("required", []))
-            computed = set(sheet.get("computed", []))
-            for column_index, column_name in enumerate(columns):
-                if column_name in required:
-                    requests.append(repeat_format(sheet_id, header_row, header_row + 1, column_index, column_index + 1, {"backgroundColor": rgb(default["required_header_fill"]), "textFormat": {"bold": True}, "wrapStrategy": "WRAP"}))
-                if column_name in computed or computed == {"all_non_selector_cells"}:
-                    requests.append(repeat_format(sheet_id, header_row, header_row + 1, column_index, column_index + 1, {"backgroundColor": rgb(default["computed_header_fill"]), "textFormat": {"bold": True}, "wrapStrategy": "WRAP"}))
-            requests.extend(grouped_width_requests(sheet_id, columns, default))
             requests.append({"setBasicFilter": {"filter": {"range": {"sheetId": sheet_id, "startRowIndex": header_row, "endRowIndex": data_end, "startColumnIndex": 0, "endColumnIndex": len(columns)}}}})
 
             # Versioned rows always inherit the selected working version ID.
