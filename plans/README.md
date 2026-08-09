@@ -6,7 +6,7 @@
 
 | План | Результат | Статус |
 |---|---|---|
-| [production-system-skills-v2.md](active/production-system-skills-v2.md) | Переработать язык, поведение агентов, модель бизнеса, версионность, шаблон и BPMN/Camunda-проекцию | Локальный v0.2-контур реализован; staging/live eval/pilot/release ожидают G-2/G-3 и внешней среды |
+| [production-system-skills-v2.md](active/production-system-skills-v2.md) | Переработать язык, поведение агентов, модель бизнеса, версионность, шаблон и BPMN/Camunda-проекцию | Шаблон v0.2 выпущен; migration runbook готов; живой пилот ждёт точных v0.1-книг и разрешения G-3, behavioral gate остаётся FAIL |
 
 ## Правила
 

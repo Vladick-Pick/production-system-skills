@@ -1,8 +1,8 @@
 # План v2: язык, поведение агентов, шаблон и проекции
 
-Статус: релиз v0.2 реализован локально и опубликован на каноническом Google Sheet; fresh-agent release gate выполнен и завершился FAIL из-за ненадёжного trace-контракта; миграция рабочих моделей не начиналась
+Статус: релиз v0.2 реализован локально и опубликован на каноническом Google Sheet; fresh-agent release gate завершился FAIL из-за trace-контракта; агентный runbook миграции v0.1→v0.2 реализован, рабочие модели ещё не изменялись
 Создан: 2026-08-06
-Последняя ревизия плана: 2026-08-09
+Последняя ревизия плана: 2026-08-10
 Владелец решения: владелец репозитория
 Точная идентификация владельца по имени и фамилии: не зафиксирована
 Режим текущего этапа: нормативные references, четыре self-contained SKILL-пакета, schema+builder v0.2, migration map, BPMN/SVG toolchain, transcript/outcome grader и локальные validators реализованы. Канонический Google Sheet сохранён на прежнем ID, обновлён до 29 листов v0.2 и открыт всем только как reader; XLSX экспортирован из него. Живые рабочие модели не мигрировались.
@@ -15,12 +15,12 @@
 | WP-1 язык | выполнен | `LANGUAGE.md` и `METAONTOLOGY.md` синхронизированы с принятыми источниками и решениями |
 | WP-2 harness | выполнен | `INTERVIEW-CONTRACT.md`, bundled copies, checkpoint/hash/transaction/recovery |
 | WP-3 версии | выполнен | четыре статуса, пять переходов, sparse resolver и 8 детерминированных fixtures |
-| WP-4 schema/migration | выполнен | schema+builder задают 29 листов, formulas, dropdown, named ranges, protections и migration map |
+| WP-4 schema/migration | выполнен | schema+builder задают 29 листов; bundled runbook задаёт assessment, классы переноса, migration dossier, bounded batches и reconciliation |
 | WP-5 staging/XLSX | выполнен | backup v0.1, приватная staging v0.2, публикация на прежний ID и экспортированный XLSX v0.2 |
 | WP-6 четыре скилла | выполнен | routing, один результат, pre/postconditions, human confirmation, recovery и self-contained runtime; quick_validate 4/4 |
 | WP-7 BPMN/SVG | выполнен локально | generator, validator, SVG, hashes, lineage, dead-end/path-traversal fixtures; внешний Desktop Modeler остаётся deployment gate |
 | WP-8 validators/evals | live gate выполнен, FAIL | 30/30 fresh-agent trials на `gpt-5.6-terra` medium завершены; 0/30 прошли строгий trace-контракт, critical violations 0; отчёт `evals/results/v0.2-terra-medium-2026-08-10.md` |
-| WP-9 пилот | ожидает G-3 и upstream PASS | нет разрешённого spreadsheet ID тестовой рабочей модели и владельца миграции |
+| WP-9 пилот | runbook готов, живой перенос не начат | для каждой рабочей v0.1-книги нужен точный spreadsheet ID/URL, владелец, read-only assessment и отдельное разрешение на staging write |
 | WP-10 выпуск | выполнен только для шаблона | v0.2 опубликован и доступ снижен до reader; релиз скиллов заблокирован до исправления trace capture и повторного fresh-agent 3/3 |
 
 Исполнимая декомпозиция: [production-system-skills-v2/IMPLEMENTATION.md](production-system-skills-v2/IMPLEMENTATION.md). Этот файл хранит принятые решения; приложение владеет пакетами исполнения, зависимостями, точными артефактами и воротами. Отдельного параллельного статуса в приложении нет.
@@ -846,11 +846,13 @@ notes
 
 **Входы:** утверждённый список рабочих spreadsheet ID и владельцев.
 
-**Работа:** создать резервный снимок, назначить базовую версию, создать performer/assignment records, преобразовать ссылки и ID, перенести материалы, сформировать исходную историю миграции.
+**Работа:** для каждой книги выполнить read-only `migration-assessment`, сохранить fingerprint/backup, построить migration dossier и version plan, классифицировать строки как `copy/derive/split/confirm/new-required/regenerate/archive/drop`; после уточнения блокеров создать performer/assignment records и перенести подтверждённое содержимое bounded batches в отдельную staging-книгу v0.2.
 
 **Проверка:** сравнение количества и ID до/после, выборочные процессы, формулы, проекции, восстановление из резервного снимка.
 
 **Стоп:** нет точного URL/ID, владельца или разрешения — модель не менять.
+
+**Контракт готов 2026-08-10:** отдельный пятый скилл не создаётся; миграция является режимом `maintain-production-system`. Канонический исполнимый runbook — `templates/migrations/v0.1-to-v0.2.md`, его копия входит во все self-contained пакеты. Фактический перенос рабочих книг не выполнялся.
 
 ### WP-8. Валидаторы и поведенческие evals
 
@@ -1000,3 +1002,4 @@ python3 scripts/forward_test_fixtures.py
 | 2026-08-09 | Сделать session checkpoint, package hash, transaction ID и recovery после compaction частью общего interview contract | принято как harness-контракт v0.2 |
 | 2026-08-09 | Разрабатывать шаблон v0.2 в staging и отдельно разрешать изменение публичного Google Sheet | принято как release boundary |
 | 2026-08-09 | Использовать отдельную шкалу 0–10 для конструкции скилла, поведения агента и качества результата; PASS требует не ниже 8 по каждой поверхности, без critical violation и 3/3 прогонов | принято как eval gate v0.2 |
+| 2026-08-10 | Не создавать пятый migration-скилл; оформить перенос наполненных v0.1-книг как режим `maintain-production-system` с bundled runbook, отдельным досье на каждую книгу, read-only assessment и bounded staging transactions | принято как migration architecture |

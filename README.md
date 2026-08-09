@@ -28,7 +28,7 @@
 |---|---|---|
 | [resolve-model-element](skills/resolve-model-element/SKILL.md) | Разрешить смысл спорного элемента до записи | Semantic-resolution package с референтом, типом, определением, решением и hash; модель не изменяется |
 | [model-production-system](skills/model-production-system/SKILL.md) | Собрать новую систему или контур | Подтверждённая transaction в одной черновой версии, история, срез, сценарии и readiness проекции |
-| [maintain-production-system](skills/maintain-production-system/SKILL.md) | Изменить существующую систему | Разреженная редакция, карта влияния, миграция экземпляров, история и пересобранные BPMN/SVG |
+| [maintain-production-system](skills/maintain-production-system/SKILL.md) | Изменить существующую систему или перенести рабочую книгу v0.1 | Разреженная редакция либо migration dossier и проверенные batches, история, срез и пересобранные BPMN/SVG |
 | [audit-production-system](skills/audit-production-system/SKILL.md) | Найти дефекты без изменения модели | Evidence-backed audit точных version/snapshot/build без каких-либо записей |
 
 Ни один из этих скиллов не принимает бизнес-истину вместо человека. Изменение подтверждает идентифицированный человек, работающий с моделью; исполнитель и назначение фиксируются в пакете для атрибуции решения, а не как полноценный permission/RBAC. ИИ может исследовать, предлагать и записывать подтверждённую транзакцию, но не подтверждать её.
@@ -88,7 +88,16 @@ python3 scripts/install_codex.py --force
 - «Используй resolve-model-element и разберись, что означает “кейс клиента”».
 - «Используй model-production-system и собери принятый контур в шаблоне».
 - «Используй maintain-production-system: принято изменение правила приёмки».
+- «Используй maintain-production-system в режиме migration-assessment: обследуй рабочую книгу v0.1, ничего не записывай, раздели найденное на переносимое, вычисляемое, требующее решения, новое обязательное и архивное по `MIGRATION-v0.1-to-v0.2.md`; затем задай один самый важный вопрос».
 - «Используй audit-production-system и найди слепые зоны, ничего не меняя».
+
+## Перенос наполненных книг v0.1
+
+Отдельного пятого migration-скилла нет. Перенос является специальным режимом `maintain-production-system`, а его точный исполнимый контракт хранится в [migration runbook](templates/migrations/v0.1-to-v0.2.md) и входит в самодостаточный пакет скилла.
+
+Первый проход всегда read-only: агент фиксирует source fingerprint и backup, считает строки и stable IDs, обнаруживает drift и создаёт отдельное migration dossier для каждой исходной книги. Он сразу группирует `copy` и `derive`, а у пользователя уточняет только `split`, `confirm` и `new-required`: границу книги, version plan, личности исполнителей, identity объектов, продукты, материалы, внешние контракты, цены, интерфейсы и судьбу активных экземпляров.
+
+Исходная v0.1-книга не перестраивается на месте. После подтверждения досье агент создаёт отдельную staging-книгу v0.2 и переносит большую модель bounded batches; каждый batch имеет собственные package/hash/confirmation, одну transaction, read-back и checkpoint. Успешный перенос не принимает и не вводит версию автоматически.
 
 ## Чего здесь намеренно нет
 

@@ -36,6 +36,9 @@ FIXTURES = {
             "миграцию живых экземпляров",
             "разреженную редакцию",
             "принятие и ввод в действие",
+            "migration-assessment",
+            "migration dossier",
+            "исходная v0.1-книга остаётся неизменной",
         ],
     },
     "audit-production-system": {

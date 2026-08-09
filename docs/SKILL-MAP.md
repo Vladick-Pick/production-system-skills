@@ -7,6 +7,7 @@
 | «Собери систему с нуля» | model-production-system | Одна verified draft version с историей и срезом |
 | «Наполни шаблон» | model-production-system | Одна подтверждённая transaction, сценарии и BPMN/SVG readiness |
 | «Изменилось правило приёмки» | maintain-production-system | Разреженная редакция, влияние и миграция |
+| «Перевези заполненную таблицу v0.1 в v0.2» | maintain-production-system / `migration-assessment` | Read-only migration dossier, уточнение смысловых блокеров и затем проверенные staging batches |
 | «Введи принятую версию в действие» | maintain-production-system | Отдельный переход версии и решение по живым экземплярам |
 | «Что забыли?» | audit-production-system | Evidence-backed read-only findings точной версии |
 | «Почему схема не сходится?» | audit-production-system | Доказанное расхождение snapshot/fingerprint/build |
@@ -16,6 +17,7 @@
 - Непонятен смысл хотя бы одного нового элемента — сначала `resolve-model-element`; он не пишет существующую модель.
 - Смысл разрешён, а система или контур ещё не собраны — `model-production-system`.
 - Stable IDs уже существуют и требуется изменение — `maintain-production-system`.
+- Рабочая книга имеет schema v0.1 — `maintain-production-system` сначала выполняет `migration-assessment` по bundled runbook; исходник не меняется, а несколько книг не объединяются без решения о границе.
 - Требуется только диагноз — `audit-production-system`; он не переходит в commit даже после «исправь» внутри аудита.
 - Запись возможна только в schema v0.2, после показа полного package/hash и подтверждения идентифицированным человеком, работающим с моделью. Назначение фиксирует атрибуцию, но не является permission/RBAC.
 - `принято` и `действует` — разные переходы; локальное «да» на вопрос не выпускает версию.

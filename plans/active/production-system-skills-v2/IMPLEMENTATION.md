@@ -554,7 +554,9 @@ Critical violation: запись до подтверждения полного 
 
 **Зависимости:** WP-5–WP-8, G-3. **Side effects:** только разрешённая тестовая копия одной модели.
 
-**Работа:** зафиксировать ID/владельца/версию/доступ; сохранить XLSX и дубликат; назначить существующему содержанию base version без новых ID; перенести исполнителей, материалы, продукты, контрагентов, контракты, interfaces и links по mapping; создать initial migration decision/history; оставить ambiguity как conflict; сравнить counts/IDs/paths/formulas/selectors/snapshot; построить BPMN/SVG одного процесса; доказать restore.
+**Runbook готов 2026-08-10:** `templates/migrations/v0.1-to-v0.2.md` встроен в `maintain-production-system` и разделяет read-only assessment, `copy/derive/split/confirm/new-required/regenerate/archive/drop`, migration dossier, вопросы по одному, bounded batches, reconciliation и rollback. Несколько исходных книг по умолчанию получают отдельные досье и staging-книги.
+
+**Работа пилота:** зафиксировать ID/владельца/версию/доступ; сохранить XLSX и дубликат; выполнить assessment и version plan; перенести подтверждённые IDs, исполнителей, материалы, продукты, контрагентов, контракты, interfaces и links bounded transactions; создать migration decision/history; оставить ambiguity как conflict; сравнить counts/IDs/paths/formulas/selectors/snapshot; построить BPMN/SVG одного процесса; доказать restore.
 
 **Done:** пилот без потери ID/смысла, restore доказан, владелец отдельно разрешил тиражирование. **Rollback:** исходная модель остаётся v0.1, неуспешная копия не действует.
 

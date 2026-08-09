@@ -30,6 +30,7 @@ PUBLIC_TEMPLATE_ID = "1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k"
 TEMPLATE_MANIFEST = ROOT / "templates" / "template-manifest.yaml"
 TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.2.xlsx"
 TEMPLATE_SCHEMA_V2 = ROOT / "templates" / "template-schema-v0.2.json"
+MIGRATION_V1_TO_V2 = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
 EXPECTED_V2_SHEETS = (
     "Инструкция",
     "Система",
@@ -449,6 +450,24 @@ def validate_interview_contract(errors: list[str]) -> None:
             errors.append(f"INTERVIEW-CONTRACT.md: отсутствует harness marker {marker!r}")
 
 
+def validate_migration_contract(errors: list[str]) -> None:
+    if not MIGRATION_V1_TO_V2.is_file():
+        errors.append("нет templates/migrations/v0.1-to-v0.2.md")
+        return
+    text = MIGRATION_V1_TO_V2.read_text(encoding="utf-8")
+    for marker in (
+        "migration-assessment",
+        "migration dossier",
+        "v0.1-compatible",
+        "new-required",
+        "bounded batches",
+        "исходная v0.1-книга не изменена",
+        "один `active_question_id`",
+    ):
+        if marker not in text:
+            errors.append(f"v0.1-to-v0.2.md: отсутствует migration marker {marker!r}")
+
+
 def validate() -> list[str]:
     errors: list[str] = []
     skills_root = ROOT / "skills"
@@ -465,6 +484,7 @@ def validate() -> list[str]:
 
     validate_version_lifecycle(errors)
     validate_interview_contract(errors)
+    validate_migration_contract(errors)
     validate_template(errors)
     validate_v2_schema(errors)
 

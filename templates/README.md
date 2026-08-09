@@ -11,7 +11,7 @@
 - `template-manifest.yaml` — идентификатор источника, версия, контрольная сумма и состав листов.
 - `template-schema-v0.2.json` — машиночитаемая логическая и декларативная физическая схема 29 листов;
 - `scripts/build_template_v0_2.py` — точные formulas, dropdown ranges, named ranges, protections, filters и formatting;
-- `migrations/v0.1-to-v0.2.md` — детерминированная карта переноса и список полей, требующих решения.
+- `migrations/v0.1-to-v0.2.md` — исполнимый агентный runbook: read-only assessment, классы `copy/derive/split/confirm/new-required/regenerate/archive/drop`, migration dossier, порядок вопросов, bounded batches, reconciliation и rollback.
 
 XLSX — воспроизводимый снимок, а не второй независимо редактируемый шаблон. Если Google Sheets и снимок расходятся, сначала определить принятую версию, затем обновить снимок и манифест одним изменением.
 
