@@ -115,4 +115,6 @@ python3 scripts/install_codex.py --force
 
 Архитектура: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Карта запуска: [docs/SKILL-MAP.md](docs/SKILL-MAP.md). Правила развития: [CONTRIBUTING.md](CONTRIBUTING.md).
 
+Командный обзор релиза: [Release note v0.2](docs/RELEASE-NOTES-v0.2.md).
+
 Лицензия: [MIT](LICENSE).
