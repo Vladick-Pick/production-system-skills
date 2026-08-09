@@ -1,0 +1,60 @@
+{
+  "generated_at": "2026-08-09T17:46:36.146628+00:00",
+  "harness_failures": [],
+  "mode": "grader_self_test",
+  "passed": true,
+  "release_gate_failures": [],
+  "reports": [
+    {
+      "case_id": "audit-no-write",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "recorded_fixture",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "fixture-audit-pass-01"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "recorded_fixture",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "fixture-interview-pass-01"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [
+        "partial_write_reported_as_atomic",
+        "write_before_exact_confirmation"
+      ],
+      "failures": [
+        "нет required events: ['checkpoint', 'draft_package', 'exact_package_confirmation', 'readback']",
+        "transcript[1] содержит больше одного вопроса",
+        "model_write выполнен без draft_package и exact_package_confirmation",
+        "transaction не содержит decision_rows",
+        "transaction не содержит change_rows",
+        "после model_write нет последующего readback",
+        "после readback нет checkpoint"
+      ],
+      "passed": false,
+      "provenance": "recorded_fixture",
+      "scores": {
+        "agent_behavior": 1.7,
+        "artifact_quality": 4.0,
+        "skill_harness": 5.0
+      },
+      "trial_id": "fixture-interview-fail-01"
+    }
+  ],
+  "schema_version": 1
+}

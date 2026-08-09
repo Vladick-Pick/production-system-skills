@@ -50,14 +50,14 @@ BPMN и SVG одной сборки должны происходить из о�
 - service task;
 - manual task только при явно не поддерживаемой системой ручной работе;
 - send/receive task только при явном интерфейсе передачи;
-- call activity или embedded subprocess по правилу ADR;
+- call activity для самостоятельного связанного процесса;
 - none start/end events;
-- message, timer, error events только при явном типе и параметрах;
+- boundary timer event с явной привязкой и timer definition;
 - exclusive gateway с FEEL/default;
 - parallel split/join;
 - sequence flows.
 
-Пока запрещены inclusive/event-based gateways, внешние pools, message flows, visual data objects, associations, artifacts, compensation и произвольные modifiers.
+Пока запрещены embedded subprocess, message/error/intermediate events, inclusive/event-based gateways, внешние pools, message flows, visual data objects, associations, artifacts, compensation и произвольные modifiers. Исходный документ допускает более широкий BPMN-набор, но v0.2 сознательно блокирует элементы, для которых генератор и внутренний validator ещё не обеспечивают одинаковую детерминированную семантику. Расширение требует отдельного решения, IR-контракта, генерации и fixtures в одном изменении.
 
 ## 4. Правила отображения
 
@@ -73,11 +73,11 @@ BPMN и SVG одной сборки должны происходить из о�
 
 Человеческое решение отображается user task, после которого exclusive gateway маршрутизирует уже зафиксированный результат. Gateway не подменяет действие принятия решения.
 
-Связанный самостоятельный процесс становится call activity только при известном `linked_process_id`. Локальная группировка становится embedded subprocess и имеет один none start.
+Связанный самостоятельный процесс становится call activity только при известном `linked_process_id`. Локальная группировка в v0.2 остаётся набором обычных действий либо отдельным каноническим процессом: embedded subprocess не генерируется.
 
 ### События
 
-Обычный trigger создаёт none start. Message/timer start или intermediate event разрешён только когда модель содержит корреляцию сообщения либо timer definition. End event соответствует явному завершению ветки; разные бизнес-исходы получают разные подписи.
+Обычный trigger создаёт none start. Истечение времени, которое меняет путь уже выполняемого действия, отображается boundary timer только при явной привязке и timer definition. Message, error, timer start и intermediate events в v0.2 блокируются. End event соответствует явному завершению ветки; разные бизнес-исходы получают разные подписи.
 
 ### Gateways и потоки
 
@@ -110,6 +110,7 @@ Parallel gateway создаётся только из явной семанти�
 
 - выбранный snapshot разрешён без ошибок;
 - есть start, хотя бы один достижимый end и связный граф;
+- каждый достижимый незавершающий узел имеет исходящий flow, и из каждой достижимой ветки существует путь к end;
 - actions/edges/lanes разрешаются по stable ID;
 - unsupported элементы отсутствуют;
 - BPMN XML парсится, references и DI целостны;
@@ -125,6 +126,7 @@ Parallel gateway создаётся только из явной семанти�
 - service/send tasks имеют `zeebe:taskDefinition type`;
 - call activities имеют process ID и binding;
 - FEEL conditions определены, а exclusive default ровно один;
+- каждый parallel split имеет явный достижимый parallel join, а каждый join — предшествующий split;
 - forms, assignments, variables и worker contracts заданы там, где обязательны;
 - target Camunda version определена;
 - актуальный Desktop Modeler или эквивалентный зафиксированный lint не выдаёт блокирующих ошибок.

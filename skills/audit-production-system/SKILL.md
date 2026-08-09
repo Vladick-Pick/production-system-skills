@@ -30,6 +30,8 @@ description: Использовать для независимого read-only 
 5. `references/TEMPLATE-SCHEMA-v0.2.json`;
 6. `references/PROJECTION-CONTRACT.md`.
 
+Для детерминированной проверки использовать поставляемые вместе со скиллом `scripts/versioning/resolve.py` и `scripts/bpmn/validate.py`; при необходимости воспроизводимой пересборки — `scripts/bpmn/generate.py`, для сверки физического контракта новой книги — `scripts/build_template_v0_2.py`. Не предполагать наличие исходного репозитория рядом с установленным скиллом.
+
 ## Scope и источник истины
 
 В state `orient` установить:
@@ -73,7 +75,7 @@ Technical IDs должны быть открыты, включая первый 
 Проверить:
 
 - `Исполнители` и `Назначения` как отдельные сущности;
-- идентифицированного человека, confirmation и active assignment либо новое назначение, созданное той же подтверждённой transaction;
+- идентифицированного человека и confirmation; существующий либо новый performer/assignment должен совпадать с пакетом как атрибуция, но не трактуется как permission/RBAC;
 - AI не указан как подтверждающее лицо;
 - полный `package_id`/`package_hash` и отсутствие подтверждения отдельного ответа как всего пакета;
 - единую transaction, read-back и append-only `Решения`/`Изменения модели`;

@@ -28,31 +28,8 @@ REQUIRED_REFERENCES = {
 }
 PUBLIC_TEMPLATE_ID = "1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k"
 TEMPLATE_MANIFEST = ROOT / "templates" / "template-manifest.yaml"
-TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.1.xlsx"
+TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.2.xlsx"
 TEMPLATE_SCHEMA_V2 = ROOT / "templates" / "template-schema-v0.2.json"
-EXPECTED_TEMPLATE_SHEETS = (
-    "Инструкция",
-    "Система",
-    "Схема шаблона",
-    "Источники",
-    "Версии",
-    "Позиции",
-    "Назначения",
-    "Процессы",
-    "Действия",
-    "Связи действий",
-    "Объекты",
-    "Состояния",
-    "Переходы",
-    "Элементы модели",
-    "Контракты",
-    "Связи модели",
-    "Проверки",
-    "Реестр процессов",
-    "Рабочая панель",
-    "Диаграммы",
-    "Проекция draw.io",
-)
 EXPECTED_V2_SHEETS = (
     "Инструкция",
     "Система",
@@ -198,8 +175,13 @@ def validate_template(errors: list[str]) -> None:
     if manifest_value(manifest, "spreadsheet_id") != PUBLIC_TEMPLATE_ID:
         errors.append("template-manifest.yaml содержит неожиданный spreadsheet_id")
 
+    if manifest_value(manifest, "version") != "0.2":
+        errors.append("template-manifest.yaml должен объявлять текущую версию 0.2")
+    if manifest_value(manifest, "access_observed") != "anyone_with_link_reader":
+        errors.append("template-manifest.yaml должен фиксировать публичный доступ reader")
+
     declared_snapshot = manifest_value(manifest, "snapshot")
-    if declared_snapshot != "templates/production-system-model-template-v0.1.xlsx":
+    if declared_snapshot != "templates/production-system-model-template-v0.2.xlsx":
         errors.append("template-manifest.yaml содержит неожиданный путь snapshot")
 
     expected_sha = manifest_value(manifest, "sha256")
@@ -224,17 +206,34 @@ def validate_template(errors: list[str]) -> None:
         except KeyError:
             errors.append("в XLSX-шаблоне отсутствует xl/workbook.xml")
             return
+        worksheet_xml = [
+            archive.read(name)
+            for name in names
+            if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", name)
+        ]
 
     root = ElementTree.fromstring(workbook_xml)
     namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
     sheet_names = tuple(
         node.attrib["name"] for node in root.findall(f".//{namespace}sheet")
     )
-    if sheet_names != EXPECTED_TEMPLATE_SHEETS:
+    if sheet_names != EXPECTED_V2_SHEETS:
         errors.append(
             "состав или порядок листов XLSX не совпадает с контрактом; "
             f"найдено {list(sheet_names)}"
         )
+    defined_names = root.findall(f".//{namespace}definedName")
+    if len(defined_names) < 40:
+        errors.append("XLSX v0.2 не содержит полный набор enum/selector named ranges")
+    combined = b"\n".join(worksheet_xml)
+    if combined.count(b"<f") < 100:
+        errors.append("XLSX v0.2 не содержит ожидаемые физические formulas")
+    if combined.count(b"<dataValidation") < 20:
+        errors.append("XLSX v0.2 не содержит ожидаемые dropdown validations")
+    if combined.count(b"<conditionalFormatting") < 20:
+        errors.append("XLSX v0.2 не содержит ожидаемое conditional formatting")
+    if b"#REF!" in combined:
+        errors.append("XLSX v0.2 содержит формулу или диапазон с #REF!")
 
 
 def validate_v2_schema(errors: list[str]) -> None:
@@ -265,6 +264,28 @@ def validate_v2_schema(errors: list[str]) -> None:
     default_table = schema.get("default_table", {})
     if default_table.get("technical_ids_visible") is not True:
         errors.append("schema v0.2 должна оставлять technical IDs видимыми")
+
+    physical = schema.get("physical_contract", {})
+    expected_physical = {
+        "builder",
+        "spreadsheet_locale",
+        "time_zone",
+        "formula_language",
+        "selector_encoding",
+        "foreign_key_write_path",
+        "selector_catalogs",
+        "enum_catalogs",
+        "generated_ranges",
+        "conditional_formatting",
+        "filtering",
+        "rebuild_semantics",
+    }
+    missing_physical = expected_physical - set(physical)
+    if missing_physical:
+        errors.append(f"schema v0.2: неполный physical_contract {sorted(missing_physical)}")
+    builder = ROOT / str(physical.get("builder", ""))
+    if not builder.is_file():
+        errors.append("schema v0.2 ссылается на отсутствующий physical builder")
 
     for sheet_name, required_columns in ESSENTIAL_V2_COLUMNS.items():
         actual_columns = set(sheets.get(sheet_name, {}).get("columns", []))
@@ -518,6 +539,27 @@ def validate() -> list[str]:
                 "запустите scripts/sync_references.py"
             )
 
+        bundled_migration = skill_dir / "references" / "MIGRATION-v0.1-to-v0.2.md"
+        canonical_migration = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
+        if not bundled_migration.is_file():
+            errors.append(f"{name}: нет локальной migration map")
+        elif bundled_migration.read_bytes() != canonical_migration.read_bytes():
+            errors.append(f"{name}: migration map расходится с канонической")
+
+        if name in {"model-production-system", "maintain-production-system", "audit-production-system"}:
+            for relative, canonical in (
+                ("bpmn/common.py", ROOT / "scripts" / "bpmn" / "common.py"),
+                ("bpmn/generate.py", ROOT / "scripts" / "bpmn" / "generate.py"),
+                ("bpmn/validate.py", ROOT / "scripts" / "bpmn" / "validate.py"),
+                ("versioning/resolve.py", ROOT / "scripts" / "versioning" / "resolve.py"),
+                ("build_template_v0_2.py", ROOT / "scripts" / "build_template_v0_2.py"),
+            ):
+                bundled = skill_dir / "scripts" / relative
+                if not bundled.is_file():
+                    errors.append(f"{name}: нет self-contained runtime scripts/{relative}")
+                elif bundled.read_bytes() != canonical.read_bytes():
+                    errors.append(f"{name}: runtime scripts/{relative} расходится с каноническим")
+
         agent = agent_path.read_text(encoding="utf-8")
         if "$" + name not in agent:
             errors.append(f"{name}: default_prompt не упоминает навык через знак доллара")
@@ -533,6 +575,13 @@ def validate() -> list[str]:
         errors.append(
             f"skill-package.yaml перечисляет {sorted(listed)}, ожидалось {sorted(EXPECTED_SKILLS)}"
         )
+    package_snapshot = re.search(r"^\s{2}snapshot:\s*([^\n]+)$", manifest, re.MULTILINE)
+    if not package_snapshot or package_snapshot.group(1).strip().strip("\"'") != "templates/production-system-model-template-v0.2.xlsx":
+        errors.append("skill-package.yaml должен ссылаться на текущий XLSX v0.2")
+    if "identified_assigned_human:" in manifest:
+        errors.append("skill-package.yaml не должен трактовать assignment как permission")
+    if "assignment: фиксирует атрибуцию, но не является permission или RBAC" not in manifest:
+        errors.append("skill-package.yaml должен фиксировать attribution-only смысл assignment")
 
     for path in text_files():
         text = path.read_text(encoding="utf-8")

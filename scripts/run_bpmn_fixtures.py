@@ -133,12 +133,74 @@ def main() -> int:
         if "STALE_VERSION" not in stale.stdout:
             raise AssertionError("stale version не обнаружена")
 
+        normal_ir = json.loads((FIXTURES / "normal-path.json").read_text(encoding="utf-8"))
+        dead_end_ir = json.loads(json.dumps(normal_ir, ensure_ascii=False))
+        dead_end_ir["actions"].append(
+            {
+                "action_id": "act-reachable-dead-end",
+                "name": "Потерять ветку",
+                "position_id": dead_end_ir["lanes"][0]["position_id"],
+                "action_type": "работа",
+                "implementation": {"kind": "manual-task"},
+            }
+        )
+        dead_end_ir["flows"].append(
+            {
+                "edge_id": "edge-to-dead-end",
+                "source_id": dead_end_ir["events"][0]["event_id"],
+                "target_id": "act-reachable-dead-end",
+                "link_type": "последовательность",
+            }
+        )
+        dead_end_path = root / "dead-end.json"
+        dead_end_path.write_text(json.dumps(dead_end_ir, ensure_ascii=False), encoding="utf-8")
+        dead_end = run(
+            [
+                sys.executable,
+                str(GENERATOR),
+                str(dead_end_path),
+                "--output-dir",
+                str(root / "dead-end"),
+                "--expected-version-id",
+                "v2",
+                "--built-at",
+                BUILT_AT,
+            ],
+            expect_success=False,
+        )
+        if "DEAD_END_NODE" not in dead_end.stdout or "DEAD_END_PATH" not in dead_end.stdout:
+            raise AssertionError("достижимая тупиковая ветка не заблокирована")
+
+        traversal_ir = json.loads(json.dumps(normal_ir, ensure_ascii=False))
+        traversal_ir["process"]["process_id"] = "../escape"
+        traversal_path = root / "path-traversal.json"
+        traversal_path.write_text(json.dumps(traversal_ir, ensure_ascii=False), encoding="utf-8")
+        escape_target = root / "escape--v2.bpmn"
+        traversal = run(
+            [
+                sys.executable,
+                str(GENERATOR),
+                str(traversal_path),
+                "--output-dir",
+                str(root / "safe-output"),
+                "--expected-version-id",
+                "v2",
+                "--built-at",
+                BUILT_AT,
+            ],
+            expect_success=False,
+        )
+        if "filename-компонент" not in traversal.stdout:
+            raise AssertionError("unsafe process_id не был отклонён")
+        if escape_target.exists():
+            raise AssertionError("генератор записал файл вне --output-dir")
+
         schema = json.loads((ROOT / "templates" / "template-schema-v0.2.json").read_text(encoding="utf-8"))
         if "Проекция draw.io" in schema["sheet_order"]:
             raise AssertionError("draw.io попал в финальный v0.2")
 
-    print("[OK] BPMN/SVG: normal, decision, exclusive, parallel, timer, return, subprocess, automation")
-    print("[OK] Lineage, materials/IS properties, stale version, unknown connector, repeat bytes")
+    print("[OK] BPMN/SVG: normal, decision, exclusive, parallel, boundary timer, return, call activity, automation")
+    print("[OK] Lineage, dead-end branches, safe filenames, stale version, unknown connector, repeat bytes")
     print("[INFO] Camunda Desktop Modeler gate не симулируется и остаётся deployment blocker")
     return 0
 

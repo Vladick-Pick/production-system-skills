@@ -23,6 +23,19 @@ REFERENCES = (
 )
 EXTRA_BUNDLED_FILES = (
     (ROOT / "templates" / "template-schema-v0.2.json", "TEMPLATE-SCHEMA-v0.2.json"),
+    (ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md", "MIGRATION-v0.1-to-v0.2.md"),
+)
+RUNTIME_SKILLS = {
+    "model-production-system",
+    "maintain-production-system",
+    "audit-production-system",
+}
+RUNTIME_FILES = (
+    (ROOT / "scripts" / "bpmn" / "common.py", Path("bpmn/common.py")),
+    (ROOT / "scripts" / "bpmn" / "generate.py", Path("bpmn/generate.py")),
+    (ROOT / "scripts" / "bpmn" / "validate.py", Path("bpmn/validate.py")),
+    (ROOT / "scripts" / "versioning" / "resolve.py", Path("versioning/resolve.py")),
+    (ROOT / "scripts" / "build_template_v0_2.py", Path("build_template_v0_2.py")),
 )
 
 
@@ -36,8 +49,17 @@ def main() -> int:
             shutil.copy2(source, destination)
         for source, name in EXTRA_BUNDLED_FILES:
             shutil.copy2(source, target / name)
+        runtime_count = 0
+        if skill in RUNTIME_SKILLS:
+            scripts = ROOT / "skills" / skill / "scripts"
+            shutil.rmtree(scripts, ignore_errors=True)
+            for source, relative in RUNTIME_FILES:
+                destination = scripts / relative
+                destination.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copy2(source, destination)
+                runtime_count += 1
         count = len(REFERENCES) + len(EXTRA_BUNDLED_FILES)
-        print(f"[OK] {skill}: синхронизировано {count} reference-файлов")
+        print(f"[OK] {skill}: синхронизировано {count} reference-файлов и {runtime_count} runtime-файлов")
     return 0
 
 

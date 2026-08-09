@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 import sys
+import tempfile
 from pathlib import Path
 
 
@@ -62,13 +63,43 @@ def main() -> int:
         return 2
 
     target.mkdir(parents=True, exist_ok=True)
-    for name in SKILLS:
-        source = ROOT / "skills" / name
-        destination = target / name
-        shutil.copytree(source, destination, dirs_exist_ok=args.force)
-        print(f"[OK] {name} -> {destination}")
+    transaction = Path(tempfile.mkdtemp(prefix=".production-system-skills-install-", dir=target))
+    staged_root = transaction / "staged"
+    backup_root = transaction / "backup"
+    installed: list[str] = []
+    backed_up: list[str] = []
+    try:
+        for name in SKILLS:
+            source = ROOT / "skills" / name
+            staged = staged_root / name
+            shutil.copytree(source, staged)
 
-    print("[OK] Установлено 4 скилла. Старый business-ontology не изменён и не входит в пакет.")
+        for name in SKILLS:
+            destination = target / name
+            staged = staged_root / name
+            if destination.exists():
+                backup_root.mkdir(parents=True, exist_ok=True)
+                destination.replace(backup_root / name)
+                backed_up.append(name)
+            staged.replace(destination)
+            installed.append(name)
+            print(f"[OK] {name} -> {destination}")
+    except Exception:
+        for name in reversed(installed):
+            destination = target / name
+            if destination.exists():
+                shutil.rmtree(destination)
+        for name in reversed(backed_up):
+            backup = backup_root / name
+            if backup.exists():
+                backup.replace(target / name)
+        raise
+    finally:
+        shutil.rmtree(transaction, ignore_errors=True)
+
+    print("[OK] Установлено 4 самодостаточных скилла атомарной заменой управляемых папок.")
+    print("[OK] Устаревшие файлы внутри этих четырёх папок удалены; остальные скиллы не изменены.")
+    print("[OK] Старый business-ontology не изменён и не входит в пакет.")
     return 0
 
 

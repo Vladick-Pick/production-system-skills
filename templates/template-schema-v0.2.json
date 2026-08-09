@@ -3,6 +3,20 @@
   "sheet_count": 29,
   "required_semantics": "For versioned_authoring and versioned_authoring_with_settings, required lists apply to version_operation=применить. For version_operation=исключить require only stable_id, version_id, version_operation, source_id and the linked decision/transaction evidence.",
   "foreign_key_resolution": "FK to a versioned entity resolves against the materialized snapshot of working_version_id; FK to an identity/governance registry resolves against that registry. Physical duplicate stable IDs across versions are never a selector source.",
+  "physical_contract": {
+    "builder": "scripts/build_template_v0_2.py",
+    "spreadsheet_locale": "en_US",
+    "time_zone": "Europe/Istanbul",
+    "formula_language": "Google Sheets English functions with comma separators",
+    "selector_encoding": "читаемая подпись [id=stable_id]",
+    "foreign_key_write_path": "Пользователь выбирает selector; соседний открытый *_id вычисляется формулой по ASCII-маркеру [id=...]. version_id авторской строки берётся из Система!B4.",
+    "selector_catalogs": "Именованные скрытые диапазоны. Для версионируемых сущностей источник — Срез модели выбранной рабочей версии; для identity/governance registry — собственные строки реестра.",
+    "enum_catalogs": "Именованные скрытые диапазоны на листе Система; пользовательские значения только на русском языке.",
+    "generated_ranges": "Вычисляемые листы и helper-каталоги защищены warning-only; IDs, selectors и официальные колонки остаются видимыми.",
+    "conditional_formatting": "Неполная начатая строка подсвечивается красным; заголовки required жёлтые, computed голубые.",
+    "filtering": "Для каждого табличного листа включён basic filter на официальные колонки и закреплены строки до header_row.",
+    "rebuild_semantics": "Builder полностью заменяет физическую структуру книги после обязательной резервной копии. При повторной сборке ему передаются все текущие sheetId и namedRangeId; named ranges удаляются до листов. Миграция бизнес-данных выполняется отдельным подтверждённым пакетом."
+  },
   "default_table": {
     "title_row": 1,
     "description_row": 2,
@@ -265,7 +279,7 @@
       "types": {"decided_at": "datetime"},
       "foreign_keys": {"confirmed_by_performer_id": "Исполнители.performer_id", "confirmation_assignment_id": "Назначения.assignment_id", "working_version_id": "Версии.version_id", "corrects_decision_id": "Решения.decision_id", "recorded_by_performer_id": "Исполнители.performer_id", "source_id": "Источники.source_id"},
       "selectors": {"confirmed_by_performer_id": "confirmed_by_performer_selector", "confirmation_assignment_id": "confirmation_assignment_selector", "working_version_id": "working_version_selector", "corrects_decision_id": "corrects_decision_selector", "recorded_by_performer_id": "recorded_by_performer_selector", "source_id": "source_selector"},
-      "constraints": ["human_confirmer_only", "active_or_same_transaction_assignment_at_decided_at", "immutable_append_only"]
+      "constraints": ["identified_human_confirmer_only", "assignment_attribution_matches_confirmed_package", "assignment_is_not_permission_or_rbac", "immutable_append_only"]
     },
     "Изменения модели": {
       "kind": "append_only_governance",

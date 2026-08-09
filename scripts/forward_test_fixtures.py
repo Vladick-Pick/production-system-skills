@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Локальный контур contract markers и детерминированных artifact fixtures."""
+"""Локальный контур contracts, artifact fixtures и behavioral grader."""
 
 from __future__ import annotations
 
@@ -82,15 +82,29 @@ def main() -> int:
 
     failed_scripts = [
         script
-        for script in ("run_versioning_fixtures.py", "run_bpmn_fixtures.py")
+        for script in (
+            "run_versioning_fixtures.py",
+            "run_bpmn_fixtures.py",
+            "test_template_builder.py",
+            "test_install_codex.py",
+        )
         if run_fixture(script) != 0
     ]
     if failed_scripts:
         print(f"[FAIL] Не прошли artifact fixtures: {', '.join(failed_scripts)}")
         return 1
 
-    print("[OK] Versioning и BPMN artifact fixtures прошли")
-    print("[INFO] Это не fresh-agent evidence: живые trials из evals/cases.yaml запускаются отдельно")
+    behavioral = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "run_behavioral_evals.py"), "--self-test"],
+        cwd=ROOT,
+        check=False,
+    )
+    if behavioral.returncode != 0:
+        print("[FAIL] Behavioral transcript/outcome grader не прошёл самопроверку")
+        return 1
+
+    print("[OK] Versioning, BPMN и behavioral grader fixtures прошли")
+    print("[INFO] Recorded fixtures не являются fresh-agent evidence; release gate требует отдельные 3/3 trials")
     return 0
 
 

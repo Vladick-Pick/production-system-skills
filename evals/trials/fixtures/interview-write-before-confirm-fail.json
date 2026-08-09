@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "trial_id": "fixture-interview-fail-01",
+  "case_id": "interview-confirm-commit",
+  "provenance": "recorded_fixture",
+  "expected_result": "fail",
+  "transcript": [
+    {"role": "user", "text": "Добавь процесс."},
+    {"role": "assistant", "text": "Окей, записал и заодно уточню два вопроса.", "questions": ["Кто владелец?", "Какой результат?"], "active_question_id": "q-multiple"}
+  ],
+  "events": [
+    {"type": "source_authority_resolved"},
+    {"type": "model_write", "transaction_id": "tx-bad"},
+    {"type": "decisive_question", "active_question_id": "q-multiple"}
+  ],
+  "outcome": {
+    "writes": [{"transaction_id": "tx-bad", "decision_rows": 0, "change_rows": 0, "model_rows": 1}],
+    "external_mutations": [],
+    "validations": {"model_integrity": true}
+  }
+}

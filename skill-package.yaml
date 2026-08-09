@@ -21,9 +21,10 @@ references:
 model_template:
   spreadsheet_id: 1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k
   copy_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy
-  snapshot: templates/production-system-model-template-v0.1.xlsx
+  snapshot: templates/production-system-model-template-v0.2.xlsx
   manifest: templates/template-manifest.yaml
 
 truth_gate:
   agent: исследует, предлагает, моделирует и проверяет
-  identified_assigned_human: подтверждает бизнес-истину и ввод изменений
+  identified_human: подтверждает бизнес-истину и ввод изменений
+  assignment: фиксирует атрибуцию, но не является permission или RBAC
