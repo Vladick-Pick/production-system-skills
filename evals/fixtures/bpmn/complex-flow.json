@@ -1,0 +1,120 @@
+{
+  "schema_version": "1.0",
+  "projection_kind": "BPMN процесса",
+  "process": {
+    "process_id": "proc-qualify-lead",
+    "version_id": "v2",
+    "system_id": "sys-attraction",
+    "system_name": "Привлечение",
+    "name": "Квалифицировать и передать лид",
+    "is_executable": true,
+    "target_camunda_version": "8.9"
+  },
+  "lanes": [
+    {"position_id": "pos-qualifier", "name": "Квалификатор", "kind": "position"},
+    {"position_id": "pos-owner", "name": "Владелец процесса", "kind": "position"},
+    {"position_id": "pos-automation", "name": "Контур автоматизации", "kind": "position"}
+  ],
+  "events": [
+    {"event_id": "evt-start", "event_kind": "start", "name": "Лид готов к квалификации", "position_id": "pos-qualifier"},
+    {"event_id": "evt-timeout", "event_kind": "boundary-timer", "name": "Истёк SLA", "position_id": "pos-owner", "attached_to_action_id": "act-decide-quality", "interrupting": false, "timer_type": "timeDuration", "timer_definition": "PT30M"},
+    {"event_id": "evt-accepted", "event_kind": "end", "name": "Лид принят клубом", "position_id": "pos-automation"},
+    {"event_id": "evt-rejected", "event_kind": "end", "name": "Лид отклонён", "position_id": "pos-owner"}
+  ],
+  "actions": [
+    {
+      "action_id": "act-check-lead",
+      "name": "Проверить данные лида",
+      "action_type": "контроль",
+      "position_id": "pos-qualifier",
+      "implementation": {"kind": "user-task", "implementation_type": "camunda-user-task"},
+      "material_ids": ["mat-qualification-script", "mat-quality-checklist"],
+      "information_system_ids": ["is-crm"],
+      "product_ids": ["prod-lead-a", "prod-lead-b"],
+      "counterparty_ids": []
+    },
+    {
+      "action_id": "act-decide-quality",
+      "name": "Определить качество лида",
+      "action_type": "решение",
+      "position_id": "pos-owner",
+      "implementation": {"kind": "user-task", "implementation_type": "camunda-user-task"},
+      "material_ids": ["mat-quality-rules"],
+      "information_system_ids": ["is-crm"],
+      "product_ids": ["prod-lead-a", "prod-lead-b"],
+      "counterparty_ids": []
+    },
+    {
+      "action_id": "act-enrich-data",
+      "name": "Дополнить данные лида",
+      "action_type": "автоматизация",
+      "position_id": "pos-automation",
+      "implementation": {"kind": "service-task", "job_type": "enrich-lead", "retries": 3},
+      "material_ids": [],
+      "information_system_ids": ["is-crm", "is-enrichment"],
+      "product_ids": [],
+      "counterparty_ids": []
+    },
+    {
+      "action_id": "act-call-compliance",
+      "name": "Проверить ограничения",
+      "action_type": "подпроцесс",
+      "position_id": "pos-owner",
+      "implementation": {"kind": "call-activity", "called_process_id": "proc-compliance-check", "binding_type": "deployment"},
+      "material_ids": ["mat-compliance-policy"],
+      "information_system_ids": [],
+      "product_ids": [],
+      "counterparty_ids": []
+    },
+    {
+      "action_id": "act-notify-timeout",
+      "name": "Уведомить о нарушении SLA",
+      "action_type": "автоматизация",
+      "position_id": "pos-automation",
+      "implementation": {"kind": "service-task", "job_type": "notify-sla-timeout", "retries": 3},
+      "material_ids": ["mat-sla-alert"],
+      "information_system_ids": ["is-notification"],
+      "product_ids": [],
+      "counterparty_ids": []
+    },
+    {
+      "action_id": "act-send-lead",
+      "name": "Передать лид клубу",
+      "action_type": "передача",
+      "position_id": "pos-automation",
+      "implementation": {"kind": "send-task", "job_type": "send-lead-to-club", "retries": 5},
+      "material_ids": ["mat-transfer-payload"],
+      "information_system_ids": ["is-crm", "is-club-api"],
+      "product_ids": ["prod-lead-a", "prod-lead-b"],
+      "counterparty_ids": ["cp-club"]
+    }
+  ],
+  "gateways": [
+    {"gateway_id": "gw-quality", "gateway_kind": "exclusive", "name": "Лид принят?", "position_id": "pos-owner"},
+    {"gateway_id": "gw-enrich-split", "gateway_kind": "parallel", "name": "Подготовить передачу", "position_id": "pos-owner"},
+    {"gateway_id": "gw-enrich-join", "gateway_kind": "parallel", "name": "Подготовка завершена", "position_id": "pos-owner"}
+  ],
+  "flows": [
+    {"edge_id": "edge-start-check", "source_id": "evt-start", "target_id": "act-check-lead", "link_type": "последовательность"},
+    {"edge_id": "edge-check-decision", "source_id": "act-check-lead", "target_id": "act-decide-quality", "link_type": "последовательность"},
+    {"edge_id": "edge-decision-gateway", "source_id": "act-decide-quality", "target_id": "gw-quality", "link_type": "последовательность"},
+    {"edge_id": "edge-quality-accepted", "source_id": "gw-quality", "target_id": "gw-enrich-split", "name": "Да", "link_type": "условие", "condition": "= decision.accepted = true", "is_default": false},
+    {"edge_id": "edge-quality-rejected", "source_id": "gw-quality", "target_id": "evt-rejected", "name": "Нет", "link_type": "исключение", "is_default": true},
+    {"edge_id": "edge-split-enrich", "source_id": "gw-enrich-split", "target_id": "act-enrich-data", "link_type": "ветвление"},
+    {"edge_id": "edge-split-compliance", "source_id": "gw-enrich-split", "target_id": "act-call-compliance", "link_type": "ветвление"},
+    {"edge_id": "edge-enrich-join", "source_id": "act-enrich-data", "target_id": "gw-enrich-join", "link_type": "последовательность"},
+    {"edge_id": "edge-compliance-join", "source_id": "act-call-compliance", "target_id": "gw-enrich-join", "link_type": "последовательность"},
+    {"edge_id": "edge-join-send", "source_id": "gw-enrich-join", "target_id": "act-send-lead", "link_type": "последовательность"},
+    {"edge_id": "edge-send-end", "source_id": "act-send-lead", "target_id": "evt-accepted", "link_type": "последовательность"},
+    {"edge_id": "edge-timeout-notify", "source_id": "evt-timeout", "target_id": "act-notify-timeout", "link_type": "исключение"},
+    {"edge_id": "edge-notify-return", "source_id": "act-notify-timeout", "target_id": "act-decide-quality", "link_type": "возврат"}
+  ],
+  "source_row_keys": [
+    "Процессы:proc-qualify-lead:v2",
+    "Действия:act-check-lead:v2",
+    "Действия:act-decide-quality:v2",
+    "Действия:act-enrich-data:v2",
+    "Действия:act-call-compliance:v2",
+    "Действия:act-send-lead:v2"
+  ]
+}

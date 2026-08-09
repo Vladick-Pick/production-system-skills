@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "projection_kind": "BPMN процесса",
+  "process": {
+    "process_id": "proc-unknown-connector",
+    "version_id": "v2",
+    "system_id": "sys-attraction",
+    "system_name": "Привлечение",
+    "name": "Проверить неизвестный коннектор",
+    "is_executable": true,
+    "target_camunda_version": "8.9"
+  },
+  "lanes": [
+    {"position_id": "pos-automation", "name": "Контур автоматизации", "kind": "position"}
+  ],
+  "events": [
+    {"event_id": "evt-start", "event_kind": "start", "name": "Запрос получен", "position_id": "pos-automation"},
+    {"event_id": "evt-end", "event_kind": "end", "name": "Запрос обработан", "position_id": "pos-automation"}
+  ],
+  "actions": [
+    {
+      "action_id": "act-call-unknown",
+      "name": "Вызвать внешний сервис",
+      "action_type": "автоматизация",
+      "position_id": "pos-automation",
+      "implementation": {"kind": "service-task"},
+      "material_ids": [],
+      "information_system_ids": ["is-unknown"],
+      "product_ids": [],
+      "counterparty_ids": ["cp-provider"]
+    }
+  ],
+  "gateways": [],
+  "flows": [
+    {"edge_id": "edge-start-task", "source_id": "evt-start", "target_id": "act-call-unknown", "link_type": "последовательность"},
+    {"edge_id": "edge-task-end", "source_id": "act-call-unknown", "target_id": "evt-end", "link_type": "последовательность"}
+  ],
+  "source_row_keys": ["Действия:act-call-unknown:v2"]
+}
