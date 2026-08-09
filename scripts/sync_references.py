@@ -21,6 +21,9 @@ REFERENCES = (
     "TEMPLATE-CONTRACT.md",
     "PROJECTION-CONTRACT.md",
 )
+EXTRA_BUNDLED_FILES = (
+    (ROOT / "templates" / "template-schema-v0.2.json", "TEMPLATE-SCHEMA-v0.2.json"),
+)
 
 
 def main() -> int:
@@ -31,7 +34,10 @@ def main() -> int:
             source = ROOT / "references" / name
             destination = target / name
             shutil.copy2(source, destination)
-        print(f"[OK] {skill}: синхронизировано {len(REFERENCES)} reference-файла")
+        for source, name in EXTRA_BUNDLED_FILES:
+            shutil.copy2(source, target / name)
+        count = len(REFERENCES) + len(EXTRA_BUNDLED_FILES)
+        print(f"[OK] {skill}: синхронизировано {count} reference-файлов")
     return 0
 
 

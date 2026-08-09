@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import sys
 import zipfile
@@ -28,6 +29,7 @@ REQUIRED_REFERENCES = {
 PUBLIC_TEMPLATE_ID = "1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k"
 TEMPLATE_MANIFEST = ROOT / "templates" / "template-manifest.yaml"
 TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.1.xlsx"
+TEMPLATE_SCHEMA_V2 = ROOT / "templates" / "template-schema-v0.2.json"
 EXPECTED_TEMPLATE_SHEETS = (
     "Инструкция",
     "Система",
@@ -50,6 +52,37 @@ EXPECTED_TEMPLATE_SHEETS = (
     "Рабочая панель",
     "Диаграммы",
     "Проекция draw.io",
+)
+EXPECTED_V2_SHEETS = (
+    "Инструкция",
+    "Система",
+    "Схема шаблона",
+    "Источники",
+    "Версии",
+    "Исполнители",
+    "Позиции",
+    "Назначения",
+    "Контрагенты",
+    "Продукты",
+    "Материалы",
+    "Процессы",
+    "Действия",
+    "Связи действий",
+    "Объекты",
+    "Состояния",
+    "Переходы",
+    "Элементы модели",
+    "Контракты",
+    "Позиции контрактов",
+    "Интерфейсы передачи",
+    "Связи модели",
+    "Решения",
+    "Изменения модели",
+    "Срез модели",
+    "Проверки",
+    "Реестр процессов",
+    "Рабочая панель",
+    "Диаграммы",
 )
 EXPECTED_VERSION_STATUSES = {
     "черновик",
@@ -99,7 +132,7 @@ def markdown_links(path: Path) -> list[Path]:
 
 
 def text_files() -> list[Path]:
-    allowed = {".md", ".yaml", ".yml", ".py", ".txt"}
+    allowed = {".json", ".md", ".yaml", ".yml", ".py", ".txt"}
     return [
         path
         for path in ROOT.rglob("*")
@@ -163,6 +196,96 @@ def validate_template(errors: list[str]) -> None:
         )
 
 
+def validate_v2_schema(errors: list[str]) -> None:
+    if not TEMPLATE_SCHEMA_V2.is_file():
+        errors.append("нет templates/template-schema-v0.2.json")
+        return
+
+    try:
+        schema = json.loads(TEMPLATE_SCHEMA_V2.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError) as exc:
+        errors.append(f"template-schema-v0.2.json не читается: {exc}")
+        return
+
+    order = tuple(schema.get("sheet_order", ()))
+    sheets = schema.get("sheets", {})
+    if schema.get("schema_version") != "0.2":
+        errors.append("template-schema-v0.2.json имеет неожиданный schema_version")
+    if schema.get("sheet_count") != 29 or order != EXPECTED_V2_SHEETS:
+        errors.append("schema v0.2 должна задавать ровно 29 листов в принятом порядке")
+    if tuple(sheets) != EXPECTED_V2_SHEETS:
+        errors.append("порядок объектов sheets не совпадает с sheet_order v0.2")
+
+    enums = schema.get("enums", {})
+    for sheet_name, sheet in sheets.items():
+        columns = sheet.get("columns", [])
+        if len(columns) != len(set(columns)):
+            errors.append(f"{sheet_name}: в schema v0.2 есть повторяющиеся колонки")
+        for group in ("required", "computed"):
+            values = sheet.get(group, [])
+            if values == ["all_non_selector_cells"]:
+                continue
+            unknown = set(values) - set(columns)
+            if unknown:
+                errors.append(
+                    f"{sheet_name}: {group} ссылается на неизвестные колонки {sorted(unknown)}"
+                )
+        for field, enum_name in sheet.get("enums", {}).items():
+            if field not in columns or enum_name not in enums:
+                errors.append(
+                    f"{sheet_name}: enum {field} → {enum_name} не разрешается"
+                )
+        for field, target in sheet.get("foreign_keys", {}).items():
+            if field not in columns:
+                errors.append(f"{sheet_name}: FK-поле {field} отсутствует в columns")
+                continue
+            if "." not in target:
+                errors.append(f"{sheet_name}: FK {field} имеет некорректную цель {target}")
+                continue
+            target_sheet, target_column = target.split(".", 1)
+            target_columns = sheets.get(target_sheet, {}).get("columns", [])
+            target_settings = sheets.get(target_sheet, {}).get("settings", {})
+            if target_sheet not in sheets or (
+                target_column not in target_columns and target_column not in target_settings
+            ):
+                errors.append(f"{sheet_name}: FK {field} указывает на неизвестное {target}")
+        selectors = sheet.get("selectors", {})
+        if isinstance(selectors, dict):
+            settings = sheet.get("settings", {})
+            for field, selector in selectors.items():
+                if field in settings:
+                    if selector not in settings:
+                        errors.append(
+                            f"{sheet_name}: selector настройки {field} → {selector} отсутствует"
+                        )
+                    continue
+                if field not in columns or selector not in columns:
+                    errors.append(
+                        f"{sheet_name}: selector {field} → {selector} отсутствует в columns"
+                    )
+                elif columns.index(selector) != columns.index(field) + 1:
+                    errors.append(
+                        f"{sheet_name}: selector {selector} должен идти сразу после {field}"
+                    )
+        if sheet.get("kind") == "versioned_authoring":
+            expected_prefix = [columns[0], "version_id", "version_operation"] if columns else []
+            if columns[:3] != expected_prefix:
+                errors.append(
+                    f"{sheet_name}: версионная строка должна начинаться stable_id, version_id, version_operation"
+                )
+
+    required_relations = {
+        "производит",
+        "использует",
+        "создаёт",
+        "регулируется",
+        "входит в приёмочный пакет",
+    }
+    actual_relations = set(sheets.get("Связи модели", {}).get("relation_types", []))
+    if not required_relations <= actual_relations:
+        errors.append("Связи модели не содержат минимальный словарь отношений v0.2")
+
+
 def validate_version_lifecycle(errors: list[str]) -> None:
     language_path = ROOT / "references" / "LANGUAGE.md"
     metaontology_path = ROOT / "references" / "METAONTOLOGY.md"
@@ -223,6 +346,7 @@ def validate() -> list[str]:
 
     validate_version_lifecycle(errors)
     validate_template(errors)
+    validate_v2_schema(errors)
 
     for name in sorted(EXPECTED_SKILLS):
         skill_dir = skills_root / name
@@ -285,6 +409,15 @@ def validate() -> list[str]:
                     f"{name}: references/{reference_name} расходится с корневым контрактом; "
                     "запустите scripts/sync_references.py"
                 )
+
+        bundled_schema = skill_dir / "references" / "TEMPLATE-SCHEMA-v0.2.json"
+        if not bundled_schema.is_file():
+            errors.append(f"{name}: нет локальной копии references/TEMPLATE-SCHEMA-v0.2.json")
+        elif bundled_schema.read_bytes() != TEMPLATE_SCHEMA_V2.read_bytes():
+            errors.append(
+                f"{name}: TEMPLATE-SCHEMA-v0.2.json расходится с templates/template-schema-v0.2.json; "
+                "запустите scripts/sync_references.py"
+            )
 
         agent = agent_path.read_text(encoding="utf-8")
         if "$" + name not in agent:
