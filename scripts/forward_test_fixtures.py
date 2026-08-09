@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Статические поведенческие fixtures; не заменяют живой forward-тест агента."""
+"""Локальный контур contract markers и детерминированных artifact fixtures."""
 
 from __future__ import annotations
 
+import subprocess
 import sys
 from pathlib import Path
 
@@ -12,60 +13,84 @@ ROOT = Path(__file__).resolve().parents[1]
 FIXTURES = {
     "resolve-model-element": {
         "required": [
-            "карту противоречий",
-            "опровергнуть свою гипотезу",
-            "предложить готовое определение",
-            "задать один вопрос",
-            "оставить нерешённым",
+            "semantic-resolution package",
+            "семь тестов",
+            "одновременно активен ровно один вопрос",
+            "package_hash",
+            "существующая модель не изменена этим скиллом",
         ],
     },
     "model-production-system": {
         "required": [
-            "от продукта назад",
+            "систему от продукта назад",
             "пройти исполнение вперёд",
-            "один основной объект",
-            "проиграть сценарии",
-            "проекцию draw.io",
+            "одну ответственную позицию",
+            "одной идемпотентной transaction",
+            "bpmn, svg и manifest",
         ],
     },
     "maintain-production-system": {
         "required": [
             "классифицировать изменение",
-            "карту влияния",
-            "активных экземпляров",
-            "принятая версия неизменяема",
-            "синхронизировать представления",
+            "карта влияния",
+            "миграцию живых экземпляров",
+            "разреженную редакцию",
+            "принятие и ввод в действие",
         ],
     },
     "audit-production-system": {
         "required": [
-            "read-only",
-            "не исправлять найденное",
-            "проиграть исполнение",
-            "слепых зон",
-            "не перерисовывать схему",
+            "read-only audit report",
+            "evidence ledger",
+            "разреженные версии",
+            "проиграть минимум",
+            "bpmn/svg lineage",
         ],
     },
 }
 
 
-def main() -> int:
+def check_skill_contracts() -> list[str]:
     failures: list[str] = []
     for name, fixture in FIXTURES.items():
         path = ROOT / "skills" / name / "SKILL.md"
         text = path.read_text(encoding="utf-8").lower()
         for phrase in fixture["required"]:
             if phrase.lower() not in text:
-                failures.append(f"{name}: отсутствует поведенческий маркер {phrase!r}")
+                failures.append(f"{name}: отсутствует contract marker {phrase!r}")
+    return failures
 
+
+def run_fixture(script: str) -> int:
+    completed = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / script)],
+        cwd=ROOT,
+        check=False,
+    )
+    return completed.returncode
+
+
+def main() -> int:
+    failures = check_skill_contracts()
     if failures:
-        print("[FAIL] Контрактные fixtures:")
+        print("[FAIL] Контракты скиллов:")
         for failure in failures:
             print(f"  - {failure}")
         return 1
 
-    print("[OK] Четыре поведенческих контракта содержат обязательные предохранители")
-    print("[INFO] Это статическая проверка; живой forward-тест выполняется в отдельной сессии")
+    print("[OK] Routing и критические предохранители четырёх скиллов присутствуют")
+
+    failed_scripts = [
+        script
+        for script in ("run_versioning_fixtures.py", "run_bpmn_fixtures.py")
+        if run_fixture(script) != 0
+    ]
+    if failed_scripts:
+        print(f"[FAIL] Не прошли artifact fixtures: {', '.join(failed_scripts)}")
+        return 1
+
+    print("[OK] Versioning и BPMN artifact fixtures прошли")
+    print("[INFO] Это не fresh-agent evidence: живые trials из evals/cases.yaml запускаются отдельно")
     return 0
 
 

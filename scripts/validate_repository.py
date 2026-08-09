@@ -97,6 +97,47 @@ EXPECTED_VERSION_TRANSITIONS = {
     "принято → закрыто",
     "действует → закрыто",
 }
+EXPECTED_INTERVIEW_STATES = {
+    "orient",
+    "investigate",
+    "resolve",
+    "draft",
+    "confirm",
+    "commit",
+    "verify",
+    "checkpoint",
+}
+ESSENTIAL_V2_COLUMNS = {
+    "Версии": {
+        "version_id",
+        "predecessor_version_id",
+        "version_status",
+        "accepted_decision_id",
+        "closed_decision_id",
+        "successor_version_id",
+        "migration_decision_id",
+    },
+    "Исполнители": {"performer_id", "performer_type", "performer_name"},
+    "Назначения": {"assignment_id", "performer_id", "position_id", "active_from", "active_to"},
+    "Контрагенты": {"counterparty_id", "counterparty_name"},
+    "Продукты": {"product_id", "primary_object_id", "required_state_id", "acceptance_criteria"},
+    "Материалы": {"material_id", "material_type", "content_text", "url"},
+    "Позиции контрактов": {"contract_item_id", "contract_id", "product_id", "pricing_method", "interface_id"},
+    "Интерфейсы передачи": {"interface_id", "product_id", "acceptance_action_id", "rejection_path", "fallback_path"},
+    "Решения": {"decision_id", "transaction_id", "package_id", "package_hash", "confirmation_id", "confirmed_by_performer_id"},
+    "Изменения модели": {"change_id", "transaction_id", "decision_id", "stable_id", "old_value", "new_value"},
+    "Срез модели": {"selected_version_id", "stable_id", "source_version_id", "resolved_operation", "resolution_status"},
+    "Диаграммы": {"projection_build_id", "model_fingerprint", "bpmn_sha256", "svg_sha256", "readiness_status"},
+}
+
+
+def reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"повторяющийся JSON-ключ {key!r}")
+        result[key] = value
+    return result
 
 
 def frontmatter(text: str) -> tuple[dict[str, str], int]:
@@ -202,8 +243,11 @@ def validate_v2_schema(errors: list[str]) -> None:
         return
 
     try:
-        schema = json.loads(TEMPLATE_SCHEMA_V2.read_text(encoding="utf-8"))
-    except (json.JSONDecodeError, OSError) as exc:
+        schema = json.loads(
+            TEMPLATE_SCHEMA_V2.read_text(encoding="utf-8"),
+            object_pairs_hook=reject_duplicate_json_keys,
+        )
+    except (json.JSONDecodeError, OSError, ValueError) as exc:
         errors.append(f"template-schema-v0.2.json не читается: {exc}")
         return
 
@@ -215,6 +259,22 @@ def validate_v2_schema(errors: list[str]) -> None:
         errors.append("schema v0.2 должна задавать ровно 29 листов в принятом порядке")
     if tuple(sheets) != EXPECTED_V2_SHEETS:
         errors.append("порядок объектов sheets не совпадает с sheet_order v0.2")
+    if "Проекция draw.io" in order:
+        errors.append("schema v0.2 не должна содержать лист Проекция draw.io")
+
+    default_table = schema.get("default_table", {})
+    if default_table.get("technical_ids_visible") is not True:
+        errors.append("schema v0.2 должна оставлять technical IDs видимыми")
+
+    for sheet_name, required_columns in ESSENTIAL_V2_COLUMNS.items():
+        actual_columns = set(sheets.get(sheet_name, {}).get("columns", []))
+        missing = required_columns - actual_columns
+        if missing:
+            errors.append(f"{sheet_name}: отсутствуют обязательные v0.2 колонки {sorted(missing)}")
+
+    version_columns = set(sheets.get("Версии", {}).get("columns", []))
+    if "close_reason" in version_columns:
+        errors.append("Версии: обязательный close_reason отложен решением владельца")
 
     enums = schema.get("enums", {})
     for sheet_name, sheet in sheets.items():
@@ -267,12 +327,22 @@ def validate_v2_schema(errors: list[str]) -> None:
                     errors.append(
                         f"{sheet_name}: selector {selector} должен идти сразу после {field}"
                     )
-        if sheet.get("kind") == "versioned_authoring":
+        if sheet.get("kind") in {"versioned_authoring", "versioned_authoring_with_settings"}:
             expected_prefix = [columns[0], "version_id", "version_operation"] if columns else []
             if columns[:3] != expected_prefix:
                 errors.append(
                     f"{sheet_name}: версионная строка должна начинаться stable_id, version_id, version_operation"
                 )
+            if not columns or not columns[0].endswith("_id"):
+                errors.append(f"{sheet_name}: первый открытый столбец должен быть stable ID")
+
+        foreign_keys = set(sheet.get("foreign_keys", {}))
+        selector_fields = set(selectors) if isinstance(selectors, dict) else set()
+        missing_selectors = foreign_keys - selector_fields - {"version_id"}
+        if missing_selectors:
+            errors.append(
+                f"{sheet_name}: FK без человекочитаемого selector {sorted(missing_selectors)}"
+            )
 
     required_relations = {
         "производит",
@@ -330,6 +400,34 @@ def validate_version_lifecycle(errors: list[str]) -> None:
         )
 
 
+def validate_interview_contract(errors: list[str]) -> None:
+    path = ROOT / "references" / "INTERVIEW-CONTRACT.md"
+    if not path.is_file():
+        return
+    text = path.read_text(encoding="utf-8")
+    states = set(
+        re.findall(
+            r"^\| `([a-z]+)` \|",
+            text,
+            re.MULTILINE,
+        )
+    )
+    if states != EXPECTED_INTERVIEW_STATES:
+        errors.append(
+            "INTERVIEW-CONTRACT.md содержит неожиданные состояния; "
+            f"найдено {sorted(states)}"
+        )
+    for marker in (
+        "package_hash",
+        "transaction_id",
+        "Одновременно активно ровно одно состояние и не более одного вопроса",
+        "ИИ-агент может быть исполнителем и регистратором транзакции, но не подтверждающим лицом",
+        "До retry искать `transaction_id`",
+    ):
+        if marker not in text:
+            errors.append(f"INTERVIEW-CONTRACT.md: отсутствует harness marker {marker!r}")
+
+
 def validate() -> list[str]:
     errors: list[str] = []
     skills_root = ROOT / "skills"
@@ -345,6 +443,7 @@ def validate() -> list[str]:
             errors.append(f"нет обязательного reference: {relative}")
 
     validate_version_lifecycle(errors)
+    validate_interview_contract(errors)
     validate_template(errors)
     validate_v2_schema(errors)
 

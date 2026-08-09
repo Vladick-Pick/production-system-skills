@@ -90,7 +90,7 @@
     },
     "Версии": {
       "kind": "governance_registry",
-      "columns": ["version_id", "predecessor_version_id", "predecessor_version_selector", "version_label", "model_layer", "version_status", "accepted_decision_id", "accepted_decision_selector", "accepted_at", "effective_from", "closed_decision_id", "closed_decision_selector", "close_reason", "successor_version_id", "successor_version_selector", "migration_required", "migration_decision_id", "migration_decision_selector", "source_id", "source_selector", "notes"],
+      "columns": ["version_id", "predecessor_version_id", "predecessor_version_selector", "version_label", "model_layer", "version_status", "accepted_decision_id", "accepted_decision_selector", "accepted_at", "effective_from", "closed_decision_id", "closed_decision_selector", "successor_version_id", "successor_version_selector", "migration_required", "migration_decision_id", "migration_decision_selector", "source_id", "source_selector", "notes"],
       "required": ["version_id", "version_label", "model_layer", "version_status", "migration_required", "source_id"],
       "types": {"accepted_at": "datetime", "effective_from": "datetime", "migration_required": "boolean"},
       "enums": {"model_layer": "model_layer", "version_status": "version_status", "migration_required": "yes_no"},
@@ -265,7 +265,7 @@
       "types": {"decided_at": "datetime"},
       "foreign_keys": {"confirmed_by_performer_id": "Исполнители.performer_id", "confirmation_assignment_id": "Назначения.assignment_id", "working_version_id": "Версии.version_id", "corrects_decision_id": "Решения.decision_id", "recorded_by_performer_id": "Исполнители.performer_id", "source_id": "Источники.source_id"},
       "selectors": {"confirmed_by_performer_id": "confirmed_by_performer_selector", "confirmation_assignment_id": "confirmation_assignment_selector", "working_version_id": "working_version_selector", "corrects_decision_id": "corrects_decision_selector", "recorded_by_performer_id": "recorded_by_performer_selector", "source_id": "source_selector"},
-      "constraints": ["human_confirmer_only", "active_assignment_at_decided_at", "immutable_append_only"]
+      "constraints": ["human_confirmer_only", "active_or_same_transaction_assignment_at_decided_at", "immutable_append_only"]
     },
     "Изменения модели": {
       "kind": "append_only_governance",
