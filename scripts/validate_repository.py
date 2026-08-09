@@ -21,6 +21,7 @@ EXPECTED_SKILLS = {
 REQUIRED_REFERENCES = {
     "references/LANGUAGE.md",
     "references/METAONTOLOGY.md",
+    "references/INTERVIEW-CONTRACT.md",
     "references/TEMPLATE-CONTRACT.md",
     "references/PROJECTION-CONTRACT.md",
 }
@@ -54,16 +55,14 @@ EXPECTED_VERSION_STATUSES = {
     "черновик",
     "принято",
     "действует",
-    "заменено",
-    "выведено",
+    "закрыто",
 }
 EXPECTED_VERSION_TRANSITIONS = {
     "черновик → принято",
-    "черновик → выведено",
+    "черновик → закрыто",
     "принято → действует",
-    "принято → выведено",
-    "действует → заменено",
-    "действует → выведено",
+    "принято → закрыто",
+    "действует → закрыто",
 }
 
 
@@ -189,7 +188,7 @@ def validate_version_lifecycle(errors: list[str]) -> None:
     )
     if statuses != EXPECTED_VERSION_STATUSES:
         errors.append(
-            "LANGUAGE.md должен определять ровно пять статусов версии; "
+            "LANGUAGE.md должен определять ровно четыре статуса версии; "
             f"найдено {sorted(statuses)}"
         )
 
@@ -264,6 +263,7 @@ def validate() -> list[str]:
         for reference in (
             "references/LANGUAGE.md",
             "references/METAONTOLOGY.md",
+            "references/INTERVIEW-CONTRACT.md",
             "references/TEMPLATE-CONTRACT.md",
         ):
             if reference not in text:
@@ -272,6 +272,7 @@ def validate() -> list[str]:
         for reference_name in (
             "LANGUAGE.md",
             "METAONTOLOGY.md",
+            "INTERVIEW-CONTRACT.md",
             "TEMPLATE-CONTRACT.md",
             "PROJECTION-CONTRACT.md",
         ):

@@ -15,8 +15,9 @@ description: Использовать для независимого read-only 
 
 1. references/LANGUAGE.md;
 2. references/METAONTOLOGY.md;
-3. references/TEMPLATE-CONTRACT.md;
-4. references/PROJECTION-CONTRACT.md.
+3. references/INTERVIEW-CONTRACT.md;
+4. references/TEMPLATE-CONTRACT.md;
+5. references/PROJECTION-CONTRACT.md.
 
 Не оценивать модель по частной альтернативной метамодели. Если общий язык или шаблон недостаточны, оформить отдельное ограничение контракта с доказательством.
 

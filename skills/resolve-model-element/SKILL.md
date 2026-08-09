@@ -13,7 +13,8 @@ description: Использовать перед добавлением, опр�
 
 1. references/LANGUAGE.md;
 2. references/METAONTOLOGY.md;
-3. references/TEMPLATE-CONTRACT.md, если затронут шаблон или его ID.
+3. references/INTERVIEW-CONTRACT.md;
+4. references/TEMPLATE-CONTRACT.md, если затронут шаблон или его ID.
 
 Если файлы уже прочитаны в этой задаче и не изменились, использовать прочитанное. Не исправлять язык или шаблон внутри семантического допуска.
 

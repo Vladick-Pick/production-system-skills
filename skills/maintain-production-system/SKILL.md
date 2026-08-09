@@ -15,8 +15,9 @@ description: Использовать для контролируемого из
 
 1. references/LANGUAGE.md;
 2. references/METAONTOLOGY.md;
-3. references/TEMPLATE-CONTRACT.md;
-4. references/PROJECTION-CONTRACT.md.
+3. references/INTERVIEW-CONTRACT.md;
+4. references/TEMPLATE-CONTRACT.md;
+5. references/PROJECTION-CONTRACT.md.
 
 Если изменение нельзя представить действующим языком или шаблоном, подготовить отдельное предложение об изменении контракта. Не чинить его скрытой правкой.
 

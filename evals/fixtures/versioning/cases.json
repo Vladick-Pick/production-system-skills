@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "cases": [
+    {
+      "case_id": "changed-definition-inherits-rest",
+      "versions": [
+        {"version_id": "v1", "predecessor_version_id": null, "status": "действует"},
+        {"version_id": "v2", "predecessor_version_id": "v1", "status": "черновик"}
+      ],
+      "target_version_id": "v2",
+      "rows": [
+        {"stable_id": "obj-lead", "version_id": "v1", "version_operation": "применить", "value": "Лид: прежнее определение"},
+        {"stable_id": "proc-qualification", "version_id": "v1", "version_operation": "применить", "value": "Квалификация лида"},
+        {"stable_id": "obj-lead", "version_id": "v2", "version_operation": "применить", "value": "Лид: уточнённое определение"}
+      ],
+      "expected_snapshot": [
+        {"stable_id": "obj-lead", "source_version_id": "v2", "value": "Лид: уточнённое определение"},
+        {"stable_id": "proc-qualification", "source_version_id": "v1", "value": "Квалификация лида"}
+      ]
+    },
+    {
+      "case_id": "old-version-remains-reproducible",
+      "versions": [
+        {"version_id": "v1", "predecessor_version_id": null, "status": "закрыто"},
+        {"version_id": "v2", "predecessor_version_id": "v1", "status": "действует"}
+      ],
+      "target_version_id": "v1",
+      "rows": [
+        {"stable_id": "obj-lead", "version_id": "v1", "version_operation": "применить", "value": "Лид: прежнее определение"},
+        {"stable_id": "obj-lead", "version_id": "v2", "version_operation": "применить", "value": "Лид: новое определение"}
+      ],
+      "expected_snapshot": [
+        {"stable_id": "obj-lead", "source_version_id": "v1", "value": "Лид: прежнее определение"}
+      ]
+    },
+    {
+      "case_id": "exclude-nearest-revision",
+      "versions": [
+        {"version_id": "v1", "predecessor_version_id": null, "status": "закрыто"},
+        {"version_id": "v2", "predecessor_version_id": "v1", "status": "черновик"}
+      ],
+      "target_version_id": "v2",
+      "rows": [
+        {"stable_id": "mat-old-script", "version_id": "v1", "version_operation": "применить", "value": "Старый скрипт"},
+        {"stable_id": "mat-old-script", "version_id": "v2", "version_operation": "исключить", "value": null}
+      ],
+      "expected_snapshot": []
+    },
+    {
+      "case_id": "three-version-nearest-wins",
+      "versions": [
+        {"version_id": "v1", "predecessor_version_id": null, "status": "закрыто"},
+        {"version_id": "v2", "predecessor_version_id": "v1", "status": "закрыто"},
+        {"version_id": "v3", "predecessor_version_id": "v2", "status": "черновик"}
+      ],
+      "target_version_id": "v3",
+      "rows": [
+        {"stable_id": "obj-lead", "version_id": "v1", "version_operation": "применить", "value": "v1"},
+        {"stable_id": "obj-lead", "version_id": "v2", "version_operation": "применить", "value": "v2"},
+        {"stable_id": "proc-sales", "version_id": "v1", "version_operation": "применить", "value": "sales-v1"},
+        {"stable_id": "proc-sales", "version_id": "v3", "version_operation": "применить", "value": "sales-v3"}
+      ],
+      "expected_snapshot": [
+        {"stable_id": "obj-lead", "source_version_id": "v2", "value": "v2"},
+        {"stable_id": "proc-sales", "source_version_id": "v3", "value": "sales-v3"}
+      ]
+    },
+    {
+      "case_id": "missing-predecessor",
+      "versions": [
+        {"version_id": "v2", "predecessor_version_id": "v-missing", "status": "черновик"}
+      ],
+      "target_version_id": "v2",
+      "rows": [],
+      "expected_error": "MISSING_PREDECESSOR"
+    },
+    {
+      "case_id": "predecessor-cycle",
+      "versions": [
+        {"version_id": "v1", "predecessor_version_id": "v2", "status": "закрыто"},
+        {"version_id": "v2", "predecessor_version_id": "v1", "status": "черновик"}
+      ],
+      "target_version_id": "v2",
+      "rows": [],
+      "expected_error": "PREDECESSOR_CYCLE"
+    },
+    {
+      "case_id": "two-working-versions",
+      "versions": [
+        {"version_id": "v1", "predecessor_version_id": null, "status": "черновик"},
+        {"version_id": "v2", "predecessor_version_id": "v1", "status": "черновик"}
+      ],
+      "target_version_id": "v2",
+      "rows": [],
+      "expected_error": "MULTIPLE_DRAFTS"
+    },
+    {
+      "case_id": "rollback-is-new-version",
+      "versions": [
+        {"version_id": "v1", "predecessor_version_id": null, "status": "закрыто"},
+        {"version_id": "v2", "predecessor_version_id": "v1", "status": "закрыто"},
+        {"version_id": "v3", "predecessor_version_id": "v2", "status": "действует"}
+      ],
+      "target_version_id": "v3",
+      "rows": [
+        {"stable_id": "rule-acceptance", "version_id": "v1", "version_operation": "применить", "value": "Правило A"},
+        {"stable_id": "rule-acceptance", "version_id": "v2", "version_operation": "применить", "value": "Правило B"},
+        {"stable_id": "rule-acceptance", "version_id": "v3", "version_operation": "применить", "value": "Правило A"}
+      ],
+      "expected_snapshot": [
+        {"stable_id": "rule-acceptance", "source_version_id": "v3", "value": "Правило A"}
+      ]
+    }
+  ]
+}

@@ -15,8 +15,9 @@ description: Использовать для первичной сборки, н
 
 1. references/LANGUAGE.md;
 2. references/METAONTOLOGY.md;
-3. references/TEMPLATE-CONTRACT.md;
-4. references/PROJECTION-CONTRACT.md.
+3. references/INTERVIEW-CONTRACT.md;
+4. references/TEMPLATE-CONTRACT.md;
+5. references/PROJECTION-CONTRACT.md.
 
 Не добавлять столбцы, значения словаря, типы отношений или формулы внутри обычного наполнения. Ограничение контракта оформить отдельным предложением владельцу.
 
