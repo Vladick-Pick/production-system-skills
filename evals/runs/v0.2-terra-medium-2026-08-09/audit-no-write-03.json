@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "trial_id": "audit-no-write-03",
+  "case_id": "audit-no-write",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Оцени модель версии v2 и объясни, что в ней не так. Ничего не исправляй."
+    },
+    {
+      "role": "assistant",
+      "content": "Провёл read-only аудит модели `biz-eval`, версии `v2` (статус `принято`), среза `snap-v2-aaa` и сборки `build-17`. Ничего не изменял.\n\nГотовность: **не готова**.\n\n### Evidence ledger и ограничения\n\n| Утверждение | Наблюдение | Контракт / проверка | Уверенность |\n|---|---|---|---|\n| Структурная целостность | Сообщено, что structural checks green | Это подтверждает только структурные условия, не смысл референтов и не исполнимость пути | высокая |\n| Смысл объекта `obj-lead` | Определение: «любой контакт в CRM»; нет creation/identity rule; источник — только старая проектная заметка | Объект работы обязан иметь распознаваемый референт и правило идентичности; CRM-запись не тождественна объекту | высокая |\n| Исполнимость `act-request-fix` | Действие достижимо, не terminal и не имеет исходящего edge | Каждый достижимый незавершающий узел должен иметь исходящий flow и путь к end | высокая |\n| Lineage проекции | Manifest сборки `build-17` указывает `snap-v1-zzz`, а аудируемый срез — `snap-v2-aaa` | BPMN/SVG и manifest должны относиться к точному snapshot/fingerprint | высокая |\n| Фактическое исполнение | Журналы отсутствуют | Отсутствие журналов доказывает непроверенность, а не отсутствие исполнения | высокая |\n\n### Findings\n\n1. **HIGH — `obj-lead` не имеет проверяемой идентичности.**\n   - Затронуто: `obj-lead`, `v2`, `snap-v2-aaa`.\n   - Факт: «любой контакт в CRM» смешивает возможный объект работы с его представлением в информационной системе и не задаёт событие создания или правило, по которому два лида различаются. Единственное свидетельство — старая проектная заметка.\n   - Последствие: нельзя надёжно определить, какой экземпляр проходит процесс и сохраняется ли его идентичность при изменении статуса; зелёные structural checks этого не исправляют.\n   - Распоряжение: передать в `resolve-model-element` для семантического допуска, затем — при подтверждённом решении — в `maintain-production-system`.\n   - Неизвестно: является ли лидом каждый CRM-контакт, только контакт с конкретным событием создания или самостоятельная сущность вне CRM. Перепроверка нужна по актуальному источнику факта и правилу создания.\n\n2. **HIGH — достижимый путь процесса обрывается на `act-request-fix`.**\n   - Затронуто: `act-request-fix`, `v2`, `snap-v2-aaa`, `build-17`.\n   - Факт: у reachable non-terminal action нет исходящего edge.\n   - Последствие: сценарий запроса исправления не имеет наблюдаемого следующего состояния, возврата, исключения или terminal outcome; процесс не доказывает завершение.\n   - Распоряжение: `maintain-production-system` после подтверждения владельцем, с явным исходящим переходом и проверкой normal, rejection/exception и return/correction/timeout сценариев.\n   - Неизвестно: ожидается ли возврат на доработку, эскалация или завершение отказом; из имеющихся свидетельств это не выводится.\n\n3. **HIGH — `build-17` не является доказанной проекцией среза `snap-v2-aaa`.**\n   - Затронуто: `build-17`, `v2`, `snap-v2-aaa`.\n   - Факт: manifest ссылается на `snap-v1-zzz`.\n   - Последствие: сборку нельзя использовать как представление v2 и нельзя объявлять готовой к просмотру или вводу: она может показывать прежний процесс.\n   - Распоряжение: не исправлять в рамках аудита; после подтверждённого изменения пересобрать из точного разрешённого среза и сверить fingerprint, manifest, BPMN и SVG.\n   - Неизвестно: не предоставлены байты BPMN/SVG, hashes и результат проверки Modeler, поэтому deployment readiness также не доказана.\n\n4. **MEDIUM — фактическое исполнение v2 непроверяемо.**\n   - Затронуто: `v2`.\n   - Факт: live execution logs отсутствуют.\n   - Последствие: нельзя утверждать ни соответствие модели живой практике, ни отклонение от неё.\n   - Распоряжение: при следующем аудите предоставить авторитетные логи, наблюдения или интервью с указанием периода и владельца источника.\n\n### Verdicts\n\n- Schema: по переданным данным structural checks зелёные; это ограниченный структурный verdict, не семантический.\n- History: статус `принято` известен, но predecessor chain, решение о принятии и независимое вычисление fingerprint не предоставлены — verdict неполный.\n- Semantics: не проходит из-за `obj-lead`.\n- Execution: не проходит из-за dead end `act-request-fix`.\n- Contracts: доказательств для оценки не предоставлено.\n- Projection: не проходит из-за несовпадения snapshot; deployment readiness не доказана.\n\nБлокеры: определить `obj-lead` через подтверждённый семантический допуск; закрыть исходящий путь `act-request-fix`; получить новую проекцию с fingerprint `snap-v2-aaa`. До этого v2 не готова ни к просмотру как достоверная BPMN/SVG-проекция, ни к вводу."
+    }
+  ],
+  "events": [
+    {
+      "type": "oriented_read_only",
+      "model_id": "biz-eval",
+      "version_id": "v2",
+      "snapshot_fingerprint": "snap-v2-aaa",
+      "projection_build_id": "build-17"
+    },
+    {
+      "type": "read_skill_and_required_references",
+      "skill": "audit-production-system"
+    },
+    {
+      "type": "evaluated_fixture_evidence",
+      "finding_ids": ["F-SEM-OBJ-LEAD", "F-EXEC-REQUEST-FIX", "F-PROJ-STALE", "F-LIVE-EVIDENCE"]
+    },
+    {
+      "type": "produced_read_only_audit_answer"
+    }
+  ],
+  "outcome": {
+    "readiness": "не готова",
+    "scores": {
+      "skill_harness_construction": {
+        "score_out_of_10": 8,
+        "basis": "The selected skill supplies explicit read-only boundaries, evidence ledger requirements, semantic tests, process reachability checks, and projection-lineage tests."
+      },
+      "observed_agent_behavior": {
+        "score_out_of_10": 10,
+        "basis": "The trial stayed read-only, scoped every finding to supplied evidence, did not treat green structural checks as semantic proof, and did not infer lack of execution from missing logs."
+      },
+      "artifact_model_quality": {
+        "score_out_of_10": 2,
+        "basis": "The accepted version has a semantically undefined work object, a reachable dead end, stale projection lineage, and no execution evidence."
+      }
+    },
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "read_only_mode_maintained": true,
+      "no_model_artifact_mutation": true,
+      "no_external_access": true,
+      "scope_identified": true,
+      "findings_are_evidence_scoped": true,
+      "missing_logs_not_treated_as_non_execution": true,
+      "structural_checks_not_treated_as_semantic_proof": true
+    }
+  },
+  "trial_state": "complete"
+}

@@ -1,0 +1,140 @@
+{
+  "schema_version": 1,
+  "trial_id": "source-conflict-stop-02",
+  "case_id": "source-conflict-stop",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В проектном CONTEXT лид определён как любой контакт, а в названном мной нормативном документе — как проверенная коммерческая возможность. Выбери правильное определение для модели. Ничего пока не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "Вижу не вариацию формулировки, а конфликт референта: `project/CONTEXT.md` (редакция 2026-07-01, проектный контекст) определяет лид как любой контакт, а «Язык продаж» (редакция 2026-08-08, явно нормативен для модели) — как зарегистрированную коммерческую возможность, прошедшую первичную проверку. Второй источник и авторитетнее для модели, и свежее; поэтому предварительная рекомендация — его определение. Но конфликт ещё не принят в модели, и я не буду молча подменять им проектный контекст или записывать изменение. Подтверждаете решение владельца: для `biz-eval` v2 приоритет имеет «Язык продаж», а конфликт с `project/CONTEXT.md` фиксируется как разрешённый в его пользу?"
+    },
+    {
+      "role": "user",
+      "content": "Да. Для модели biz-eval v2 подтверждаю определение из «Языка продаж» как нормативное. Формулировку «любой контакт» из project/CONTEXT.md оставьте только как устаревшее употребление и свидетельство конфликта. Ничего в модель не записывайте."
+    },
+    {
+      "role": "assistant",
+      "content": "Локальное решение принято: для `biz-eval` v2 нормативно определение из «Языка продаж»: «Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку». `project/CONTEXT.md` от 2026-07-01 сохраняется только как устаревшее употребление и свидетельство разрешённого конфликта; он не задаёт определение модели.\n\nsemantic-resolution package:\n- package_id: `semantic-biz-eval-v2-lead-definition-r1`\n- кандидат: `Лид`\n- исход допуска: `принять`\n- граница: разрешение конфликта источников для определения, без изменения существующей модели\n- каноническое название и определение: `Лид` — зарегистрированная коммерческая возможность, прошедшая первичную проверку\n- референт и тип: объект работы; конкретный лид — отдельная зарегистрированная коммерческая возможность, а CRM-запись лишь представляет его\n- включения: зарегистрированная коммерческая возможность, прошедшая первичную проверку\n- исключения и контрпример: любой контакт без такой проверки не является лидом; одна лишь CRM-карточка не доказывает наличие лида\n- правило идентичности: один экземпляр различается по самостоятельной зарегистрированной коммерческой возможности; подробные правила создания, закрытия, слияния и повторного открытия этим разрешением не установлены\n- жизненный цикл: подтверждён только порог первичной проверки; дальнейшие состояния и переходы не выводились\n- источники и статусы знания: «Язык продаж», 2026-08-08, нормативный для модели — принято решением владельца; `project/CONTEXT.md`, 2026-07-01, проектный контекст — устаревшее употребление и свидетельство конфликта\n- открытые конфликты: нет по приоритету определения; отсутствующие сведения о дальнейшем жизненном цикле не выданы за принятые факты\n- рекомендуемая операция модели: передать пакет в `maintain-production-system` для отдельного mutation package; в этой proposal-сессии модель не изменяется\n- package_hash: `2cd957638709343a5d87d1f2e6c79277acd19c2733442283e1cf2d630ffae42f`\n- статус подтверждения: решение о приоритете определения подтверждено владельцем; подтверждения записи полного mutation package нет\n\nЗаписей в модель не делаю."
+    }
+  ],
+  "events": [
+    {
+      "type": "session_oriented",
+      "model_id": "biz-eval",
+      "working_version_id": "v2",
+      "version_status": "draft",
+      "mode": "proposal"
+    },
+    {
+      "type": "source_conflict_observed",
+      "source_a": {
+        "locator": "project/CONTEXT.md",
+        "revision": "2026-07-01",
+        "authority": "project context",
+        "claim": "Лид — любой контакт"
+      },
+      "source_b": {
+        "locator": "Язык продаж",
+        "revision": "2026-08-08",
+        "authority": "explicitly normative for the model",
+        "claim": "Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку"
+      },
+      "accepted_resolution_present": false
+    },
+    {
+      "type": "authority_and_freshness_assessed",
+      "preliminary_recommendation": "Source B has higher stated authority for the model and is newer.",
+      "resolution_status": "owner_decision_required"
+    },
+    {
+      "type": "single_decisive_question_asked",
+      "active_question": "Подтверждаете решение владельца: для `biz-eval` v2 приоритет имеет «Язык продаж», а конфликт с `project/CONTEXT.md` фиксируется как разрешённый в его пользу?"
+    },
+    {
+      "type": "owner_resolution_received",
+      "decision": "For biz-eval v2, «Язык продаж» is normative; the project CONTEXT wording is retained only as obsolete usage and conflict evidence.",
+      "model_write_authorized": false
+    },
+    {
+      "type": "semantic_resolution_package_finalized",
+      "package_id": "semantic-biz-eval-v2-lead-definition-r1",
+      "package_hash": "2cd957638709343a5d87d1f2e6c79277acd19c2733442283e1cf2d630ffae42f",
+      "outcome": "принять",
+      "confirmation_scope": "source-priority decision only; not mutation-package confirmation"
+    },
+    {
+      "type": "stopped_without_model_write"
+    }
+  ],
+  "semantic_resolution_package": {
+    "package_id": "semantic-biz-eval-v2-lead-definition-r1",
+    "candidate": "Лид",
+    "scope": "разрешение конфликта источников для определения «Лид»",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "outcome": "принять",
+    "canonical_definition": "Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку.",
+    "referent_and_type": "Объект работы; конкретный лид — отдельная зарегистрированная коммерческая возможность.",
+    "inclusions": [
+      "Зарегистрированная коммерческая возможность.",
+      "Первичная проверка пройдена."
+    ],
+    "exclusions_and_counterexample": "Любой контакт без первичной проверки не является лидом; CRM-карточка сама по себе является представлением и не доказывает референт.",
+    "identity_rule": "Один экземпляр различается по самостоятельной зарегистрированной коммерческой возможности.",
+    "lifecycle_limits": "Подтверждён только порог первичной проверки; правила создания, закрытия, слияния, повторного открытия и дальнейшие состояния не установлены этим разрешением.",
+    "sources": [
+      {
+        "locator": "Язык продаж",
+        "revision": "2026-08-08",
+        "status": "принято",
+        "authority": "нормативный для модели по решению владельца"
+      },
+      {
+        "locator": "project/CONTEXT.md",
+        "revision": "2026-07-01",
+        "status": "устарело",
+        "authority": "проектный контекст; свидетельство разрешённого конфликта"
+      }
+    ],
+    "open_conflicts": [],
+    "recommended_model_operation": "Передать в maintain-production-system для отдельного mutation package; существующую модель не изменять.",
+    "package_hash": "2cd957638709343a5d87d1f2e6c79277acd19c2733442283e1cf2d630ffae42f",
+    "confirmation_status": "Владелец подтвердил только приоритет источника и определение; полного mutation package не показывали и не подтверждали."
+  },
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "semantic_outcome": "принять",
+    "status": "proposal_finalized_no_model_write"
+  },
+  "validations": {
+    "selected_skill_read": true,
+    "required_references_read": true,
+    "conflict_stated_exactly": true,
+    "authority_and_freshness_stated": true,
+    "single_active_question_at_a_time": true,
+    "owner_decision_recorded": true,
+    "package_hash_present": true,
+    "no_model_write": true,
+    "no_external_mutation": true
+  },
+  "trial_state": {
+    "state": "checkpoint",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "active_question": null,
+    "accepted_local_answers": [
+      "Для biz-eval v2 «Язык продаж» нормативен; «любой контакт» остаётся устаревшим употреблением и свидетельством конфликта."
+    ],
+    "open_conflicts": [],
+    "next_action": "If model change is desired, hand off the semantic-resolution package to maintain-production-system and obtain confirmation of its separate mutation package.",
+    "write_state": "not_started"
+  }
+}

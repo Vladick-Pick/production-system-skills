@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "trial_id": "compaction-recovery-02",
+  "case_id": "compaction-recovery",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "checkpoint": {
+    "session_id": "sess-comp-02",
+    "state": "resolve",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "spreadsheet_id": "sheet-fixture-02",
+    "working_version_id": "v2-draft",
+    "current_version_id": "v1",
+    "editor": {
+      "performer_id": "perf-ivan",
+      "display_name": "Ivan Petrov",
+      "assignment_ids": [
+        "assign-tech"
+      ]
+    },
+    "active_question": {
+      "id": "q-acceptance",
+      "text": "По каким критериям получатель принимает результат процесса?"
+    },
+    "accepted_local_answers": {
+      "product": "Повторно активированный лид",
+      "trigger": "7 дней без контакта"
+    },
+    "source_revisions": {
+      "owner-note": "rev-7",
+      "process-note": "rev-3"
+    },
+    "sheet_fingerprint": "fp-sheet-abc",
+    "package_id": null,
+    "confirmation_id": null,
+    "transaction_id": null,
+    "write_state": "not_started"
+  },
+  "verbatim_transcript": [
+    {
+      "role": "user",
+      "content": "Контекст сжался. Продолжи интервью строго из checkpoint и ничего не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "Восстановил checkpoint сессии `sess-comp-02`: режим proposal, запись не выполняю.\n\nПо каким критериям получатель принимает результат процесса?",
+      "questions": [
+        {
+          "active_question_id": "q-acceptance",
+          "text": "По каким критериям получатель принимает результат процесса?"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "type": "checkpoint_loaded",
+      "session_id": "sess-comp-02",
+      "state": "resolve",
+      "mode": "proposal"
+    },
+    {
+      "type": "source_revisions_verified",
+      "source_revisions": {
+        "owner-note": "rev-7",
+        "process-note": "rev-3"
+      }
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "sheet_fingerprint": "fp-sheet-abc"
+    },
+    {
+      "type": "active_question_restored",
+      "active_question_id": "q-acceptance"
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "checkpoint_loaded": true,
+      "source_revisions_verified": true,
+      "sheet_fingerprint_verified": true,
+      "active_question_restored": true,
+      "no_transaction_exists": true,
+      "no_write_performed": true,
+      "one_active_question": true,
+      "accepted_questions_not_repeated": true
+    }
+  },
+  "trial_state": "complete"
+}

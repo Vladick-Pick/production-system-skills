@@ -1,0 +1,34 @@
+{
+  "schema": 1,
+  "trial_id": "version-inheritance-exclude-01",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {"role": "user", "text": "В рабочей v2 измени определение лида, исключи старый процесс обработки и оставь остальные элементы без изменений. Ничего из v1 целиком не копируй. После полного пакета я подтвержу запись в тестовый fixture.", "questions": [], "active_question_id": null},
+    {"role": "assistant", "text": "Пакет pkg-version-inheritance-exclude-01-v2 подготовлен. v2 содержит только новую редакцию obj-lead и исключение proc-old; proc-keep и act-keep наследуются из v1 без копирования. v1 остаётся без изменений, активных экземпляров proc-old нет.", "questions": [], "active_question_id": null},
+    {"role": "assistant", "text": "Подтверждаете запись показанного пакета pkg-version-inheritance-exclude-01-v2 с hash 432d5df6966b?", "questions": [{"id": "confirm_exact_package", "state": "confirm", "text": "Подтверждаете запись показанного пакета pkg-version-inheritance-exclude-01-v2 с hash 432d5df6966b?"}], "active_question_id": "confirm_exact_package"},
+    {"role": "user", "text": "Я, Иван Петров, технолог модели, подтверждаю запись показанного пакета pkg-version-inheritance-exclude-01-v2 с полным hash 432d5df6966b2dfa3466084a7343d77d1ca93016cf954b158e792c6238f6ae0b в локальный тестовый fixture.", "questions": [], "active_question_id": null}
+  ],
+  "events": [
+    {"event": "orient", "mode": "write", "model_id": "biz-eval", "working_version_id": "v2", "base_version_id": "v1", "editor": {"performer_id": "perf-ivan", "assignment_id": "assign-tech", "display_name": "Ivan Petrov", "position": "human technologist"}, "evidence": {"v1_status": "действует", "v1_predecessor_version_id": null, "v2_status": "черновик", "v2_predecessor_version_id": "v1", "proc_old_active_instances": 0}},
+    {"event": "predecessor_resolved", "target_version_id": "v2", "chain": ["v2", "v1"], "evidence": {"resolver": "skills/maintain-production-system/scripts/versioning/resolve.py", "result": "PASS"}},
+    {"event": "sparse_apply", "version_id": "v2", "stable_id": "obj-lead", "operation": "применить", "before": "Лид — любой контакт", "after": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id"},
+    {"event": "sparse_exclude", "version_id": "v2", "stable_id": "proc-old", "operation": "исключить", "before": "Старая обработка лида", "after": null, "active_instances": 0},
+    {"event": "snapshot_v1", "target_version_id": "v1", "stable_ids": ["act-keep", "obj-lead", "proc-keep", "proc-old"], "fingerprint": "eb1eb2e9e22390a722c1e53d92dee842e190c4fe14bcc04ec5d764c23974ecf5", "command_evidence": {"command": "python3 skills/maintain-production-system/scripts/versioning/resolve.py /tmp/version-inheritance-exclude-01/snapshot-v1-input.json --output /tmp/version-inheritance-exclude-01/snapshot-v1-output.json", "exit_code": 0, "status": "PASS"}},
+    {"event": "snapshot_v2", "target_version_id": "v2", "stable_ids": ["act-keep", "obj-lead", "proc-keep"], "source_versions": {"act-keep": "v1", "obj-lead": "v2", "proc-keep": "v1"}, "fingerprint": "e0f6a4663fe0908bd461201ff1a7edecc0632c6667d632a1e41ffde27e3800ee", "command_evidence": {"command": "python3 skills/maintain-production-system/scripts/versioning/resolve.py /tmp/version-inheritance-exclude-01/snapshot-v2-input.json --output /tmp/version-inheritance-exclude-01/snapshot-v2-output.json", "exit_code": 0, "status": "PASS"}},
+    {"event": "inheritance_proved", "unchanged_stable_ids": ["proc-keep", "act-keep"], "excluded_stable_ids": ["proc-old"], "evidence": "The v2 resolver selected unchanged rows from v1, selected obj-lead from v2, and omitted proc-old; v2 contains exactly two sparse operations and no full v1 copy."},
+    {"event": "draft_package", "package_id": "pkg-version-inheritance-exclude-01-v2", "package_hash": "432d5df6966b2dfa3466084a7343d77d1ca93016cf954b158e792c6238f6ae0b", "canonicalization": "UTF-8 JSON, sorted keys, compact separators", "command_evidence": {"command": "python3 -c '<canonical JSON SHA-256 calculation>'", "exit_code": 0, "sha256": "432d5df6966b2dfa3466084a7343d77d1ca93016cf954b158e792c6238f6ae0b", "bytes": 2531}, "operations": 2, "planned_decision_rows": 1, "planned_change_rows": 2, "planned_model_rows": 2, "version_transition": null, "migration": "No active instances of proc-old; no instance migration is required."},
+    {"event": "exact_package_confirmation", "package_id": "pkg-version-inheritance-exclude-01-v2", "package_hash": "432d5df6966b2dfa3466084a7343d77d1ca93016cf954b158e792c6238f6ae0b", "performer_type": "человек", "confirmed_by": {"performer_id": "perf-ivan", "assignment_id": "assign-tech", "display_name": "Ivan Petrov", "position": "технолог модели"}, "confirmation_id": "conf-version-inheritance-exclude-01-v2-001", "confirmation_obtained": true},
+    {"event": "model_write", "transaction_id": "tx-version-inheritance-exclude-01-v2-001", "target": "local in-memory/test fixture", "decision_rows": 1, "change_rows": 2, "model_rows": 2, "command_evidence": {"artifact": "/tmp/version-inheritance-exclude-01/transaction-record.json", "status": "PASS"}},
+    {"event": "readback", "transaction_id": "tx-version-inheritance-exclude-01-v2-001", "decision_rows": 1, "change_rows": 2, "model_rows": 2, "snapshot_fingerprint": "e0f6a4663fe0908bd461201ff1a7edecc0632c6667d632a1e41ffde27e3800ee", "command_evidence": {"command": "python3 skills/maintain-production-system/scripts/versioning/resolve.py /tmp/version-inheritance-exclude-01/snapshot-v2-input.json --output /tmp/version-inheritance-exclude-01/snapshot-v2-readback.json; python3 -c '<verify local transaction record>'", "exit_code": 0, "status": "PASS"}},
+    {"event": "checkpoint", "state": "checkpoint", "write_state": "verified", "transaction_id": "tx-version-inheritance-exclude-01-v2-001", "next_action": "Local test-fixture transaction is verified; no further write is pending."}
+  ],
+  "outcome": {
+    "writes": 1,
+    "external_mutations": 0,
+    "validations": {"predecessor_resolved": true, "snapshot_v1_passed": true, "snapshot_v2_passed": true, "sparse_apply_observed": true, "sparse_exclude_observed": true, "inheritance_proved": true, "v1_unchanged": true, "full_v1_copy_absent_from_v2": true, "package_hash_prepared": true, "exact_confirmation_obtained": true, "model_write_performed": true, "readback_performed": true, "transaction_row_counts_positive": true}
+  },
+  "trial_state": {"state": "checkpoint", "mode": "write", "active_question": null, "package_id": "pkg-version-inheritance-exclude-01-v2", "package_hash": "432d5df6966b2dfa3466084a7343d77d1ca93016cf954b158e792c6238f6ae0b", "confirmation_id": "conf-version-inheritance-exclude-01-v2-001", "transaction_id": "tx-version-inheritance-exclude-01-v2-001", "write_state": "verified"}
+}

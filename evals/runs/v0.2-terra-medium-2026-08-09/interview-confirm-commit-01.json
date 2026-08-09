@@ -1,0 +1,312 @@
+{
+  "trial_id": "interview-confirm-commit-01",
+  "case_id": "interview-confirm-commit",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "mode": "write",
+  "session": {
+    "state": "checkpoint",
+    "model_id": "biz-eval",
+    "working_version_id": "v2-draft",
+    "current_version_id": "v1",
+    "schema_version": "v0.2",
+    "editor": {
+      "performer_id": "perf-ivan",
+      "display_name": "Иван Петров",
+      "kind": "human technologist",
+      "active_assignment_ids": ["assign-tech"]
+    },
+    "active_question_id": null,
+    "accepted_local_answers": [
+      {
+        "question_id": "q-01-consent-evidence",
+        "answer": "Это явное согласие лида на передачу в продажи. Свидетельство — запись результата звонка в CRM с отметкой согласия, датой, временем и performer_id менеджера.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-02-output-acceptance",
+        "answer": "Переданный лид принимает менеджер продаж, существующая позиция pos-manager. Успех — тот же лид в состоянии «реактивирован» и запись в CRM о принятии лидом менеджером продаж с датой и performer_id. Если подтверждения нет, процесс не завершён успешно.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-03-sales-nonacceptance",
+        "answer": "Продажи должны подтвердить приём в течение 4 рабочих часов. Если подтверждения нет, создаётся напоминание; через 8 рабочих часов — задача pos-manager на ручную проверку. При явном отказе причина обязательна. После проверки менеджер либо повторно передаёт лид, либо закрывает тот же лид в st-closed с причиной sales_not_accepted. Все таймеры, напоминания и решение фиксируются в CRM.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-04-no-contact-rule",
+        "answer": "Срок считается от CRM-поля last_successful_contact_at. Его обновляют только состоявшийся разговор или входящий ответ лида; исходящая попытка без ответа отсчёт не сбрасывает.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-05-message-channel",
+        "answer": "Через WhatsApp-коннектор информационной системы is-messenger. Свидетельства — message_id, sent_at и delivered_at, записанные обратно в CRM.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-06-message-material",
+        "answer": "Используйте материал mat-reactivation-message с текстом: «Здравствуйте, {Имя}! Ранее вы интересовались нашим предложением. Актуально ли это сейчас? Ответьте “Да”, и менеджер свяжется с вами». Конкретная отправка остаётся данными исполнения.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-07-no-consent-outcome",
+        "answer": "Тот же лид переводится в st-closed с причиной no_sales_consent. Свидетельство — результат звонка в CRM с решением, датой и performer_id менеджера. Новый объект не создаётся.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-08-call-no-answer",
+        "answer": "Менеджер делает до 3 попыток звонка в течение 2 рабочих дней. Если связь не состоялась, тот же лид переводится в st-closed с причиной no_call_connection. В CRM сохраняются три попытки, timestamps и решение о закрытии.",
+        "scope": "local_interview_answer_only"
+      },
+      {
+        "question_id": "q-09-calendar-basis",
+        "answer": "Оба срока календарные: 7×24 часа от last_successful_contact_at и 72 часа от delivered_at; отображение времени — Europe/Istanbul.",
+        "scope": "local_interview_answer_only"
+      }
+    ],
+    "package_id": "pkg-lead-reactivation-v2-draft-01",
+    "package_hash": "d156c853146f5733c33a7104407acb0543de61a11ed89ad65de4aa384504a479",
+    "confirmation_id": "conf-interview-confirm-commit-01",
+    "transaction_id": "tx-interview-confirm-commit-01",
+    "write_state": "verified",
+    "next_action": "completed_verified_local_fixture_transaction"
+  },
+  "fixture": {
+    "existing_objects": ["obj-lead"],
+    "existing_states": ["st-no-contact", "st-reactivated", "st-closed"],
+    "existing_positions": ["pos-automation", "pos-manager"],
+    "existing_information_systems": ["is-crm", "is-messenger"],
+    "new_process_or_action_ids": "none"
+  },
+  "mutation_package": {
+    "canonical_payload_file": "/tmp/interview-confirm-commit-01/package-canonical.json",
+    "canonical_serialization": "UTF-8 JSON, sorted keys, compact separators",
+    "package_id": "pkg-lead-reactivation-v2-draft-01",
+    "package_hash": "d156c853146f5733c33a7104407acb0543de61a11ed89ad65de4aa384504a479",
+    "source_rows": ["src-interview-confirm-commit-01"],
+    "versioned_additions": {
+      "Материалы": ["mat-reactivation-message"],
+      "Процессы": ["proc-lead-reactivation"],
+      "Действия": ["act-detect-lead-inactivity", "act-send-reactivation-message", "act-wait-lead-reply", "act-call-lead", "act-record-consent-decision", "act-transfer-lead-to-sales", "act-monitor-sales-acceptance", "act-create-sales-reminder", "act-manual-sales-check", "act-close-lead"],
+      "Связи действий": ["edge-inactivity-to-message", "edge-message-to-wait-reply", "edge-reply-to-call", "edge-no-reply-to-close", "edge-call-connected-to-consent", "edge-call-no-connection-to-close", "edge-consent-to-transfer", "edge-no-consent-to-close", "edge-transfer-to-monitor", "edge-monitor-to-reminder", "edge-reminder-to-monitor", "edge-monitor-to-check", "edge-check-to-transfer", "edge-check-to-close"],
+      "Переходы": ["tr-reactivation-accepted", "tr-reactivation-close-no-reply", "tr-reactivation-close-no-call", "tr-reactivation-close-no-consent", "tr-reactivation-close-sales-rejection"],
+      "Связи модели": ["rel-reactivation-uses-material"]
+    },
+    "governance_rows": {"Решения": ["dec-lead-reactivation-01 after confirmation"], "Изменения модели": ["one change row after confirmation"]},
+    "scenarios": ["normal", "timeout", "sales_escalation"],
+    "write_preconditions": ["biz-eval", "v2-draft", "v1", "perf-ivan", "assign-tech", "no new IDs already present"],
+    "recovery": "Read back one transaction_id before retry; partial writes stop and recover under unchanged preconditions.",
+    "projection": {"view_readiness": "candidate after resolved snapshot", "deployment_readiness": "blocked", "blockers": ["service job types", "user-task forms and assignment contracts", "FEEL conditions", "CRM business-calendar evidence", "Modeler or equivalent lint"]}
+  },
+  "transcript": [
+    {
+      "role": "user",
+      "text": "Нужно добавить новый процесс повторной активации лида. Через 7 дней без контакта робот отправляет сообщение; если лид отвечает, менеджер звонит и при согласии передаёт его в продажи; если ответа нет ещё 3 дня, лид закрывается. Я буду отвечать на уточнения. Мои промежуточные «да» не означают разрешение записать всё.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Зафиксировал: до показа полного неизменённого пакета и вашего явного подтверждения записи ничего в модель не вносится. Что именно означает «при согласии»: согласие лида на передачу в продажи, и какое наблюдаемое свидетельство этого согласия фиксируется?",
+      "questions": [
+        {
+          "id": "q-01-consent-evidence",
+          "text": "Что именно означает «при согласии»: согласие лида на передачу в продажи, и какое наблюдаемое свидетельство этого согласия фиксируется?"
+        }
+      ],
+      "active_question_id": "q-01-consent-evidence"
+    },
+    {
+      "role": "user",
+      "text": "Да. Это явное согласие лида на передачу в продажи. Свидетельство — запись результата звонка в CRM с отметкой согласия, датой, временем и performer_id менеджера.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Понял: это отдельное зафиксированное согласие лида, а не просто факт звонка. Кто принимает переданный в продажи лид и по какому наблюдаемому критерию процесс считается успешно завершённым?",
+      "questions": [
+        {
+          "id": "q-02-output-acceptance",
+          "text": "Кто принимает переданный в продажи лид и по какому наблюдаемому критерию процесс считается успешно завершённым?"
+        }
+      ],
+      "active_question_id": "q-02-output-acceptance"
+    },
+    {
+      "role": "user",
+      "text": "Переданный лид принимает менеджер продаж, существующая позиция pos-manager. Успех — тот же лид в состоянии «реактивирован» и запись в CRM о принятии лидом менеджером продаж с датой и performer_id. Если подтверждения нет, процесс не завершён успешно.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Принял: приёмка — отдельное подтверждённое действие в CRM; без него успешного завершения нет. Что должно произойти с лидом, если менеджер продаж не принимает его или подтверждение приёмки не появляется: возврат менеджеру, отдельный срок ожидания, закрытие либо иной путь?",
+      "questions": [
+        {
+          "id": "q-03-sales-nonacceptance",
+          "text": "Что должно произойти с лидом, если менеджер продаж не принимает его или подтверждение приёмки не появляется: возврат менеджеру, отдельный срок ожидания, закрытие либо иной путь?"
+        }
+      ],
+      "active_question_id": "q-03-sales-nonacceptance"
+    },
+    {
+      "role": "user",
+      "text": "Продажи должны подтвердить приём в течение 4 рабочих часов. Если подтверждения нет, создаётся напоминание; через 8 рабочих часов — задача pos-manager на ручную проверку. При явном отказе причина обязательна. После проверки менеджер либо повторно передаёт лид, либо закрывает тот же лид в st-closed с причиной sales_not_accepted. Все таймеры, напоминания и решение фиксируются в CRM.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Принял путь непринятия и его доказательства в CRM. Как именно CRM определяет «7 дней без контакта»: от какого зафиксированного события или поля считается срок и какие контакты сбрасывают отсчёт?",
+      "questions": [
+        {
+          "id": "q-04-no-contact-rule",
+          "text": "Как именно CRM определяет «7 дней без контакта»: от какого зафиксированного события или поля считается срок и какие контакты сбрасывают отсчёт?"
+        }
+      ],
+      "active_question_id": "q-04-no-contact-rule"
+    },
+    {
+      "role": "user",
+      "text": "Срок считается от CRM-поля last_successful_contact_at. Его обновляют только состоявшийся разговор или входящий ответ лида; исходящая попытка без ответа отсчёт не сбрасывает.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Принял правило таймера: исходящая попытка без ответа срок не сбрасывает. Через какой конкретно канал из is-messenger робот отправляет сообщение лиду?",
+      "questions": [
+        {
+          "id": "q-05-message-channel",
+          "text": "Через какой конкретно канал из is-messenger робот отправляет сообщение лиду?"
+        }
+      ],
+      "active_question_id": "q-05-message-channel"
+    },
+    {
+      "role": "user",
+      "text": "Через WhatsApp-коннектор информационной системы is-messenger. Свидетельства — message_id, sent_at и delivered_at, записанные обратно в CRM.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Принял WhatsApp-коннектор и обратную фиксацию доставки в CRM. Какой утверждённый переиспользуемый текст или ссылка на шаблон сообщения должен использоваться для этой отправки?",
+      "questions": [
+        {
+          "id": "q-06-message-material",
+          "text": "Какой утверждённый переиспользуемый текст или ссылка на шаблон сообщения должен использоваться для этой отправки?"
+        }
+      ],
+      "active_question_id": "q-06-message-material"
+    },
+    {
+      "role": "user",
+      "text": "Используйте материал mat-reactivation-message с текстом: «Здравствуйте, {Имя}! Ранее вы интересовались нашим предложением. Актуально ли это сейчас? Ответьте “Да”, и менеджер свяжется с вами». Конкретная отправка остаётся данными исполнения.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Принял материал mat-reactivation-message; конкретная отправка остаётся данными исполнения. Что происходит с тем же лидом, если после ответа менеджер дозвонился, но лид не дал согласия на передачу в продажи?",
+      "questions": [
+        {
+          "id": "q-07-no-consent-outcome",
+          "text": "Что происходит с тем же лидом, если после ответа менеджер дозвонился, но лид не дал согласия на передачу в продажи?"
+        }
+      ],
+      "active_question_id": "q-07-no-consent-outcome"
+    },
+    {
+      "role": "user",
+      "text": "Тот же лид переводится в st-closed с причиной no_sales_consent. Свидетельство — результат звонка в CRM с решением, датой и performer_id менеджера. Новый объект не создаётся.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Принял: отказ от передачи закрывает тот же лид в st-closed с причиной no_sales_consent. Что происходит, если лид ответил на WhatsApp, но менеджер не дозвонился ему?",
+      "questions": [
+        {
+          "id": "q-08-call-no-answer",
+          "text": "Что происходит, если лид ответил на WhatsApp, но менеджер не дозвонился ему?"
+        }
+      ],
+      "active_question_id": "q-08-call-no-answer"
+    },
+    {
+      "role": "user",
+      "text": "Менеджер делает до 3 попыток звонка в течение 2 рабочих дней. Если связь не состоялась, тот же лид переводится в st-closed с причиной no_call_connection. В CRM сохраняются три попытки, timestamps и решение о закрытии.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Принял ветку недозвона. Сроки 7 дней до сообщения и 3 дня после него считаются календарными или рабочими днями?",
+      "questions": [
+        {
+          "id": "q-09-calendar-basis",
+          "text": "Сроки 7 дней до сообщения и 3 дня после него считаются календарными или рабочими днями?"
+        }
+      ],
+      "active_question_id": "q-09-calendar-basis"
+    },
+    {
+      "role": "user",
+      "text": "Оба срока календарные: 7×24 часа от last_successful_contact_at и 72 часа от delivered_at; отображение времени — Europe/Istanbul.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Полный пакет-кандидат pkg-lead-reactivation-v2-draft-01 собран для biz-eval / v2-draft на базе v1. Редактор и атрибуция: Иван Петров, perf-ivan, assign-tech. Добавляются источник src-interview-confirm-commit-01; материал mat-reactivation-message с показанным текстом; процесс proc-lead-reactivation; действия act-detect-lead-inactivity, act-send-reactivation-message, act-wait-lead-reply, act-call-lead, act-record-consent-decision, act-transfer-lead-to-sales, act-monitor-sales-acceptance, act-create-sales-reminder, act-manual-sales-check и act-close-lead; 14 связей полного графа; пять переходов того же obj-lead из st-no-contact в st-reactivated либо st-closed с причинами no_reply_72h, no_call_connection, no_sales_consent и sales_not_accepted; связь act-send-reactivation-message → использует → mat-reactivation-message. Таймеры: 7×24 часа от last_successful_contact_at, 72 часа от delivered_at в Europe/Istanbul, до 3 попыток звонка за 2 рабочих дня и контроль приёмки продажами через 4 и 8 рабочих часов. Сценарии: нормальный путь до приёмки, timeout без ответа, эскалация непринятия продажами. После подтверждения одной transaction будут добавлены решение dec-lead-reactivation-01, все указанные authoring rows, положительные строки Изменений модели, materialized snapshot и проверки; статусы версий не меняются. View-проекция будет candidate после разрешения среза; deployment blocked до job types, forms/assignments, FEEL, подтверждения CRM-календаря и Modeler/lint. Preconditions: неизменны biz-eval, v2-draft, v1, perf-ivan, assign-tech и отсутствие новых IDs; recovery — read-back одного transaction_id до любого retry. Канонический package_hash: d156c853146f5733c33a7104407acb0543de61a11ed89ad65de4aa384504a479. Подтверждаете запись показанного пакета pkg-lead-reactivation-v2-draft-01 с hash d156c853146f?",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "user",
+      "text": "Я, Иван Петров, человек и технолог модели, подтверждаю запись полного пакета pkg-lead-reactivation-v2-draft-01 с hash d156c853146f5733c33a7104407acb0543de61a11ed89ad65de4aa384504a479 в локальный тестовый fixture.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Подтверждение hash получено от Ивана Петрова. Одна локальная test-fixture transaction tx-interview-confirm-commit-01 применена: 1 строка Решений, 32 authoring/model rows и 32 положительные строки Изменений модели. Read-back подтвердил совпадение transaction_id, package_id, package_hash, состава строк и generated snapshot; внешних изменений не было. Checkpoint сохранён в состоянии verified.",
+      "questions": [],
+      "active_question_id": null
+    }
+  ],
+  "telemetry": [
+    "source_authority_resolved",
+    "decisive_question"
+    ,"draft_package"
+    ,"exact_package_confirmation"
+    ,"model_write"
+    ,"readback"
+    ,"checkpoint"
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-interview-confirm-commit-01",
+        "package_id": "pkg-lead-reactivation-v2-draft-01",
+        "package_hash": "d156c853146f5733c33a7104407acb0543de61a11ed89ad65de4aa384504a479",
+        "target": "local in-memory/test fixture only",
+        "decision_rows": 1,
+        "change_rows": 32,
+        "model_rows": 32,
+        "status": "verified"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "one_active_question": true,
+      "no_write_before_exact_package_confirmation": true,
+      "transaction_integrity": true,
+      "readback": true,
+      "checkpoint": true
+    }
+  }
+}

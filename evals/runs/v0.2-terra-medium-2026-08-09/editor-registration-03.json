@@ -1,0 +1,330 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-03",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "ordered_transcript": [
+    {
+      "turn": 1,
+      "role": "user",
+      "content": "Я новый человек в этой модели, меня ещё нет в Исполнителях. Нужно уточнить определение obj-lead в рабочей v2: лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id. Проведи меня правильно и после полного пакета запиши изменение в тестовый fixture."
+    },
+    {
+      "turn": 1,
+      "role": "assistant",
+      "content": "Сначала зафиксируем, кто подтверждает изменение: назовите, пожалуйста, имя и фамилию полностью. После этого я проверю реестр Исполнителей и уточню позицию; запись появится только после показа полного пакета и вашего точного подтверждения его hash."
+    },
+    {
+      "turn": 2,
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "content": "Проверка реестра по нормализованному ФИО «Анна Смирнова» совпадений не нашла. Какую позицию назначить вам для этой модели: «Технолог систематизации [id=pos-tech]» или другую существующую позицию?"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "content": "Назначьте Анну Смирнову на существующую позицию Технолог систематизации [id=pos-tech]."
+    },
+    {
+      "turn": 3,
+      "role": "assistant",
+      "content": "Позиция разрешена: Анна Смирнова — Технолог систематизации [id=pos-tech]. Это определение должно лишь исправить описание уже действующей практики или вводит новое правило для будущей работы? От этого зависят класс изменения, миграция и переход версии."
+    },
+    {
+      "turn": 4,
+      "role": "user",
+      "content": "Это исправление описания уже существующей практики. Живая работа не меняется, миграция активных экземпляров не требуется."
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "content": "Зафиксировал: это исправление, живая работа не меняется, миграция не требуется. Какой источник и локатор указать для этого исправления в пакете — например, ваш подтверждаемый ответ в этой сессии, или существующий источник из модели?"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "content": "Источник — подтверждённое в этой сессии описание фактической практики: source_id src-owner-interview-2026-08-10, locator trial://editor-registration/source-statement-01, статус знания «принято» после подтверждения полного пакета."
+    },
+    {
+      "turn": 5,
+      "role": "assistant",
+      "content": "Пакет pkg-editor-registration-03-v2-lead-definition (hash 8772d90db78c) готов к записи в одной transaction. Он создаёт Исполнителя «Анна Смирнова [id=perf-anna-smirnova]» и Назначение «Анна Смирнова — Технолог систематизации [id=asn-anna-smirnova-pos-tech-20260810]» с 2026-08-10; добавляет разреженную редакцию obj-lead в v2-draft, где «Лид — любой контакт» заменяется на «Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.», а identity rule исключает контакт без зарегистрированной коммерческой возможности; добавляет одно Решение и четыре строки Изменения модели с transaction_id txn-editor-registration-03-v2-lead-definition. Это исправление уже действующей практики: миграция не нужна; затронуты obj-lead, Срез модели и Проверки, без пересборки BPMN/SVG. Источник: src-owner-interview-2026-08-10, trial://editor-registration/source-statement-01; статус знания «принято» после записи. Версия остаётся черновиком v2-draft, перехода версии нет. Подтверждаете запись показанного пакета pkg-editor-registration-03-v2-lead-definition с hash 8772d90db78c?"
+    },
+    {
+      "turn": 6,
+      "role": "user",
+      "content": "Я, Анна Смирнова, человек и технолог этой модели, подтверждаю запись пакета pkg-editor-registration-03-v2-lead-definition с полным hash 8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb в локальный тестовый fixture."
+    },
+    {
+      "turn": 6,
+      "role": "assistant",
+      "content": "Пакет записан одной локальной transaction txn-editor-registration-03-v2-lead-definition и перечитан: исполнитель, назначение, решение, две редакции полей obj-lead и четыре строки истории совпадают с подтверждённым hash. Срез v2-draft берёт obj-lead из v2-draft, остальное наследует из v1; миграция не требуется."
+    }
+  ],
+  "events": [
+    {
+      "event": "editor_identified",
+      "performer_name": "Анна Смирнова",
+      "normalized_performer_name": "анна смирнова"
+    },
+    {
+      "event": "performer_lookup",
+      "normalized_performer_name": "анна смирнова",
+      "match_count": 0,
+      "result": "not_found"
+    },
+    {
+      "event": "position_resolved",
+      "performer_name": "Анна Смирнова",
+      "position_id": "pos-tech",
+      "position_selector": "Технолог систематизации [id=pos-tech]",
+      "result": "existing_position_selected"
+    },
+    {
+      "event": "change_classified",
+      "classification": "исправление",
+      "execution_change": false,
+      "migration_required": false
+    },
+    {
+      "event": "draft_package",
+      "package_id": "pkg-editor-registration-03-v2-lead-definition",
+      "package_hash": "8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb",
+      "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+      "ready_for_exact_confirmation": true
+    },
+    {
+      "event": "exact_package_confirmation",
+      "confirmation_id": "conf-editor-registration-03",
+      "package_id": "pkg-editor-registration-03-v2-lead-definition",
+      "package_hash": "8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb",
+      "confirmed_by_performer_id": "perf-anna-smirnova",
+      "confirmed_by_selector": "Анна Смирнова — Технолог систематизации [id=asn-anna-smirnova-pos-tech-20260810]",
+      "channel": "local trial transcript"
+    },
+    {
+      "event": "model_write",
+      "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+      "result": "complete"
+    },
+    {
+      "event": "readback",
+      "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+      "result": "verified"
+    },
+    {
+      "event": "checkpoint",
+      "state": "checkpoint",
+      "write_state": "verified",
+      "active_question": null
+    }
+  ],
+  "outcome": {
+    "status": "verified",
+    "model_change_written": true,
+    "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+    "package_id": "pkg-editor-registration-03-v2-lead-definition",
+    "package_hash": "8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb"
+  },
+  "draft_package": {
+    "package_id": "pkg-editor-registration-03-v2-lead-definition",
+    "package_hash": "8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb",
+    "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+    "model_id": "biz-eval",
+    "base_version_id": "v1",
+    "working_version_id": "v2-draft",
+    "version_transition": null,
+    "editor": {
+      "performer": {
+        "performer_id": "perf-anna-smirnova",
+        "selector": "Анна Смирнова [id=perf-anna-smirnova]",
+        "performer_type": "человек",
+        "active": "да"
+      },
+      "assignment": {
+        "assignment_id": "asn-anna-smirnova-pos-tech-20260810",
+        "selector": "Анна Смирнова — Технолог систематизации [id=asn-anna-smirnova-pos-tech-20260810]",
+        "position_id": "pos-tech",
+        "position_selector": "Технолог систематизации [id=pos-tech]",
+        "active_from": "2026-08-10",
+        "assignment_status": "активно"
+      }
+    },
+    "source": {
+      "source_id": "src-owner-interview-2026-08-10",
+      "source_locator": "trial://editor-registration/source-statement-01",
+      "knowledge_status_after_confirmation": "принято"
+    },
+    "semantic_resolution": {
+      "referent": "obj-lead",
+      "classification": "объект работы",
+      "identity_test": "own lead_id",
+      "inclusion": "registered commercial opportunity",
+      "exclusion": "contact without a registered commercial opportunity",
+      "counterexample": "a contact record without lead_id is not obj-lead"
+    },
+    "operations": [
+      {"sheet": "Исполнители", "operation": "создать", "stable_id": "perf-anna-smirnova"},
+      {"sheet": "Назначения", "operation": "создать", "stable_id": "asn-anna-smirnova-pos-tech-20260810"},
+      {
+        "sheet": "Объекты",
+        "operation": "изменить",
+        "stable_id": "obj-lead",
+        "version_operation": "применить",
+        "before": {"definition": "Лид — любой контакт"},
+        "after": {
+          "definition": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.",
+          "identity_rule": "Один lead_id однозначно идентифицирует одну коммерческую возможность; контакт без зарегистрированной коммерческой возможности лидом не является."
+        },
+        "sparse_revision_rule": "All unchanged required fields are copied verbatim from the resolved v1 obj-lead row; no other stable ID receives a v2 revision."
+      },
+      {"sheet": "Решения", "operation": "создать", "stable_id": "dec-editor-registration-03", "confirmation_id": "conf-editor-registration-03", "confirmed_by_performer_id": "perf-anna-smirnova", "recorded_by_performer_id": "perf-anna-smirnova"},
+      {"sheet": "Изменения модели", "operation": "создать", "stable_ids": ["chg-editor-registration-03-performer", "chg-editor-registration-03-assignment", "chg-editor-registration-03-obj-lead-definition", "chg-editor-registration-03-obj-lead-identity-rule"]}
+    ],
+    "impact": {
+      "direct": ["obj-lead"],
+      "derived": ["Срез модели", "Проверки"],
+      "migration": "not required; live work does not change",
+      "projection": "no BPMN/SVG rebuild; no process or projection input changes"
+    },
+    "preconditions": ["model_id remains biz-eval", "working_version_id remains v2-draft with predecessor v1", "no normalized performer match for Анна Смирнова", "pos-tech resolves to Технолог систематизации", "obj-lead v1 definition remains Лид — любой контакт", "no completed transaction with txn-editor-registration-03-v2-lead-definition"],
+    "recovery": "On unknown write outcome, read back transaction_id before any retry; partial rows are recovery state, never completion.",
+    "post_write_checks": ["read back all rows with transaction_id", "resolve v2-draft snapshot and verify obj-lead comes from v2-draft while unchanged IDs inherit from v1", "validate selectors, foreign keys, transaction hash, and no migration requirement"]
+  },
+  "local_transaction": {
+    "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+    "package_id": "pkg-editor-registration-03-v2-lead-definition",
+    "package_hash": "8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb",
+    "status": "complete",
+    "rows": {
+      "Исполнители": [
+        {
+          "performer_id": "perf-anna-smirnova",
+          "performer_type": "человек",
+          "performer_name": "Анна Смирнова",
+          "active": "да",
+          "source_id": "src-owner-interview-2026-08-10",
+          "source_locator": "trial://editor-registration/source-statement-01"
+        }
+      ],
+      "Назначения": [
+        {
+          "assignment_id": "asn-anna-smirnova-pos-tech-20260810",
+          "performer_id": "perf-anna-smirnova",
+          "performer_selector": "Анна Смирнова [id=perf-anna-smirnova]",
+          "position_id": "pos-tech",
+          "position_selector": "Технолог систематизации [id=pos-tech]",
+          "active_from": "2026-08-10",
+          "assignment_status": "активно",
+          "source_id": "src-owner-interview-2026-08-10",
+          "source_locator": "trial://editor-registration/source-statement-01"
+        }
+      ],
+      "Решения": [
+        {
+          "decision_id": "dec-editor-registration-03",
+          "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+          "package_id": "pkg-editor-registration-03-v2-lead-definition",
+          "package_hash": "8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb",
+          "confirmation_id": "conf-editor-registration-03",
+          "confirmed_by_performer_id": "perf-anna-smirnova",
+          "confirmed_by_performer_selector": "Анна Смирнова [id=perf-anna-smirnova]",
+          "confirmation_assignment_id": "asn-anna-smirnova-pos-tech-20260810",
+          "confirmation_assignment_selector": "Анна Смирнова — Технолог систематизации [id=asn-anna-smirnova-pos-tech-20260810]",
+          "confirmer_name_snapshot": "Анна Смирнова",
+          "confirmer_position_snapshot": "Технолог систематизации [id=pos-tech]",
+          "decision_text": "Подтверждено исправление определения obj-lead в v2-draft без изменения живой работы.",
+          "confirmation_evidence": "Я, Анна Смирнова, человек и технолог этой модели, подтверждаю запись пакета pkg-editor-registration-03-v2-lead-definition с полным hash 8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb в локальный тестовый fixture.",
+          "working_version_id": "v2-draft",
+          "recorded_by_performer_id": "perf-anna-smirnova",
+          "source_id": "src-owner-interview-2026-08-10"
+        }
+      ],
+      "Объекты": [
+        {
+          "object_id": "obj-lead",
+          "version_id": "v2-draft",
+          "version_operation": "применить",
+          "definition": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.",
+          "identity_rule": "Один lead_id однозначно идентифицирует одну коммерческую возможность; контакт без зарегистрированной коммерческой возможности лидом не является.",
+          "knowledge_status": "принято",
+          "source_id": "src-owner-interview-2026-08-10",
+          "source_locator": "trial://editor-registration/source-statement-01",
+          "unchanged_required_fields": "Copied verbatim from resolved obj-lead v1."
+        }
+      ],
+      "Изменения модели": [
+        {"change_id": "chg-editor-registration-03-performer", "transaction_id": "txn-editor-registration-03-v2-lead-definition", "decision_id": "dec-editor-registration-03", "operation": "создать", "entity_type": "Исполнители", "stable_id": "perf-anna-smirnova", "field_name": "record", "old_value": null, "new_value": "Анна Смирнова", "version_id": "v2-draft", "recorded_by_performer_id": "perf-anna-smirnova", "validation_result": "ok"},
+        {"change_id": "chg-editor-registration-03-assignment", "transaction_id": "txn-editor-registration-03-v2-lead-definition", "decision_id": "dec-editor-registration-03", "operation": "создать", "entity_type": "Назначения", "stable_id": "asn-anna-smirnova-pos-tech-20260810", "field_name": "record", "old_value": null, "new_value": "Анна Смирнова — Технолог систематизации", "version_id": "v2-draft", "recorded_by_performer_id": "perf-anna-smirnova", "validation_result": "ok"},
+        {"change_id": "chg-editor-registration-03-obj-lead-definition", "transaction_id": "txn-editor-registration-03-v2-lead-definition", "decision_id": "dec-editor-registration-03", "operation": "изменить", "entity_type": "Объекты", "stable_id": "obj-lead", "field_name": "definition", "old_value": "Лид — любой контакт", "new_value": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.", "version_id": "v2-draft", "recorded_by_performer_id": "perf-anna-smirnova", "validation_result": "ok"},
+        {"change_id": "chg-editor-registration-03-obj-lead-identity-rule", "transaction_id": "txn-editor-registration-03-v2-lead-definition", "decision_id": "dec-editor-registration-03", "operation": "изменить", "entity_type": "Объекты", "stable_id": "obj-lead", "field_name": "identity_rule", "old_value": null, "new_value": "Один lead_id однозначно идентифицирует одну коммерческую возможность; контакт без зарегистрированной коммерческой возможности лидом не является.", "version_id": "v2-draft", "recorded_by_performer_id": "perf-anna-smirnova", "validation_result": "ok"}
+      ],
+      "Срез модели": [
+        {"selected_version_id": "v2-draft", "entity_type": "Объекты", "stable_id": "obj-lead", "source_version_id": "v2-draft", "resolved_operation": "применить", "resolution_status": "разрешено"},
+        {"selected_version_id": "v2-draft", "entity_type": "all_other_entities", "source_version_id": "v1", "resolution_status": "разрешено", "resolution_note": "unchanged entities inherited through predecessor chain"}
+      ],
+      "Проверки": [
+        {"check_id": "txn-hash", "status": "ok", "blocking": "нет", "affected_ids": "txn-editor-registration-03-v2-lead-definition"},
+        {"check_id": "obj-lead-sparse-revision", "status": "ok", "blocking": "нет", "affected_ids": "obj-lead"},
+        {"check_id": "editor-assignment-attribution", "status": "ok", "blocking": "нет", "affected_ids": "perf-anna-smirnova, asn-anna-smirnova-pos-tech-20260810"},
+        {"check_id": "migration", "status": "ok", "blocking": "нет", "affected_ids": "obj-lead", "result": "not required"}
+      ]
+    }
+  },
+  "trial_state": {
+    "session_id": "editor-registration-03",
+    "state": "checkpoint",
+    "mode": "write",
+    "model_id": "biz-eval",
+    "spreadsheet_id": "local-fixture:editor-registration-03",
+    "working_version_id": "v2-draft",
+    "current_version_id": "v1",
+    "editor": {
+      "performer_id": null,
+      "display_name": "Анна Смирнова",
+      "assignment_ids": [],
+      "candidate_assignment": {
+        "position_id": "pos-tech",
+        "position_selector": "Технолог систематизации [id=pos-tech]",
+        "write_status": "not_written"
+      }
+    },
+    "active_question": null,
+    "accepted_local_answers": [
+      {
+        "question": "Назовите, пожалуйста, имя и фамилию полностью.",
+        "answer": "Анна Смирнова.",
+        "scope": "editor_identity_only"
+      },
+      {
+        "question": "Какую позицию назначить вам для этой модели: «Технолог систематизации [id=pos-tech]» или другую существующую позицию?",
+        "answer": "Назначьте Анну Смирнову на существующую позицию Технолог систематизации [id=pos-tech].",
+        "scope": "candidate_assignment_only"
+      },
+      {
+        "question": "Это определение должно лишь исправить описание уже действующей практики или вводит новое правило для будущей работы?",
+        "answer": "Это исправление описания уже существующей практики. Живая работа не меняется, миграция активных экземпляров не требуется.",
+        "scope": "change_classification_and_migration_only"
+      },
+      {
+        "question": "Какой источник и локатор указать для этого исправления в пакете — например, ваш подтверждаемый ответ в этой сессии, или существующий источник из модели?",
+        "answer": "Источник — подтверждённое в этой сессии описание фактической практики: source_id src-owner-interview-2026-08-10, locator trial://editor-registration/source-statement-01, статус знания «принято» после подтверждения полного пакета.",
+        "scope": "source_evidence_only"
+      }
+    ],
+    "source_locators": ["trial://editor-registration/source-statement-01"],
+    "package_id": "pkg-editor-registration-03-v2-lead-definition",
+    "package_hash": "8772d90db78ce8a0e3b9b10e91420d175c3529d5a734f2c52a504abf11eff0fb",
+    "confirmation_id": "conf-editor-registration-03",
+    "transaction_id": "txn-editor-registration-03-v2-lead-definition",
+    "write_state": "verified",
+    "open_conflicts": [],
+    "next_action": "Completed and verified; do not retry this transaction."
+  }
+}

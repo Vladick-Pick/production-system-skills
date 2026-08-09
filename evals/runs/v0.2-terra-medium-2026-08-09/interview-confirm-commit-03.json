@@ -1,0 +1,432 @@
+{
+  "trial_id": "interview-confirm-commit-03",
+  "case_id": "interview-confirm-commit",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "session": {
+    "state": "checkpoint",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "schema_version": "0.2",
+    "working_version_id": "v2-draft",
+    "current_version_id": "v1",
+    "editor": {
+      "performer_id": "perf-ivan",
+      "display_name": "Иван Петров",
+      "role": "human technologist",
+      "assignment_id": "assign-tech",
+      "assignment_active": true
+    },
+    "active_question_id": null,
+    "confirmation_id": "conf-interview-confirm-commit-03-001",
+    "transaction_id": "txn-reactivation-lead-v2-001",
+    "write_state": "verified",
+    "next_action": "handoff to maintain-production-system for any later confirmed changes"
+  },
+  "draft_package": {
+    "package_id": "pkg-reactivation-lead-v2-001",
+    "package_hash": "199a9bcfa65aca88087d4f801c595b52370542ac558dbad5cb2d7638df408992",
+    "purpose": "Добавить процесс повторной активации существующего лида без создания нового объекта или отдельного контура.",
+    "boundary": {
+      "model_id": "biz-eval",
+      "schema_version": "0.2",
+      "working_version_id": "v2-draft",
+      "base_current_version_id": "v1",
+      "system_id": "sys-attraction",
+      "work_object_id": "obj-lead",
+      "existing_states": ["st-no-contact", "st-reactivated", "st-closed"],
+      "existing_positions": ["pos-automation", "pos-manager"],
+      "execution_elements": ["is-crm", "is-messenger"]
+    },
+    "editor": {
+      "performer_id": "perf-ivan",
+      "assignment_id": "assign-tech",
+      "display_name": "Иван Петров"
+    },
+    "source": {
+      "operation": "create",
+      "source_id": "src-interview-confirm-commit-03",
+      "title": "Подтверждённые ответы Ивана Петрова о повторной активации лида",
+      "source_type": "интервью",
+      "authority_level": "решение редактора модели",
+      "trust_floor": "принято"
+    },
+    "semantic_resolution": {
+      "process": {
+        "stable_id": "proc-lead-reactivation",
+        "definition": "Внутренний процесс системы «Привлечение»: после 7 дней без успешного контакта реактивирует или закрывает тот же лид; новый объект не создаётся.",
+        "inclusion": "Таймер, отправка сообщения, обработка ответа, звонок, передача в продажи, ветки недоставки и закрытия.",
+        "exclusion": "Живые экземпляры сообщений и отдельный процесс продаж.",
+        "counterexample": "Разовая исходящая попытка без запуска таймера не является повторной активацией."
+      },
+      "identity": "obj-lead сохраняет stable identity во всех переходах; st-reactivated и st-closed — состояния того же объекта."
+    },
+    "operations": {
+      "Материалы": [
+        {
+          "operation": "применить",
+          "stable_id": "mat-reactivation-message",
+          "material_name": "Сообщение повторной активации лида",
+          "content_text": "Здравствуйте, {Имя}! Ранее вы интересовались нашим предложением. Актуально ли это сейчас? Ответьте “Да”, и менеджер свяжется с вами",
+          "owner_position_id": "pos-automation"
+        }
+      ],
+      "Элементы модели": [
+        {
+          "operation": "применить",
+          "stable_id": "rule-lead-reactivation-timers",
+          "element_type": "правило",
+          "element_name": "Таймеры повторной активации лида",
+          "definition": "7 суток от last_successful_contact_at; 72 часа от delivered_at без входящего ответа; при трёх неудачных доставках — один рабочий день CRM-календаря Europe/Istanbul, Пн–Пт 09:00–18:00, с исключением crm_business_calendar."
+        }
+      ],
+      "Процессы": [
+        {
+          "operation": "применить",
+          "stable_id": "proc-lead-reactivation",
+          "system_id": "sys-attraction",
+          "process_name": "Повторная активация лида",
+          "goal": "Передать в продажи тот же лид с подтверждённым получением либо закрыть его по определённой причине.",
+          "work_object_id": "obj-lead",
+          "trigger": "last_successful_contact_at старше 7 суток при состоянии st-no-contact",
+          "process_input": "Лид в st-no-contact и факт последнего успешного контакта из CRM",
+          "process_output": "Лид в st-reactivated с подтверждённым получением продажами либо в st-closed с причиной закрытия",
+          "entry_state_id": "st-no-contact",
+          "owner_position_id": "pos-automation"
+        }
+      ],
+      "Действия": [
+        {"operation":"применить","stable_id":"act-check-no-contact-7d","process_id":"proc-lead-reactivation","action_type":"автоматизация","action_name":"Проверить семь суток без успешного контакта","responsible_position_id":"pos-automation","performer_mode":"автоматизация","execution_element_id":"is-crm","action_output":"Решение о запуске повторной активации"},
+        {"operation":"применить","stable_id":"act-send-reactivation-message","process_id":"proc-lead-reactivation","action_type":"автоматизация","action_name":"Отправить сообщение повторной активации","responsible_position_id":"pos-automation","performer_mode":"автоматизация","execution_element_id":"is-messenger","action_output":"Попытка доставки с message_id, sent_at и delivered_at","uses_material_id":"mat-reactivation-message"},
+        {"operation":"применить","stable_id":"act-retry-delivery","process_id":"proc-lead-reactivation","action_type":"автоматизация","action_name":"Повторить недоставленное сообщение","responsible_position_id":"pos-automation","performer_mode":"автоматизация","execution_element_id":"is-messenger","action_output":"До трёх попыток доставки через 15 минут"},
+        {"operation":"применить","stable_id":"act-create-manual-contact-task","process_id":"proc-lead-reactivation","action_type":"передача","action_name":"Создать задачу менеджеру на ручной контакт","responsible_position_id":"pos-automation","performer_mode":"автоматизация","execution_element_id":"is-crm","action_output":"CRM-задача для pos-manager"},
+        {"operation":"применить","stable_id":"act-wait-reply-72h","process_id":"proc-lead-reactivation","action_type":"автоматизация","action_name":"Отследить входящий ответ в течение 72 часов","responsible_position_id":"pos-automation","performer_mode":"автоматизация","execution_element_id":"is-crm","action_output":"Входящий ответ либо таймаут"},
+        {"operation":"применить","stable_id":"act-call-responded-lead","process_id":"proc-lead-reactivation","action_type":"работа","action_name":"Созвониться с ответившим лидом","responsible_position_id":"pos-manager","performer_mode":"человек","execution_element_id":"is-crm","action_output":"Результат звонка с решением, датой и performer_id"},
+        {"operation":"применить","stable_id":"act-confirm-sales-receipt","process_id":"proc-lead-reactivation","action_type":"передача","action_name":"Зафиксировать получение лида продажами","responsible_position_id":"pos-manager","performer_mode":"человек","execution_element_id":"is-crm","action_output":"Подтверждение получения ответственным менеджером продаж"},
+        {"operation":"применить","stable_id":"act-close-no-response","process_id":"proc-lead-reactivation","action_type":"автоматизация","action_name":"Закрыть лид без ответа","responsible_position_id":"pos-automation","performer_mode":"автоматизация","execution_element_id":"is-crm","action_output":"st-closed с причиной no_reactivation_response и evidence message_id, sent_at, delivered_at, closed_at, timer_rule_version"},
+        {"operation":"применить","stable_id":"act-close-no-consent","process_id":"proc-lead-reactivation","action_type":"решение","action_name":"Закрыть лид без согласия на передачу","responsible_position_id":"pos-manager","performer_mode":"человек","execution_element_id":"is-crm","action_output":"st-closed с причиной no_sales_consent и результатом звонка"},
+        {"operation":"применить","stable_id":"act-close-delivery-failed","process_id":"proc-lead-reactivation","action_type":"автоматизация","action_name":"Закрыть лид после неудачной доставки и ручного контакта","responsible_position_id":"pos-automation","performer_mode":"автоматизация","execution_element_id":"is-crm","action_output":"st-closed с причиной delivery_failed и журналом попыток, задачей и решением менеджера"}
+      ],
+      "Переходы": [
+        {"operation":"применить","stable_id":"tr-reactivation-start","process_id":"proc-lead-reactivation","object_id":"obj-lead","from_state_id":"st-no-contact","to_state_id":"st-no-contact","action_id":"act-check-no-contact-7d","trigger_type":"таймер","condition_text":"last_successful_contact_at + 7 суток <= now","evidence":"CRM.last_successful_contact_at"},
+        {"operation":"применить","stable_id":"tr-reactivated-after-sales-receipt","process_id":"proc-lead-reactivation","object_id":"obj-lead","from_state_id":"st-no-contact","to_state_id":"st-reactivated","action_id":"act-confirm-sales-receipt","trigger_type":"решение","condition_text":"Менеджер подтвердил согласие лида и получение лида продажами зафиксировано в CRM","decision_position_id":"pos-manager","evidence":"CRM-подтверждение получения ответственным менеджером"},
+        {"operation":"применить","stable_id":"tr-closed-no-response","process_id":"proc-lead-reactivation","object_id":"obj-lead","from_state_id":"st-no-contact","to_state_id":"st-closed","action_id":"act-close-no-response","trigger_type":"таймер","condition_text":"72 часа от delivered_at без входящего ответа","evidence":"message_id, sent_at, delivered_at, closed_at, timer_rule_version"},
+        {"operation":"применить","stable_id":"tr-closed-no-consent","process_id":"proc-lead-reactivation","object_id":"obj-lead","from_state_id":"st-no-contact","to_state_id":"st-closed","action_id":"act-close-no-consent","trigger_type":"решение","condition_text":"Лид ответил, но не согласился на передачу в продажи","decision_position_id":"pos-manager","evidence":"Результат звонка в CRM с решением, датой и performer_id"},
+        {"operation":"применить","stable_id":"tr-closed-delivery-failed","process_id":"proc-lead-reactivation","object_id":"obj-lead","from_state_id":"st-no-contact","to_state_id":"st-closed","action_id":"act-close-delivery-failed","trigger_type":"таймер","condition_text":"Три неудачные доставки, CRM-задача менеджеру и отсутствие состоявшегося контакта один рабочий день по crm_business_calendar","evidence":"Журнал попыток, задача и решение менеджера в CRM"}
+      ],
+      "Связи модели": [
+        {"operation":"применить","stable_id":"link-action-message-material","from_entity_id":"act-send-reactivation-message","relation_type":"использует","to_entity_id":"mat-reactivation-message","scope_system_id":"sys-attraction","scope_process_id":"proc-lead-reactivation","required":"да"},
+        {"operation":"применить","stable_id":"link-process-timer-rule","from_entity_id":"proc-lead-reactivation","relation_type":"регулируется","to_entity_id":"rule-lead-reactivation-timers","scope_system_id":"sys-attraction","scope_process_id":"proc-lead-reactivation","required":"да"}
+      ]
+    },
+    "scenario_results": [
+      "Норма: 7 суток без успешного контакта → доставленное сообщение → входящий ответ → звонок с согласием → CRM-подтверждение получения → obj-lead: st-no-contact → st-reactivated.",
+      "Отказ: входящий ответ → звонок без согласия → результат звонка в CRM → obj-lead: st-no-contact → st-closed, причина no_sales_consent.",
+      "Таймаут: delivered_at + 72 часа без входящего ответа → obj-lead: st-no-contact → st-closed, причина no_reactivation_response.",
+      "Исключение: три недоставки с шагом 15 минут → CRM-задача менеджеру → один рабочий день без состоявшегося контакта → obj-lead: st-no-contact → st-closed, причина delivery_failed."
+    ],
+    "expected_governance": {
+      "decision": "Одно решение с будущими confirmation_id и package_hash; подтверждает perf-ivan через assign-tech.",
+      "changes": "По одной append-only строке Изменения модели на каждое созданное поле/строку, все с одним transaction_id.",
+      "transaction_id": "txn-reactivation-lead-v2-001"
+    },
+    "preconditions": [
+      "biz-eval остаётся на schema v0.2; working_version_id остаётся v2-draft, current_version_id остаётся v1.",
+      "Все перечисленные существующие stable IDs разрешаются однозначно и не имеют конкурирующих редакций в v2-draft.",
+      "В Решения, Изменения модели и authoring rows нет завершённой transaction_id txn-reactivation-lead-v2-001.",
+      "Иван Петров (perf-ivan) и назначение assign-tech остаются активны и совпадают с пакетом."
+    ],
+    "recovery": "Перед любым повтором прочитать все authoring/governance rows по txn-reactivation-lead-v2-001: полное совпадение ведёт к verify; отсутствие — к одному batch; частичное состояние останавливает новые записи и требует восстановления тем же пакетом.",
+    "projection": {
+      "impact": "Новый BPMN/SVG для proc-lead-reactivation после разрешения snapshot.",
+      "view_readiness": "ожидается после связности графа и сборки",
+      "deployment_readiness": "не готова: не заданы job types, FEEL-выражения, формы и worker contracts."
+    }
+  },
+  "transcript": [
+    {
+      "role": "assistant",
+      "text": "Какой конкретно результат процесса считается переданным в продажи: лид в состоянии «реактивирован» после согласия на звонке или отдельный принимаемый продажами результат с собственным критерием приёмки?",
+      "questions": [
+        {
+          "id": "q-result-acceptance",
+          "text": "Какой конкретно результат процесса считается переданным в продажи: лид в состоянии «реактивирован» после согласия на звонке или отдельный принимаемый продажами результат с собственным критерием приёмки?"
+        }
+      ],
+      "active_question_id": "q-result-acceptance"
+    },
+    {
+      "role": "user",
+      "text": "Результат — тот же лид в состоянии «реактивирован», который передан в продажи. Новый объект не создаётся. Продажи принимают результат, когда в CRM фиксируется подтверждение получения лида ответственным менеджером; без этого процесс не считается завершённым.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Какая позиция в модели отвечает за приём лида продажами и фиксацию подтверждения в CRM: существующий менеджер (`pos-manager`) или нужна отдельная позиция продаж?",
+      "questions": [
+        {
+          "id": "q-sales-acceptance-owner",
+          "text": "Какая позиция в модели отвечает за приём лида продажами и фиксацию подтверждения в CRM: существующий менеджер (`pos-manager`) или нужна отдельная позиция продаж?"
+        }
+      ],
+      "active_question_id": "q-sales-acceptance-owner"
+    },
+    {
+      "role": "user",
+      "text": "Используйте существующую позицию pos-manager: в этой модели это менеджер продаж. Он принимает лид и фиксирует подтверждение получения в CRM.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Какой точный текст робот отправляет лиду через 7 дней без контакта? Он будет сохранён как переиспользуемый материал процесса.",
+      "questions": [
+        {
+          "id": "q-message-material",
+          "text": "Какой точный текст робот отправляет лиду через 7 дней без контакта? Он будет сохранён как переиспользуемый материал процесса."
+        }
+      ],
+      "active_question_id": "q-message-material"
+    },
+    {
+      "role": "user",
+      "text": "Сохраните переиспользуемый материал mat-reactivation-message: «Здравствуйте, {Имя}! Ранее вы интересовались нашим предложением. Актуально ли это сейчас? Ответьте “Да”, и менеджер свяжется с вами». Конкретно отправленное сообщение должно оставаться данными исполнения.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Что именно считается «контактом» для отсчёта 7 дней и где CRM хранит дату последнего контакта: любой входящий/исходящий контакт менеджера, только ответ лида, или другое правило?",
+      "questions": [
+        {
+          "id": "q-no-contact-rule",
+          "text": "Что именно считается «контактом» для отсчёта 7 дней и где CRM хранит дату последнего контакта: любой входящий/исходящий контакт менеджера, только ответ лида, или другое правило?"
+        }
+      ],
+      "active_question_id": "q-no-contact-rule"
+    },
+    {
+      "role": "user",
+      "text": "Контактом считается только состоявшийся разговор или входящий ответ лида; исходящая попытка без ответа не обнуляет срок. CRM хранит момент в поле last_successful_contact_at, это источник факта для таймера.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Если лид ответил, но в разговоре не согласился на передачу в продажи, каким должно быть конечное состояние и доказательство этого решения: закрыть лид или вернуть его в другой существующий контур?",
+      "questions": [
+        {
+          "id": "q-no-consent-outcome",
+          "text": "Если лид ответил, но в разговоре не согласился на передачу в продажи, каким должно быть конечное состояние и доказательство этого решения: закрыть лид или вернуть его в другой существующий контур?"
+        }
+      ],
+      "active_question_id": "q-no-consent-outcome"
+    },
+    {
+      "role": "user",
+      "text": "Закрыть тот же лид в состоянии st-closed с причиной no_sales_consent. Свидетельство — результат звонка в CRM с решением менеджера, датой и performer_id. Новый объект или отдельный контур не создаётся.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "От какого события отсчитываются 3 дня без ответа после сообщения и какое доказательство закрытия с причиной `no_reactivation_response` должно быть сохранено в CRM?",
+      "questions": [
+        {
+          "id": "q-no-response-timeout",
+          "text": "От какого события отсчитываются 3 дня без ответа после сообщения и какое доказательство закрытия с причиной `no_reactivation_response` должно быть сохранено в CRM?"
+        }
+      ],
+      "active_question_id": "q-no-response-timeout"
+    },
+    {
+      "role": "user",
+      "text": "Три дня отсчитываются от delivered_at успешно доставленного сообщения. Через 72 часа без входящего ответа автоматизация переводит лид в st-closed с причиной no_reactivation_response. В CRM сохраняются message_id, sent_at, delivered_at, closed_at и версия правила таймера.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Какая внутренняя система-владелец должна быть указана у нового процесса: CRM, мессенджер или другая существующая система? `is-crm` и `is-messenger` я использую как средства исполнения, но у процесса нужен один владелец границы.",
+      "questions": [
+        {
+          "id": "q-owning-system",
+          "text": "Какая внутренняя система-владелец должна быть указана у нового процесса: CRM, мессенджер или другая существующая система? `is-crm` и `is-messenger` я использую как средства исполнения, но у процесса нужен один владелец границы."
+        }
+      ],
+      "active_question_id": "q-owning-system"
+    },
+    {
+      "role": "user",
+      "text": "Процесс принадлежит внутренней производственной системе sys-attraction «Привлечение». is-crm и is-messenger — информационные системы, используемые действиями, а не владельцы процесса.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Что происходит, если сообщение не получило успешный `delivered_at`: повторяется отправка, лид закрывается, или случай передаётся менеджеру? Без этого не получится проверить завершённость исключительной ветки.",
+      "questions": [
+        {
+          "id": "q-undelivered-message",
+          "text": "Что происходит, если сообщение не получило успешный `delivered_at`: повторяется отправка, лид закрывается, или случай передаётся менеджеру? Без этого не получится проверить завершённость исключительной ветки."
+        }
+      ],
+      "active_question_id": "q-undelivered-message"
+    },
+    {
+      "role": "user",
+      "text": "Автоматизация повторяет отправку до 3 раз с интервалом 15 минут. После трёх неудач создаётся задача pos-manager на ручной контакт. Если в течение одного рабочего дня контакт не состоялся, лид переводится в st-closed с причиной delivery_failed. В CRM сохраняются все попытки доставки, задача и решение менеджера.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "По какому календарю считать один рабочий день для ручного контакта: календарь CRM/организации с какой зоной и графиком? Это нужно для однозначного таймера закрытия `delivery_failed`.",
+      "questions": [
+        {
+          "id": "q-working-day-calendar",
+          "text": "По какому календарю считать один рабочий день для ручного контакта: календарь CRM/организации с какой зоной и графиком? Это нужно для однозначного таймера закрытия `delivery_failed`."
+        }
+      ],
+      "active_question_id": "q-working-day-calendar"
+    },
+    {
+      "role": "user",
+      "text": "Используйте календарь организации в CRM: Europe/Istanbul, понедельник–пятница 09:00–18:00, исключая праздничные дни из справочника crm_business_calendar.",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "assistant",
+      "text": "Полный пакет-кандидат `pkg-reactivation-lead-v2-001` готов.\n\nГраница: `biz-eval`, схема v0.2, рабочая версия `v2-draft` поверх `v1`; система `sys-attraction`; объект остаётся `obj-lead`; редактор и подтверждающий — Иван Петров (`perf-ivan`, назначение `assign-tech`). Источник будет добавлен как `src-interview-confirm-commit-03`.\n\nДобавления с операцией «применить»:\n- `Материалы`: `mat-reactivation-message` с согласованным текстом.\n- `Элементы модели`: `rule-lead-reactivation-timers` — 7 суток от `last_successful_contact_at`; 72 часа от `delivered_at`; три попытки доставки через 15 минут; затем один рабочий день по `crm_business_calendar` (Europe/Istanbul, Пн–Пт 09:00–18:00, кроме праздников).\n- `Процессы`: `proc-lead-reactivation` — «Повторная активация лида», вход `st-no-contact`, владелец `pos-automation`, результат: тот же лид в `st-reactivated` с CRM-подтверждением продаж или в `st-closed` с причиной.\n- `Действия`: `act-check-no-contact-7d`, `act-send-reactivation-message`, `act-retry-delivery`, `act-create-manual-contact-task`, `act-wait-reply-72h`, `act-call-responded-lead`, `act-confirm-sales-receipt`, `act-close-no-response`, `act-close-no-consent`, `act-close-delivery-failed`. Автоматизации ответственны у `pos-automation`; звонок, подтверждение получения и решение по несогласию — у `pos-manager`; средства исполнения — `is-crm` и `is-messenger`.\n- `Переходы`: `tr-reactivation-start`; `tr-reactivated-after-sales-receipt` при согласии и CRM-подтверждении; `tr-closed-no-response` через 72 часа без входящего ответа с причиной `no_reactivation_response`; `tr-closed-no-consent` с причиной `no_sales_consent`; `tr-closed-delivery-failed` после трёх неудачных доставок, задачи и одного рабочего дня без состоявшегося контакта.\n- `Связи модели`: `link-action-message-material` (действие использует материал) и `link-process-timer-rule` (процесс регулируется правилом).\n\nСценарии пакета: нормальный путь завершается `st-reactivated` только после подтверждения получения менеджером продаж в CRM; отказ — `st-closed/no_sales_consent`; таймаут ответа — `st-closed/no_reactivation_response`; недоставка — `st-closed/delivery_failed`. Конкретные сообщения остаются данными исполнения.\n\nПосле подтверждения одной транзакцией `txn-reactivation-lead-v2-001` будут записаны источник, авторские строки, одно append-only решение и соответствующие строки `Изменения модели`; затем read-back, срез и проверки. BPMN/SVG будут готовы к просмотру после сборки; к deployment пока не готовы, потому что не заданы job types, FEEL, формы и worker contracts. Preconditions: неизменность `v2-draft`, перечисленных ID, назначения `assign-tech` и отсутствие этой transaction. При частичной записи новых строк не будет: сначала read-back по transaction ID и восстановление тем же пакетом.\n\n`package_hash`: `199a9bcfa65aca88087d4f801c595b52370542ac558dbad5cb2d7638df408992`\n\nПодтверждаете запись показанного пакета `pkg-reactivation-lead-v2-001` с hash `199a9bcfa65a`?",
+      "questions": [],
+      "active_question_id": null
+    },
+    {
+      "role": "user",
+      "text": "Я, Иван Петров, человек и технолог модели, подтверждаю запись полного пакета pkg-reactivation-lead-v2-001 с hash 199a9bcfa65aca88087d4f801c595b52370542ac558dbad5cb2d7638df408992 в локальный тестовый fixture.",
+      "questions": [],
+      "active_question_id": null
+    }
+  ],
+  "events": [
+    {
+      "event": "source_authority_resolved",
+      "detail": "Fixture authority: biz-eval v2-draft over v1; schema v0.2; editor perf-ivan with active assign-tech."
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-result-acceptance"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-sales-acceptance-owner"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-message-material"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-no-contact-rule"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-no-consent-outcome"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-no-response-timeout"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-owning-system"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-undelivered-message"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q-working-day-calendar"
+    },
+    {
+      "event": "draft_package",
+      "package_id": "pkg-reactivation-lead-v2-001",
+      "package_hash": "199a9bcfa65aca88087d4f801c595b52370542ac558dbad5cb2d7638df408992"
+    },
+    {
+      "event": "exact_package_confirmation",
+      "confirmation_id": "conf-interview-confirm-commit-03-001",
+      "performer_id": "perf-ivan",
+      "assignment_id": "assign-tech",
+      "package_id": "pkg-reactivation-lead-v2-001",
+      "package_hash": "199a9bcfa65aca88087d4f801c595b52370542ac558dbad5cb2d7638df408992",
+      "channel": "simulator",
+      "meaning": "explicit human authorization for the complete displayed package and local fixture only"
+    },
+    {
+      "event": "model_write",
+      "transaction_id": "txn-reactivation-lead-v2-001",
+      "mode": "single_local_fixture_transaction",
+      "decision_rows": 1,
+      "change_rows": 20,
+      "model_rows": 20,
+      "source_rows": 1,
+      "writes": {
+        "Источники": ["src-interview-confirm-commit-03"],
+        "Материалы": ["mat-reactivation-message"],
+        "Элементы модели": ["rule-lead-reactivation-timers"],
+        "Процессы": ["proc-lead-reactivation"],
+        "Действия": ["act-check-no-contact-7d", "act-send-reactivation-message", "act-retry-delivery", "act-create-manual-contact-task", "act-wait-reply-72h", "act-call-responded-lead", "act-confirm-sales-receipt", "act-close-no-response", "act-close-no-consent", "act-close-delivery-failed"],
+        "Переходы": ["tr-reactivation-start", "tr-reactivated-after-sales-receipt", "tr-closed-no-response", "tr-closed-no-consent", "tr-closed-delivery-failed"],
+        "Связи модели": ["link-action-message-material", "link-process-timer-rule"],
+        "Решения": ["dec-reactivation-lead-v2-001"],
+        "Изменения модели": ["chg-reactivation-lead-v2-001-001", "chg-reactivation-lead-v2-001-002", "chg-reactivation-lead-v2-001-003", "chg-reactivation-lead-v2-001-004", "chg-reactivation-lead-v2-001-005", "chg-reactivation-lead-v2-001-006", "chg-reactivation-lead-v2-001-007", "chg-reactivation-lead-v2-001-008", "chg-reactivation-lead-v2-001-009", "chg-reactivation-lead-v2-001-010", "chg-reactivation-lead-v2-001-011", "chg-reactivation-lead-v2-001-012", "chg-reactivation-lead-v2-001-013", "chg-reactivation-lead-v2-001-014", "chg-reactivation-lead-v2-001-015", "chg-reactivation-lead-v2-001-016", "chg-reactivation-lead-v2-001-017", "chg-reactivation-lead-v2-001-018", "chg-reactivation-lead-v2-001-019", "chg-reactivation-lead-v2-001-020"]
+      }
+    },
+    {
+      "event": "readback",
+      "transaction_id": "txn-reactivation-lead-v2-001",
+      "result": "verified",
+      "checks": {
+        "package_hash_matches_decision": true,
+        "one_matching_decision": true,
+        "all_20_change_rows_match_transaction": true,
+        "all_20_model_rows_match_package": true,
+        "existing_ids_resolve": true,
+        "lead_identity_preserved": true,
+        "no_external_mutation": true
+      }
+    },
+    {
+      "event": "checkpoint",
+      "state": "checkpoint",
+      "transaction_id": "txn-reactivation-lead-v2-001",
+      "write_state": "verified"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-reactivation-lead-v2-001",
+        "decision_rows": 1,
+        "change_rows": 20,
+        "model_rows": 20,
+        "outcome": "verified"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "no_write_before_exact_confirmation": true,
+      "one_active_question": true,
+      "exact_confirmation_received": true,
+      "confirmation_matches_shown_package_hash": true,
+      "single_transaction": true,
+      "readback_verified": true,
+      "checkpoint_saved": true
+    }
+  }
+}

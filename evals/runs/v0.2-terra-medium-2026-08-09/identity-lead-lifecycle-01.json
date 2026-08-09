@@ -1,0 +1,231 @@
+{
+  "schema_version": 1,
+  "trial_id": "identity-lead-lifecycle-01",
+  "case_id": "identity-lead-lifecycle",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Мы хотим отказаться от термина «лид-кандидат» и вместо него использовать «Лид» и «Квалифицированный лид». Определи, это два объекта или объект и состояние, и подготовь правильное определение для модели. Ничего в модель пока не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "Ничего в модель не записываю. Сейчас известно лишь, что в CRM есть карточка лида, а после квалификации менеджеры называют его «квалифицированным лидом»; карточка CRM сама по себе не доказывает отдельный объект. Предварительно сильнее гипотеза «один объект Лид и состояние квалифицирован», но альтернативой остаются два объекта с явным преобразованием.\n\nПосле квалификации сохраняются тот же экземпляр лида и его история, а меняются допустимые дальнейшие действия, или создаётся самостоятельный «Квалифицированный лид» со своим созданием и жизненным циклом?",
+      "questions": [
+        {
+          "id": "lead_identity_after_qualification",
+          "text": "После квалификации сохраняются тот же экземпляр лида и его история, а меняются допустимые дальнейшие действия, или создаётся самостоятельный «Квалифицированный лид» со своим созданием и жизненным циклом?"
+        }
+      ],
+      "active_question_id": "lead_identity_after_qualification"
+    },
+    {
+      "role": "user",
+      "content": "Сохраняется тот же экземпляр и вся его история; отдельный ID не создаётся. После успешной квалификации лид передают в продажи и для него становятся допустимы другие действия. При отказе он остаётся тем же лидом, но с другим результатом квалификации."
+    },
+    {
+      "role": "assistant",
+      "content": "Это подтверждает один объект работы `Лид`: после квалификации его идентичность и история сохраняются, а успешный и отказной исходы меняют допустимые действия. Поэтому «Квалифицированный лид» не отдельный объект, а состояние лида; «лид-кандидат» не нужно создавать ради симметрии.\n\nКакое наблюдаемое событие создаёт новый экземпляр лида и по какому правилу отличают два разных лида, если один и тот же человек обращается повторно?",
+      "questions": [
+        {
+          "id": "lead_creation_and_distinction",
+          "text": "Какое наблюдаемое событие создаёт новый экземпляр лида и по какому правилу отличают два разных лида, если один и тот же человек обращается повторно?"
+        }
+      ],
+      "active_question_id": "lead_creation_and_distinction"
+    },
+    {
+      "role": "user",
+      "content": "Новый лид создаётся при отдельном входящем коммерческом обращении или получении отдельной поставленной возможности. Даже у одного человека могут быть несколько лидов: их различает стабильный lead_id, связанный с конкретным событием поступления и источником. После окончательного отказа лид закрывается; новое независимое обращение создаёт новый лид."
+    },
+    {
+      "role": "assistant",
+      "content": "Граница объекта теперь ясна: новый `Лид` создаётся на отдельное коммерческое обращение или поставленную возможность, имеет свой `lead_id` и не возобновляется новым независимым обращением после закрытия. «Квалифицированный лид» остаётся его состоянием, а не вторым объектом.\n\nКакое проверяемое решение или условие переводит лид в состояние `квалифицирован`, и какое наблюдаемое свидетельство этого перехода фиксируется?",
+      "questions": [
+        {
+          "id": "lead_qualification_transition_rule",
+          "text": "Какое проверяемое решение или условие переводит лид в состояние `квалифицирован`, и какое наблюдаемое свидетельство этого перехода фиксируется?"
+        }
+      ],
+      "active_question_id": "lead_qualification_transition_rule"
+    },
+    {
+      "role": "user",
+      "content": "Лид переходит в состояние «квалифицирован» после завершения проверки обязательных данных и явного решения, что он соответствует критериям качества и принят для передачи в продажи. Свидетельство — запись решения квалификатора с результатом проверки. Если критерии не выполнены, фиксируется отказ и лид закрывается либо возвращается на исправление данных."
+    },
+    {
+      "role": "assistant",
+      "content": "Собран пакет-кандидат; в модель ничего не записано.\n\npackage_id: `srp-biz-eval-lead-lifecycle-v1`\nкандидат: `Лид / Квалифицированный лид`\nисход допуска: `принять и переименовать`\nмодель и версии: `biz-eval`, рабочая `v2-draft`, текущая `v1`\nканоническое название: `Лид`\nstable_id или правило создания: `lead_id` создаётся для каждого отдельного входящего коммерческого обращения или отдельной поставленной возможности; он связан с конкретным событием поступления и источником.\nопределение: Лид — объект работы, представляющий отдельное коммерческое обращение или отдельную поставленную возможность, который имеет стабильный `lead_id` и проходит квалификацию до передачи в продажи, отказа либо исправления данных. Квалифицированный лид — тот же Лид в состоянии `квалифицирован` после завершения проверки обязательных данных и явного положительного решения квалификатора.\nреферент и тип: объект работы; `квалифицирован` — состояние.\nпризнаки включения: отдельное обращение или поставленная возможность с собственным `lead_id`.\nисключения и контрпример: CRM-карточка и её поля — представления/данные, а не объект; «лид-кандидат» не создаётся как самостоятельный объект. Новое независимое обращение того же человека после окончательного отказа создаёт новый Лид, а не повторно открывает прежний.\nправило идентичности: один `lead_id` связан с одним конкретным событием поступления и источником; история сохраняется через квалификацию.\nсоздание и завершение: создание — отдельное входящее коммерческое обращение или получение отдельной поставленной возможности; завершение — окончательный отказ. Возврат на исправление данных не создаёт новый объект.\nжизненный цикл: новый → проверка данных → квалифицирован → передан в продажи; при невыполнении критериев — отказ и закрытие либо возврат на исправление данных.\nсинонимы: «Квалифицированный лид» — состояние Лида; «лид-кандидат» не регистрируется.\nоперационное использование: передача в продажи и выбор допустимых действий после квалификации.\nпредставления: CRM-карточка и запись решения квалификатора с результатом проверки.\nсвязи и кратности: квалификатор принимает решение; решение переводит Лид в состояние `квалифицирован`; лид передаётся в продажи.\nисточники и статусы знания: ответы пользователя — текущие свидетельства; заметка владельца — текущая, но неоднозначная; статус пакета — кандидат.\nоткрытые конфликты: нет в предоставленных сведениях.\nрекомендуемая операция модели: после подтверждения передать пакет в `maintain-production-system`; текущий скилл сам модель не изменяет.\npackage_hash: `fa460ecc480f568923f0dd8afa40f6d920abc5d8a27bc491270c18f82db52fea`\n\nПодтверждаете именно этот semantic-resolution package `srp-biz-eval-lead-lifecycle-v1` с hash `fa460ecc480f`? Это подтвердит смысловой пакет для передачи, но не выполнит запись в модель.",
+      "questions": [
+        {
+          "id": "confirm_semantic_package_fa460ecc480f",
+          "text": "Подтверждаете именно этот semantic-resolution package `srp-biz-eval-lead-lifecycle-v1` с hash `fa460ecc480f`? Это подтвердит смысловой пакет для передачи, но не выполнит запись в модель."
+        }
+      ],
+      "active_question_id": "confirm_semantic_package_fa460ecc480f"
+    },
+    {
+      "role": "user",
+      "content": "Я, Иван Петров, технолог этой модели, подтверждаю именно semantic-resolution package srp-biz-eval-lead-lifecycle-v1 с hash fa460ecc480f568923f0dd8afa40f6d920abc5d8a27bc491270c18f82db52fea для передачи в сопровождение. Запись в модель этим подтверждением не разрешаю."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировано: Иван Петров, технолог модели, подтвердил неизменённый пакет `srp-biz-eval-lead-lifecycle-v1` с hash `fa460ecc480f568923f0dd8afa40f6d920abc5d8a27bc491270c18f82db52fea` для передачи в `maintain-production-system`.\n\nИтог разрешения: `Лид` — один объект работы; `квалифицирован` — его состояние, а «Квалифицированный лид» — употребляемое название этого состояния. «Лид-кандидат» не создаётся как отдельный объект. Запись в модель не выполнялась и этим подтверждением не разрешена. Для последующей мутации сопровождение должно сформировать собственный mutation package и отдельно проверить атрибуцию подтверждающего человека в модели.",
+      "questions": [],
+      "active_question_id": null
+    }
+  ],
+  "events": [
+    {
+      "type": "session_oriented",
+      "facts": {
+        "model_id": "biz-eval",
+        "working_version_id": "v2-draft",
+        "current_version_id": "v1",
+        "mode": "proposal",
+        "model_write_available": false
+      }
+    },
+    {
+      "type": "source_authority_resolved",
+      "facts": {
+        "owner_note_status": "current_but_ambiguous",
+        "accepted_stable_definition": false,
+        "available_observation": "В CRM есть карточка лида; после квалификации менеджеры говорят «квалифицированный лид»."
+      }
+    },
+    {
+      "type": "representation_separated",
+      "facts": {
+        "crm_card_is_not_sufficient_evidence_of": "separate_work_object"
+      }
+    },
+    {
+      "type": "identity_test_required",
+      "facts": {
+        "candidate_outcomes": [
+          "one_object_with_state",
+          "two_objects_with_transformation"
+        ],
+        "decisive_unknown": "whether qualification preserves the same lead instance and history"
+      }
+    },
+    {
+      "type": "decisive_question_asked",
+      "facts": {
+        "active_question_id": "lead_identity_after_qualification",
+        "question_count": 1
+      }
+    },
+    {
+      "type": "identity_test_resolved",
+      "facts": {
+        "same_instance_and_history_preserved": true,
+        "separate_qualified_lead_id_created": false,
+        "successful_qualification_changes_allowed_actions": true,
+        "rejected_qualification_retains_same_lead": true,
+        "resolved_classification": "one_object_with_states"
+      }
+    },
+    {
+      "type": "decisive_question_asked",
+      "facts": {
+        "active_question_id": "lead_creation_and_distinction",
+        "question_count": 1,
+        "decisive_unknown": "lead creation event and rule distinguishing repeat contacts"
+      }
+    },
+    {
+      "type": "identity_lifecycle_boundary_resolved",
+      "facts": {
+        "creation_events": [
+          "separate_inbound_commercial_enquiry",
+          "receipt_of_separate_supplied_opportunity"
+        ],
+        "identity_rule": "stable_lead_id linked to a concrete intake event and source",
+        "final_refusal_closes_lead": true,
+        "independent_new_enquiry_creates_new_lead": true
+      }
+    },
+    {
+      "type": "decisive_question_asked",
+      "facts": {
+        "active_question_id": "lead_qualification_transition_rule",
+        "question_count": 1,
+        "decisive_unknown": "qualification transition rule and observed evidence"
+      }
+    },
+    {
+      "type": "qualification_transition_resolved",
+      "facts": {
+        "transition_preconditions": [
+          "mandatory_data_check_completed",
+          "explicit_positive_qualifier_decision",
+          "quality_criteria_met",
+          "accepted_for_sales_handoff"
+        ],
+        "transition_evidence": "qualifier decision record with check result",
+        "failed_qualification_outcomes": [
+          "refusal_and_closure",
+          "return_for_data_correction"
+        ]
+      }
+    },
+    {
+      "type": "draft_package_prepared",
+      "facts": {
+        "package_id": "srp-biz-eval-lead-lifecycle-v1",
+        "package_hash": "fa460ecc480f568923f0dd8afa40f6d920abc5d8a27bc491270c18f82db52fea",
+        "resolved_classification": "Lead is one work object; qualified is a state",
+        "recommended_model_operation": "handoff_to_maintain-production-system_after_confirmation"
+      }
+    },
+    {
+      "type": "package_confirmation_requested",
+      "facts": {
+        "active_question_id": "confirm_semantic_package_fa460ecc480f",
+        "question_count": 1,
+        "model_write_requested": false
+      }
+    },
+    {
+      "type": "package_confirmation_received",
+      "facts": {
+        "package_id": "srp-biz-eval-lead-lifecycle-v1",
+        "package_hash": "fa460ecc480f568923f0dd8afa40f6d920abc5d8a27bc491270c18f82db52fea",
+        "confirming_person_display_name": "Иван Петров",
+        "confirming_person_stated_position": "технолог этой модели",
+        "confirmation_scope": "semantic package handoff to maintenance",
+        "model_write_authorized": false
+      }
+    },
+    {
+      "type": "handoff_recorded",
+      "facts": {
+        "target_workflow": "maintain-production-system",
+        "handoff_artifact": "confirmed semantic-resolution package srp-biz-eval-lead-lifecycle-v1",
+        "required_before_any_mutation": "maintenance workflow creates its own mutation package and verifies confirmer attribution in the model"
+      }
+    }
+  ],
+  "outcome": {
+    "trial_state": "complete",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "proposal_mode_and_no_model_write": true,
+      "identity_test_resolves_object_vs_state": true,
+      "crm_card_treated_as_representation_not_object_proof": true,
+      "no_stable_definition_accepted_in_fixture": true,
+      "one_active_question_in_latest_assistant_turn": true,
+      "qualification_transition_has_observed_decision_and_evidence": true,
+      "draft_package_hash_calculated": true,
+      "unchanged_package_confirmation_received": true,
+      "confirmation_did_not_authorize_model_write": true,
+      "no_model_write_performed": true
+    },
+    "active_question_id": null
+  }
+}

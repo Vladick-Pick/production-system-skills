@@ -1,0 +1,333 @@
+{
+  "schema_version": 1,
+  "trial_id": "identity-lead-lifecycle-03",
+  "case_id": "identity-lead-lifecycle",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "assistant",
+      "content": "Зафиксировал контекст: модель `biz-eval`, рабочая версия `v2-draft`, текущая версия `v1`, режим — proposal. Записи в модель не будет.\n\nИз известного следует только то, что в CRM есть карточка лида, а менеджеры после квалификации употребляют выражение «квалифицированный лид». Карточка CRM — представление и сама по себе не доказывает отдельный объект.\n\nПредварительная рекомендация: считать «Лид» одним объектом, а «квалифицирован» — его состоянием, если после квалификации сохраняются тот же экземпляр и его история, но меняются допустимые следующие действия. Сильная альтернатива — два объекта с явным преобразованием, если квалификация создаёт самостоятельный экземпляр со своим созданием, жизненным циклом или независимым использованием.\n\nВопрос: после квалификации это тот же самый лид с непрерывной историей, для которого меняются допустимые следующие действия, или создаётся самостоятельный «Квалифицированный лид», которым можно отдельно пользоваться и завершать его жизненный цикл?",
+      "questions": [
+        {
+          "id": "identity_after_qualification",
+          "text": "После квалификации это тот же самый лид с непрерывной историей, для которого меняются допустимые следующие действия, или создаётся самостоятельный «Квалифицированный лид», которым можно отдельно пользоваться и завершать его жизненный цикл?"
+        }
+      ],
+      "active_question_id": "identity_after_qualification"
+    },
+    {
+      "role": "user",
+      "content": "Сохраняется тот же экземпляр и вся его история; отдельный ID не создаётся. После успешной квалификации лид передают в продажи и для него становятся допустимы другие действия. При отказе он остаётся тем же лидом, но с другим результатом квалификации."
+    },
+    {
+      "role": "assistant",
+      "content": "Локальное разрешение: это один объект работы `Лид`. При успешной квалификации тот же экземпляр переходит в состояние `квалифицирован`; выражение «Квалифицированный лид» обозначает лид в этом состоянии, а не второй объект. При отказе идентичность также сохраняется, меняется результат квалификации и допустимые дальнейшие действия. Ничего в модель не записываю.\n\nЧтобы зафиксировать правило идентичности, нужен момент создания: какое наблюдаемое событие создаёт новый экземпляр `Лида` — например, регистрация обращения, импорт контакта, ручное создание в CRM — и как это событие отличить от обновления уже существующего лида?",
+      "questions": [
+        {
+          "id": "lead_creation_event",
+          "text": "Какое наблюдаемое событие создаёт новый экземпляр `Лида` — например, регистрация обращения, импорт контакта, ручное создание в CRM — и как это событие отличить от обновления уже существующего лида?"
+        }
+      ],
+      "active_question_id": "lead_creation_event"
+    },
+    {
+      "role": "user",
+      "content": "Новый лид создаётся при отдельном входящем коммерческом обращении или получении отдельной поставленной возможности. Даже у одного человека могут быть несколько лидов: их различает стабильный lead_id, связанный с конкретным событием поступления и источником. После окончательного отказа лид закрывается; новое независимое обращение создаёт новый лид."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировал локально: `Лид` — объект работы, который создаётся отдельным входящим коммерческим обращением или получением отдельной поставленной возможности; его экземпляры различаются стабильным `lead_id`, связанным с событием поступления и источником. Окончательный отказ закрывает этот экземпляр, а новое независимое обращение создаёт другой.\n\nСледствие для определения: `Квалифицированный лид` — не второй объект, а лид в состоянии `квалифицирован`; успешная квалификация меняет допустимые действия и передаёт лид в продажи. Открыто только смысловое наследие уходящего термина.\n\nВопрос: «лид-кандидат» ранее обозначал тот же экземпляр `Лида` до квалификации или им называли другой, самостоятельно создаваемый и используемый референт?",
+      "questions": [
+        {
+          "id": "legacy_term_referent",
+          "text": "«Лид-кандидат» ранее обозначал тот же экземпляр `Лида` до квалификации или им называли другой, самостоятельно создаваемый и используемый референт?"
+        }
+      ],
+      "active_question_id": "legacy_term_referent"
+    },
+    {
+      "role": "user",
+      "content": "«Лид-кандидат» никто не создаёт и не использует как самостоятельную сущность. Это старое техническое название очереди ещё не проверенных поступлений; отдельного ID, владельца и жизненного цикла у него нет. Термин хотим вывести из употребления, а не сохранять как объект."
+    },
+    {
+      "role": "assistant",
+      "content": "Смысловое разрешение получено, записи в модель не делаю.\n\n- `Лид` — объект работы, возникающий из отдельного входящего коммерческого обращения или получения отдельной поставленной возможности. Каждый экземпляр различается стабильным `lead_id`, связанным с конкретным событием поступления и источником; окончательный отказ закрывает экземпляр, а новое независимое обращение создаёт новый.\n- `Квалифицированный лид` — не второй объект, а лид в состоянии `квалифицирован`, достигнутом после успешной квалификации. В этом состоянии лид передаётся в продажи и для него допустимы другие действия.\n- `Лид-кандидат` не имеет самостоятельного референта, ID, владельца или жизненного цикла: это устаревшее техническое имя очереди непроверенных поступлений. Его следует вывести из употребления и не создавать для него элемент модели.\n\nИсход допуска для предположения, что «Квалифицированный лид» — отдельный объект: `изменить тип` на состояние объекта `Лид`. Для подтверждаемого пакета нужно указать человека, работающего с этой моделью; без этого я не буду считать определение подтверждённым и не передам его на изменение.\n\nВопрос: кто будет подтверждать пакет — укажите его имя, фамилию и позицию в работе с моделью?",
+      "questions": [
+        {
+          "id": "confirmation_editor_identity",
+          "text": "Кто будет подтверждать пакет — укажите его имя, фамилию и позицию в работе с моделью?"
+        }
+      ],
+      "active_question_id": "confirmation_editor_identity"
+    },
+    {
+      "role": "user",
+      "content": "Меня зовут Иван Петров, я технолог этой модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет-кандидат подготовлен в режиме proposal. Записей в модель и передачи на изменение не выполняю.\n\n```text\npackage_id: semantic-resolution-biz-eval-lead-lifecycle-v2-draft-01\nкандидат: Квалифицированный лид как предполагаемый отдельный объект\nисход допуска: изменить тип\nканоническое название: Лид\nstable_id или правило создания: экземпляр Лида создаётся отдельным входящим коммерческим обращением или получением отдельной поставленной возможности; экземпляры различаются стабильным lead_id, связанным с событием поступления и источником. Стабильный ID элемента каталога не доступен в fixture.\nопределение: Лид — объект работы, возникающий из отдельного входящего коммерческого обращения или получения отдельной поставленной возможности. Экземпляры различаются стабильным lead_id, связанным с конкретным событием поступления и источником; окончательный отказ закрывает экземпляр, а новое независимое обращение создаёт новый.\nреферент и тип: Лид — объект работы. Квалифицированный лид — Лид в состоянии квалифицирован, достигнутом после успешной квалификации; это не самостоятельный объект.\nпризнаки включения: отдельное входящее коммерческое обращение или отдельная поставленная возможность.\nисключения и контрпример: Лид-кандидат — устаревшее техническое имя очереди непроверенных поступлений, без самостоятельного референта, ID, владельца и жизненного цикла; не создавать его как объект, состояние или сохраняемый синоним.\nправило идентичности: один lead_id, связанный с одним событием поступления и источником, обозначает один экземпляр; повторное независимое обращение создаёт другой экземпляр.\nсоздание и завершение: создание — указанное отдельное событие поступления; завершение — окончательный отказ.\nжизненный цикл: успешная квалификация переводит тот же Лид в состояние квалифицирован, передаёт его в продажи и меняет допустимые действия; окончательный отказ закрывает экземпляр.\nсинонимы: отсутствуют; термин Лид-кандидат вывести из употребления.\nоперационное использование: в квалифицированном состоянии Лид передаётся в продажи и для него допустимы другие действия.\nпредставления: CRM-карточка и её поля — данные и интерфейс исполнения, не доказательство отдельного объекта.\nсвязи и кратности: один экземпляр Лида имеет один текущий статус; успешная квалификация — переход того же экземпляра в состояние квалифицирован.\nграница и контракты: отдельная поставленная возможность может создавать экземпляр Лида; сведения о контракте и интерфейсе передачи в fixture отсутствуют.\nзатронутые ID: конкретные stable_id каталога и срез модели в fixture недоступны; известен только lead_id как правило идентичности экземпляра.\nкарта влияния: не создавать элемент Лид-кандидат; представить Лид как объект работы и квалифицирован как его состояние.\nисточники и статусы знания: текущая заметка владельца — неоднозначный источник до интервью; ответы Ивана Петрова — локальные наблюдаемые ответы; статус определения — кандидат.\nоткрытые конфликты: нет в доступных сведениях.\nрекомендуемая операция модели: не создавать объект для Лид-кандидат; при последующем изменении модели внести Лид как объект работы и квалифицирован как состояние Лида.\npackage_hash: 12f1b9cb81f222a288122b6822643369d81b675404312550530ec13c7534e5fd\nстатус подтверждения: не запрошено; пользователь разрешил подготовить определение, но не разрешил запись в модель.\nатрибуция: Иван Петров, Технолог; performer_id и assignment_id не проверялись, поскольку доступ к модели не предоставлен.\n```\n\nHandoff: если понадобится изменение существующей модели, передать этот пакет в `maintain-production-system`; перед записью нужно перечитать срез `v2-draft`, установить затронутые stable_id, проверить атрибуцию Ивана Петрова и получить отдельное подтверждение неизменённого пакета.\n\nНа этом запрос на определение выполнен; ответ пользователя не требуется.",
+      "questions": [],
+      "active_question_id": null
+    }
+  ],
+  "events": [
+    {
+      "type": "session_oriented",
+      "facts": {
+        "model_id": "biz-eval",
+        "working_version_id": "v2-draft",
+        "current_version_id": "v1",
+        "mode": "proposal"
+      }
+    },
+    {
+      "type": "source_authority_resolved",
+      "facts": {
+        "source": "named owner note",
+        "status": "current_but_ambiguous",
+        "observed_note": "В CRM есть карточка лида; после квалификации менеджеры говорят «квалифицированный лид»"
+      }
+    },
+    {
+      "type": "representation_distinguished",
+      "facts": {
+        "representation": "CRM lead card",
+        "conclusion": "representation_does_not_establish_separate_work_object"
+      }
+    },
+    {
+      "type": "identity_test_opened",
+      "facts": {
+        "candidate_terms": [
+          "Лид",
+          "Квалифицированный лид"
+        ],
+        "unresolved_dimension": "identity_after_qualification"
+      }
+    },
+    {
+      "type": "decisive_question_asked",
+      "facts": {
+        "question_id": "identity_after_qualification",
+        "state": "resolve"
+      }
+    },
+    {
+      "type": "local_answer_recorded",
+      "facts": {
+        "question_id": "identity_after_qualification",
+        "same_instance_and_history_preserved": true,
+        "separate_id_created": false,
+        "successful_qualification_changes_permitted_actions": true,
+        "rejection_preserves_identity": true
+      }
+    },
+    {
+      "type": "identity_classified",
+      "facts": {
+        "object": "Лид",
+        "qualified_lead_classification": "state_conditioned_designation",
+        "qualified_state": "квалифицирован"
+      }
+    },
+    {
+      "type": "decisive_question_asked",
+      "facts": {
+        "question_id": "lead_creation_event",
+        "state": "resolve"
+      }
+    },
+    {
+      "type": "local_answer_recorded",
+      "facts": {
+        "question_id": "lead_creation_event",
+        "creation_events": [
+          "separate_incoming_commercial_inquiry",
+          "receipt_of_separate_supplied_opportunity"
+        ],
+        "identity_key": "lead_id linked to arrival event and source",
+        "final_rejection_closes_lead": true,
+        "independent_new_inquiry_creates_new_lead": true
+      }
+    },
+    {
+      "type": "lifecycle_rule_resolved",
+      "facts": {
+        "object": "Лид",
+        "creation_rule": "separate arrival event",
+        "closure_rule": "final rejection",
+        "identity_rule": "stable lead_id"
+      }
+    },
+    {
+      "type": "decisive_question_asked",
+      "facts": {
+        "question_id": "legacy_term_referent",
+        "state": "resolve"
+      }
+    },
+    {
+      "type": "local_answer_recorded",
+      "facts": {
+        "question_id": "legacy_term_referent",
+        "legacy_term_has_independent_referent": false,
+        "legacy_term_has_independent_id": false,
+        "legacy_term_has_owner": false,
+        "legacy_term_has_lifecycle": false,
+        "legacy_term_intended_disposition": "retire"
+      }
+    },
+    {
+      "type": "legacy_term_rejected",
+      "facts": {
+        "term": "Лид-кандидат",
+        "reason": "technical queue name without independent referent"
+      }
+    },
+    {
+      "type": "semantic_type_resolved",
+      "facts": {
+        "candidate": "Квалифицированный лид",
+        "admission_outcome": "изменить тип",
+        "resolved_type": "state of Лид"
+      }
+    },
+    {
+      "type": "confirmation_identity_requested",
+      "facts": {
+        "question_id": "confirmation_editor_identity",
+        "state": "resolve"
+      }
+    },
+    {
+      "type": "local_answer_recorded",
+      "facts": {
+        "question_id": "confirmation_editor_identity",
+        "display_name": "Иван Петров",
+        "position": "Технолог"
+      }
+    },
+    {
+      "type": "semantic_package_drafted",
+      "facts": {
+        "package_id": "semantic-resolution-biz-eval-lead-lifecycle-v2-draft-01",
+        "admission_outcome": "изменить тип",
+        "confirmation_status": "not_requested"
+      }
+    },
+    {
+      "type": "package_hash_computed",
+      "facts": {
+        "package_hash": "12f1b9cb81f222a288122b6822643369d81b675404312550530ec13c7534e5fd"
+      }
+    },
+    {
+      "type": "trial_completed",
+      "facts": {
+        "reason": "requested proposal delivered without model write"
+      }
+    },
+    {
+      "type": "package_hash_verified",
+      "facts": {
+        "package_hash": "12f1b9cb81f222a288122b6822643369d81b675404312550530ec13c7534e5fd"
+      }
+    }
+  ],
+  "outcome": {
+    "trial_state": "complete",
+    "semantic_package": {
+      "admission_outcome": "изменить тип",
+      "candidate": "Квалифицированный лид как предполагаемый отдельный объект",
+      "canonical_name": "Лид",
+      "definition": "Лид — объект работы, возникающий из отдельного входящего коммерческого обращения или получения отдельной поставленной возможности. Экземпляры различаются стабильным lead_id, связанным с конкретным событием поступления и источником; окончательный отказ закрывает экземпляр, а новое независимое обращение создаёт новый.",
+      "editor": {
+        "assignment_ids": [],
+        "display_name": "Иван Петров",
+        "performer_id": null,
+        "position": "Технолог"
+      },
+      "exclusions": {
+        "term": "Лид-кандидат",
+        "value": "устаревшее техническое имя очереди непроверенных поступлений; не самостоятельный объект, состояние или синоним для сохранения"
+      },
+      "impact_map": {
+        "known_affected_stable_ids": [],
+        "note": "Срез модели и стабильные ID каталога не доступны в fixture."
+      },
+      "inclusions": "отдельное входящее коммерческое обращение или отдельная поставленная возможность",
+      "instance_identity_rule": "stable lead_id linked to one arrival event and source",
+      "lifecycle": {
+        "closure": "окончательный отказ",
+        "creation": "отдельное входящее коммерческое обращение или получение отдельной поставленной возможности",
+        "qualified_transition": "успешная квалификация; после неё лид передаётся в продажи и допустимы другие действия"
+      },
+      "model": {
+        "current_version_id": "v1",
+        "model_id": "biz-eval",
+        "working_version_id": "v2-draft"
+      },
+      "recommended_model_operation": "Не создавать элемент для Лид-кандидат; представить Лид как объект работы, а квалифицирован как состояние Лида.",
+      "representations": "CRM-карточка и её поля — данные и интерфейс исполнения, не доказательство отдельного объекта.",
+      "sources": [
+        {
+          "authority": "current named owner note",
+          "status": "ambiguous before interview"
+        },
+        {
+          "authority": "user interview replies",
+          "status": "observed local answers"
+        }
+      ],
+      "state_definition": "Квалифицированный лид — Лид в состоянии квалифицирован, наступающем после успешной квалификации; это не самостоятельный объект.",
+      "status_of_knowledge": "candidate",
+      "synonyms": []
+    },
+    "checkpoint": {
+      "state": "checkpoint",
+      "mode": "proposal",
+      "model_id": "biz-eval",
+      "working_version_id": "v2-draft",
+      "current_version_id": "v1",
+      "active_question_id": null,
+      "accepted_local_answers": [
+        {
+          "question_id": "identity_after_qualification",
+          "answer": "The same instance and history are preserved; no separate ID is created; successful qualification changes permitted actions; rejection preserves the same lead with a different qualification result."
+        },
+        {
+          "question_id": "lead_creation_event",
+          "answer": "A lead is created by a separate incoming commercial inquiry or separately supplied opportunity, distinguished by lead_id tied to its arrival event and source; final rejection closes it, while a new independent inquiry creates a new lead."
+        },
+        {
+          "question_id": "legacy_term_referent",
+          "answer": "Лид-кандидат is a legacy technical queue name for unverified arrivals, with no independent creation, use, ID, owner, or lifecycle, and is to be retired rather than modeled as an object."
+        },
+        {
+          "question_id": "confirmation_editor_identity",
+          "answer": "Иван Петров, Технолог этой модели."
+        }
+      ],
+      "package_id": "semantic-resolution-biz-eval-lead-lifecycle-v2-draft-01",
+      "package_hash": "12f1b9cb81f222a288122b6822643369d81b675404312550530ec13c7534e5fd",
+      "write_state": "not_started"
+    },
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "fixture_context_recorded": true,
+      "identity_was_unresolved_before_simulator_reply": true,
+      "identity_resolved_from_simulator_reply": true,
+      "lead_lifecycle_rule_resolved_from_simulator_reply": true,
+      "legacy_term_referent_resolved_from_simulator_reply": true,
+      "editor_identity_recorded_from_simulator_reply": true,
+      "package_hash_computed_from_deterministic_serialization": true,
+      "package_hash_matches_serialized_semantic_package": true,
+      "confirmation_not_requested": true,
+      "no_model_write_or_external_access_performed": true
+    }
+  }
+}

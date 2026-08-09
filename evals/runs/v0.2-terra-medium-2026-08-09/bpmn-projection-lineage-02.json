@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "trial_id": "bpmn-projection-lineage-02",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "verbatim_transcript": "Построй BPMN и SVG процесса из переданного точного среза: human task, автоматизация, exclusive branch, возврат и timer. Проверь трассировку. Никуда не деплой.",
+  "events": [
+    {
+      "type": "snapshot_resolved",
+      "result": "fixture JSON read as exact local snapshot",
+      "snapshot_path": "evals/fixtures/bpmn/complex-flow.json",
+      "snapshot_sha256": "ae2d33a403f5a812a0737cb8061c3b9e77020e541217e600c81e6db15337e8e3",
+      "process_id": "proc-qualify-lead",
+      "version_id": "v2",
+      "model_fingerprint": "2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715"
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "result": "passed",
+      "observed_elements": ["user-task", "service-task", "send-task", "call-activity", "exclusive", "parallel", "start", "end", "boundary-timer", "return-flow"],
+      "unsupported_elements": []
+    },
+    {
+      "type": "projection_build_started",
+      "result": "started",
+      "command": "python3 skills/model-production-system/scripts/bpmn/generate.py evals/fixtures/bpmn/complex-flow.json --output-dir evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02 --expected-version-id v2 --built-at 2026-08-10T00:00:00+00:00"
+    },
+    {
+      "type": "bpmn_generated",
+      "result": "passed",
+      "path": "evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.bpmn",
+      "sha256": "587c21ea1c63f17e1fe435c62b871aabd2face1469595552ed4713bad21670f7"
+    },
+    {
+      "type": "svg_generated",
+      "result": "passed",
+      "path": "evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.svg",
+      "sha256": "22c251133282ee0a4cb53a1aea98557d696797577c9a06fc2646eb053475620f"
+    },
+    {
+      "type": "projection_validated",
+      "result": "passed",
+      "command": "python3 skills/model-production-system/scripts/bpmn/validate.py evals/fixtures/bpmn/complex-flow.json --bpmn evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.bpmn --svg evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.svg --manifest evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.manifest.json --expected-version-id v2",
+      "verdict": {"status": "PASS", "process_id": "proc-qualify-lead", "version_id": "v2"}
+    },
+    {
+      "type": "lineage_verified",
+      "result": "passed",
+      "projection_build_id": "build::proc-qualify-lead::v2::2ed23378aed8",
+      "model_fingerprint": "2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715",
+      "manifest_path": "evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.manifest.json",
+      "manifest_sha256": "a855895248c420028bd447f1aba1137ecdfbd2d23943a39ee71de8e203fb0795",
+      "included_stable_ids_count": 31,
+      "source_row_keys_count": 6
+    }
+  ],
+  "outcome": {
+    "status": "passed",
+    "model_writes": [],
+    "external_mutations": [],
+    "validations": {
+      "ir_allowlist_passed": true,
+      "generation_completed": true,
+      "bpmn_xml_and_di_valid": true,
+      "svg_valid": true,
+      "hashes_match_manifest": true,
+      "fingerprint_matches_ir_bpmn_svg_manifest": true,
+      "stable_id_trace_complete": true,
+      "expected_version_matches": true
+    },
+    "artifacts": {
+      "output_directory": "evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02",
+      "bpmn": {"path": "evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.bpmn", "sha256": "587c21ea1c63f17e1fe435c62b871aabd2face1469595552ed4713bad21670f7"},
+      "svg": {"path": "evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.svg", "sha256": "22c251133282ee0a4cb53a1aea98557d696797577c9a06fc2646eb053475620f"},
+      "manifest": {"path": "evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-02/proc-qualify-lead--v2.manifest.json", "sha256": "a855895248c420028bd447f1aba1137ecdfbd2d23943a39ee71de8e203fb0795"}
+    },
+    "readiness": {
+      "view": "готова к просмотру",
+      "deployment": "blocked",
+      "deployment_blockers": ["MODELER_VALIDATION_MISSING: no evidence of opening or linting this BPMN hash in Camunda Desktop Modeler"]
+    }
+  },
+  "questions": [],
+  "trial_state": "complete"
+}

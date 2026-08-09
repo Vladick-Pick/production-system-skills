@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "trial_id": "bpmn-projection-lineage-03",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "verbatim_transcript": {
+    "user_turn": "Построй BPMN и SVG процесса из переданного точного среза: human task, автоматизация, exclusive branch, возврат и timer. Проверь трассировку. Никуда не деплой."
+  },
+  "questions": [],
+  "events": [
+    {
+      "type": "snapshot_resolved",
+      "snapshot_path": "${REPO_ROOT}/evals/fixtures/bpmn/complex-flow.json",
+      "snapshot_sha256": "ae2d33a403f5a812a0737cb8061c3b9e77020e541217e600c81e6db15337e8e3",
+      "process_id": "proc-qualify-lead",
+      "version_id": "v2",
+      "model_fingerprint": "2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715"
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "command": "python3 - (imports bundled scripts/bpmn/common.py; validate_ir fixture with expected version v2)",
+      "passed": true,
+      "view_blocking_issues": [],
+      "deployment_blocking_issue_codes": ["MODELER_VALIDATION_MISSING"]
+    },
+    {
+      "type": "projection_build_started",
+      "command": "python3 skills/model-production-system/scripts/bpmn/generate.py evals/fixtures/bpmn/complex-flow.json --output-dir evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03 --expected-version-id v2 --built-at 2026-08-10T00:00:00+00:00",
+      "exit_code": 0,
+      "projection_build_id": "build::proc-qualify-lead::v2::2ed23378aed8"
+    },
+    {
+      "type": "bpmn_generated",
+      "path": "${REPO_ROOT}/evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.bpmn",
+      "sha256": "587c21ea1c63f17e1fe435c62b871aabd2face1469595552ed4713bad21670f7",
+      "model_fingerprint": "2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715"
+    },
+    {
+      "type": "svg_generated",
+      "path": "${REPO_ROOT}/evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.svg",
+      "sha256": "22c251133282ee0a4cb53a1aea98557d696797577c9a06fc2646eb053475620f",
+      "model_fingerprint": "2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715"
+    },
+    {
+      "type": "projection_validated",
+      "command": "python3 skills/model-production-system/scripts/bpmn/validate.py evals/fixtures/bpmn/complex-flow.json --bpmn evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.bpmn --svg evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.svg --manifest evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.manifest.json --expected-version-id v2",
+      "exit_code": 0,
+      "verdict": "PASS"
+    },
+    {
+      "type": "lineage_verified",
+      "passed": true,
+      "projection_build_id": "build::proc-qualify-lead::v2::2ed23378aed8",
+      "shared_model_fingerprint": "2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715",
+      "manifest_sha256": "a855895248c420028bd447f1aba1137ecdfbd2d23943a39ee71de8e203fb0795"
+    }
+  ],
+  "outcome": {
+    "model_writes": [],
+    "external_mutations": [],
+    "validations": {
+      "snapshot_hash_verified": true,
+      "bpmn_allowlist_checked": true,
+      "generator_exit_zero": true,
+      "bpmn_generated": true,
+      "svg_generated": true,
+      "bundled_validator_passed": true,
+      "fingerprint_lineage_verified": true,
+      "artifact_hashes_match_manifest": true,
+      "view_ready": true,
+      "deployment_ready": false
+    },
+    "artifacts": {
+      "output_directory": "${REPO_ROOT}/evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03",
+      "bpmn": {
+        "path": "${REPO_ROOT}/evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.bpmn",
+        "sha256": "587c21ea1c63f17e1fe435c62b871aabd2face1469595552ed4713bad21670f7"
+      },
+      "svg": {
+        "path": "${REPO_ROOT}/evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.svg",
+        "sha256": "22c251133282ee0a4cb53a1aea98557d696797577c9a06fc2646eb053475620f"
+      },
+      "manifest": {
+        "path": "${REPO_ROOT}/evals/runs/v0.2-terra-medium-2026-08-09/artifacts/bpmn-03/proc-qualify-lead--v2.manifest.json",
+        "sha256": "a855895248c420028bd447f1aba1137ecdfbd2d23943a39ee71de8e203fb0795"
+      }
+    },
+    "readiness": {
+      "view": "готова к просмотру",
+      "deployment": "не готова",
+      "blockers": [
+        {
+          "code": "MODELER_VALIDATION_MISSING",
+          "detail": "No evidence of opening/linting the exact BPMN hash in Camunda Desktop Modeler was supplied by the fixture."
+        }
+      ]
+    },
+    "lineage": {
+      "snapshot_sha256": "ae2d33a403f5a812a0737cb8061c3b9e77020e541217e600c81e6db15337e8e3",
+      "model_fingerprint": "2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715",
+      "projection_build_id": "build::proc-qualify-lead::v2::2ed23378aed8"
+    }
+  },
+  "trial_state": "complete"
+}

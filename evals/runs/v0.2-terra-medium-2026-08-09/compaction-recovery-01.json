@@ -1,0 +1,73 @@
+{
+  "schema": 1,
+  "trial_id": "compaction-recovery-01",
+  "case_id": "compaction-recovery",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": {
+    "user": "Контекст сжался. Продолжи интервью строго из checkpoint и ничего не записывай.",
+    "assistant": {
+      "message": "Восстановил checkpoint и сверил неизменность источников и книги; записей не делал. Продолжаем с единственного открытого вопроса: по каким критериям получатель принимает результат процесса?",
+      "questions": [
+        {
+          "active_question_id": "q-acceptance",
+          "text": "По каким критериям получатель принимает результат процесса?"
+        }
+      ]
+    }
+  },
+  "events": [
+    {
+      "type": "checkpoint_loaded",
+      "session_id": "sess-comp-01",
+      "state": "resolve",
+      "mode": "proposal",
+      "model_id": "biz-eval",
+      "spreadsheet_id": "sheet-fixture-01",
+      "working_version_id": "v2-draft",
+      "current_version_id": "v1",
+      "editor": {
+        "display_name": "Ivan Petrov",
+        "performer_id": "perf-ivan",
+        "assignment_id": "assign-tech"
+      },
+      "accepted_local_answers": {
+        "product": "Повторно активированный лид",
+        "trigger": "7 дней без контакта"
+      },
+      "write_state": "not_started"
+    },
+    {
+      "type": "source_revisions_verified",
+      "observed": {
+        "owner-note": "rev-7",
+        "process-note": "rev-3"
+      }
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "observed": "fp-sheet-abc"
+    },
+    {
+      "type": "active_question_restored",
+      "active_question_id": "q-acceptance",
+      "text": "По каким критериям получатель принимает результат процесса?"
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "checkpoint_loaded": true,
+      "source_revisions_verified": true,
+      "sheet_fingerprint_verified": true,
+      "active_question_restored": true,
+      "transaction_absent": true,
+      "no_write_performed": true,
+      "single_active_question": true,
+      "accepted_questions_not_repeated": true
+    }
+  },
+  "trial_state": "complete"
+}

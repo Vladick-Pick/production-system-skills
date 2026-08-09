@@ -1,6 +1,6 @@
 # План v2: язык, поведение агентов, шаблон и проекции
 
-Статус: релиз v0.2 реализован локально и опубликован на каноническом Google Sheet; fresh-agent 3/3 и миграция рабочих моделей остаются отдельными воротами
+Статус: релиз v0.2 реализован локально и опубликован на каноническом Google Sheet; fresh-agent release gate выполнен и завершился FAIL из-за ненадёжного trace-контракта; миграция рабочих моделей не начиналась
 Создан: 2026-08-06
 Последняя ревизия плана: 2026-08-09
 Владелец решения: владелец репозитория
@@ -19,9 +19,9 @@
 | WP-5 staging/XLSX | выполнен | backup v0.1, приватная staging v0.2, публикация на прежний ID и экспортированный XLSX v0.2 |
 | WP-6 четыре скилла | выполнен | routing, один результат, pre/postconditions, human confirmation, recovery и self-contained runtime; quick_validate 4/4 |
 | WP-7 BPMN/SVG | выполнен локально | generator, validator, SVG, hashes, lineage, dead-end/path-traversal fixtures; внешний Desktop Modeler остаётся deployment gate |
-| WP-8 validators/evals | grader выполнен, live gate открыт | transcript/outcome grader и positive/negative fixtures проходят; fresh-agent trials 3/3 не запускались и PASS поведения не заявлен |
+| WP-8 validators/evals | live gate выполнен, FAIL | 30/30 fresh-agent trials на `gpt-5.6-terra` medium завершены; 0/30 прошли строгий trace-контракт, critical violations 0; отчёт `evals/results/v0.2-terra-medium-2026-08-10.md` |
 | WP-9 пилот | ожидает G-3 и upstream PASS | нет разрешённого spreadsheet ID тестовой рабочей модели и владельца миграции |
-| WP-10 выпуск | выполнен для шаблона | v0.2 опубликован и доступ снижен до reader; релиз поведения агента остаётся условным до fresh-agent 3/3 |
+| WP-10 выпуск | выполнен только для шаблона | v0.2 опубликован и доступ снижен до reader; релиз скиллов заблокирован до исправления trace capture и повторного fresh-agent 3/3 |
 
 Исполнимая декомпозиция: [production-system-skills-v2/IMPLEMENTATION.md](production-system-skills-v2/IMPLEMENTATION.md). Этот файл хранит принятые решения; приложение владеет пакетами исполнения, зависимостями, точными артефактами и воротами. Отдельного параллельного статуса в приложении нет.
 
@@ -106,7 +106,9 @@
 
 ### F-5. Статические проверки не доказывают поведение агента
 
-`validate_repository.py` и artifact fixtures остаются структурными воротами. Дополнительно реализован `run_behavioral_evals.py`, который оценивает transcript, event stream и outcome и ловит преждевременную запись; recorded fixtures проверяют grader, но не доказывают надёжность агента. Для этого по-прежнему нужны три независимых `fresh_agent` trial каждого blocking case.
+`validate_repository.py` и artifact fixtures остаются структурными воротами. Дополнительно реализован `run_behavioral_evals.py`, который оценивает transcript, event stream и outcome и ловит преждевременную запись; recorded fixtures проверяют grader, но не доказывают надёжность агента.
+
+Первый полный release run выполнен на `gpt-5.6-terra` medium: 30 независимых trials, по три на каждый из десяти blocking cases. Строгий gate получил 0/30 PASS при 0 critical violations и 0 внешних мутаций. Главный выявленный дефект находится на границе исполнения eval: агент сам сериализует trace и выдаёт семантически близкие, но физически несовместимые формы событий, transcript и outcome. Сырые trials не нормализуются задним числом. Следующий прогон допустим только после того, как controller/runner станет владельцем канонического trace capture; отдельного решения также требует порядок `transfer_interface_resolved → consumer_actions_linked`.
 
 ### F-6. Baseline v0.1 моделирует внешние стороны как производственные системы
 
@@ -875,6 +877,8 @@ notes
 - green-but-wrong модель.
 
 **Критерий:** PASS только при правильном решении, соблюдении границ, корректном артефакте, видимых неизвестных и отсутствии запрещённой записи.
+
+**Результат первого live gate:** FAIL. Выполнено 30/30 trials на `gpt-5.6-terra` medium; строгий grader принял 0/30, critical violations и external mutations не обнаружены. До повторного запуска trace должен формироваться controller/runner, а не тестируемым агентом. Сырые результаты: `evals/runs/v0.2-terra-medium-2026-08-09/`; отчёт: `evals/results/v0.2-terra-medium-2026-08-10.md`.
 
 ## 9. Исходный порядок реализации — заменён приложением
 

@@ -1,0 +1,229 @@
+{
+  "schema": 1,
+  "trial_id": "version-inheritance-exclude-03",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "message": "В рабочей v2 измени определение лида, исключи старый процесс обработки и оставь остальные элементы без изменений. Ничего из v1 целиком не копируй. После полного пакета я подтвержу запись в тестовый fixture."
+    },
+    {
+      "role": "assistant",
+      "message": "Resolved v1 and proposed v2 snapshots prove sparse inheritance and exclusion. The complete package is ready. Подтверждаете запись показанного пакета pkg-version-inheritance-exclude-03-v2 с hash 02e8b24cce76?"
+    },
+    {
+      "role": "user",
+      "message": "Я, Иван Петров, технолог модели, подтверждаю запись показанного пакета pkg-version-inheritance-exclude-03-v2 с полным hash 02e8b24cce76ccf1e477b0a2478fb903960ee4547bb6d08bc0fcc71c70240eb5 в локальный тестовый fixture."
+    }
+  ],
+  "events": [
+    {
+      "event": "predecessor_resolved",
+      "version_id": "v2",
+      "predecessor_version_id": "v1",
+      "evidence": "resolver input contains a finite chain v2 -> v1 -> null"
+    },
+    {
+      "event": "snapshot_v1",
+      "version_id": "v1",
+      "status": "PASS",
+      "stable_ids": ["act-keep", "obj-lead", "proc-keep", "proc-old"],
+      "snapshot_fingerprint": "eb1eb2e9e22390a722c1e53d92dee842e190c4fe14bcc04ec5d764c23974ecf5",
+      "command": "python3 skills/maintain-production-system/scripts/versioning/resolve.py /tmp/version-inheritance-exclude-03/v1-input.json --output /tmp/version-inheritance-exclude-03/v1-output.json"
+    },
+    {
+      "event": "sparse_apply",
+      "version_id": "v2",
+      "entity_type": "object",
+      "stable_id": "obj-lead",
+      "before": "Лид — любой контакт",
+      "after": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id"
+    },
+    {
+      "event": "sparse_exclude",
+      "version_id": "v2",
+      "entity_type": "process",
+      "stable_id": "proc-old",
+      "before": "Старая обработка лида",
+      "active_instances": 0
+    },
+    {
+      "event": "snapshot_v2",
+      "version_id": "v2",
+      "status": "PASS",
+      "stable_ids": ["act-keep", "obj-lead", "proc-keep"],
+      "source_versions": {"act-keep": "v1", "obj-lead": "v2", "proc-keep": "v1"},
+      "excluded_stable_ids": ["proc-old"],
+      "snapshot_fingerprint": "e0f6a4663fe0908bd461201ff1a7edecc0632c6667d632a1e41ffde27e3800ee",
+      "command": "python3 skills/maintain-production-system/scripts/versioning/resolve.py /tmp/version-inheritance-exclude-03/v2-input.json --output /tmp/version-inheritance-exclude-03/v2-output.json"
+    },
+    {
+      "event": "inheritance_proved",
+      "unchanged_inherited_stable_ids": ["act-keep", "proc-keep"],
+      "not_copied_from_v1": ["act-keep", "proc-keep"],
+      "v1_snapshot_unchanged": true,
+      "v2_snapshot_omits_proc_old": true
+    },
+    {
+      "event": "draft_package",
+      "package_id": "pkg-version-inheritance-exclude-03-v2",
+      "package_hash": "02e8b24cce76ccf1e477b0a2478fb903960ee4547bb6d08bc0fcc71c70240eb5",
+      "canonicalization": "UTF-8 JSON, sorted keys, compact separators",
+      "model_id": "biz-eval",
+      "base_version_id": "v1",
+      "target_version_id": "v2",
+      "editor": {
+        "performer_id": "perf-ivan",
+        "display_name": "Ivan Petrov",
+        "assignment_id": "assign-tech",
+        "position": "human technologist"
+      },
+      "change_class": "structural target change",
+      "operations": [
+        {
+          "sheet": "Объекты",
+          "stable_id": "obj-lead",
+          "version_operation": "применить",
+          "before": {"definition": "Лид — любой контакт"},
+          "after": {"definition": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id"}
+        },
+        {
+          "sheet": "Процессы",
+          "stable_id": "proc-old",
+          "version_operation": "исключить",
+          "before": {"process_name": "Старая обработка лида"},
+          "after": null
+        }
+      ],
+      "planned_transaction_rows_after_confirmation": {
+        "Решения": 1,
+        "Изменения модели": 2,
+        "Объекты": 1,
+        "Процессы": 1,
+        "Срез модели": "materialized v2 snapshot"
+      },
+      "impact": {
+        "direct": ["obj-lead", "proc-old"],
+        "inherited_unchanged": ["act-keep", "proc-keep"],
+        "active_instances_of_excluded_process": 0,
+        "migration": "No active proc-old instances; no instance migration is required.",
+        "projection": "No projection rebuild before confirmed write; any later affected projection must be rebuilt from the exact v2 snapshot."
+      },
+      "semantic_resolution": {
+        "stable_id": "obj-lead",
+        "outcome": "accept",
+        "type": "work object",
+        "identity_rule": "Each lead is a separately registered commercial opportunity with its own lead_id.",
+        "inclusion": "Registered commercial opportunities that have a lead_id.",
+        "exclusion": "A mere contact without a registered commercial opportunity and lead_id.",
+        "counterexample": "A contact record with no independent commercial opportunity is not a lead."
+      },
+      "preconditions": [
+        "biz-eval remains the target model.",
+        "v2 remains the sole draft and its predecessor remains v1.",
+        "v1 remains active and its four source rows are unchanged.",
+        "Ivan Petrov / perf-ivan / assign-tech remains the identified human technologist.",
+        "No completed transaction exists for this package hash.",
+        "The exact package hash is confirmed by Ivan Petrov."
+      ],
+      "recovery": "If the local fixture transaction becomes unknown or partial, read back its single transaction_id before any retry; do not write a new transaction."
+    },
+    {
+      "event": "exact_package_confirmation",
+      "status": "confirmed",
+      "package_id": "pkg-version-inheritance-exclude-03-v2",
+      "package_hash": "02e8b24cce76ccf1e477b0a2478fb903960ee4547bb6d08bc0fcc71c70240eb5",
+      "confirmation_id": "confirm-version-inheritance-exclude-03-ivan",
+      "confirmed_by": {
+        "performer_id": "perf-ivan",
+        "display_name": "Ivan Petrov",
+        "assignment_id": "assign-tech",
+        "position": "human technologist"
+      },
+      "confirmed": true
+    },
+    {
+      "event": "model_write",
+      "transaction_id": "txn-version-inheritance-exclude-03-v2-01",
+      "scope": "one local test-fixture transaction",
+      "decision_rows": 1,
+      "change_rows": 2,
+      "model_rows": 2,
+      "authoring_operations": [
+        {"stable_id": "obj-lead", "version_operation": "применить"},
+        {"stable_id": "proc-old", "version_operation": "исключить"}
+      ],
+      "fixture_path": "/tmp/version-inheritance-exclude-03/fixture-transaction.json"
+    },
+    {
+      "event": "readback",
+      "transaction_id": "txn-version-inheritance-exclude-03-v2-01",
+      "status": "PASS",
+      "evidence": "READBACK PASS txn-version-inheritance-exclude-03-v2-01 decision_rows=1 change_rows=2 model_rows=2 snapshot_rows=3",
+      "validated": {
+        "package_hash_matches": true,
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2,
+        "v2_snapshot_fingerprint_matches": true
+      }
+    },
+    {
+      "event": "checkpoint",
+      "state": "checkpoint",
+      "mode": "write",
+      "active_question": null,
+      "transaction_id": "txn-version-inheritance-exclude-03-v2-01",
+      "write_state": "verified",
+      "next_action": "Completed; do not repeat the transaction."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-version-inheritance-exclude-03-v2-01",
+        "target": "local test fixture",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2,
+        "status": "verified"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "predecessor_resolved": true,
+      "snapshot_v1_passed": true,
+      "snapshot_v2_passed": true,
+      "obj_lead_overridden_in_v2": true,
+      "proc_old_excluded_in_v2": true,
+      "act_keep_inherited_from_v1": true,
+      "proc_keep_inherited_from_v1": true,
+      "v1_unchanged": true,
+      "whole_v1_not_copied": true,
+      "no_active_proc_old_instances": true,
+      "human_confirmation_matches_package_hash": true,
+      "exactly_one_local_fixture_transaction": true,
+      "positive_decision_rows": true,
+      "positive_change_rows": true,
+      "positive_model_rows": true,
+      "readback_passed": true
+    }
+  },
+  "trial_state": {
+    "state": "checkpoint",
+    "mode": "write",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "current_version_id": "v1",
+    "editor": {"performer_id": "perf-ivan", "display_name": "Ivan Petrov", "assignment_ids": ["assign-tech"]},
+    "package_id": "pkg-version-inheritance-exclude-03-v2",
+    "package_hash": "02e8b24cce76ccf1e477b0a2478fb903960ee4547bb6d08bc0fcc71c70240eb5",
+    "confirmation_id": "confirm-version-inheritance-exclude-03-ivan",
+    "transaction_id": "txn-version-inheritance-exclude-03-v2-01",
+    "write_state": "verified",
+    "active_question": null
+  }
+}

@@ -1,0 +1,286 @@
+{
+  "schema_version": 1,
+  "trial_id": "identity-lead-lifecycle-02",
+  "case_id": "identity-lead-lifecycle",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "turn": 1,
+      "content": "Мы хотим отказаться от термина «лид-кандидат» и вместо него использовать «Лид» и «Квалифицированный лид». Определи, это два объекта или объект и состояние, и подготовь правильное определение для модели. Ничего в модель пока не записывай."
+    },
+    {
+      "role": "assistant",
+      "turn": 1,
+      "content": "Сейчас подтверждены только CRM-карточка лида и устойчивое выражение менеджеров «квалифицированный лид»; карточка и слово сами по себе не доказывают отдельный объект. Рекомендация пока условная: один объект «Лид» и состояние «квалифицирован», если после квалификации сохраняются тот же экземпляр и его история, а меняются допустимые действия. Сильная альтернатива — два объекта с явным преобразованием, если создаётся самостоятельный экземпляр. Ничего в модель не записываю.\n\nПосле квалификации это тот же лид с той же историей и непрерывной жизнью, или создаётся самостоятельный «Квалифицированный лид» со своим созданием, жизненным циклом либо отдельным использованием?",
+      "questions": [
+        {
+          "id": "identity_after_qualification",
+          "text": "После квалификации это тот же лид с той же историей и непрерывной жизнью, или создаётся самостоятельный «Квалифицированный лид» со своим созданием, жизненным циклом либо отдельным использованием?",
+          "purpose": "Resolve the identity test that determines whether qualification is a state transition or transformation into a second object."
+        }
+      ],
+      "active_question_id": "identity_after_qualification"
+    },
+    {
+      "role": "user",
+      "turn": 2,
+      "content": "Сохраняется тот же экземпляр и вся его история; отдельный ID не создаётся. После успешной квалификации лид передают в продажи и для него становятся допустимы другие действия. При отказе он остаётся тем же лидом, но с другим результатом квалификации."
+    },
+    {
+      "role": "assistant",
+      "turn": 2,
+      "content": "Локальное решение: это один объект работы «Лид», а «квалифицированный» — его состояние успешной квалификации, не второй объект. Основания: сохраняются экземпляр и история, отдельный ID не создаётся, а после успеха меняются допустимые действия. При отказе остаётся тот же лид с другим результатом квалификации. CRM-карточка остаётся представлением и данными об объекте; отдельный «лид-кандидат» не нужен, пока для него нет самостоятельной идентичности или использования. Ничего в модель не записываю.\n\nПосле отказа в квалификации можно вернуть тот же лид на повторную квалификацию, или этот исход окончательно завершает его жизненный цикл?",
+      "questions": [
+        {
+          "id": "reopen_after_qualification_refusal",
+          "text": "После отказа в квалификации можно вернуть тот же лид на повторную квалификацию, или этот исход окончательно завершает его жизненный цикл?",
+          "purpose": "Resolve whether refusal is terminal or a reversible state, which is required for the lead lifecycle definition."
+        }
+      ],
+      "active_question_id": "reopen_after_qualification_refusal"
+    },
+    {
+      "role": "user",
+      "turn": 3,
+      "content": "Если по отказанному лиду появились исправленные данные до окончательного закрытия, квалификацию можно открыть повторно: сохраняются тот же lead_id и вся история. После окончательного закрытия новое независимое обращение создаёт новый лид."
+    },
+    {
+      "role": "assistant",
+      "turn": 3,
+      "content": "Уточнён жизненный цикл: отказ — обратимое состояние до окончательного закрытия; при повторном открытии сохраняются тот же lead_id и история. После окончательного закрытия новое независимое обращение создаёт новый экземпляр «Лида». Это дополнительно подтверждает один объект «Лид» с состояниями, а не два объекта.\n\nЧерновая формулировка: «Лид» — объект работы по отдельному обращению, сохраняющий идентичность от создания до окончательного закрытия; «квалифицированный» — состояние лида после успешной квалификации, в котором он передаётся в продажи и для него допустимы следующие действия продаж. «Лид-кандидат» не нужен как отдельный элемент.\n\nКакое наблюдаемое решение или подтверждённый результат переводит лид именно в состояние «квалифицированный» — решение менеджера по зафиксированным критериям, автоматическое правило или иной факт?",
+      "questions": [
+        {
+          "id": "qualification_transition_evidence",
+          "text": "Какое наблюдаемое решение или подтверждённый результат переводит лид именно в состояние «квалифицированный» — решение менеджера по зафиксированным критериям, автоматическое правило или иной факт?",
+          "purpose": "Resolve the authority and observable evidence for the transition into the qualified state."
+        }
+      ],
+      "active_question_id": "qualification_transition_evidence"
+    },
+    {
+      "role": "user",
+      "turn": 4,
+      "content": "Лид переходит в состояние «квалифицирован» после завершения проверки обязательных данных и явного решения, что он соответствует критериям качества и принят для передачи в продажи. Свидетельство — запись решения квалификатора с результатом проверки. Если критерии не выполнены, фиксируется отказ и лид закрывается либо возвращается на исправление данных."
+    },
+    {
+      "role": "assistant",
+      "turn": 4,
+      "content": "Собран semantic-resolution package `semres-biz-eval-lead-lifecycle-v2-draft-001` с hash `ff6c6812c281e445ac511bb57d9b4b4f4a32a817366e0d236a7a3d82940b9c39`.\n\n- Исход допуска: `принять`.\n- Канонический объект: «Лид», тип — объект работы. Определение: отдельное обращение, сохраняющее идентичность и историю от создания до окончательного закрытия.\n- Каноническое состояние: «квалифицирован». Синоним в речи исполнителей: «Квалифицированный лид». Это устойчивое состояние лида после проверки обязательных данных и явного решения квалификатора, что лид соответствует критериям качества и принят для передачи в продажи.\n- Включение: один экземпляр обращения с непрерывной историей; после успешной квалификации меняются допустимые действия. Исключение: CRM-карточка и её поля — представление и данные, не сам объект; «лид-кандидат» не является отдельным элементом без самостоятельной идентичности и использования. Контрпример второго объекта: самостоятельное создание, ID, жизненный цикл или независимое использование «Квалифицированного лида» — таких свидетельств нет.\n- Идентичность и жизненный цикл: повторное открытие отказанного лида до окончательного закрытия сохраняет lead_id и историю; новое независимое обращение после окончательного закрытия создаёт новый лид. Неуспешная проверка фиксирует отказ, после которого лид закрывается либо возвращается на исправление данных.\n- Переход: в «квалифицирован» переводит завершённая проверка обязательных данных и явное решение квалификатора; свидетельство — запись решения с результатом проверки.\n- Операционное использование: квалифицированный лид передаётся в продажи, где для него допустимы другие действия.\n- Представления: CRM-карточка, lead_id и запись решения квалификатора.\n- Stable ID: в доступном срезе не предоставлен; в следующем mutation package его нужно сверить с моделью и либо сохранить существующий ID «Лида» при сохранённой идентичности, либо назначить новый по правилу шаблона.\n- Источники: текущая, но ранее неоднозначная заметка владельца; четыре локальных ответа пользователя. Статус знания определения — кандидат до подтверждения человеком. Открытый конфликт: не обнаружен в доступных источниках.\n- Рекомендуемая операция модели: передать подтверждённый пакет в `maintain-production-system`; существующую модель этим скиллом не менять.\n\nКто из идентифицированных людей, работающих с моделью `biz-eval`, может подтвердить именно этот пакет и hash `ff6c6812c281`?",
+      "questions": [
+        {
+          "id": "package_confirmation_identity",
+          "text": "Кто из идентифицированных людей, работающих с моделью `biz-eval`, может подтвердить именно этот пакет и hash `ff6c6812c281`?",
+          "purpose": "Identify the human who may confirm the displayed immutable semantic-resolution package; this is not a request to write the model."
+        }
+      ],
+      "active_question_id": "package_confirmation_identity"
+    },
+    {
+      "role": "user",
+      "turn": 5,
+      "content": "Меня зовут Иван Петров, я технолог этой модели."
+    },
+    {
+      "role": "assistant",
+      "turn": 5,
+      "content": "Иван Петров указан как технолог и подтверждающий человек. Поскольку атрибуция подтверждающего — поле пакета, прежний hash недействителен; собран обновлённый пакет `semres-biz-eval-lead-lifecycle-v2-draft-002` с hash `83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23`. Его смысловое содержание неизменно: «Лид» — объект работы по отдельному обращению до окончательного закрытия; «квалифицирован» — состояние после проверки обязательных данных и явного решения квалификатора о соответствии критериям качества и передаче в продажи; «Квалифицированный лид» — синоним состояния; «лид-кандидат» не получает отдельный элемент. Повторное открытие до окончательного закрытия сохраняет lead_id и историю, а новое независимое обращение после него создаёт новый лид. Отказ ведёт к закрытию или возврату на исправление данных; свидетельство перехода — запись решения квалификатора с результатом проверки. CRM-карточка, lead_id и запись решения — представления и данные, не самостоятельные объекты. Stable ID нужно сверить с моделью в следующем mutation package; рекомендуемый handoff — `maintain-production-system`.\n\nИван Петров, подтверждаете именно пакет `semres-biz-eval-lead-lifecycle-v2-draft-002` с hash `83828bf6efe3` для передачи дальше без записи в модель в этой сессии?",
+      "questions": [
+        {
+          "id": "package_confirmation",
+          "text": "Иван Петров, подтверждаете именно пакет `semres-biz-eval-lead-lifecycle-v2-draft-002` с hash `83828bf6efe3` для передачи дальше без записи в модель в этой сессии?",
+          "purpose": "Obtain explicit confirmation of the displayed immutable package from the identified human while retaining proposal mode and making no model write."
+        }
+      ],
+      "active_question_id": "package_confirmation"
+    },
+    {
+      "role": "user",
+      "turn": 6,
+      "content": "Я, Иван Петров, подтверждаю именно пакет semres-biz-eval-lead-lifecycle-v2-draft-002 с полным hash 83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23 для передачи дальше. Запись в модель в этой сессии не разрешаю."
+    },
+    {
+      "role": "assistant",
+      "turn": 6,
+      "content": "Пакет `semres-biz-eval-lead-lifecycle-v2-draft-002` с hash `83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23` подтверждён Иваном Петровым для передачи дальше.\n\nЗапись в модель не выполнялась и не будет выполняться в этой сессии. Передача в `maintain-production-system` должна сохранить подтверждённый semantic-resolution package, затем отдельно сверить stable ID и собрать собственный mutation package; подтверждение семантики не разрешает запись без нового разрешения на неё.",
+      "questions": []
+    }
+  ],
+  "events": [
+    {
+      "type": "session_oriented",
+      "state": "orient",
+      "mode": "proposal",
+      "model_id": "biz-eval",
+      "working_version_id": "v2-draft",
+      "current_version_id": "v1"
+    },
+    {
+      "type": "source_authority_assessed",
+      "source": "current_named_owner_note",
+      "observed": "В CRM есть карточка лида; после квалификации менеджеры говорят «квалифицированный лид».",
+      "result": "current but ambiguous; no stable definition accepted"
+    },
+    {
+      "type": "four_planes_separated",
+      "observed": "CRM card is treated as a representation, not proof of an object; manager terminology is treated as language evidence, not a type decision."
+    },
+    {
+      "type": "identity_test_applied",
+      "result": "same continuing instance and history implies one object with a new state; independent creation, lifecycle, or use implies two objects and transformation"
+    },
+    {
+      "type": "decisive_question_asked",
+      "question_id": "identity_after_qualification",
+      "state": "resolve"
+    },
+    {
+      "type": "checkpoint_saved",
+      "state": "resolve",
+      "active_question_id": "identity_after_qualification",
+      "next_action": "Await one user answer, then reassess the identity and lifecycle evidence."
+    },
+    {
+      "type": "identity_answer_observed",
+      "question_id": "identity_after_qualification",
+      "observed": "The same instance and full history continue; no separate ID is created; successful qualification changes permitted actions and transfers the lead to sales; refusal leaves the same lead with a different qualification result."
+    },
+    {
+      "type": "identity_resolution_derived",
+      "result": "One object, Lead; qualified is a successful-qualification state rather than a second object."
+    },
+    {
+      "type": "decisive_question_asked",
+      "question_id": "reopen_after_qualification_refusal",
+      "state": "resolve"
+    },
+    {
+      "type": "checkpoint_saved",
+      "state": "resolve",
+      "active_question_id": "reopen_after_qualification_refusal",
+      "next_action": "Await one user answer about whether a refused lead can be reopened for qualification."
+    },
+    {
+      "type": "reopen_answer_observed",
+      "question_id": "reopen_after_qualification_refusal",
+      "observed": "A refused lead can be reopened before final closure when corrected data appears, retaining the same lead_id and history; a new independent appeal after final closure creates a new lead."
+    },
+    {
+      "type": "lifecycle_rule_derived",
+      "result": "Refusal is reversible before final closure; final closure ends the lead lifecycle and a later independent appeal is a new instance."
+    },
+    {
+      "type": "definition_draft_presented",
+      "result": "A provisional definition was presented without a package hash or request for model confirmation."
+    },
+    {
+      "type": "decisive_question_asked",
+      "question_id": "qualification_transition_evidence",
+      "state": "resolve"
+    },
+    {
+      "type": "checkpoint_saved",
+      "state": "resolve",
+      "active_question_id": "qualification_transition_evidence",
+      "next_action": "Await one user answer identifying the authority and evidence for the qualification transition."
+    },
+    {
+      "type": "transition_evidence_observed",
+      "question_id": "qualification_transition_evidence",
+      "observed": "Qualification follows completion of mandatory-data checks and an explicit decision that quality criteria are met and transfer to sales is accepted; evidence is the qualifier's recorded decision and check result. Failed criteria lead to refusal, closure, or return for data correction."
+    },
+    {
+      "type": "semantic_package_drafted",
+      "package_id": "semres-biz-eval-lead-lifecycle-v2-draft-001",
+      "package_hash": "ff6c6812c281e445ac511bb57d9b4b4f4a32a817366e0d236a7a3d82940b9c39",
+      "admission_outcome": "принять"
+    },
+    {
+      "type": "package_confirmation_question_asked",
+      "question_id": "package_confirmation_identity",
+      "state": "resolve"
+    },
+    {
+      "type": "checkpoint_saved",
+      "state": "resolve",
+      "active_question_id": "package_confirmation_identity",
+      "package_id": "semres-biz-eval-lead-lifecycle-v2-draft-001",
+      "package_hash": "ff6c6812c281e445ac511bb57d9b4b4f4a32a817366e0d236a7a3d82940b9c39",
+      "next_action": "Await identification and explicit confirmation from a human working with model biz-eval; no model write is available."
+    },
+    {
+      "type": "confirmer_identity_observed",
+      "question_id": "package_confirmation_identity",
+      "observed": "Иван Петров identified himself as the model's technologist."
+    },
+    {
+      "type": "package_rehashed",
+      "reason": "The confirming human attribution was added to the package.",
+      "previous_package_id": "semres-biz-eval-lead-lifecycle-v2-draft-001",
+      "previous_package_hash": "ff6c6812c281e445ac511bb57d9b4b4f4a32a817366e0d236a7a3d82940b9c39",
+      "package_id": "semres-biz-eval-lead-lifecycle-v2-draft-002",
+      "package_hash": "83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23"
+    },
+    {
+      "type": "package_confirmation_question_asked",
+      "question_id": "package_confirmation",
+      "state": "confirm"
+    },
+    {
+      "type": "checkpoint_saved",
+      "state": "confirm",
+      "active_question_id": "package_confirmation",
+      "package_id": "semres-biz-eval-lead-lifecycle-v2-draft-002",
+      "package_hash": "83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23",
+      "next_action": "Await explicit confirmation of the displayed package; no model write is available."
+    },
+    {
+      "type": "package_confirmation_observed",
+      "question_id": "package_confirmation",
+      "confirmer": "Иван Петров",
+      "package_id": "semres-biz-eval-lead-lifecycle-v2-draft-002",
+      "package_hash": "83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23",
+      "scope": "handoff only"
+    },
+    {
+      "type": "model_write_not_authorized",
+      "observed": "The confirmer explicitly did not authorize a model write in this session."
+    },
+    {
+      "type": "handoff_ready",
+      "target": "maintain-production-system",
+      "constraint": "The downstream skill must independently verify stable IDs and build its own mutation package before any write."
+    },
+    {
+      "type": "checkpoint_saved",
+      "state": "checkpoint",
+      "active_question_id": null,
+      "package_id": "semres-biz-eval-lead-lifecycle-v2-draft-002",
+      "package_hash": "83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23",
+      "next_action": "Handoff is ready; no model write is authorized in this session."
+    }
+  ],
+  "outcome": {
+    "trial_state": "complete",
+    "active_question_id": null,
+    "package_id": "semres-biz-eval-lead-lifecycle-v2-draft-002",
+    "package_hash": "83828bf6efe33216b152c6e851ca86a01922c7e086f5c6723c1482c373b27e23",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "proposal_mode_no_model_write": true,
+      "one_active_question_in_latest_assistant_turn": true,
+      "identity_resolution_based_on_observed_user_answer": true,
+      "crm_card_not_treated_as_object_proof": true,
+      "lifecycle_rule_based_on_observed_user_answer": true,
+      "transition_rule_based_on_observed_user_answer": true,
+      "semantic_package_hash_computed": true,
+      "confirmation_identity_observed": true,
+      "package_rehashed_after_attribution_change": true,
+      "full_hash_matched_confirmed_package": true,
+      "model_write_remained_unauthorized": true
+    }
+  }
+}

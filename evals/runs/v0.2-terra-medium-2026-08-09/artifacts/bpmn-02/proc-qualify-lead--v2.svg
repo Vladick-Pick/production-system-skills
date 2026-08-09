@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2520" height="790" viewBox="0 0 2520 790" data-model-fingerprint="2ed23378aed821fc23c458ff0f4ddeccb5312377ef89e237cc2c601850589715">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#344054"/></marker></defs>
+<style>text{font-family:Arial,sans-serif;fill:#101828}.lane{fill:#f8fafc;stroke:#98a2b3}.lane-head{fill:#eef2f6;stroke:#98a2b3}.task{fill:#fff;stroke:#344054;stroke-width:2}.event{fill:#fff;stroke:#344054;stroke-width:2}.gateway{fill:#fff7d6;stroke:#7f6500;stroke-width:2}.flow{stroke:#344054;stroke-width:2;fill:none;marker-end:url(#arrow)}.label{font-size:13px}.small{font-size:11px;fill:#475467}.node-label{font-size:12px;font-weight:600}</style>
+<rect x="20" y="20" width="2460" height="690" fill="#fff" stroke="#344054" stroke-width="2"/>
+<rect class="lane" x="20" y="20" width="2460" height="230" data-position-id="pos-qualifier"/>
+<rect class="lane-head" x="20" y="20" width="180" height="230"/>
+<text class="label" text-anchor="middle"><tspan x="110.0" y="54">Квалификатор</tspan></text>
+<rect class="lane" x="20" y="250" width="2460" height="230" data-position-id="pos-owner"/>
+<rect class="lane-head" x="20" y="250" width="180" height="230"/>
+<text class="label" text-anchor="middle"><tspan x="110.0" y="284">Владелец процесса</tspan></text>
+<rect class="lane" x="20" y="480" width="2460" height="230" data-position-id="pos-automation"/>
+<rect class="lane-head" x="20" y="480" width="180" height="230"/>
+<text class="label" text-anchor="middle"><tspan x="110.0" y="514">Контур автоматизации</tspan></text>
+<path class="flow" d="M 320 135.0 L 500 135.0" data-edge-id="edge-start-check"/>
+<path class="flow" d="M 670 135.0 L 700.0 135.0 L 700.0 365.0 L 730 365.0" data-edge-id="edge-check-decision"/>
+<path class="flow" d="M 900 365.0 L 960 365.0" data-edge-id="edge-decision-gateway"/>
+<path class="flow" d="M 1010 365.0 L 1100.0 365.0 L 1100.0 411.6666666666667 L 1190 411.6666666666667" data-edge-id="edge-quality-accepted"/>
+<rect x="1070.0" y="394.6666666666667" width="60" height="18" fill="#ffffff" opacity="0.9"/>
+<text class="small" text-anchor="middle" x="1100.0" y="407.6666666666667">Да</text>
+<path class="flow" d="M 1010 365.0 L 1100.0 365.0 L 1100.0 318.3333333333333 L 1190 318.3333333333333" data-edge-id="edge-quality-rejected"/>
+<rect x="1070.0" y="301.3333333333333" width="60" height="18" fill="#ffffff" opacity="0.9"/>
+<text class="small" text-anchor="middle" x="1100.0" y="314.3333333333333">Нет</text>
+<path class="flow" d="M 1240 411.6666666666667 L 1330.0 411.6666666666667 L 1330.0 595.0 L 1420 595.0" data-edge-id="edge-split-enrich"/>
+<path class="flow" d="M 1240 411.6666666666667 L 1330.0 411.6666666666667 L 1330.0 365.0 L 1420 365.0" data-edge-id="edge-split-compliance"/>
+<path class="flow" d="M 1590 595.0 L 1620.0 595.0 L 1620.0 365.0 L 1650 365.0" data-edge-id="edge-enrich-join"/>
+<path class="flow" d="M 1590 365.0 L 1650 365.0" data-edge-id="edge-compliance-join"/>
+<path class="flow" d="M 1700 365.0 L 1790.0 365.0 L 1790.0 595.0 L 1880 595.0" data-edge-id="edge-join-send"/>
+<path class="flow" d="M 2050 595.0 L 2110 595.0" data-edge-id="edge-send-end"/>
+<path class="flow" d="M 918 406.0 L 939.0 406.0 L 939.0 595.0 L 960 595.0" data-edge-id="edge-timeout-notify"/>
+<path class="flow" d="M 960 595.0 L 845 595.0 L 845 365.0 L 900 365.0" data-edge-id="edge-notify-return"/>
+<circle class="event" cx="295.0" cy="135.0" r="25.0" data-event-id="evt-start"/>
+<text class="node-label" text-anchor="middle"><tspan x="295.0" y="170.0">Лид готов к</tspan><tspan x="295.0" y="186.0">квалификации</tspan></text>
+<circle class="event" cx="900.0" cy="406.0" r="18.0" data-event-id="evt-timeout"/>
+<text class="node-label" text-anchor="middle"><tspan x="900.0" y="442.0">Истёк SLA</tspan></text>
+<circle class="event" cx="2135.0" cy="595.0" r="25.0" data-event-id="evt-accepted"/>
+<text class="node-label" text-anchor="middle"><tspan x="2135.0" y="638.0">Лид принят клубом</tspan></text>
+<circle class="event" cx="1215.0" cy="318.3333333333333" r="25.0" data-event-id="evt-rejected"/>
+<text class="node-label" text-anchor="middle"><tspan x="1215.0" y="361.3333333333333">Лид отклонён</tspan></text>
+<rect class="task" rx="10" x="500" y="94.0" width="170" height="82" data-action-id="act-check-lead"/>
+<text class="node-label" text-anchor="middle"><tspan x="585.0" y="139.0">Проверить данные лида</tspan></text>
+<rect class="task" rx="10" x="730" y="324.0" width="170" height="82" data-action-id="act-decide-quality"/>
+<text class="node-label" text-anchor="middle"><tspan x="815.0" y="361.0">Определить качество</tspan><tspan x="815.0" y="377.0">лида</tspan></text>
+<rect class="task" rx="10" x="1420" y="554.0" width="170" height="82" data-action-id="act-enrich-data"/>
+<text class="node-label" text-anchor="middle"><tspan x="1505.0" y="599.0">Дополнить данные лида</tspan></text>
+<rect class="task" rx="10" x="1420" y="324.0" width="170" height="82" data-action-id="act-call-compliance"/>
+<text class="node-label" text-anchor="middle"><tspan x="1505.0" y="369.0">Проверить ограничения</tspan></text>
+<rect class="task" rx="10" x="960" y="554.0" width="170" height="82" data-action-id="act-notify-timeout"/>
+<text class="node-label" text-anchor="middle"><tspan x="1045.0" y="591.0">Уведомить о нарушении</tspan><tspan x="1045.0" y="607.0">SLA</tspan></text>
+<rect class="task" rx="10" x="1880" y="554.0" width="170" height="82" data-action-id="act-send-lead"/>
+<text class="node-label" text-anchor="middle"><tspan x="1965.0" y="599.0">Передать лид клубу</tspan></text>
+<polygon class="gateway" points="985.0,340.0 1010,365.0 985.0,390.0 960,365.0" data-gateway-id="gw-quality"/>
+<text class="node-label" text-anchor="middle"><tspan x="985.0" y="328.0">Лид принят?</tspan></text>
+<polygon class="gateway" points="1215.0,386.6666666666667 1240,411.6666666666667 1215.0,436.6666666666667 1190,411.6666666666667" data-gateway-id="gw-enrich-split"/>
+<text class="node-label" text-anchor="middle"><tspan x="1215.0" y="366.6666666666667">Подготовить</tspan><tspan x="1215.0" y="382.6666666666667">передачу</tspan></text>
+<polygon class="gateway" points="1675.0,340.0 1700,365.0 1675.0,390.0 1650,365.0" data-gateway-id="gw-enrich-join"/>
+<text class="node-label" text-anchor="middle"><tspan x="1675.0" y="320.0">Подготовка</tspan><tspan x="1675.0" y="336.0">завершена</tspan></text>
+</svg>

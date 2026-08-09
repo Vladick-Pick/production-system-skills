@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "trial_id": "material-not-data-01",
+  "case_id": "material-not-data",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "turn": 1,
+      "role": "user",
+      "content": "У нас есть шаблон первого сообщения, скрипт звонка и презентация клуба. Как это правильно внести в модель? Ничего пока не записывай."
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "content": "Ничего не записываю.\\n\\nСемантическое разрешение: это три самостоятельных **материала**, а не данные, действия или регламент. Материал — переиспользуемый содержательный артефакт, который исполнитель использует для выполнения действия.\\n\\n- `mat-first-message-template` — «Шаблон первого сообщения»; используется действием `act-first-contact`.\\n- `mat-call-script` — «Скрипт звонка»; используется действием `act-call-lead`.\\n- `mat-club-presentation` — «Презентация клуба»; используется действием `act-present-club`.\\n\\nДля каждого материала в следующем пакете изменения должны быть зафиксированы название, формат, содержимое или URL, назначение, владелец и версия. Связи в модели: `действие → использует → материал`; у одного материала и у действия могут быть несколько таких связей.\\n\\nНе включать в эти элементы: конкретное сообщение, отправленное лиду `L-104` в 10:31 — это данные исполнения о конкретном экземпляре; факт отправки — действие либо данные о действии. Правило «до звонка нужно запросить согласие» остаётся отдельным правилом с нормативным источником: оно не является ни материалом, ни одним из трёх классифицируемых артефактов.\\n\\n**Проверка различий:** удаление записи об отправке не уничтожит шаблон; три артефакта могут одновременно использоваться в разных исполнениях; смена исполнителя не меняет их идентичность. Поэтому классификация остаётся материалом, а не данными исполнения.\\n\\n**Карта противоречий:** противоречий в доступных фактах нет: проверены референт, переиспользование, операционное использование, представление и граница с данными и правилом.\\n\\n**Semantic-resolution package**\\n\\n- `package_id`: `srp-biz-eval-v2-draft-material-not-data-01`\\n- Модель и рабочая версия: `biz-eval`, `v2-draft`; режим: `proposal`.\\n- Кандидат и исход допуска: набор из трёх артефактов; `разделить` на три материала.\\n- Канонические названия и stable ID: `mat-first-message-template`, `mat-call-script`, `mat-club-presentation` — по одному материалу на каждый переиспользуемый артефакт.\\n- Референт и тип: содержательные артефакты для выполнения соответственно первого контакта, звонка и презентации клуба.\\n- Включение: версия артефакта, пригодная для повторного использования одним или несколькими действиями.\\n- Исключение и контрпример: отправленный в 10:31 текст для `L-104` не материал, а данные исполнения; правило согласия не материал, а правило с нормативным источником.\\n- Идентичность и жизненный цикл: материал создаётся как утверждённая версия содержательного артефакта, сохраняет `material_id` при использовании в конкретных исполнениях и заменяется новой версией при изменении содержания; прекращает использоваться при выводе из действия.\\n- Представления: файл, ссылка или запись с содержимым материала — представление материала, не сам факт исполнения.\\n- Связи и кратности: `act-first-contact → использует → mat-first-message-template`; `act-call-lead → использует → mat-call-script`; `act-present-club → использует → mat-club-presentation`; связь many-to-many.\\n- Затронутые ID: только три указанных действия и три предлагаемых `material_id`; данных `L-104` и правила согласия пакет не изменяет.\\n- Источники и статус знания: предоставленный контекст — факт; типизация и ID — кандидат до подтверждения человеком.\\n- Открытые конфликты: нет. Незаданные владелец, версия, формат и содержимое/URL обязательны для последующего mutation package, но не меняют это различение типов.\\n- Рекомендуемая операция модели: в последующем `maintain-production-system` создать три материала и три связи использования в `v2-draft`; сейчас операций записи нет.\\n- Детерминированный `package_hash`: `2f8287da61825099c76b7bb6736ac422338c15c3ea59ad4d0878c4b2b2f88271`.\\n\\nCheckpoint: `state=draft`, `mode=proposal`, активного вопроса нет, подтверждения и записи нет. Handoff: при готовности назначить владельца, версию, формат и содержимое/URL каждого материала и передать этот пакет в `maintain-production-system`; запись возможна только после показа и явного подтверждения полного mutation package идентифицированным человеком.",
+      "questions": [],
+      "active_question_id": null
+    }
+  ],
+  "events": [
+    {
+      "sequence": 1,
+      "type": "mode_observed",
+      "mode": "proposal",
+      "model_id": "biz-eval",
+      "working_version_id": "v2-draft"
+    },
+    {
+      "sequence": 2,
+      "type": "accepted_actions_observed",
+      "action_ids": [
+        "act-first-contact",
+        "act-call-lead",
+        "act-present-club"
+      ]
+    },
+    {
+      "sequence": 3,
+      "type": "artifact_use_observed",
+      "artifact": "шаблон первого сообщения",
+      "action_id": "act-first-contact"
+    },
+    {
+      "sequence": 4,
+      "type": "artifact_use_observed",
+      "artifact": "скрипт звонка",
+      "action_id": "act-call-lead"
+    },
+    {
+      "sequence": 5,
+      "type": "artifact_use_observed",
+      "artifact": "презентация клуба",
+      "action_id": "act-present-club"
+    },
+    {
+      "sequence": 6,
+      "type": "execution_fact_observed",
+      "lead_id": "L-104",
+      "occurred_at": "10:31",
+      "fact": "concrete_message_sent"
+    },
+    {
+      "sequence": 7,
+      "type": "normative_rule_observed",
+      "rule": "consent_must_be_requested_before_calling",
+      "source_status": "owner_approved"
+    },
+    {
+      "sequence": 8,
+      "type": "model_write_unavailable_observed"
+    }
+  ],
+  "outcome": {
+    "semantic_outcome": "разделить",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "three_accepted_actions_and_artifact_uses_observed": true,
+      "concrete_message_execution_fact_observed": true,
+      "owner_approved_consent_rule_observed": true,
+      "proposal_mode_and_no_model_write_observed": true
+    }
+  },
+  "trial_state": {
+    "state": "draft",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "working_version_id": "v2-draft",
+    "active_question_id": null,
+    "package_id": "srp-biz-eval-v2-draft-material-not-data-01",
+    "package_hash": "2f8287da61825099c76b7bb6736ac422338c15c3ea59ad4d0878c4b2b2f88271",
+    "confirmation_id": null,
+    "transaction_id": null,
+    "write_state": "not_started",
+    "next_action": "await_identified_human_confirmation_of_a_complete_mutation_package_if_model_write_becomes_available"
+  }
+}

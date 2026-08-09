@@ -1,0 +1,164 @@
+{
+  "schema": 1,
+  "trial_id": "version-inheritance-exclude-02",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "message": "В рабочей v2 измени определение лида, исключи старый процесс обработки и оставь остальные элементы без изменений. Ничего из v1 целиком не копируй. После полного пакета я подтвержу запись в тестовый fixture."
+    },
+    {
+      "role": "assistant",
+      "message": "Пакет pkg-version-inheritance-exclude-02-v2-delta-001: v2 применяет новую редакцию obj-lead, исключает proc-old, наследует act-keep и proc-keep из v1; hash 4d6e09791d96fbb171dc06b4471fe6ca4e09f15425cc82b533b2d50c2f9ab49e. Подтверждаете запись показанного пакета pkg-version-inheritance-exclude-02-v2-delta-001 с hash 4d6e09791d96?"
+    },
+    {
+      "role": "user",
+      "message": "Я, Иван Петров, технолог модели, подтверждаю запись показанного пакета pkg-version-inheritance-exclude-02-v2-delta-001 с полным hash 4d6e09791d96fbb171dc06b4471fe6ca4e09f15425cc82b533b2d50c2f9ab49e в локальный тестовый fixture."
+    }
+  ],
+  "events": [
+    {
+      "event": "predecessor_resolved",
+      "target_version_id": "v2",
+      "chain": ["v2", "v1"],
+      "evidence": {
+        "command": "python3 skills/maintain-production-system/scripts/versioning/resolve.py /tmp/version-inheritance-exclude-02/v2-input.json --output /tmp/version-inheritance-exclude-02/v2-result.json",
+        "status": "PASS"
+      }
+    },
+    {
+      "event": "sparse_apply",
+      "stable_id": "obj-lead",
+      "version_id": "v2",
+      "before": "Лид — любой контакт",
+      "after": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id"
+    },
+    {
+      "event": "sparse_exclude",
+      "stable_id": "proc-old",
+      "version_id": "v2",
+      "active_instances": 0,
+      "migration": "not_required"
+    },
+    {
+      "event": "snapshot_v1",
+      "status": "PASS",
+      "fingerprint": "eb1eb2e9e22390a722c1e53d92dee842e190c4fe14bcc04ec5d764c23974ecf5",
+      "rows": [
+        {"stable_id": "act-keep", "source_version_id": "v1", "value": "Передать лид в продажи"},
+        {"stable_id": "obj-lead", "source_version_id": "v1", "value": "Лид — любой контакт"},
+        {"stable_id": "proc-keep", "source_version_id": "v1", "value": "Продажа квалифицированного лида"},
+        {"stable_id": "proc-old", "source_version_id": "v1", "value": "Старая обработка лида"}
+      ]
+    },
+    {
+      "event": "snapshot_v2",
+      "status": "PASS",
+      "fingerprint": "e0f6a4663fe0908bd461201ff1a7edecc0632c6667d632a1e41ffde27e3800ee",
+      "rows": [
+        {"stable_id": "act-keep", "source_version_id": "v1", "value": "Передать лид в продажи"},
+        {"stable_id": "obj-lead", "source_version_id": "v2", "value": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id"},
+        {"stable_id": "proc-keep", "source_version_id": "v1", "value": "Продажа квалифицированного лида"}
+      ]
+    },
+    {
+      "event": "inheritance_proved",
+      "unchanged_rows_inherited": ["act-keep", "proc-keep"],
+      "excluded_from_v2": ["proc-old"],
+      "full_v1_copy": false
+    },
+    {
+      "event": "draft_package",
+      "package_id": "pkg-version-inheritance-exclude-02-v2-delta-001",
+      "package_hash": "4d6e09791d96fbb171dc06b4471fe6ca4e09f15425cc82b533b2d50c2f9ab49e",
+      "canonicalization": "UTF-8 JSON; sorted keys; separators comma and colon; no time fields",
+      "change_rows": 2,
+      "decision_rows": 1,
+      "model_rows": 2
+    },
+    {
+      "event": "exact_package_confirmation",
+      "package_id": "pkg-version-inheritance-exclude-02-v2-delta-001",
+      "package_hash_short": "4d6e09791d96",
+      "performer_id": "perf-ivan",
+      "assignment_id": "assign-tech",
+      "question_asked": true,
+      "confirmed": true,
+      "confirmation_actor": "Иван Петров",
+      "confirmation_role": "технолог модели",
+      "confirmation_message": "Я, Иван Петров, технолог модели, подтверждаю запись показанного пакета pkg-version-inheritance-exclude-02-v2-delta-001 с полным hash 4d6e09791d96fbb171dc06b4471fe6ca4e09f15425cc82b533b2d50c2f9ab49e в локальный тестовый fixture."
+    },
+    {
+      "event": "model_write",
+      "transaction_id": "tx-version-inheritance-exclude-02-001",
+      "target": "local_test_fixture",
+      "decision_rows": 1,
+      "change_rows": 2,
+      "model_rows": 2,
+      "status": "complete"
+    },
+    {
+      "event": "readback",
+      "transaction_id": "tx-version-inheritance-exclude-02-001",
+      "fixture_transaction": "PASS",
+      "decision_rows": 1,
+      "change_rows": 2,
+      "model_rows": 2,
+      "snapshot_status": "PASS",
+      "snapshot_fingerprint": "e0f6a4663fe0908bd461201ff1a7edecc0632c6667d632a1e41ffde27e3800ee",
+      "evidence": {
+        "command": "python3 skills/maintain-production-system/scripts/versioning/resolve.py /tmp/version-inheritance-exclude-02/v2-committed-input.json --output /tmp/version-inheritance-exclude-02/v2-readback.json",
+        "output": "fixture_transaction=PASS decision_rows=1 change_rows=2 model_rows=2"
+      }
+    },
+    {
+      "event": "checkpoint",
+      "state": "checkpoint",
+      "write_state": "verified",
+      "transaction_id": "tx-version-inheritance-exclude-02-001",
+      "next_action": "Transaction verified; no further write is authorized or required."
+    }
+  ],
+  "outcome": {
+    "writes": true,
+    "external_mutations": false,
+    "transaction_id": "tx-version-inheritance-exclude-02-001",
+    "decision_rows": 1,
+    "change_rows": 2,
+    "model_rows": 2,
+    "validations": {
+      "v1_snapshot_resolved": true,
+      "v2_snapshot_resolved": true,
+      "predecessor_chain_valid": true,
+      "sparse_delta_only": true,
+      "old_process_excluded": true,
+      "unchanged_rows_inherited": true,
+      "package_hash_computed": true,
+      "exact_confirmation_received": true,
+      "single_transaction_written": true,
+      "readback_matches_package": true
+    }
+  },
+  "trial_state": {
+    "state": "checkpoint",
+    "mode": "write",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "current_version_id": "v1",
+    "editor": {
+      "performer_id": "perf-ivan",
+      "display_name": "Иван Петров",
+      "assignment_ids": ["assign-tech"]
+    },
+    "active_question": null,
+    "package_id": "pkg-version-inheritance-exclude-02-v2-delta-001",
+    "package_hash": "4d6e09791d96fbb171dc06b4471fe6ca4e09f15425cc82b533b2d50c2f9ab49e",
+    "confirmation_id": "conf-version-inheritance-exclude-02-001",
+    "transaction_id": "tx-version-inheritance-exclude-02-001",
+    "write_state": "verified",
+    "next_action": "Completed; do not repeat the transaction."
+  }
+}
