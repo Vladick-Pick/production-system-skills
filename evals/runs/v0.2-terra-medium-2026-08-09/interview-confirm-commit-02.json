@@ -1,0 +1,375 @@
+{
+  "trial_id": "interview-confirm-commit-02",
+  "case_id": "interview-confirm-commit",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "mode": "write",
+  "fixture_scope": "local in-memory/test fixture only",
+  "session": {
+    "state": "complete",
+    "write_authorized": true,
+    "active_question_id": null,
+    "checkpoint": {
+      "state": "complete",
+      "active_question_id": null,
+      "base_version_id": "v1",
+      "working_version_id": "v2-draft",
+      "current_version_id": "v1",
+      "schema_version": "v0.2",
+      "resumable": true
+    }
+  },
+  "fixture": {
+    "model_id": "biz-eval",
+    "schema_version": "v0.2",
+    "working_version_id": "v2-draft",
+    "current_version_id": "v1",
+    "editor": {
+      "performer_id": "perf-ivan",
+      "performer_name": "Ivan Petrov",
+      "performer_type": "human technologist",
+      "assignment_id": "assign-tech",
+      "assignment_status": "active"
+    },
+    "known_elements": {
+      "objects": ["obj-lead"],
+      "states": ["st-no-contact", "st-reactivated", "st-closed"],
+      "positions": ["pos-automation", "pos-manager"],
+      "systems": ["is-crm", "is-messenger"],
+      "process_ids": [],
+      "action_ids": []
+    }
+  },
+  "source_authority": {
+    "source_id": "src-user-request",
+    "authority": "identified human interviewee",
+    "locator": "Russian user turn 1",
+    "resolved": true
+  },
+  "transcript": [
+    {
+      "role": "user",
+      "text": "Нужно добавить новый процесс повторной активации лида. Через 7 дней без контакта робот отправляет сообщение; если лид отвечает, менеджер звонит и при согласии передаёт его в продажи; если ответа нет ещё 3 дня, лид закрывается. Я буду отвечать на уточнения. Мои промежуточные «да» не означают разрешение записать всё."
+    },
+    {
+      "role": "assistant",
+      "text": "Какой конкретный результат этот процесс должен передавать в продажи и кому именно?",
+      "questions": [
+        {
+          "id": "q01-process-output-and-recipient",
+          "text": "Какой конкретный результат этот процесс должен передавать в продажи и кому именно?",
+          "purpose": "Установить продуктовый выход и получателя до моделирования пути процесса."
+        }
+      ],
+      "active_question_id": "q01-process-output-and-recipient"
+    },
+    {
+      "role": "user",
+      "text": "Процесс передаёт тот же obj-lead в состоянии «реактивирован» существующей позиции pos-manager, которая в этой модели является менеджером продаж. Успех подтверждается записью принятия лида в CRM с датой и performer_id."
+    },
+    {
+      "role": "assistant",
+      "text": "Какие именно события в CRM считаются контактом и тем самым отменяют отсчёт семи дней?",
+      "questions": [
+        {
+          "id": "q02-contact-definition",
+          "text": "Какие именно события в CRM считаются контактом и тем самым отменяют отсчёт семи дней?",
+          "purpose": "Установить наблюдаемое условие запуска и отмены таймера без предположений о полях CRM."
+        }
+      ],
+      "active_question_id": "q02-contact-definition"
+    },
+    {
+      "role": "user",
+      "text": "Контактом считается только состоявшийся разговор или входящий ответ лида; исходящая попытка без ответа срок не обнуляет. Источник факта — CRM-поле last_successful_contact_at."
+    },
+    {
+      "role": "assistant",
+      "text": "Какой точный текст сообщения робот должен отправлять лиду при повторной активации?",
+      "questions": [
+        {
+          "id": "q03-reactivation-message",
+          "text": "Какой точный текст сообщения робот должен отправлять лиду при повторной активации?",
+          "purpose": "Получить содержимое обязательного переиспользуемого материала для действия робота."
+        }
+      ],
+      "active_question_id": "q03-reactivation-message"
+    },
+    {
+      "role": "user",
+      "text": "Используйте материал mat-reactivation-message: «Здравствуйте, {Имя}! Ранее вы интересовались нашим предложением. Актуально ли это сейчас? Ответьте “Да”, и менеджер свяжется с вами». Конкретная отправка остаётся данными исполнения."
+    },
+    {
+      "role": "assistant",
+      "text": "Как менеджер фиксирует согласие лида на передачу в продажи: какое наблюдаемое свидетельство должно появиться в CRM?",
+      "questions": [
+        {
+          "id": "q04-consent-evidence",
+          "text": "Как менеджер фиксирует согласие лида на передачу в продажи: какое наблюдаемое свидетельство должно появиться в CRM?",
+          "purpose": "Установить решение ветвления и проверяемое доказательство перехода к передаче в продажи."
+        }
+      ],
+      "active_question_id": "q04-consent-evidence"
+    },
+    {
+      "role": "user",
+      "text": "Свидетельство — результат звонка в CRM с флагом sales_transfer_consent=true, датой, временем и performer_id менеджера."
+    },
+    {
+      "role": "assistant",
+      "text": "Если после ответа лида менеджер не получает согласия на передачу в продажи, каким состоянием или дальнейшим действием должен завершаться этот путь?",
+      "questions": [
+        {
+          "id": "q05-no-consent-outcome",
+          "text": "Если после ответа лида менеджер не получает согласия на передачу в продажи, каким состоянием или дальнейшим действием должен завершаться этот путь?",
+          "purpose": "Закрыть неполную ветвь после звонка без предположения о закрытии или повторной обработке лида."
+        }
+      ],
+      "active_question_id": "q05-no-consent-outcome"
+    },
+    {
+      "role": "user",
+      "text": "Путь завершается переводом того же лида в st-closed с причиной no_sales_consent. Свидетельство — результат звонка и решение менеджера в CRM. Новый объект не создаётся."
+    },
+    {
+      "role": "assistant",
+      "text": "В какой срок после входящего ответа лида менеджер должен совершить и зафиксировать звонок?",
+      "questions": [
+        {
+          "id": "q06-manager-call-sla",
+          "text": "В какой срок после входящего ответа лида менеджер должен совершить и зафиксировать звонок?",
+          "purpose": "Установить SLA и timer для действия менеджера."
+        }
+      ],
+      "active_question_id": "q06-manager-call-sla"
+    },
+    {
+      "role": "user",
+      "text": "Менеджер должен совершить и зафиксировать звонок не позднее 4 рабочих часов после incoming_reply_at. Проверка SLA — разница между incoming_reply_at и call_recorded_at в CRM."
+    },
+    {
+      "role": "assistant",
+      "text": "В какой момент тот же obj-lead переходит в существующее состояние st-reactivated: при входящем ответе или только после согласия на передачу в продажи?",
+      "questions": [
+        {
+          "id": "q07-reactivated-state-transition",
+          "text": "В какой момент тот же obj-lead переходит в существующее состояние st-reactivated: при входящем ответе или только после согласия на передачу в продажи?",
+          "purpose": "Установить владельца и момент перехода состояния до построения графа."
+        }
+      ],
+      "active_question_id": "q07-reactivated-state-transition"
+    },
+    {
+      "role": "user",
+      "text": "При входящем ответе нужен новый промежуточный state st-reactivation-in-progress. В st-reactivated лид переходит только после звонка и явного согласия на передачу в продажи."
+    },
+    {
+      "role": "assistant",
+      "text": "Что должно произойти, если менеджер не зафиксировал звонок в течение 4 рабочих часов после incoming_reply_at?",
+      "questions": [
+        {
+          "id": "q08-manager-call-sla-breach",
+          "text": "Что должно произойти, если менеджер не зафиксировал звонок в течение 4 рабочих часов после incoming_reply_at?",
+          "purpose": "Определить исключение и terminal либо escalation path при нарушении SLA."
+        }
+      ],
+      "active_question_id": "q08-manager-call-sla-breach"
+    },
+    {
+      "role": "user",
+      "text": "Через 4 рабочих часа фиксируется нарушение SLA, владелец процесса получает уведомление, а задача переназначается резервному исполнителю позиции pos-manager. Если ещё через 4 рабочих часа звонок не зафиксирован, лид переводится в st-closed с причиной manager_sla_breach; повторное открытие возможно только отдельным решением менеджера."
+    },
+    {
+      "role": "assistant",
+      "text": "Какая существующая позиция является владельцем процесса и получает уведомление о нарушении SLA: pos-manager или другая позиция?",
+      "questions": [
+        {
+          "id": "q09-process-owner-position",
+          "text": "Какая существующая позиция является владельцем процесса и получает уведомление о нарушении SLA: pos-manager или другая позиция?",
+          "purpose": "Зафиксировать единственную ответственную позицию процесса и адресата уведомления."
+        }
+      ],
+      "active_question_id": "q09-process-owner-position"
+    },
+    {
+      "role": "user",
+      "text": "В рамках этого fixture владельцем процесса является существующая позиция pos-manager; она же получает уведомление, а конкретная задача может быть переназначена другому исполнителю этой позиции."
+    },
+    {
+      "role": "assistant",
+      "text": "В какой из известных систем выполняются уведомление о нарушении SLA и переназначение задачи: is-crm, is-messenger или в обеих?",
+      "questions": [
+        {
+          "id": "q10-sla-notification-and-reassignment-system",
+          "text": "В какой из известных систем выполняются уведомление о нарушении SLA и переназначение задачи: is-crm, is-messenger или в обеих?",
+          "purpose": "Определить средства и deployment-readiness для действий по нарушению SLA."
+        }
+      ],
+      "active_question_id": "q10-sla-notification-and-reassignment-system"
+    },
+    {
+      "role": "user",
+      "text": "И уведомление, и переназначение задачи выполняются в is-crm. is-messenger используется только для сообщения лиду."
+    },
+    {
+      "role": "assistant",
+      "text": "Семь дней без контакта и три дня ожидания ответа отсчитываются в календарных или рабочих днях?",
+      "questions": [
+        {
+          "id": "q11-reactivation-timer-calendar",
+          "text": "Семь дней без контакта и три дня ожидания ответа отсчитываются в календарных или рабочих днях?",
+          "purpose": "Зафиксировать детерминированные timer events для запуска и закрытия процесса."
+        }
+      ],
+      "active_question_id": "q11-reactivation-timer-calendar"
+    },
+    {
+      "role": "user",
+      "text": "Оба срока календарные: 7×24 часа от last_successful_contact_at и 72 часа от delivered_at. Временная зона для отображения и календарных границ — Europe/Istanbul."
+    },
+    {
+      "role": "assistant",
+      "text": "Полный mutation package pkg-lead-reactivation-v1 подготовлен для единственного локального test fixture. package_hash: d3d2c3c37b0793a17af847115d1bbc20db8ec98c441dbb0a58ac8bb1d01feee8. Он создаёт продукт, материал, процесс, состояние, восемь действий, пять переходов и две связи модели; не меняет v1 и не создаёт внешних сущностей. Сценарии, preconditions, recovery и projection impact приведены в пакете. Подтверждаете запись именно package_id pkg-lead-reactivation-v1 с этим package_hash в локальный test fixture?",
+      "questions": [
+        {"id": "confirm-package-lead-reactivation-v1", "text": "Подтверждаете запись именно этого package_id и package_hash в локальный test fixture?", "purpose": "Получить точное подтверждение полного неизменённого пакета."}
+      ],
+      "active_question_id": "confirm-package-lead-reactivation-v1"
+    },
+    {
+      "role": "user",
+      "text": "Я, Иван Петров, человек и технолог модели, подтверждаю запись полного пакета pkg-lead-reactivation-v1 с hash d3d2c3c37b0793a17af847115d1bbc20db8ec98c441dbb0a58ac8bb1d01feee8 в локальный тестовый fixture."
+    },
+    {
+      "role": "assistant",
+      "text": "Пакет записан одной локальной транзакцией tx-interview-confirm-commit-02-001. Readback подтвердил package_hash, 1 строку решения, 20 строк изменений и 20 строк модели; v1 не изменён, v2-draft остаётся единственным черновиком. Внешних мутаций не было. Checkpoint сохранён.",
+      "questions": [],
+      "active_question_id": null
+    }
+  ],
+  "telemetry": [
+    {
+      "event": "source_authority_resolved",
+      "source_id": "src-user-request"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q01-process-output-and-recipient"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q02-contact-definition"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q03-reactivation-message"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q04-consent-evidence"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q05-no-consent-outcome"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q06-manager-call-sla"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q07-reactivated-state-transition"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q08-manager-call-sla-breach"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q09-process-owner-position"
+    },
+    {
+      "event": "decisive_question",
+      "question_id": "q10-sla-notification-and-reassignment-system"
+    },
+    {"event": "decisive_question", "question_id": "q11-reactivation-timer-calendar"},
+    {"event": "draft_package", "package_id": "pkg-lead-reactivation-v1"},
+    {"event": "exact_package_confirmation", "package_id": "pkg-lead-reactivation-v1", "package_hash": "d3d2c3c37b0793a17af847115d1bbc20db8ec98c441dbb0a58ac8bb1d01feee8", "performer_id": "perf-ivan", "assignment_id": "assign-tech"},
+    {"event": "model_write", "transaction_id": "tx-interview-confirm-commit-02-001", "decision_rows": 1, "change_rows": 20, "model_rows": 20},
+    {"event": "readback", "transaction_id": "tx-interview-confirm-commit-02-001", "package_hash_matches": true, "decision_rows": 1, "change_rows": 20, "model_rows": 20},
+    {"event": "checkpoint", "transaction_id": "tx-interview-confirm-commit-02-001", "state": "complete"}
+  ],
+  "mutation_package": {
+    "package_id": "pkg-lead-reactivation-v1",
+    "scope": "local in-memory/test fixture only",
+    "base": {"model_id": "biz-eval", "schema_version": "v0.2", "working_version_id": "v2-draft", "current_version_id": "v1", "editor": "perf-ivan", "assignment": "assign-tech"},
+    "boundary": "Внутренний контур; is-crm и is-messenger внутренние системы; внешние контрагенты не добавляются.",
+    "semantic_resolution_packages": [
+      {"stable_id": "prd-reactivated-lead-for-sales", "type": "product", "decision": "resolved", "definition": "Тот же obj-lead в st-reactivated, принятый pos-manager записью CRM с датой и performer_id."},
+      {"stable_id": "st-reactivation-in-progress", "type": "state", "referent": "obj-lead", "decision": "resolved", "definition": "Лид ответил и ожидает звонка менеджера."},
+      {"stable_id": "proc-lead-reactivation", "type": "process", "decision": "resolved", "definition": "Повторная активация obj-lead от 7x24 часов без успешного контакта до передачи в продажи или закрытия."}
+    ],
+    "operations": {
+      "Источники": [{"operation": "create", "source_id": "src-interview-perf-ivan", "title": "Интервью с Ivan Petrov", "authority_level": "владелец модели", "trust_floor": "подтверждено"}],
+      "Продукты": [{"operation": "apply", "product_id": "prd-reactivated-lead-for-sales", "version_id": "v2-draft", "primary_object_id": "obj-lead", "required_state_id": "st-reactivated", "acceptance_criteria": "Запись принятия в CRM с датой и performer_id", "owner_position_id": "pos-manager", "source_id": "src-interview-perf-ivan"}],
+      "Материалы": [{"operation": "apply", "material_id": "mat-reactivation-message", "version_id": "v2-draft", "content_text": "Здравствуйте, {Имя}! Ранее вы интересовались нашим предложением. Актуально ли это сейчас? Ответьте “Да”, и менеджер свяжется с вами", "purpose": "Получить входящий ответ", "source_id": "src-interview-perf-ivan"}],
+      "Процессы": [{"operation": "apply", "process_id": "proc-lead-reactivation", "version_id": "v2-draft", "system_id": "is-crm", "work_object_id": "obj-lead", "entry_state_id": "st-no-contact", "goal": "Передать лид в продажи или закрыть с причиной", "trigger": "7x24 часа от last_successful_contact_at без успешного контакта", "owner_position_id": "pos-manager", "source_id": "src-interview-perf-ivan"}],
+      "Состояния": [{"operation": "apply", "state_id": "st-reactivation-in-progress", "version_id": "v2-draft", "object_id": "obj-lead", "terminal": false, "definition": "Лид ответил на сообщение и ожидает звонка менеджера", "source_id": "src-interview-perf-ivan"}],
+      "Действия": [
+        {"operation":"apply","action_id":"act-send-reactivation-message","responsible_position_id":"pos-automation","system_id":"is-messenger","input":"7x24h от last_successful_contact_at","output":"delivered_at","material_id":"mat-reactivation-message"},
+        {"operation":"apply","action_id":"act-record-incoming-reply","responsible_position_id":"pos-automation","system_id":"is-crm","input":"Входящий ответ","output":"incoming_reply_at; st-reactivation-in-progress"},
+        {"operation":"apply","action_id":"act-call-lead","responsible_position_id":"pos-manager","system_id":"is-crm","input":"incoming_reply_at","output":"call_recorded_at и результат звонка","sla":"4 рабочих часа"},
+        {"operation":"apply","action_id":"act-transfer-lead-to-sales","responsible_position_id":"pos-manager","system_id":"is-crm","input":"sales_transfer_consent=true","output":"Принятие в CRM; st-reactivated"},
+        {"operation":"apply","action_id":"act-record-sla-breach-and-reassign","responsible_position_id":"pos-automation","system_id":"is-crm","input":"4 рабочих часа без call_recorded_at","output":"Нарушение SLA, уведомление pos-manager, задача резервному исполнителю pos-manager"},
+        {"operation":"apply","action_id":"act-close-no-response","responsible_position_id":"pos-automation","system_id":"is-crm","input":"72 часа от delivered_at без incoming_reply_at","output":"st-closed; reason=no_response"},
+        {"operation":"apply","action_id":"act-close-no-sales-consent","responsible_position_id":"pos-manager","system_id":"is-crm","input":"Звонок без согласия","output":"st-closed; reason=no_sales_consent"},
+        {"operation":"apply","action_id":"act-close-manager-sla-breach","responsible_position_id":"pos-automation","system_id":"is-crm","input":"Ещё 4 рабочих часа после переназначения без call_recorded_at","output":"st-closed; reason=manager_sla_breach"}
+      ],
+      "Переходы": [
+        {"operation":"apply","transition_id":"tr-no-contact-to-progress","object_id":"obj-lead","from_state_id":"st-no-contact","to_state_id":"st-reactivation-in-progress","evidence":"incoming_reply_at"},
+        {"operation":"apply","transition_id":"tr-progress-to-reactivated","object_id":"obj-lead","from_state_id":"st-reactivation-in-progress","to_state_id":"st-reactivated","evidence":"sales_transfer_consent=true, звонок, дата, время, performer_id"},
+        {"operation":"apply","transition_id":"tr-no-contact-to-closed-no-response","object_id":"obj-lead","from_state_id":"st-no-contact","to_state_id":"st-closed","evidence":"72h от delivered_at; reason=no_response"},
+        {"operation":"apply","transition_id":"tr-progress-to-closed-no-sales-consent","object_id":"obj-lead","from_state_id":"st-reactivation-in-progress","to_state_id":"st-closed","evidence":"Звонок и решение; reason=no_sales_consent"},
+        {"operation":"apply","transition_id":"tr-progress-to-closed-manager-sla-breach","object_id":"obj-lead","from_state_id":"st-reactivation-in-progress","to_state_id":"st-closed","evidence":"Повторный SLA breach; reason=manager_sla_breach"}
+      ],
+      "Связи модели": [{"operation":"apply","relation":"process_produces_product","from_id":"proc-lead-reactivation","to_id":"prd-reactivated-lead-for-sales"},{"operation":"apply","relation":"action_uses_material","from_id":"act-send-reactivation-message","to_id":"mat-reactivation-message"}]
+    },
+    "scenarios": ["normal: 7x24h -> delivered_at -> incoming_reply_at -> звонок <=4 рабочих часов -> согласие -> st-reactivated -> принятие", "exception: delivered_at -> 72h без ответа -> st-closed/no_response", "timeout: ответ -> 4 рабочих часа без звонка -> уведомление и переназначение -> ещё 4 рабочих часа -> st-closed/manager_sla_breach"],
+    "preconditions": ["v2-draft — единственный черновик", "perf-ivan/assign-tech активны", "все заданные stable IDs разрешаются однозначно", "запись только локальна"],
+    "recovery": "Retry сначала ищет transaction_id; частичная запись не является успехом.",
+    "projection": {"impact":"Новый BPMN/SVG", "view_readiness":"после readback", "deployment_readiness":"не готова: implementation bindings не подтверждены"}
+  },
+  "package_hash": "d3d2c3c37b0793a17af847115d1bbc20db8ec98c441dbb0a58ac8bb1d01feee8",
+  "confirmation": {
+    "performer_id": "perf-ivan",
+    "performer_name": "Ivan Petrov",
+    "performer_type": "human technologist",
+    "assignment_id": "assign-tech",
+    "package_id": "pkg-lead-reactivation-v1",
+    "package_hash": "d3d2c3c37b0793a17af847115d1bbc20db8ec98c441dbb0a58ac8bb1d01feee8",
+    "exact": true
+  },
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-interview-confirm-commit-02-001",
+        "scope": "local in-memory/test fixture only",
+        "package_id": "pkg-lead-reactivation-v1",
+        "package_hash": "d3d2c3c37b0793a17af847115d1bbc20db8ec98c441dbb0a58ac8bb1d01feee8",
+        "decision_rows": 1,
+        "change_rows": 20,
+        "model_rows": 20,
+        "outcome": "committed"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "one_active_question": true,
+      "no_write_before_exact_package_confirmation": true,
+      "confirmation_present": true,
+      "single_transaction_complete": true,
+      "readback_complete": true,
+      "checkpoint_complete": true
+    }
+  }
+}

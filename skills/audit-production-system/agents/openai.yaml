@@ -1,4 +1,4 @@
 interface:
   display_name: "Аудит производственной системы"
-  short_description: "Находит дефекты и слепые зоны модели"
-  default_prompt: "Используй $audit-production-system, чтобы проверить целостность производственной системы."
+  short_description: "Проверяет точные версию, срез и BPMN-сборку"
+  default_prompt: "Используй $audit-production-system, чтобы провести доказательный read-only аудит точной версии, snapshot и BPMN/SVG-сборки без изменений."

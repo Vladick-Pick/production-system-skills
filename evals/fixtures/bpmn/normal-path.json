@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "projection_kind": "BPMN процесса",
+  "process": {
+    "process_id": "proc-lead-capture",
+    "version_id": "v2",
+    "system_id": "sys-attraction",
+    "system_name": "Привлечение",
+    "name": "Зафиксировать лид",
+    "is_executable": true,
+    "target_camunda_version": "8.9"
+  },
+  "lanes": [
+    {"position_id": "pos-lead-manager", "name": "Менеджер привлечения", "kind": "position"}
+  ],
+  "events": [
+    {"event_id": "evt-lead-received", "event_kind": "start", "name": "Лид получен", "position_id": "pos-lead-manager"},
+    {"event_id": "evt-lead-recorded", "event_kind": "end", "name": "Лид зафиксирован", "position_id": "pos-lead-manager"}
+  ],
+  "actions": [
+    {
+      "action_id": "act-record-lead",
+      "name": "Зафиксировать лид",
+      "action_type": "работа",
+      "position_id": "pos-lead-manager",
+      "implementation": {"kind": "user-task", "implementation_type": "camunda-user-task"},
+      "material_ids": ["mat-lead-card-guide"],
+      "information_system_ids": ["is-crm"],
+      "product_ids": [],
+      "counterparty_ids": []
+    }
+  ],
+  "gateways": [],
+  "flows": [
+    {"edge_id": "edge-start-record", "source_id": "evt-lead-received", "target_id": "act-record-lead", "link_type": "последовательность"},
+    {"edge_id": "edge-record-end", "source_id": "act-record-lead", "target_id": "evt-lead-recorded", "link_type": "последовательность"}
+  ],
+  "source_row_keys": ["Действия:act-record-lead:v2", "Процессы:proc-lead-capture:v2"]
+}

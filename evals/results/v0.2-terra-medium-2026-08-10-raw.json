@@ -1,0 +1,491 @@
+{
+  "generated_at": "2026-08-09T21:32:10.375279+00:00",
+  "harness_failures": [],
+  "mode": "release_gate",
+  "passed": false,
+  "release_gate_failures": [
+    "identity-lead-lifecycle: не все fresh_agent trials прошли",
+    "interview-confirm-commit: не все fresh_agent trials прошли",
+    "editor-registration: не все fresh_agent trials прошли",
+    "material-not-data: не все fresh_agent trials прошли",
+    "version-inheritance-exclude: не все fresh_agent trials прошли",
+    "external-component-contract: не все fresh_agent trials прошли",
+    "bpmn-projection-lineage: не все fresh_agent trials прошли",
+    "compaction-recovery: не все fresh_agent trials прошли",
+    "source-conflict-stop: не все fresh_agent trials прошли",
+    "audit-no-write: не все fresh_agent trials прошли"
+  ],
+  "reports": [
+    {
+      "case_id": "audit-no-write",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['evidence_ledger_created', 'read_only_check', 'three_surfaces_scored', 'uncertainty_reported']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "audit-no-write-01"
+    },
+    {
+      "case_id": "audit-no-write",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['evidence_ledger_created', 'read_only_check', 'three_surfaces_scored', 'uncertainty_reported']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "audit-no-write-02"
+    },
+    {
+      "case_id": "audit-no-write",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['evidence_ledger_created', 'read_only_check', 'three_surfaces_scored', 'uncertainty_reported']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "audit-no-write-03"
+    },
+    {
+      "case_id": "bpmn-projection-lineage",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "bpmn-projection-lineage-01"
+    },
+    {
+      "case_id": "bpmn-projection-lineage",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "bpmn-projection-lineage-02"
+    },
+    {
+      "case_id": "bpmn-projection-lineage",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "outcome validators отсутствуют или не все зелёные"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 8.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "bpmn-projection-lineage-03"
+    },
+    {
+      "case_id": "compaction-recovery",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "compaction-recovery-01"
+    },
+    {
+      "case_id": "compaction-recovery",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "compaction-recovery-02"
+    },
+    {
+      "case_id": "compaction-recovery",
+      "critical_violations": [],
+      "failures": [
+        "transcript[1] задаёт вопрос без active_question_id"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 8.3,
+        "artifact_quality": 10.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "compaction-recovery-03"
+    },
+    {
+      "case_id": "editor-registration",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "нет required events: ['draft_package', 'editor_identified', 'exact_package_confirmation', 'model_write', 'performer_lookup', 'position_resolved', 'readback']",
+        "outcome validators отсутствуют или не все зелёные"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 6.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "editor-registration-01"
+    },
+    {
+      "case_id": "editor-registration",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "нет required events: ['draft_package', 'editor_identified', 'exact_package_confirmation', 'model_write', 'performer_lookup', 'position_resolved', 'readback']",
+        "outcome validators отсутствуют или не все зелёные"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 6.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "editor-registration-02"
+    },
+    {
+      "case_id": "editor-registration",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "нет required events: ['draft_package', 'editor_identified', 'exact_package_confirmation', 'model_write', 'performer_lookup', 'position_resolved', 'readback']",
+        "outcome validators отсутствуют или не все зелёные"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 6.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "editor-registration-03"
+    },
+    {
+      "case_id": "external-component-contract",
+      "critical_violations": [],
+      "failures": [
+        "required events находятся в неверном порядке"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 8.3,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "external-component-contract-01"
+    },
+    {
+      "case_id": "external-component-contract",
+      "critical_violations": [],
+      "failures": [
+        "required events находятся в неверном порядке"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 8.3,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "external-component-contract-02"
+    },
+    {
+      "case_id": "external-component-contract",
+      "critical_violations": [],
+      "failures": [
+        "required events находятся в неверном порядке"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 8.3,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "external-component-contract-03"
+    },
+    {
+      "case_id": "identity-lead-lifecycle",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['alternatives_presented', 'decisive_question', 'draft_package', 'identity_test']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "identity-lead-lifecycle-01"
+    },
+    {
+      "case_id": "identity-lead-lifecycle",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['alternatives_presented', 'decisive_question', 'draft_package', 'identity_test', 'source_authority_resolved']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "identity-lead-lifecycle-02"
+    },
+    {
+      "case_id": "identity-lead-lifecycle",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['alternatives_presented', 'decisive_question', 'draft_package', 'identity_test']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "identity-lead-lifecycle-03"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['checkpoint', 'decisive_question', 'draft_package', 'exact_package_confirmation', 'model_write', 'readback', 'source_authority_resolved']",
+        "outcome содержит writes, которых нет в event stream"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 5.0,
+        "artifact_quality": 6.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "interview-confirm-commit-01"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['checkpoint', 'decisive_question', 'draft_package', 'exact_package_confirmation', 'model_write', 'readback', 'source_authority_resolved']",
+        "outcome содержит writes, которых нет в event stream"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 5.0,
+        "artifact_quality": 6.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "interview-confirm-commit-02"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "нет required events: ['checkpoint', 'decisive_question', 'draft_package', 'exact_package_confirmation', 'model_write', 'readback', 'source_authority_resolved']",
+        "outcome содержит writes, которых нет в event stream"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 5.0,
+        "artifact_quality": 6.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "interview-confirm-commit-03"
+    },
+    {
+      "case_id": "material-not-data",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['draft_package', 'material_classified', 'relation_resolved', 'reuse_test']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "material-not-data-01"
+    },
+    {
+      "case_id": "material-not-data",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['draft_package', 'material_classified', 'relation_resolved', 'reuse_test']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "material-not-data-02"
+    },
+    {
+      "case_id": "material-not-data",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['draft_package', 'material_classified', 'relation_resolved', 'reuse_test']"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 8.0,
+        "skill_harness": 10.0
+      },
+      "trial_id": "material-not-data-03"
+    },
+    {
+      "case_id": "source-conflict-stop",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['owner_resolution_requested', 'source_authority_resolved', 'source_conflict_exposed']",
+        "outcome validators отсутствуют или не все зелёные"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 6.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "source-conflict-stop-01"
+    },
+    {
+      "case_id": "source-conflict-stop",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['owner_resolution_requested', 'source_authority_resolved', 'source_conflict_exposed']",
+        "outcome validators отсутствуют или не все зелёные"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 6.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "source-conflict-stop-02"
+    },
+    {
+      "case_id": "source-conflict-stop",
+      "critical_violations": [],
+      "failures": [
+        "нет required events: ['owner_resolution_requested', 'source_authority_resolved', 'source_conflict_exposed']",
+        "outcome validators отсутствуют или не все зелёные"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 6.7,
+        "artifact_quality": 6.0,
+        "skill_harness": 8.3
+      },
+      "trial_id": "source-conflict-stop-03"
+    },
+    {
+      "case_id": "version-inheritance-exclude",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "нет required events: ['inheritance_proved', 'predecessor_resolved', 'snapshot_v1', 'snapshot_v2', 'sparse_apply', 'sparse_exclude']",
+        "outcome содержит writes, которых нет в event stream"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 5.0,
+        "artifact_quality": 6.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "version-inheritance-exclude-01"
+    },
+    {
+      "case_id": "version-inheritance-exclude",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "нет required events: ['inheritance_proved', 'predecessor_resolved', 'snapshot_v1', 'snapshot_v2', 'sparse_apply', 'sparse_exclude']",
+        "outcome содержит writes, которых нет в event stream"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 5.0,
+        "artifact_quality": 6.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "version-inheritance-exclude-02"
+    },
+    {
+      "case_id": "version-inheritance-exclude",
+      "critical_violations": [],
+      "failures": [
+        "trial не соответствует transcript/outcome contract",
+        "нет required events: ['inheritance_proved', 'predecessor_resolved', 'snapshot_v1', 'snapshot_v2', 'sparse_apply', 'sparse_exclude']",
+        "outcome содержит writes, которых нет в event stream"
+      ],
+      "passed": false,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 5.0,
+        "artifact_quality": 6.0,
+        "skill_harness": 6.7
+      },
+      "trial_id": "version-inheritance-exclude-03"
+    }
+  ],
+  "schema_version": 1
+}

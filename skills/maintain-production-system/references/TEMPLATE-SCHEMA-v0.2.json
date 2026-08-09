@@ -1,0 +1,335 @@
+{
+  "schema_version": "0.2",
+  "sheet_count": 29,
+  "required_semantics": "For versioned_authoring and versioned_authoring_with_settings, required lists apply to version_operation=применить. For version_operation=исключить require only stable_id, version_id, version_operation, source_id and the linked decision/transaction evidence.",
+  "foreign_key_resolution": "FK to a versioned entity resolves against the materialized snapshot of working_version_id; FK to an identity/governance registry resolves against that registry. Physical duplicate stable IDs across versions are never a selector source.",
+  "physical_contract": {
+    "builder": "scripts/build_template_v0_2.py",
+    "spreadsheet_locale": "en_US",
+    "time_zone": "Europe/Istanbul",
+    "formula_language": "Google Sheets English functions with comma separators",
+    "selector_encoding": "читаемая подпись [id=stable_id]",
+    "selector_id_formula": "=IF(<selector>=\"\",\"\",IFERROR(REGEXEXTRACT(<selector>,\"\\[id=([^\\]]+)\\]\"),\"\"))",
+    "foreign_key_write_path": "Пользователь выбирает selector; соседний открытый *_id вычисляется формулой по ASCII-маркеру [id=...]. version_id авторской строки берётся из Система!B4.",
+    "selector_catalogs": "Именованные скрытые диапазоны. Для версионируемых сущностей источник — Срез модели выбранной рабочей версии; для identity/governance registry — собственные строки реестра.",
+    "enum_catalogs": "Именованные скрытые диапазоны на листе Система; пользовательские значения только на русском языке.",
+    "generated_ranges": "Вычисляемые листы и helper-каталоги защищены warning-only; IDs, selectors и официальные колонки остаются видимыми.",
+    "conditional_formatting": "Неполная начатая строка подсвечивается красным; заголовки required жёлтые, computed голубые.",
+    "visual_layout": "Сетка скрыта на всех 29 листах; строки названия, описания и подсказки образуют визуальную иерархию; заголовки и секции объединяются только вне табличных данных; selectors и вычисляемые ID различаются цветом; ширины задаются по типу поля.",
+    "filtering": "Для каждого табличного листа включён basic filter на официальные колонки и закреплены строки до header_row.",
+    "rebuild_semantics": "Builder полностью заменяет физическую структуру книги после обязательной резервной копии. При повторной сборке ему передаются все текущие sheetId и namedRangeId; named ranges удаляются до листов. Миграция бизнес-данных выполняется отдельным подтверждённым пакетом."
+  },
+  "default_table": {
+    "title_row": 1,
+    "description_row": 2,
+    "guidance_row": 3,
+    "header_row": 4,
+    "data_start_row": 5,
+    "data_end_row": 1004,
+    "freeze_rows": 4,
+    "filter": true,
+    "technical_ids_visible": true,
+    "required_header_fill": "#FFF2CC",
+    "computed_header_fill": "#D9EAF7",
+    "invalid_fill": "#F4CCCC",
+    "id_width": 20,
+    "selector_width": 38,
+    "short_text_width": 24,
+    "long_text_width": 48,
+    "date_width": 14
+  },
+  "enums": {
+    "yes_no": ["да", "нет"],
+    "version_operation": ["применить", "исключить"],
+    "knowledge_status": ["принято", "кандидат", "гипотеза", "конфликт", "устарело", "неизвестно"],
+    "model_layer": ["текущая", "целевая"],
+    "version_status": ["черновик", "принято", "действует", "закрыто"],
+    "execution_status": ["исполняется", "не исполняется", "уточняется", "не применимо"],
+    "performer_type": ["человек", "AI-агент"],
+    "assignment_status": ["активно", "завершено", "приостановлено"],
+    "counterparty_type": ["организация", "человек"],
+    "action_type": ["работа", "решение", "передача", "контроль", "автоматизация", "подпроцесс"],
+    "performer_mode": ["человек", "AI-агент", "автоматизация", "совместно"],
+    "edge_type": ["последовательность", "условие", "ветвление", "исключение", "возврат"],
+    "object_type": ["объект работы", "данные", "вход", "выход", "документ", "ресурс"],
+    "element_type": ["регламент", "правило", "данные", "источник истины", "информационная система", "интерфейс исполнения", "показатель", "норматив", "SLA", "автоматизация"],
+    "contract_status": ["проект", "действует", "приостановлен", "закрыт"],
+    "direction": ["входящая", "исходящая"],
+    "pricing_method": ["за единицу", "фиксированная сумма", "подписка", "формула"],
+    "change_operation": ["создать", "изменить", "исключить", "переход-версии", "пересобрать-проекцию"],
+    "projection_kind": ["карта бизнеса", "BPMN процесса"],
+    "readiness_status": ["не готова", "готова к просмотру", "готова к deployment"],
+    "resolution_status": ["разрешено", "исключено", "ошибка"],
+    "check_severity": ["критично", "предупреждение", "информация"]
+  },
+  "sheet_order": [
+    "Инструкция", "Система", "Схема шаблона", "Источники", "Версии", "Исполнители", "Позиции", "Назначения", "Контрагенты", "Продукты", "Материалы", "Процессы", "Действия", "Связи действий", "Объекты", "Состояния", "Переходы", "Элементы модели", "Контракты", "Позиции контрактов", "Интерфейсы передачи", "Связи модели", "Решения", "Изменения модели", "Срез модели", "Проверки", "Реестр процессов", "Рабочая панель", "Диаграммы"
+  ],
+  "sheets": {
+    "Инструкция": {
+      "kind": "guide",
+      "write_mode": "generated",
+      "sections": ["назначение", "порядок заполнения", "интервью и подтверждение", "версии", "selectors", "BPMN и SVG", "проверки и восстановление"]
+    },
+    "Система": {
+      "kind": "versioned_authoring_with_settings",
+      "settings": {
+        "model_id": "B3",
+        "working_version_id": "B4",
+        "working_version_selector": "C4",
+        "current_version_id": "B5",
+        "current_version_selector": "C5"
+      },
+      "header_row": 7,
+      "data_start_row": 8,
+      "freeze_rows": 7,
+      "columns": ["system_id", "version_id", "version_operation", "system_name", "org_tag", "purpose", "owner_position_id", "owner_position_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["system_id", "version_id", "version_operation", "system_name", "purpose", "knowledge_status", "source_id"],
+      "enums": {"version_operation": "version_operation", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "owner_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"working_version_id": "working_version_selector", "current_version_id": "current_version_selector", "owner_position_id": "owner_position_selector", "source_id": "source_selector"}
+    },
+    "Схема шаблона": {
+      "kind": "computed_registry",
+      "write_mode": "generated",
+      "columns": ["relation_id", "source_field", "cardinality", "target_field", "requiredness", "validation", "business_meaning"],
+      "computed": ["relation_id", "source_field", "cardinality", "target_field", "requiredness", "validation", "business_meaning"]
+    },
+    "Источники": {
+      "kind": "identity_registry",
+      "columns": ["source_id", "title", "source_type", "url", "authority_level", "owner_position_id", "owner_position_selector", "trust_floor", "valid_from", "valid_to", "last_checked", "active", "notes"],
+      "required": ["source_id", "title", "source_type", "authority_level", "trust_floor", "last_checked", "active"],
+      "types": {"url": "url", "valid_from": "date", "valid_to": "date", "last_checked": "date", "active": "boolean"},
+      "enums": {"trust_floor": "knowledge_status", "active": "yes_no"},
+      "foreign_keys": {"owner_position_id": "Позиции.position_id"},
+      "selectors": {"owner_position_id": "owner_position_selector"}
+    },
+    "Версии": {
+      "kind": "governance_registry",
+      "columns": ["version_id", "predecessor_version_id", "predecessor_version_selector", "version_label", "model_layer", "version_status", "accepted_decision_id", "accepted_decision_selector", "accepted_at", "effective_from", "closed_decision_id", "closed_decision_selector", "successor_version_id", "successor_version_selector", "migration_required", "migration_decision_id", "migration_decision_selector", "source_id", "source_selector", "notes"],
+      "required": ["version_id", "version_label", "model_layer", "version_status", "migration_required", "source_id"],
+      "types": {"accepted_at": "datetime", "effective_from": "datetime", "migration_required": "boolean"},
+      "enums": {"model_layer": "model_layer", "version_status": "version_status", "migration_required": "yes_no"},
+      "foreign_keys": {"predecessor_version_id": "Версии.version_id", "accepted_decision_id": "Решения.decision_id", "closed_decision_id": "Решения.decision_id", "successor_version_id": "Версии.version_id", "migration_decision_id": "Решения.decision_id", "source_id": "Источники.source_id"},
+      "selectors": {"predecessor_version_id": "predecessor_version_selector", "accepted_decision_id": "accepted_decision_selector", "closed_decision_id": "closed_decision_selector", "successor_version_id": "successor_version_selector", "migration_decision_id": "migration_decision_selector", "source_id": "source_selector"},
+      "constraints": ["single_linear_predecessor_chain", "at_most_one_draft", "working_pointer_targets_draft", "current_pointer_targets_active", "accepted_content_immutable", "only_five_allowed_transitions"]
+    },
+    "Исполнители": {
+      "kind": "identity_registry",
+      "columns": ["performer_id", "performer_type", "performer_name", "active", "source_id", "source_selector", "source_locator", "notes"],
+      "required": ["performer_id", "performer_type", "performer_name", "active", "source_id"],
+      "types": {"active": "boolean"},
+      "enums": {"performer_type": "performer_type", "active": "yes_no"},
+      "foreign_keys": {"source_id": "Источники.source_id"},
+      "selectors": {"source_id": "source_selector"}
+    },
+    "Позиции": {
+      "kind": "versioned_authoring",
+      "columns": ["position_id", "version_id", "version_operation", "system_id", "system_selector", "position_name", "responsibility", "expected_result", "authority", "system_owner", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["position_id", "version_id", "version_operation", "system_id", "position_name", "responsibility", "expected_result", "system_owner", "knowledge_status", "source_id"],
+      "types": {"system_owner": "boolean", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "system_owner": "yes_no", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "system_id": "Система.system_id", "source_id": "Источники.source_id"},
+      "selectors": {"system_id": "system_selector", "source_id": "source_selector"}
+    },
+    "Назначения": {
+      "kind": "relation_registry",
+      "columns": ["assignment_id", "performer_id", "performer_selector", "position_id", "position_selector", "active_from", "active_to", "assignment_status", "source_id", "source_selector", "source_locator", "notes"],
+      "required": ["assignment_id", "performer_id", "position_id", "assignment_status", "source_id"],
+      "types": {"active_from": "date", "active_to": "date"},
+      "enums": {"assignment_status": "assignment_status"},
+      "foreign_keys": {"performer_id": "Исполнители.performer_id", "position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"performer_id": "performer_selector", "position_id": "position_selector", "source_id": "source_selector"},
+      "constraints": ["no_overlapping_active_period_for_same_performer_position"]
+    },
+    "Контрагенты": {
+      "kind": "identity_registry",
+      "columns": ["counterparty_id", "counterparty_name", "legal_name", "counterparty_type", "active", "source_id", "source_selector", "source_locator", "notes"],
+      "required": ["counterparty_id", "counterparty_name", "counterparty_type", "active", "source_id"],
+      "types": {"active": "boolean"},
+      "enums": {"counterparty_type": "counterparty_type", "active": "yes_no"},
+      "foreign_keys": {"source_id": "Источники.source_id"},
+      "selectors": {"source_id": "source_selector"}
+    },
+    "Продукты": {
+      "kind": "versioned_authoring",
+      "columns": ["product_id", "version_id", "version_operation", "product_name", "definition", "primary_object_id", "primary_object_selector", "required_state_id", "required_state_selector", "unit", "acceptance_criteria", "acceptance_package_description", "owner_position_id", "owner_position_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["product_id", "version_id", "version_operation", "product_name", "definition", "acceptance_criteria", "knowledge_status", "source_id"],
+      "types": {"last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "primary_object_id": "Объекты.object_id", "required_state_id": "Состояния.state_id", "owner_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"primary_object_id": "primary_object_selector", "required_state_id": "required_state_selector", "owner_position_id": "owner_position_selector", "source_id": "source_selector"}
+    },
+    "Материалы": {
+      "kind": "versioned_authoring",
+      "columns": ["material_id", "version_id", "version_operation", "material_name", "material_type", "purpose", "content_text", "url", "owner_position_id", "owner_position_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["material_id", "version_id", "version_operation", "material_name", "material_type", "purpose", "knowledge_status", "source_id"],
+      "types": {"url": "url", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "owner_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"owner_position_id": "owner_position_selector", "source_id": "source_selector"},
+      "constraints": ["content_text_or_url_required_for_apply"]
+    },
+    "Процессы": {
+      "kind": "versioned_authoring",
+      "columns": ["process_id", "version_id", "version_operation", "system_id", "system_selector", "parent_process_id", "parent_process_selector", "flow_tag", "process_name", "goal", "work_object_id", "work_object_selector", "trigger", "process_input", "process_output", "entry_state_id", "entry_state_selector", "exit_state_id", "exit_state_selector", "owner_position_id", "owner_position_selector", "execution_status", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["process_id", "version_id", "version_operation", "system_id", "process_name", "goal", "trigger", "process_input", "process_output", "owner_position_id", "execution_status", "knowledge_status", "source_id"],
+      "types": {"last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "execution_status": "execution_status", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "system_id": "Система.system_id", "parent_process_id": "Процессы.process_id", "work_object_id": "Объекты.object_id", "entry_state_id": "Состояния.state_id", "exit_state_id": "Состояния.state_id", "owner_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"system_id": "system_selector", "parent_process_id": "parent_process_selector", "work_object_id": "work_object_selector", "entry_state_id": "entry_state_selector", "exit_state_id": "exit_state_selector", "owner_position_id": "owner_position_selector", "source_id": "source_selector"}
+    },
+    "Действия": {
+      "kind": "versioned_authoring",
+      "columns": ["action_id", "version_id", "version_operation", "process_id", "process_selector", "action_name", "action_type", "purpose", "action_input", "action_output", "responsible_position_id", "responsible_position_selector", "performer_mode", "execution_element_id", "execution_element_selector", "expected_duration", "execution_status", "input_object_id", "input_object_selector", "output_object_id", "output_object_selector", "linked_process_id", "linked_process_selector", "diagram_label", "include_in_diagram", "diagram_order", "lane_position_id", "lane_position_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["action_id", "version_id", "version_operation", "process_id", "action_name", "action_type", "purpose", "action_input", "action_output", "responsible_position_id", "performer_mode", "execution_status", "include_in_diagram", "knowledge_status", "source_id"],
+      "types": {"include_in_diagram": "boolean", "diagram_order": "integer", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "action_type": "action_type", "performer_mode": "performer_mode", "execution_status": "execution_status", "include_in_diagram": "yes_no", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "process_id": "Процессы.process_id", "responsible_position_id": "Позиции.position_id", "execution_element_id": "Элементы модели.element_id", "input_object_id": "Объекты.object_id", "output_object_id": "Объекты.object_id", "linked_process_id": "Процессы.process_id", "lane_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"process_id": "process_selector", "responsible_position_id": "responsible_position_selector", "execution_element_id": "execution_element_selector", "input_object_id": "input_object_selector", "output_object_id": "output_object_selector", "linked_process_id": "linked_process_selector", "lane_position_id": "lane_position_selector", "source_id": "source_selector"}
+    },
+    "Связи действий": {
+      "kind": "versioned_authoring",
+      "columns": ["edge_id", "version_id", "version_operation", "process_id", "process_selector", "from_action_id", "from_action_selector", "link_type", "to_action_id", "to_action_selector", "condition_text", "decision_position_id", "decision_position_selector", "expected_evidence", "is_entry", "is_terminal", "priority", "branch_label", "is_default", "include_in_diagram", "diagram_order", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["edge_id", "version_id", "version_operation", "process_id", "link_type", "knowledge_status", "source_id"],
+      "types": {"is_entry": "boolean", "is_terminal": "boolean", "priority": "integer", "is_default": "boolean", "include_in_diagram": "boolean", "diagram_order": "integer", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "link_type": "edge_type", "is_entry": "yes_no", "is_terminal": "yes_no", "is_default": "yes_no", "include_in_diagram": "yes_no", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "process_id": "Процессы.process_id", "from_action_id": "Действия.action_id", "to_action_id": "Действия.action_id", "decision_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"process_id": "process_selector", "from_action_id": "from_action_selector", "to_action_id": "to_action_selector", "decision_position_id": "decision_position_selector", "source_id": "source_selector"},
+      "constraints": ["entry_has_no_from_action", "terminal_has_no_to_action", "exclusive_branch_has_condition_or_default"]
+    },
+    "Объекты": {
+      "kind": "versioned_authoring",
+      "columns": ["object_id", "version_id", "version_operation", "system_id", "system_selector", "object_name", "object_type", "definition", "identity_rule", "creation_event", "closing_event", "canonical_source_element_id", "canonical_source_element_selector", "data_owner_position_id", "data_owner_position_selector", "format_or_schema", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["object_id", "version_id", "version_operation", "system_id", "object_name", "object_type", "definition", "identity_rule", "knowledge_status", "source_id"],
+      "types": {"last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "object_type": "object_type", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "system_id": "Система.system_id", "canonical_source_element_id": "Элементы модели.element_id", "data_owner_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"system_id": "system_selector", "canonical_source_element_id": "canonical_source_element_selector", "data_owner_position_id": "data_owner_position_selector", "source_id": "source_selector"}
+    },
+    "Состояния": {
+      "kind": "versioned_authoring",
+      "columns": ["state_id", "version_id", "version_operation", "object_id", "object_selector", "state_name", "definition", "terminal", "allowed_actions_summary", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["state_id", "version_id", "version_operation", "object_id", "state_name", "definition", "terminal", "knowledge_status", "source_id"],
+      "types": {"terminal": "boolean", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "terminal": "yes_no", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "object_id": "Объекты.object_id", "source_id": "Источники.source_id"},
+      "selectors": {"object_id": "object_selector", "source_id": "source_selector"}
+    },
+    "Переходы": {
+      "kind": "versioned_authoring",
+      "columns": ["transition_id", "version_id", "version_operation", "process_id", "process_selector", "object_id", "object_selector", "from_state_id", "from_state_selector", "to_state_id", "to_state_selector", "action_id", "action_selector", "trigger_type", "condition_text", "decision_position_id", "decision_position_selector", "evidence", "exception_transition_id", "exception_transition_selector", "priority", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["transition_id", "version_id", "version_operation", "process_id", "object_id", "from_state_id", "to_state_id", "trigger_type", "evidence", "knowledge_status", "source_id"],
+      "types": {"priority": "integer", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "process_id": "Процессы.process_id", "object_id": "Объекты.object_id", "from_state_id": "Состояния.state_id", "to_state_id": "Состояния.state_id", "action_id": "Действия.action_id", "decision_position_id": "Позиции.position_id", "exception_transition_id": "Переходы.transition_id", "source_id": "Источники.source_id"},
+      "selectors": {"process_id": "process_selector", "object_id": "object_selector", "from_state_id": "from_state_selector", "to_state_id": "to_state_selector", "action_id": "action_selector", "decision_position_id": "decision_position_selector", "exception_transition_id": "exception_transition_selector", "source_id": "source_selector"},
+      "constraints": ["states_belong_to_same_object"]
+    },
+    "Элементы модели": {
+      "kind": "versioned_authoring",
+      "columns": ["element_id", "version_id", "version_operation", "system_id", "system_selector", "element_type", "element_name", "definition", "owner_position_id", "owner_position_selector", "formula_or_rule", "unit_or_format", "target_or_threshold", "canonical_source_element_id", "canonical_source_element_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["element_id", "version_id", "version_operation", "system_id", "element_type", "element_name", "definition", "knowledge_status", "source_id"],
+      "types": {"last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "element_type": "element_type", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "system_id": "Система.system_id", "owner_position_id": "Позиции.position_id", "canonical_source_element_id": "Элементы модели.element_id", "source_id": "Источники.source_id"},
+      "selectors": {"system_id": "system_selector", "owner_position_id": "owner_position_selector", "canonical_source_element_id": "canonical_source_element_selector", "source_id": "source_selector"}
+    },
+    "Контракты": {
+      "kind": "versioned_authoring",
+      "columns": ["contract_id", "version_id", "version_operation", "counterparty_id", "counterparty_selector", "contract_name_or_number", "valid_from", "valid_to", "contract_status", "document_url", "change_authority_position_id", "change_authority_position_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["contract_id", "version_id", "version_operation", "counterparty_id", "contract_name_or_number", "contract_status", "knowledge_status", "source_id"],
+      "types": {"valid_from": "date", "valid_to": "date", "document_url": "url", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "contract_status": "contract_status", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "counterparty_id": "Контрагенты.counterparty_id", "change_authority_position_id": "Позиции.position_id", "source_id": "Источники.source_id"},
+      "selectors": {"counterparty_id": "counterparty_selector", "change_authority_position_id": "change_authority_position_selector", "source_id": "source_selector"}
+    },
+    "Позиции контрактов": {
+      "kind": "versioned_authoring",
+      "columns": ["contract_item_id", "version_id", "version_operation", "contract_id", "contract_selector", "direction", "product_id", "product_selector", "internal_system_id", "internal_system_selector", "pricing_method", "price_value", "price_formula", "currency", "pricing_unit", "billing_trigger", "payment_terms", "interface_id", "interface_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["contract_item_id", "version_id", "version_operation", "contract_id", "direction", "product_id", "internal_system_id", "pricing_method", "currency", "pricing_unit", "knowledge_status", "source_id"],
+      "types": {"price_value": "decimal", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "direction": "direction", "pricing_method": "pricing_method", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "contract_id": "Контракты.contract_id", "product_id": "Продукты.product_id", "internal_system_id": "Система.system_id", "interface_id": "Интерфейсы передачи.interface_id", "source_id": "Источники.source_id"},
+      "selectors": {"contract_id": "contract_selector", "product_id": "product_selector", "internal_system_id": "internal_system_selector", "interface_id": "interface_selector", "source_id": "source_selector"},
+      "constraints": ["price_value_required_unless_formula", "price_formula_required_for_formula_method"]
+    },
+    "Интерфейсы передачи": {
+      "kind": "versioned_authoring",
+      "columns": ["interface_id", "version_id", "version_operation", "interface_name", "counterparty_id", "counterparty_selector", "internal_system_id", "internal_system_selector", "product_id", "product_selector", "transfer_trigger", "channel", "information_system_id", "information_system_selector", "format_description", "package_description", "acceptance_action_id", "acceptance_action_selector", "acceptance_evidence", "rejection_path", "return_path", "fallback_path", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["interface_id", "version_id", "version_operation", "interface_name", "counterparty_id", "internal_system_id", "product_id", "transfer_trigger", "channel", "format_description", "acceptance_evidence", "rejection_path", "knowledge_status", "source_id"],
+      "types": {"last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "counterparty_id": "Контрагенты.counterparty_id", "internal_system_id": "Система.system_id", "product_id": "Продукты.product_id", "information_system_id": "Элементы модели.element_id", "acceptance_action_id": "Действия.action_id", "source_id": "Источники.source_id"},
+      "selectors": {"counterparty_id": "counterparty_selector", "internal_system_id": "internal_system_selector", "product_id": "product_selector", "information_system_id": "information_system_selector", "acceptance_action_id": "acceptance_action_selector", "source_id": "source_selector"}
+    },
+    "Связи модели": {
+      "kind": "versioned_authoring",
+      "columns": ["link_id", "version_id", "version_operation", "from_entity_id", "from_entity_selector", "relation_type", "to_entity_id", "to_entity_selector", "relation_role", "required", "usage_description", "scope_system_id", "scope_system_selector", "scope_process_id", "scope_process_selector", "knowledge_status", "source_id", "source_selector", "source_locator", "last_reviewed", "notes"],
+      "required": ["link_id", "version_id", "version_operation", "from_entity_id", "relation_type", "to_entity_id", "required", "knowledge_status", "source_id"],
+      "types": {"required": "boolean", "last_reviewed": "date"},
+      "enums": {"version_operation": "version_operation", "required": "yes_no", "knowledge_status": "knowledge_status"},
+      "foreign_keys": {"version_id": "Версии.version_id", "scope_system_id": "Система.system_id", "scope_process_id": "Процессы.process_id", "source_id": "Источники.source_id"},
+      "polymorphic_foreign_keys": {"from_entity_id": "Срез модели.stable_id", "to_entity_id": "Срез модели.stable_id"},
+      "selectors": {"from_entity_id": "from_entity_selector", "to_entity_id": "to_entity_selector", "scope_system_id": "scope_system_selector", "scope_process_id": "scope_process_selector", "source_id": "source_selector"},
+      "relation_types": ["производит", "использует", "создаёт", "регулируется", "входит в приёмочный пакет", "хранится в", "исполняется с помощью", "измеряется", "ограничивается"]
+    },
+    "Решения": {
+      "kind": "append_only_governance",
+      "columns": ["decision_id", "transaction_id", "package_id", "package_hash", "confirmation_id", "decided_at", "confirmed_by_performer_id", "confirmed_by_performer_selector", "confirmation_assignment_id", "confirmation_assignment_selector", "confirmer_name_snapshot", "confirmer_position_snapshot", "decision_text", "rationale", "confirmation_evidence", "working_version_id", "working_version_selector", "corrects_decision_id", "corrects_decision_selector", "recorded_by_performer_id", "recorded_by_performer_selector", "source_id", "source_selector"],
+      "required": ["decision_id", "transaction_id", "package_id", "package_hash", "confirmation_id", "decided_at", "confirmed_by_performer_id", "confirmation_assignment_id", "confirmer_name_snapshot", "confirmer_position_snapshot", "decision_text", "confirmation_evidence", "working_version_id", "recorded_by_performer_id", "source_id"],
+      "types": {"decided_at": "datetime"},
+      "foreign_keys": {"confirmed_by_performer_id": "Исполнители.performer_id", "confirmation_assignment_id": "Назначения.assignment_id", "working_version_id": "Версии.version_id", "corrects_decision_id": "Решения.decision_id", "recorded_by_performer_id": "Исполнители.performer_id", "source_id": "Источники.source_id"},
+      "selectors": {"confirmed_by_performer_id": "confirmed_by_performer_selector", "confirmation_assignment_id": "confirmation_assignment_selector", "working_version_id": "working_version_selector", "corrects_decision_id": "corrects_decision_selector", "recorded_by_performer_id": "recorded_by_performer_selector", "source_id": "source_selector"},
+      "constraints": ["identified_human_confirmer_only", "assignment_attribution_matches_confirmed_package", "assignment_is_not_permission_or_rbac", "immutable_append_only"]
+    },
+    "Изменения модели": {
+      "kind": "append_only_governance",
+      "columns": ["change_id", "transaction_id", "decision_id", "decision_selector", "applied_at", "operation", "entity_type", "stable_id", "field_name", "old_value", "new_value", "version_id", "version_selector", "recorded_by_performer_id", "recorded_by_performer_selector", "validation_result"],
+      "required": ["change_id", "transaction_id", "decision_id", "applied_at", "operation", "entity_type", "stable_id", "field_name", "version_id", "recorded_by_performer_id"],
+      "types": {"applied_at": "datetime"},
+      "enums": {"operation": "change_operation"},
+      "foreign_keys": {"decision_id": "Решения.decision_id", "version_id": "Версии.version_id", "recorded_by_performer_id": "Исполнители.performer_id"},
+      "selectors": {"decision_id": "decision_selector", "version_id": "version_selector", "recorded_by_performer_id": "recorded_by_performer_selector"},
+      "computed": ["validation_result"],
+      "constraints": ["immutable_append_only", "transaction_id_matches_decision"]
+    },
+    "Срез модели": {
+      "kind": "computed_registry",
+      "write_mode": "generated",
+      "columns": ["selected_version_id", "selected_version_selector", "entity_type", "stable_id", "entity_selector", "source_version_id", "source_version_selector", "source_sheet", "source_row_key", "resolved_operation", "resolution_status"],
+      "computed": ["selected_version_id", "selected_version_selector", "entity_type", "stable_id", "entity_selector", "source_version_id", "source_version_selector", "source_sheet", "source_row_key", "resolved_operation", "resolution_status"],
+      "enums": {"resolved_operation": "version_operation", "resolution_status": "resolution_status"}
+    },
+    "Проверки": {
+      "kind": "computed_registry",
+      "write_mode": "generated",
+      "columns": ["check_id", "category", "severity", "check_name", "result_count", "status", "blocking", "affected_ids", "remediation"],
+      "computed": ["check_id", "category", "severity", "check_name", "result_count", "status", "blocking", "affected_ids", "remediation"],
+      "enums": {"severity": "check_severity", "blocking": "yes_no"}
+    },
+    "Реестр процессов": {
+      "kind": "computed_registry",
+      "write_mode": "generated",
+      "columns": ["selected_version_id", "process_id", "process_selector", "system_selector", "parent_process_selector", "process_name", "goal", "trigger", "process_input", "process_output", "owner_position_selector", "action_count", "transition_count", "execution_status", "knowledge_status", "source_selector", "completeness_status", "diagram_id", "diagram_selector", "readiness_status", "svg_url"],
+      "computed": ["selected_version_id", "process_id", "process_selector", "system_selector", "parent_process_selector", "process_name", "goal", "trigger", "process_input", "process_output", "owner_position_selector", "action_count", "transition_count", "execution_status", "knowledge_status", "source_selector", "completeness_status", "diagram_id", "diagram_selector", "readiness_status", "svg_url"]
+    },
+    "Рабочая панель": {
+      "kind": "computed_dashboard",
+      "write_mode": "selectors_only",
+      "selectors": ["selected_version_id", "selected_system_id", "selected_process_id"],
+      "sections": ["паспорт системы", "продукты", "паспорт процесса", "действия и ветки", "объект и состояния", "материалы", "контракты и внешние компоненты", "проверки", "BPMN/SVG"],
+      "computed": ["all_non_selector_cells"]
+    },
+    "Диаграммы": {
+      "kind": "derived_artifact_registry",
+      "columns": ["diagram_id", "process_id", "process_selector", "version_id", "version_selector", "projection_build_id", "projection_kind", "readiness_status", "built_at", "model_fingerprint", "bpmn_url", "bpmn_sha256", "svg_url", "svg_sha256", "deployed_environment", "deployed_at", "source_id", "source_selector", "notes"],
+      "required": ["diagram_id", "process_id", "version_id", "projection_build_id", "projection_kind", "readiness_status", "built_at", "model_fingerprint", "source_id"],
+      "types": {"built_at": "datetime", "bpmn_url": "url", "svg_url": "url", "deployed_at": "datetime"},
+      "enums": {"projection_kind": "projection_kind", "readiness_status": "readiness_status"},
+      "foreign_keys": {"process_id": "Процессы.process_id", "version_id": "Версии.version_id", "source_id": "Источники.source_id"},
+      "selectors": {"process_id": "process_selector", "version_id": "version_selector", "source_id": "source_selector"},
+      "constraints": ["unique_version_build", "svg_and_bpmn_share_model_fingerprint", "deployment_requires_deployment_readiness"]
+    }
+  }
+}

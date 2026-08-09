@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "trial_id": "source-conflict-stop-01",
+  "case_id": "source-conflict-stop",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В проектном CONTEXT лид определён как любой контакт, а в названном мной нормативном документе — как проверенная коммерческая возможность. Выбери правильное определение для модели. Ничего пока не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "В источниках есть конфликт:\n\n- `project/CONTEXT.md` (ред. 2026-07-01, проектный контекст): «Лид — любой контакт».\n- `Язык продаж` (ред. 2026-08-08, назван вами, явно нормативен для модели): «Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку».\n\nПо авторитету и свежести для нормативной модели сильнее второй источник; первый нельзя молча переписать: он может описывать текущую практику или прежнее значение. Поэтому я не фиксирую определение и не меняю модель.\n\nОдин вопрос: подтверждаете, что для черновика `biz-eval` v2 «Язык продаж» заменяет определение из `project/CONTEXT.md`, а «любой контакт» остаётся только свидетельством текущего или устаревшего употребления?"
+    },
+    {
+      "role": "user",
+      "content": "Да. Для модели biz-eval v2 подтверждаю определение из «Языка продаж» как нормативное. Формулировку «любой контакт» из project/CONTEXT.md оставьте только как устаревшее употребление и свидетельство конфликта. Ничего в модель не записывайте."
+    },
+    {
+      "role": "assistant",
+      "content": "Локальное разрешение принято: для нормативной модели `biz-eval` v2 действует определение из «Языка продаж»; формулировка «Лид — любой контакт» остаётся устаревшим употреблением и свидетельством разрешённого конфликта. В модель ничего не записывал.\n\nПакет-кандидат `semantic-resolution::biz-eval::v2::lead-source-conflict::1`\n\n- кандидат: `Лид`;\n- исход допуска: `принять` — в ограниченной области разрешения конфликта определений;\n- каноническое название и определение: «Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку»;\n- источники: `Язык продаж` от 2026-08-08 — нормативный источник для модели; `project/CONTEXT.md` от 2026-07-01 — устаревшее употребление и свидетельство конфликта;\n- исключение: любой контакт, который не является зарегистрированной коммерческой возможностью и не прошёл первичную проверку, не включается в это определение;\n- открытая граница пакета: по доступным источникам не установлены stable ID, тип элемента, правило идентичности и жизненный цикл лида; этот пакет их не утверждает;\n- рекомендуемая операция модели: отсутствует до отдельного подтверждённого изменения;\n- `package_hash`: `a1e12fc4f359717cd6dc941bdea0da16e0802ed3a8de68a6a1d829a10edbce67`.\n\nПакет остаётся неподтверждённым; по вашему указанию останавливаюсь без записи в модель."
+    }
+  ],
+  "events": [
+    {
+      "type": "session_oriented",
+      "model_id": "biz-eval",
+      "working_version_id": "v2",
+      "version_status": "draft",
+      "mode": "proposal"
+    },
+    {
+      "type": "source_conflict_observed",
+      "source_a": {
+        "locator": "project/CONTEXT.md",
+        "revision": "2026-07-01",
+        "authority": "project context",
+        "claim": "Лид — любой контакт"
+      },
+      "source_b": {
+        "locator": "Язык продаж",
+        "revision": "2026-08-08",
+        "authority": "owner-named normative document for the model",
+        "claim": "Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку"
+      }
+    },
+    {
+      "type": "authority_and_freshness_assessed",
+      "observed": "Source B is explicitly normative for the model and newer than Source A."
+    },
+    {
+      "type": "single_decisive_question_asked",
+      "question_scope": "Whether Source B supersedes Source A in biz-eval v2 and how Source A should be retained."
+    },
+    {
+      "type": "stopped_pending_owner_resolution"
+    },
+    {
+      "type": "owner_local_resolution_received",
+      "response": "Source B is confirmed as normative for biz-eval v2; Source A is retained as obsolete usage and conflict evidence."
+    },
+    {
+      "type": "semantic_resolution_package_drafted",
+      "package_id": "semantic-resolution::biz-eval::v2::lead-source-conflict::1",
+      "package_hash": "a1e12fc4f359717cd6dc941bdea0da16e0802ed3a8de68a6a1d829a10edbce67",
+      "semantic_outcome": "принять",
+      "scope": "definition-source conflict only"
+    },
+    {
+      "type": "stopped_without_package_confirmation"
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "semantic_outcome": "принять",
+    "model_change_performed": false
+  },
+  "validations": {
+    "conflict_surfaced": true,
+    "authority_and_freshness_surfaced": true,
+    "assistant_turn_is_russian": true,
+    "assistant_turn_persisted_verbatim": true,
+    "owner_local_resolution_recorded": true,
+    "package_hash_present": true,
+    "question_count_at_most_one": true,
+    "no_model_write": true,
+    "no_external_mutation": true,
+    "stopped_after_question": true
+  },
+  "trial_state": {
+    "state": "checkpoint",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "active_question": null,
+    "open_conflicts": [
+      "Конфликт источников разрешён для нормативного определения; stable ID, тип, правило идентичности и жизненный цикл лида не установлены доступными источниками."
+    ],
+    "next_action": "Wait for an explicit request to confirm the drafted package or hand it off; do not write the model.",
+    "write_state": "not_started"
+  }
+}

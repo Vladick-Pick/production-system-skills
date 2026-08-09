@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "trial_id": "material-not-data-03",
+  "case_id": "material-not-data",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "turn": 1,
+      "content": "У нас есть шаблон первого сообщения, скрипт звонка и презентация клуба. Как это правильно внести в модель? Ничего пока не записывай."
+    },
+    {
+      "role": "assistant",
+      "turn": 1,
+      "questions": [],
+      "content": "Ничего не записываю. В модели это три отдельных **материала**, а не данные и не действия:\n\n- `Шаблон первого сообщения` — материал, который использует действие `act-first-contact`.\n- `Скрипт звонка` — материал, который использует действие `act-call-lead`.\n- `Презентация клуба` — материал, который использует действие `act-present-club`.\n\nМатериал — переиспользуемый содержательный артефакт для выполнения действия; у него нужны стабильный `material_id`, название, формат, содержимое или URL, назначение, владелец и версия. Предлагаю зарезервировать ID по правилу `mat-<краткое-название>`: `mat-first-message-template`, `mat-call-script`, `mat-club-presentation`. Связи в модели: `действие → использует → материал`; каждая из трёх связей имеет кратность 1:1 в известных данных, без вывода, что этот материал нельзя будет использовать и в других действиях.\n\nНе включать в эти материалы конкретный текст, отправленный лиду `L-104` в 10:31: это данные исполнения о конкретном действии. Не включать и правило о согласии перед звонком: это отдельное правило с нормативным источником, которое ограничивает `act-call-lead`, но не является скриптом звонка.\n\n**Semantic-resolution package**\n\n- `package_id`: `srp-biz-eval-v2-draft-materials-001`\n- кандидат: шаблон первого сообщения, скрипт звонка, презентация клуба\n- исход допуска: `принять`\n- модель и рабочая версия: `biz-eval`, `v2-draft`; режим `proposal`\n- канонические названия и stable ID: `Шаблон первого сообщения` / `mat-first-message-template`; `Скрипт звонка` / `mat-call-script`; `Презентация клуба` / `mat-club-presentation`\n- определение: каждый кандидат — материал, то есть переиспользуемый содержательный артефакт, нужный исполнителю или автоматизации для выполнения указанного действия.\n- референт и тип: три самостоятельных переиспользуемых артефакта; тип — `материал`.\n- признаки включения: содержимое или ссылка используются при выполнении целевого действия и могут повторно применяться в разных экземплярах этого действия.\n- исключения и контрпримеры: отправленное в 10:31 сообщение лиду `L-104` — данные исполнения; факт отправки презентации — действие или данные о действии; правило о согласии перед звонком — правило с нормативным источником. Ни один из них не является одним из трёх материалов.\n- правило идентичности: экземпляры материала различны, когда различны их самостоятельное назначение и содержательное ядро; новая редакция того же материала сохраняет `material_id` при сохранении назначения и идентичности, иначе создаётся новый материал.\n- создание и завершение: материал появляется при подготовке доступного для повторного использования артефакта; прекращает использоваться при изъятии или замене, при этом история прошлых применений сохраняется в данных исполнения.\n- жизненный цикл: кандидат → доступен для использования → изменённая версия или выведен из использования.\n- синонимы: не установлены.\n- операционное использование: соответственно `act-first-contact`, `act-call-lead`, `act-present-club`.\n- представления: файл, ссылка или текстовое содержимое материала; они представляют материал, но не заменяют факт его конкретного применения.\n- связи и кратности: `act-first-contact → использует → mat-first-message-template`; `act-call-lead → использует → mat-call-script`; `act-present-club → использует → mat-club-presentation`. Материал может использоваться несколькими действиями, действие — несколькими материалами.\n- граница и контракты: все три артефакта находятся внутри моделируемой системы; внешних контрактов по известным данным нет.\n- затронутые ID: `act-first-contact`, `act-call-lead`, `act-present-club`; предлагаемы три новых `material_id`.\n- карта влияния: потребуется добавить три материала и три связи использования; потребуется отдельно связать правило согласия с `act-call-lead`, если оно ещё не представлено в модели. Данные исполнения `L-104` не меняются.\n- источники и статусы знания: известные действия и их использование материалов — факты задания; классификация — вывод по нормативному языку; правило согласия — действующая утверждённая норма из задания.\n- открытые конфликты: не обнаружены.\n- опровергающий сценарий: если презентацию отправили лиду, а запись об отправке удалили, презентация всё равно остаётся доступным артефактом; удаление данных исполнения не должно удалить материал. Если подготовили новый материал с другим назначением и содержательным ядром, это новый `material_id`, а не отправленное сообщение.\n- рекомендуемая операция модели: после подтверждённого пакета передать в `maintain-production-system` создание трёх материалов и трёх связей в `v2-draft`; в этом режиме и в этом разговоре записи нет.\n- `package_hash`: `1a30a0c090fc40d2d8c7080eeb0fb21a6db2a898ae5594e50e9ecc8c5af7bf90`\n\nСтатус: пакет-кандидат подготовлен, не подтверждён и не записан. Передача возможна только после подтверждения полного неизменённого пакета идентифицированным человеком; даже тогда этот скилл сам модель не меняет."
+    }
+  ],
+  "events": [
+    {
+      "sequence": 1,
+      "type": "session_oriented",
+      "facts": {
+        "model_id": "biz-eval",
+        "working_version_id": "v2-draft",
+        "mode": "proposal",
+        "model_write_available": false
+      }
+    },
+    {
+      "sequence": 2,
+      "type": "action_usage_observed",
+      "facts": {
+        "accepted_actions": [
+          "act-first-contact",
+          "act-call-lead",
+          "act-present-club"
+        ],
+        "material_usage": {
+          "first_message_template": "act-first-contact",
+          "call_script": "act-call-lead",
+          "club_presentation": "act-present-club"
+        }
+      }
+    },
+    {
+      "sequence": 3,
+      "type": "execution_fact_observed",
+      "facts": {
+        "description": "A concrete message was sent to lead L-104 at 10:31."
+      }
+    },
+    {
+      "sequence": 4,
+      "type": "normative_rule_observed",
+      "facts": {
+        "description": "Consent must be requested before calling.",
+        "classification": "normative_source",
+        "included_in_candidate_artifacts": false
+      }
+    },
+    {
+      "sequence": 5,
+      "type": "semantic_package_drafted",
+      "facts": {
+        "package_id": "srp-biz-eval-v2-draft-materials-001",
+        "outcome": "принять",
+        "candidate_type": "материал",
+        "questions_asked": 0,
+        "writes_performed": 0
+      }
+    }
+  ],
+  "outcome": {
+    "completion_state": "semantic_resolution_package_drafted",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "three_artifacts_have_observed_action_usage": true,
+      "concrete_sent_message_is_separate_execution_fact": true,
+      "consent_requirement_is_separate_normative_source": true,
+      "proposal_mode_has_no_model_write": true
+    },
+    "active_question_id": null,
+    "package_id": "srp-biz-eval-v2-draft-materials-001",
+    "package_hash": "1a30a0c090fc40d2d8c7080eeb0fb21a6db2a898ae5594e50e9ecc8c5af7bf90",
+    "confirmation_status": "not_requested",
+    "handoff": "maintain-production-system after an identified human confirms the unchanged package; no mutation is permitted in this trial."
+  },
+  "trial_state": {
+    "session_state": "draft",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "working_version_id": "v2-draft",
+    "active_question_id": null,
+    "accepted_local_answers": [],
+    "write_state": "not_started",
+    "next_action": "await an identified human's review or confirmation of the unchanged package; do not write the model"
+  }
+}

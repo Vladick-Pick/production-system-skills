@@ -1,0 +1,162 @@
+{
+  "schema": 1,
+  "trial_id": "external-component-contract-01",
+  "case_id": "external-component-contract",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Поставщик Leadgen продаёт нам два продукта: «Лид качества A» и «Лид качества B». Оба используются внутри нашей системы привлечения, причём A используют действия проверки и передачи, B — проверка и дозвон. Опиши это правильно в модели, но не моделируй внутренние процессы Leadgen и пока ничего не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировал предложение без записи. Граница модели — наша система привлечения `sys-attraction`; Leadgen остаётся внешним контрагентом `cp-leadgen`, его внутренние процессы и системы не моделируются.\n\n«Лид качества A» и «Лид качества B» нужно завести как два разных продукта: они отдельно заказываются и принимаются, а их критерии качества и цены различаются. Один договор с Leadgen связывается с двумя входящими позициями договора — по одной на каждый продукт — для `sys-attraction`.\n\nИспользование фиксируется на уровне действий: `act-check-lead` и `act-send-lead` используют продукт A; `act-check-lead` и `act-call-lead` используют продукт B.\n\nКак для каждого из двух продуктов определены передача и приёмка на границе: триггер, канал, формат и состав пакета, доказательство приёмки, путь отказа/возврата и fallback? Это нужно, чтобы описать два интерфейса передачи, не выдумывая работу Leadgen."
+    },
+    {
+      "role": "user",
+      "content": "Оба продукта передаются по одному API-интерфейсу, когда Leadgen объявляет лид готовым. POST /leads, JSON: lead_id, контакты, согласие, источник, quality_class A/B и доказательства критериев. Наша система подтверждает получение техническим ack и в течение 5 минут проверяет пакет. A принимается при полных данных, подтверждённом интересе и согласии; B — при проверяемом контакте и согласии. При отказе возвращаем код нарушенного критерия в течение часа; исправленный пакет можно повторно передать с тем же lead_id в течение 24 часов. Если API недоступен более 15 минут, fallback — зашифрованный CSV в контролируемый ящик с последующей сверкой."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет-кандидат сформирован, записи в модель не было.\n\nГраница: `sys-attraction` — внутренняя система; `cp-leadgen` — внешний контрагент. Внутренние процессы и система Leadgen не добавляются.\n\nВ v2 предлагаются две отдельные продуктовые записи: «Лид качества A» и «Лид качества B», и две входящие позиции одного договора с Leadgen. У каждой позиции — свой продукт, критерии качества и ценовые условия; числовые цены не подставляются, потому что их значений в предоставленных фактах нет.\n\nДля передачи предлагаются две продуктовые записи интерфейса с общим транспортным endpoint `POST /leads`; это один API-интерфейс, а не две интеграции. Триггер — Leadgen объявляет лид готовым. Пакет JSON: `lead_id`, контакты, согласие, источник, `quality_class` A/B и доказательства критериев. Техническое получение подтверждается ack; `act-check-lead` проверяет пакет не позднее 5 минут. Для A критерии приёмки: полные данные, подтверждённый интерес и согласие. Для B: проверяемый контакт и согласие. Отказ — код нарушенного критерия в течение часа; возврат — исправленный пакет с тем же `lead_id` в течение 24 часов. При недоступности API более 15 минут применяется fallback: зашифрованный CSV в контролируемый ящик с последующей сверкой.\n\nСвязи использования: A → `act-check-lead`, `act-send-lead`; B → `act-check-lead`, `act-call-lead`. Пакет готов как предложение; подтверждение и запись не запрашиваются, поскольку вы попросили пока ничего не записывать."
+    }
+  ],
+  "events": [
+    {
+      "type": "counterparty_resolved",
+      "counterparty_id": "cp-leadgen",
+      "fact": "Leadgen is an external supplier counterparty; supplier internals are out of model scope."
+    },
+    {
+      "type": "product_identity_test",
+      "result": "separate_products",
+      "products": [
+        "Лид качества A",
+        "Лид качества B"
+      ],
+      "fact": "They are separately ordered and accepted and have distinct quality criteria and prices."
+    },
+    {
+      "type": "contract_items_resolved",
+      "contract_count": 1,
+      "contract_item_count": 2,
+      "direction": "входящая",
+      "internal_system_id": "sys-attraction",
+      "fact": "One agreement covers two separately priced and accepted incoming products."
+    },
+    {
+      "type": "consumer_actions_linked",
+      "links": [
+        {
+          "product": "Лид качества A",
+          "action_ids": [
+            "act-check-lead",
+            "act-send-lead"
+          ]
+        },
+        {
+          "product": "Лид качества B",
+          "action_ids": [
+            "act-check-lead",
+            "act-call-lead"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "transfer_interface_resolved",
+      "transport_interface": {
+        "trigger": "Leadgen declares the lead ready",
+        "channel": "API",
+        "endpoint": "POST /leads",
+        "format": "JSON",
+        "package_fields": [
+          "lead_id",
+          "контакты",
+          "согласие",
+          "источник",
+          "quality_class A/B",
+          "доказательства критериев"
+        ]
+      },
+      "acceptance": {
+        "technical_ack": true,
+        "verification_action_id": "act-check-lead",
+        "verification_sla": "5 minutes",
+        "criteria_by_product": {
+          "Лид качества A": [
+            "полные данные",
+            "подтверждённый интерес",
+            "согласие"
+          ],
+          "Лид качества B": [
+            "проверяемый контакт",
+            "согласие"
+          ]
+        }
+      },
+      "exception_protocol": {
+        "rejection": "Return a code for the failed criterion within 1 hour.",
+        "return": "A corrected package with the same lead_id may be retransmitted within 24 hours.",
+        "fallback": "If API is unavailable for more than 15 minutes, send encrypted CSV to a controlled mailbox and reconcile afterwards."
+      },
+      "fact": "Both products share one transport endpoint; product-specific interface records retain separate acceptance criteria."
+    },
+    {
+      "type": "draft_package",
+      "package_kind": "proposal",
+      "model_id": "biz-eval",
+      "working_version_id": "v2",
+      "operations": {
+        "products": 2,
+        "contract_items": 2,
+        "transfer_interface_records": 2,
+        "consumer_action_links": 4
+      },
+      "fact": "No model row, decision, change record, transaction, or projection was written."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "proposal_mode": true,
+      "no_model_write": true,
+      "supplier_internal_system_not_invented": true,
+      "external_counterparty_resolved": true,
+      "separate_product_identity_resolved": true,
+      "one_contract_with_two_contract_items_resolved": true,
+      "consumer_actions_linked": true,
+      "transfer_interface_resolved": true,
+      "shared_transport_endpoint_not_misrepresented_as_two_integrations": true,
+      "acceptance_rejection_return_and_fallback_resolved": true,
+      "price_values_not_invented": true,
+      "at_most_one_question_in_assistant_turn": true,
+      "draft_package_created": true
+    }
+  },
+  "trial_state": {
+    "state": "checkpoint",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "current_version_id": null,
+    "active_question": null,
+    "accepted_local_answers": [
+      "Leadgen is an external counterparty, not a modeled internal supplier system.",
+      "Lead quality A and B are separate products.",
+      "One agreement contains two incoming contract items for sys-attraction.",
+      "Product A is used by act-check-lead and act-send-lead; product B is used by act-check-lead and act-call-lead.",
+      "Both products are transferred through POST /leads as a JSON package when Leadgen declares a lead ready.",
+      "Technical ack, five-minute internal package verification, product-specific acceptance criteria, rejection, return, and fallback behavior are resolved."
+    ],
+    "open_conflicts": [],
+    "open_unknowns": [
+      "Exact price values, currency, unit, and payment terms are not present in the supplied facts and are intentionally not invented; they are required only before a write-ready contract-item package."
+    ],
+    "write_state": "not_started",
+    "next_action": "Keep the proposal checkpoint. If a write is later authorized, obtain the contract pricing fields, identify the human confirmer, show a hashable mutation package, and require explicit confirmation before one transaction."
+  }
+}

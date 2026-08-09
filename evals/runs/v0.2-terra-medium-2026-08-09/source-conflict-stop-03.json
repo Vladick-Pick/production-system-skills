@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "trial_id": "source-conflict-stop-03",
+  "case_id": "source-conflict-stop",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В проектном CONTEXT лид определён как любой контакт, а в названном мной нормативном документе — как проверенная коммерческая возможность. Выбери правильное определение для модели. Ничего пока не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "Вижу точный конфликт источников:\n\n- `project/CONTEXT.md` от 2026-07-01 (проектный контекст): «Лид — любой контакт».\n- «Язык продаж» от 2026-08-08, названный вами нормативным для модели: «Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку».\n\nДля модели выбираю второе определение: оно прямо задано как нормативное и свежее. Первое остаётся свидетельством прежнего или фактического употребления термина, но не должно молча переопределять норму модели.\n\nЭто не усредняет конфликт: «любой контакт» и «прошедшая первичную проверку коммерческая возможность» имеют разные границы включения и разные моменты создания лида. В текущем v2 ещё нет принятого разрешения этого расхождения, поэтому статус — конфликт источников с рекомендуемым нормативным разрешением; записи не выполняю."
+    }
+  ],
+  "events": [
+    {
+      "type": "session_oriented",
+      "model_id": "biz-eval",
+      "version_id": "v2",
+      "version_status": "черновик",
+      "mode": "proposal"
+    },
+    {
+      "type": "source_conflict_observed",
+      "dimension": "definition_and_inclusion_boundary",
+      "source_a": {
+        "locator": "project/CONTEXT.md",
+        "revision": "2026-07-01",
+        "authority": "project_context",
+        "claim": "Лид — любой контакт"
+      },
+      "source_b": {
+        "locator": "Язык продаж",
+        "revision": "2026-08-08",
+        "authority": "explicitly_normative_for_model",
+        "claim": "Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку"
+      }
+    },
+    {
+      "type": "authority_and_freshness_compared",
+      "selected_source": "Язык продаж",
+      "basis": "explicit normative authority for the model and later revision"
+    },
+    {
+      "type": "assistant_turn_emitted",
+      "active_question": null
+    },
+    {
+      "type": "stopped_without_mutation",
+      "reason": "proposal mode; current model has no accepted conflict resolution"
+    }
+  ],
+  "outcome": {
+    "selected_definition": "Лид — зарегистрированная коммерческая возможность, прошедшая первичную проверку",
+    "semantic_outcome": "зафиксировать конфликт",
+    "recommendation": "Use the explicitly normative, newer definition as the candidate for a later semantic-resolution package.",
+    "writes": [],
+    "external_mutations": []
+  },
+  "validations": {
+    "source_conflict_stated_exactly": true,
+    "authority_and_freshness_stated": true,
+    "one_or_fewer_active_questions": true,
+    "no_model_write": true,
+    "no_external_mutation": true,
+    "assistant_turn_persisted_verbatim": true
+  },
+  "trial_state": {
+    "state": "checkpoint",
+    "mode": "proposal",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "active_question": null,
+    "open_conflicts": [
+      "Project context and the explicitly normative document define the inclusion boundary of «Лид» differently."
+    ],
+    "next_action": "If continued, assemble a semantic-resolution package that preserves both source claims and records the normative definition as the recommended candidate; do not mutate the model until the package is confirmed."
+  }
+}

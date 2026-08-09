@@ -1,0 +1,77 @@
+{
+  "schema_version": 1,
+  "trial_id": "audit-no-write-01",
+  "case_id": "audit-no-write",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Оцени модель версии v2 и объясни, что в ней не так. Ничего не исправляй."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверена модель `biz-eval`, версия `v2` (`принято`), срез `snap-v2-aaa`, заявленная сборка `build-17`. Исправлений не делал.\n\nОценка поверхностей:\n\n- Поведение skill/harness: 3/3 — аудит остаётся read-only; не переходит к confirm/commit и не считает зелёные структурные проверки доказательством смысла.\n- Поведение в этом аудите: 3/3 — версия, fingerprint и build не смешаны; выводы отделены от неизвестного живого исполнения; записей и внешних действий не было.\n- Качество артефакта/модели: 0/3 — есть один высокий дефект исполнимости, один высокий семантический дефект и один критический дефект lineage проекции.\n\nEvidence ledger:\n\n1. `obj-lead` в выбранном срезе определён как «любой контакт в CRM». В строке нет правила создания и идентичности; единственный источник — старая проектная заметка. Структурные проверки зелёные, но они не проверяют, что CRM-карточка и реальный объект работы совпадают.\n2. `act-request-fix` достижимо, но не имеет исходящей связи и не помечено terminal.\n3. Manifest `build-17` ссылается на `snap-v1-zzz`, тогда как выбранный snapshot — `snap-v2-aaa`.\n4. Журналы, наблюдение или иные свидетельства живого исполнения не предоставлены. Поэтому факт исполнения неизвестен, а не опровергнут.\n\nFindings:\n\n- `F-SEM-001` — high; `obj-lead`, `v2`. Нарушены тесты референта, идентичности и представления из `METAONTOLOGY.md`: «любой контакт в CRM» описывает запись в информационной системе, но не задаёт распознаваемый объект работы, момент его создания и правило, по которому два экземпляра различаются. Старая заметка не даёт достаточной свежести и авторитетности. Последствие: состояния, переходы и критерии процесса могут применяться к разным сущностям — контакту, лиду или CRM-записи. Распоряжение: перед изменением передать спорный смысл в `resolve-model-element`; нужны примеры создания, объединения/разделения и закрытия, а также авторитетный источник.\n\n- `F-EXEC-001` — high; `act-request-fix`, `v2`. Нарушен контракт исполнимости: у достижимого non-terminal action должен быть исходящий edge, а из каждой достижимой ветки должен существовать путь к end. Фактическое состояние — действие достижимо и обрывается; ожидаемое — terminal outcome либо явная исходящая связь (в том числе возврат/исключение) с доказательством. Последствие: путь исправления не имеет моделируемого завершения, поэтому normal/rejection/return сценарии нельзя доказательно проиграть. Распоряжение: `maintain-production-system` после подтверждённого решения; дополнительно проверить, не является ли пропуском сам terminal marker.\n\n- `F-PROJ-001` — critical; `build-17`, `v2`. Нарушен `PROJECTION-CONTRACT.md`: BPMN/SVG одной проверяемой сборки должны происходить из IR выбранного snapshot и иметь его `model_fingerprint`. Manifest указывает `snap-v1-zzz`, а аудит задан для `snap-v2-aaa`. Последствие: пользователь может смотреть или вводить представление другого процесса/смысла; build нельзя считать готовым даже к просмотру для v2. Распоряжение: не использовать `build-17` как проекцию v2; после подтверждённого изменения или при уже готовом корректном срезе пересобрать и сверить manifest, BPMN/SVG hashes и fingerprint.\n\nVerdicts:\n\n- Schema/history: структурные проверки предоставлены зелёными; их покрытие не доказывает семантику и не меняет findings. История отдельно не проверялась дальше данных fixture.\n- Semantics: не пройдена из-за `obj-lead`.\n- Execution model: не пройдена из-за dead end `act-request-fix`.\n- Contracts: свидетельств для отдельного вердикта нет; неизвестно.\n- Projection: не пройдена из-за stale lineage `build-17`.\n- Live execution: неизвестно — журналов нет.\n\nReadiness: `не готова` ни к просмотру v2 через `build-17`, ни к вводу. Блокеры: `F-PROJ-001`, `F-EXEC-001`, `F-SEM-001`. Остаточная неопределённость: без живых журналов нельзя утверждать ни соответствие, ни расхождение фактического исполнения с моделью."
+    }
+  ],
+  "events": [
+    {
+      "type": "read_skill",
+      "path": "skills/audit-production-system/SKILL.md"
+    },
+    {
+      "type": "read_required_references",
+      "paths": [
+        "skills/audit-production-system/references/LANGUAGE.md",
+        "skills/audit-production-system/references/METAONTOLOGY.md",
+        "skills/audit-production-system/references/INTERVIEW-CONTRACT.md",
+        "skills/audit-production-system/references/TEMPLATE-CONTRACT.md",
+        "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+        "skills/audit-production-system/references/PROJECTION-CONTRACT.md"
+      ]
+    },
+    {
+      "type": "audit_scope_established",
+      "model_id": "biz-eval",
+      "schema_version": "0.2",
+      "version_id": "v2",
+      "version_status": "принято",
+      "snapshot_fingerprint": "snap-v2-aaa",
+      "projection_build_id": "build-17"
+    },
+    {
+      "type": "finding_observed",
+      "finding_id": "F-SEM-001",
+      "affected_ids": ["obj-lead"]
+    },
+    {
+      "type": "finding_observed",
+      "finding_id": "F-EXEC-001",
+      "affected_ids": ["act-request-fix"]
+    },
+    {
+      "type": "finding_observed",
+      "finding_id": "F-PROJ-001",
+      "affected_ids": ["build-17"]
+    },
+    {
+      "type": "answer_composed",
+      "mode": "read-only"
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "read_only_discipline_observed": true,
+      "no_model_or_projection_mutation_observed": true,
+      "scope_identifiers_separated": true,
+      "structural_green_not_treated_as_semantic_proof": true,
+      "live_execution_reported_as_unknown": true,
+      "required_findings_present": true,
+      "assistant_answer_persisted_verbatim": true
+    }
+  },
+  "trial_state": "complete"
+}

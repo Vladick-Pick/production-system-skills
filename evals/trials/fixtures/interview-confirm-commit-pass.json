@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "trial_id": "fixture-interview-pass-01",
+  "case_id": "interview-confirm-commit",
+  "provenance": "recorded_fixture",
+  "expected_result": "pass",
+  "transcript": [
+    {"role": "user", "text": "Нужно описать новый процесс."},
+    {"role": "assistant", "text": "Какой объект преобразуется?", "questions": ["Какой объект преобразуется?"], "active_question_id": "q-object"},
+    {"role": "user", "text": "Лид."},
+    {"role": "assistant", "text": "Пакет готов. Подтвердите точный пакет h-001.", "questions": ["Подтверждаете запись точного пакета h-001?"], "active_question_id": "q-confirm"},
+    {"role": "user", "text": "Подтверждаю пакет h-001."}
+  ],
+  "events": [
+    {"type": "source_authority_resolved"},
+    {"type": "decisive_question", "active_question_id": "q-object"},
+    {"type": "draft_package", "package_hash": "h-001"},
+    {"type": "exact_package_confirmation", "package_hash": "h-001", "performer_type": "человек", "confirmed_by": "Иван Иванов"},
+    {"type": "model_write", "transaction_id": "tx-001"},
+    {"type": "readback", "transaction_id": "tx-001"},
+    {"type": "checkpoint", "transaction_id": "tx-001"}
+  ],
+  "outcome": {
+    "writes": [{"transaction_id": "tx-001", "decision_rows": 1, "change_rows": 3, "model_rows": 2}],
+    "external_mutations": [],
+    "validations": {"transaction_readback": true, "model_integrity": true}
+  }
+}

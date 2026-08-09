@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import re
 import sys
 import zipfile
@@ -21,20 +22,27 @@ EXPECTED_SKILLS = {
 REQUIRED_REFERENCES = {
     "references/LANGUAGE.md",
     "references/METAONTOLOGY.md",
+    "references/INTERVIEW-CONTRACT.md",
     "references/TEMPLATE-CONTRACT.md",
     "references/PROJECTION-CONTRACT.md",
 }
 PUBLIC_TEMPLATE_ID = "1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k"
 TEMPLATE_MANIFEST = ROOT / "templates" / "template-manifest.yaml"
-TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.1.xlsx"
-EXPECTED_TEMPLATE_SHEETS = (
+TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.2.xlsx"
+TEMPLATE_SCHEMA_V2 = ROOT / "templates" / "template-schema-v0.2.json"
+MIGRATION_V1_TO_V2 = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
+EXPECTED_V2_SHEETS = (
     "Инструкция",
     "Система",
     "Схема шаблона",
     "Источники",
     "Версии",
+    "Исполнители",
     "Позиции",
     "Назначения",
+    "Контрагенты",
+    "Продукты",
+    "Материалы",
     "Процессы",
     "Действия",
     "Связи действий",
@@ -43,13 +51,71 @@ EXPECTED_TEMPLATE_SHEETS = (
     "Переходы",
     "Элементы модели",
     "Контракты",
+    "Позиции контрактов",
+    "Интерфейсы передачи",
     "Связи модели",
+    "Решения",
+    "Изменения модели",
+    "Срез модели",
     "Проверки",
     "Реестр процессов",
     "Рабочая панель",
     "Диаграммы",
-    "Проекция draw.io",
 )
+EXPECTED_VERSION_STATUSES = {
+    "черновик",
+    "принято",
+    "действует",
+    "закрыто",
+}
+EXPECTED_VERSION_TRANSITIONS = {
+    "черновик → принято",
+    "черновик → закрыто",
+    "принято → действует",
+    "принято → закрыто",
+    "действует → закрыто",
+}
+EXPECTED_INTERVIEW_STATES = {
+    "orient",
+    "investigate",
+    "resolve",
+    "draft",
+    "confirm",
+    "commit",
+    "verify",
+    "checkpoint",
+}
+ESSENTIAL_V2_COLUMNS = {
+    "Версии": {
+        "version_id",
+        "predecessor_version_id",
+        "version_status",
+        "accepted_decision_id",
+        "closed_decision_id",
+        "successor_version_id",
+        "migration_decision_id",
+    },
+    "Исполнители": {"performer_id", "performer_type", "performer_name"},
+    "Назначения": {"assignment_id", "performer_id", "position_id", "active_from", "active_to"},
+    "Контрагенты": {"counterparty_id", "counterparty_name"},
+    "Продукты": {"product_id", "primary_object_id", "required_state_id", "acceptance_criteria"},
+    "Материалы": {"material_id", "material_type", "content_text", "url"},
+    "Позиции контрактов": {"contract_item_id", "contract_id", "product_id", "pricing_method", "interface_id"},
+    "Интерфейсы передачи": {"interface_id", "product_id", "acceptance_action_id", "rejection_path", "fallback_path"},
+    "Решения": {"decision_id", "transaction_id", "package_id", "package_hash", "confirmation_id", "confirmed_by_performer_id"},
+    "Изменения модели": {"change_id", "transaction_id", "decision_id", "stable_id", "old_value", "new_value"},
+    "Срез модели": {"selected_version_id", "stable_id", "source_version_id", "resolved_operation", "resolution_status"},
+    "Диаграммы": {"projection_build_id", "model_fingerprint", "bpmn_sha256", "svg_sha256", "readiness_status"},
+}
+
+
+def reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+    result: dict[str, object] = {}
+    for key, value in pairs:
+        if key in result:
+            raise ValueError(f"повторяющийся JSON-ключ {key!r}")
+        result[key] = value
+    return result
 
 
 def frontmatter(text: str) -> tuple[dict[str, str], int]:
@@ -85,7 +151,7 @@ def markdown_links(path: Path) -> list[Path]:
 
 
 def text_files() -> list[Path]:
-    allowed = {".md", ".yaml", ".yml", ".py", ".txt"}
+    allowed = {".json", ".md", ".yaml", ".yml", ".py", ".txt"}
     return [
         path
         for path in ROOT.rglob("*")
@@ -110,8 +176,13 @@ def validate_template(errors: list[str]) -> None:
     if manifest_value(manifest, "spreadsheet_id") != PUBLIC_TEMPLATE_ID:
         errors.append("template-manifest.yaml содержит неожиданный spreadsheet_id")
 
+    if manifest_value(manifest, "version") != "0.2":
+        errors.append("template-manifest.yaml должен объявлять текущую версию 0.2")
+    if manifest_value(manifest, "access_observed") != "anyone_with_link_reader":
+        errors.append("template-manifest.yaml должен фиксировать публичный доступ reader")
+
     declared_snapshot = manifest_value(manifest, "snapshot")
-    if declared_snapshot != "templates/production-system-model-template-v0.1.xlsx":
+    if declared_snapshot != "templates/production-system-model-template-v0.2.xlsx":
         errors.append("template-manifest.yaml содержит неожиданный путь snapshot")
 
     expected_sha = manifest_value(manifest, "sha256")
@@ -136,17 +207,265 @@ def validate_template(errors: list[str]) -> None:
         except KeyError:
             errors.append("в XLSX-шаблоне отсутствует xl/workbook.xml")
             return
+        worksheet_xml = [
+            archive.read(name)
+            for name in names
+            if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", name)
+        ]
 
     root = ElementTree.fromstring(workbook_xml)
     namespace = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
     sheet_names = tuple(
         node.attrib["name"] for node in root.findall(f".//{namespace}sheet")
     )
-    if sheet_names != EXPECTED_TEMPLATE_SHEETS:
+    if sheet_names != EXPECTED_V2_SHEETS:
         errors.append(
             "состав или порядок листов XLSX не совпадает с контрактом; "
             f"найдено {list(sheet_names)}"
         )
+    defined_names = root.findall(f".//{namespace}definedName")
+    if len(defined_names) < 40:
+        errors.append("XLSX v0.2 не содержит полный набор enum/selector named ranges")
+    combined = b"\n".join(worksheet_xml)
+    if combined.count(b"<f") < 100:
+        errors.append("XLSX v0.2 не содержит ожидаемые физические formulas")
+    if combined.count(b"<dataValidation") < 20:
+        errors.append("XLSX v0.2 не содержит ожидаемые dropdown validations")
+    if combined.count(b"<conditionalFormatting") < 20:
+        errors.append("XLSX v0.2 не содержит ожидаемое conditional formatting")
+    if b"#REF!" in combined:
+        errors.append("XLSX v0.2 содержит формулу или диапазон с #REF!")
+
+
+def validate_v2_schema(errors: list[str]) -> None:
+    if not TEMPLATE_SCHEMA_V2.is_file():
+        errors.append("нет templates/template-schema-v0.2.json")
+        return
+
+    try:
+        schema = json.loads(
+            TEMPLATE_SCHEMA_V2.read_text(encoding="utf-8"),
+            object_pairs_hook=reject_duplicate_json_keys,
+        )
+    except (json.JSONDecodeError, OSError, ValueError) as exc:
+        errors.append(f"template-schema-v0.2.json не читается: {exc}")
+        return
+
+    order = tuple(schema.get("sheet_order", ()))
+    sheets = schema.get("sheets", {})
+    if schema.get("schema_version") != "0.2":
+        errors.append("template-schema-v0.2.json имеет неожиданный schema_version")
+    if schema.get("sheet_count") != 29 or order != EXPECTED_V2_SHEETS:
+        errors.append("schema v0.2 должна задавать ровно 29 листов в принятом порядке")
+    if tuple(sheets) != EXPECTED_V2_SHEETS:
+        errors.append("порядок объектов sheets не совпадает с sheet_order v0.2")
+    if "Проекция draw.io" in order:
+        errors.append("schema v0.2 не должна содержать лист Проекция draw.io")
+
+    default_table = schema.get("default_table", {})
+    if default_table.get("technical_ids_visible") is not True:
+        errors.append("schema v0.2 должна оставлять technical IDs видимыми")
+
+    physical = schema.get("physical_contract", {})
+    expected_physical = {
+        "builder",
+        "spreadsheet_locale",
+        "time_zone",
+        "formula_language",
+        "selector_encoding",
+        "foreign_key_write_path",
+        "selector_catalogs",
+        "enum_catalogs",
+        "generated_ranges",
+        "conditional_formatting",
+        "filtering",
+        "rebuild_semantics",
+    }
+    missing_physical = expected_physical - set(physical)
+    if missing_physical:
+        errors.append(f"schema v0.2: неполный physical_contract {sorted(missing_physical)}")
+    builder = ROOT / str(physical.get("builder", ""))
+    if not builder.is_file():
+        errors.append("schema v0.2 ссылается на отсутствующий physical builder")
+
+    for sheet_name, required_columns in ESSENTIAL_V2_COLUMNS.items():
+        actual_columns = set(sheets.get(sheet_name, {}).get("columns", []))
+        missing = required_columns - actual_columns
+        if missing:
+            errors.append(f"{sheet_name}: отсутствуют обязательные v0.2 колонки {sorted(missing)}")
+
+    version_columns = set(sheets.get("Версии", {}).get("columns", []))
+    if "close_reason" in version_columns:
+        errors.append("Версии: обязательный close_reason отложен решением владельца")
+
+    enums = schema.get("enums", {})
+    for sheet_name, sheet in sheets.items():
+        columns = sheet.get("columns", [])
+        if len(columns) != len(set(columns)):
+            errors.append(f"{sheet_name}: в schema v0.2 есть повторяющиеся колонки")
+        for group in ("required", "computed"):
+            values = sheet.get(group, [])
+            if values == ["all_non_selector_cells"]:
+                continue
+            unknown = set(values) - set(columns)
+            if unknown:
+                errors.append(
+                    f"{sheet_name}: {group} ссылается на неизвестные колонки {sorted(unknown)}"
+                )
+        for field, enum_name in sheet.get("enums", {}).items():
+            if field not in columns or enum_name not in enums:
+                errors.append(
+                    f"{sheet_name}: enum {field} → {enum_name} не разрешается"
+                )
+        for field, target in sheet.get("foreign_keys", {}).items():
+            if field not in columns:
+                errors.append(f"{sheet_name}: FK-поле {field} отсутствует в columns")
+                continue
+            if "." not in target:
+                errors.append(f"{sheet_name}: FK {field} имеет некорректную цель {target}")
+                continue
+            target_sheet, target_column = target.split(".", 1)
+            target_columns = sheets.get(target_sheet, {}).get("columns", [])
+            target_settings = sheets.get(target_sheet, {}).get("settings", {})
+            if target_sheet not in sheets or (
+                target_column not in target_columns and target_column not in target_settings
+            ):
+                errors.append(f"{sheet_name}: FK {field} указывает на неизвестное {target}")
+        selectors = sheet.get("selectors", {})
+        if isinstance(selectors, dict):
+            settings = sheet.get("settings", {})
+            for field, selector in selectors.items():
+                if field in settings:
+                    if selector not in settings:
+                        errors.append(
+                            f"{sheet_name}: selector настройки {field} → {selector} отсутствует"
+                        )
+                    continue
+                if field not in columns or selector not in columns:
+                    errors.append(
+                        f"{sheet_name}: selector {field} → {selector} отсутствует в columns"
+                    )
+                elif columns.index(selector) != columns.index(field) + 1:
+                    errors.append(
+                        f"{sheet_name}: selector {selector} должен идти сразу после {field}"
+                    )
+        if sheet.get("kind") in {"versioned_authoring", "versioned_authoring_with_settings"}:
+            expected_prefix = [columns[0], "version_id", "version_operation"] if columns else []
+            if columns[:3] != expected_prefix:
+                errors.append(
+                    f"{sheet_name}: версионная строка должна начинаться stable_id, version_id, version_operation"
+                )
+            if not columns or not columns[0].endswith("_id"):
+                errors.append(f"{sheet_name}: первый открытый столбец должен быть stable ID")
+
+        foreign_keys = set(sheet.get("foreign_keys", {}))
+        selector_fields = set(selectors) if isinstance(selectors, dict) else set()
+        missing_selectors = foreign_keys - selector_fields - {"version_id"}
+        if missing_selectors:
+            errors.append(
+                f"{sheet_name}: FK без человекочитаемого selector {sorted(missing_selectors)}"
+            )
+
+    required_relations = {
+        "производит",
+        "использует",
+        "создаёт",
+        "регулируется",
+        "входит в приёмочный пакет",
+    }
+    actual_relations = set(sheets.get("Связи модели", {}).get("relation_types", []))
+    if not required_relations <= actual_relations:
+        errors.append("Связи модели не содержат минимальный словарь отношений v0.2")
+
+
+def validate_version_lifecycle(errors: list[str]) -> None:
+    language_path = ROOT / "references" / "LANGUAGE.md"
+    metaontology_path = ROOT / "references" / "METAONTOLOGY.md"
+    if not language_path.is_file() or not metaontology_path.is_file():
+        return
+
+    language = language_path.read_text(encoding="utf-8")
+    status_section = re.search(
+        r"^### Статус версии\n(?P<body>.*?)^### Слой модели и статус версии",
+        language,
+        re.MULTILINE | re.DOTALL,
+    )
+    statuses = (
+        set(
+            re.findall(
+                r"^#### [^\n]+ \(`([^`]+)`\)$",
+                status_section.group("body"),
+                re.MULTILINE,
+            )
+        )
+        if status_section
+        else set()
+    )
+    if statuses != EXPECTED_VERSION_STATUSES:
+        errors.append(
+            "LANGUAGE.md должен определять ровно четыре статуса версии; "
+            f"найдено {sorted(statuses)}"
+        )
+
+    metaontology = metaontology_path.read_text(encoding="utf-8")
+    transitions = set(
+        re.findall(
+            r"^\| `([^`]+ → [^`]+)` \|",
+            metaontology,
+            re.MULTILINE,
+        )
+    )
+    if transitions != EXPECTED_VERSION_TRANSITIONS:
+        errors.append(
+            "METAONTOLOGY.md содержит неожиданный граф переходов версии; "
+            f"найдено {sorted(transitions)}"
+        )
+
+
+def validate_interview_contract(errors: list[str]) -> None:
+    path = ROOT / "references" / "INTERVIEW-CONTRACT.md"
+    if not path.is_file():
+        return
+    text = path.read_text(encoding="utf-8")
+    states = set(
+        re.findall(
+            r"^\| `([a-z]+)` \|",
+            text,
+            re.MULTILINE,
+        )
+    )
+    if states != EXPECTED_INTERVIEW_STATES:
+        errors.append(
+            "INTERVIEW-CONTRACT.md содержит неожиданные состояния; "
+            f"найдено {sorted(states)}"
+        )
+    for marker in (
+        "package_hash",
+        "transaction_id",
+        "Одновременно активно ровно одно состояние и не более одного вопроса",
+        "ИИ-агент может быть исполнителем и регистратором транзакции, но не подтверждающим лицом",
+        "До retry искать `transaction_id`",
+    ):
+        if marker not in text:
+            errors.append(f"INTERVIEW-CONTRACT.md: отсутствует harness marker {marker!r}")
+
+
+def validate_migration_contract(errors: list[str]) -> None:
+    if not MIGRATION_V1_TO_V2.is_file():
+        errors.append("нет templates/migrations/v0.1-to-v0.2.md")
+        return
+    text = MIGRATION_V1_TO_V2.read_text(encoding="utf-8")
+    for marker in (
+        "migration-assessment",
+        "migration dossier",
+        "v0.1-compatible",
+        "new-required",
+        "bounded batches",
+        "исходная v0.1-книга не изменена",
+        "один `active_question_id`",
+    ):
+        if marker not in text:
+            errors.append(f"v0.1-to-v0.2.md: отсутствует migration marker {marker!r}")
 
 
 def validate() -> list[str]:
@@ -163,7 +482,11 @@ def validate() -> list[str]:
         if not (ROOT / relative).is_file():
             errors.append(f"нет обязательного reference: {relative}")
 
+    validate_version_lifecycle(errors)
+    validate_interview_contract(errors)
+    validate_migration_contract(errors)
     validate_template(errors)
+    validate_v2_schema(errors)
 
     for name in sorted(EXPECTED_SKILLS):
         skill_dir = skills_root / name
@@ -204,6 +527,7 @@ def validate() -> list[str]:
         for reference in (
             "references/LANGUAGE.md",
             "references/METAONTOLOGY.md",
+            "references/INTERVIEW-CONTRACT.md",
             "references/TEMPLATE-CONTRACT.md",
         ):
             if reference not in text:
@@ -212,6 +536,7 @@ def validate() -> list[str]:
         for reference_name in (
             "LANGUAGE.md",
             "METAONTOLOGY.md",
+            "INTERVIEW-CONTRACT.md",
             "TEMPLATE-CONTRACT.md",
             "PROJECTION-CONTRACT.md",
         ):
@@ -224,6 +549,36 @@ def validate() -> list[str]:
                     f"{name}: references/{reference_name} расходится с корневым контрактом; "
                     "запустите scripts/sync_references.py"
                 )
+
+        bundled_schema = skill_dir / "references" / "TEMPLATE-SCHEMA-v0.2.json"
+        if not bundled_schema.is_file():
+            errors.append(f"{name}: нет локальной копии references/TEMPLATE-SCHEMA-v0.2.json")
+        elif bundled_schema.read_bytes() != TEMPLATE_SCHEMA_V2.read_bytes():
+            errors.append(
+                f"{name}: TEMPLATE-SCHEMA-v0.2.json расходится с templates/template-schema-v0.2.json; "
+                "запустите scripts/sync_references.py"
+            )
+
+        bundled_migration = skill_dir / "references" / "MIGRATION-v0.1-to-v0.2.md"
+        canonical_migration = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
+        if not bundled_migration.is_file():
+            errors.append(f"{name}: нет локальной migration map")
+        elif bundled_migration.read_bytes() != canonical_migration.read_bytes():
+            errors.append(f"{name}: migration map расходится с канонической")
+
+        if name in {"model-production-system", "maintain-production-system", "audit-production-system"}:
+            for relative, canonical in (
+                ("bpmn/common.py", ROOT / "scripts" / "bpmn" / "common.py"),
+                ("bpmn/generate.py", ROOT / "scripts" / "bpmn" / "generate.py"),
+                ("bpmn/validate.py", ROOT / "scripts" / "bpmn" / "validate.py"),
+                ("versioning/resolve.py", ROOT / "scripts" / "versioning" / "resolve.py"),
+                ("build_template_v0_2.py", ROOT / "scripts" / "build_template_v0_2.py"),
+            ):
+                bundled = skill_dir / "scripts" / relative
+                if not bundled.is_file():
+                    errors.append(f"{name}: нет self-contained runtime scripts/{relative}")
+                elif bundled.read_bytes() != canonical.read_bytes():
+                    errors.append(f"{name}: runtime scripts/{relative} расходится с каноническим")
 
         agent = agent_path.read_text(encoding="utf-8")
         if "$" + name not in agent:
@@ -240,6 +595,13 @@ def validate() -> list[str]:
         errors.append(
             f"skill-package.yaml перечисляет {sorted(listed)}, ожидалось {sorted(EXPECTED_SKILLS)}"
         )
+    package_snapshot = re.search(r"^\s{2}snapshot:\s*([^\n]+)$", manifest, re.MULTILINE)
+    if not package_snapshot or package_snapshot.group(1).strip().strip("\"'") != "templates/production-system-model-template-v0.2.xlsx":
+        errors.append("skill-package.yaml должен ссылаться на текущий XLSX v0.2")
+    if "identified_assigned_human:" in manifest:
+        errors.append("skill-package.yaml не должен трактовать assignment как permission")
+    if "assignment: фиксирует атрибуцию, но не является permission или RBAC" not in manifest:
+        errors.append("skill-package.yaml должен фиксировать attribution-only смысл assignment")
 
     for path in text_files():
         text = path.read_text(encoding="utf-8")

@@ -1,0 +1,232 @@
+{
+  "schema": 1,
+  "trial_id": "external-component-contract-03",
+  "case_id": "external-component-contract",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "mode": "proposal",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Поставщик Leadgen продаёт нам два продукта: «Лид качества A» и «Лид качества B». Оба используются внутри нашей системы привлечения, причём A используют действия проверки и передачи, B — проверка и дозвон. Опиши это правильно в модели, но не моделируй внутренние процессы Leadgen и пока ничего не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "В режиме предложения: Leadgen остаётся внешним контрагентом `cp-leadgen`; его внутреннюю систему и процессы не моделируем. В черновик v2 для `biz-eval`/`sys-attraction` войдут два отдельных входящих продукта — «Лид качества A» и «Лид качества B»: их отдельно заказывают и принимают по разным критериям качества и цене, поэтому это не варианты одной позиции. Один договор с Leadgen будет связан с двумя отдельными позициями договора: по одной на каждый продукт. Использование фиксируется конкретными внутренними действиями: A — `act-check-lead` и `act-send-lead`; B — `act-check-lead` и `act-call-lead`. Пока это только кандидат: никаких строк или изменений не записываю.\n\nКак именно для каждого из двух продуктов происходит пересечение границы: триггер, канал и формат/состав пакета передачи, а также действие и доказательство приёмки, путь отказа/возврата и fallback?"
+    },
+    {
+      "role": "user",
+      "content": "Оба продукта передаются по одному API-интерфейсу, когда Leadgen объявляет лид готовым. POST /leads, JSON: lead_id, контакты, согласие, источник, quality_class A/B и доказательства критериев. Наша система подтверждает получение техническим ack и в течение 5 минут проверяет пакет. A принимается при полных данных, подтверждённом интересе и согласии; B — при проверяемом контакте и согласии. При отказе возвращаем код нарушенного критерия в течение часа; исправленный пакет можно повторно передать с тем же lead_id в течение 24 часов. Если API недоступен более 15 минут, fallback — зашифрованный CSV в контролируемый ящик с последующей сверкой."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет-кандидат `pkg-external-component-contract-03` собран для `biz-eval`, черновика `v2`, в режиме `proposal`; запись не разрешена и не выполнялась.\n\nГраница: `sys-attraction` получает внешний компонент от контрагента `cp-leadgen`; внутренние процессы и системы Leadgen отсутствуют из модели.\n\nПродукты и договор: создаются два входящих продукта — `prod-lead-quality-a` («Лид качества A») и `prod-lead-quality-b` («Лид качества B»). У них разные критерии приёмки и цена, поэтому для одного договора создаются две позиции: `contract-item-lead-quality-a` и `contract-item-lead-quality-b`.\n\nПередача: фактически это единый API-протокол Leadgen → `sys-attraction`: триггер — Leadgen объявил лид готовым; `POST /leads`; JSON-пакет содержит `lead_id`, контакты, согласие, источник, `quality_class` A/B и доказательства критериев. Физически v0.2 требует `product_id` у строки интерфейса, поэтому пакет создаёт две продуктовые записи интерфейса — `if-leadgen-lead-quality-a` и `if-leadgen-lead-quality-b` — с одинаковыми endpoint, каналом, форматом и правилами. Это не создаёт второй API или систему поставщика: обе записи описывают один общий протокол на границе, разнесённый только по отдельно принимаемым продуктам.\n\nПриёмка и исключения: `sys-attraction` отправляет технический ack, затем `act-check-lead` проверяет пакет не позднее 5 минут. Для A критерии: полные данные, подтверждённый интерес и согласие; для B: проверяемый контакт и согласие. При отказе возвращается код нарушенного критерия не позднее 1 часа. Исправленный пакет можно повторно передать с тем же `lead_id` в течение 24 часов. При недоступности API более 15 минут применяется fallback: зашифрованный CSV в контролируемый ящик с последующей сверкой.\n\nСвязи использования: A используется в `act-check-lead` и `act-send-lead`; B — в `act-check-lead` и `act-call-lead`.\n\nОграничение будущей записи: перед `write` потребуется идентифицированный редактор с назначением и явное подтверждение неизменённого пакета с hash. Семантических неизвестных по этому внешнему компоненту не осталось; пакет готов к показу на подтверждение, но не записан."
+    }
+  ],
+  "events": [
+    {
+      "type": "counterparty_resolved",
+      "counterparty_id": "cp-leadgen",
+      "fact": "Leadgen is an external counterparty; supplier internals are outside the modeled boundary."
+    },
+    {
+      "type": "product_identity_test",
+      "product_ids": [
+        "lead-quality-a",
+        "lead-quality-b"
+      ],
+      "fact": "A and B are separately ordered and accepted with different quality criteria and prices, so they are separate product identities."
+    },
+    {
+      "type": "contract_items_resolved",
+      "contract_count": 1,
+      "contract_item_count": 2,
+      "fact": "One agreement covers two separate incoming product contract items, one for A and one for B."
+    },
+    {
+      "type": "consumer_actions_linked",
+      "links": [
+        {
+          "product_id": "lead-quality-a",
+          "action_ids": [
+            "act-check-lead",
+            "act-send-lead"
+          ]
+        },
+        {
+          "product_id": "lead-quality-b",
+          "action_ids": [
+            "act-check-lead",
+            "act-call-lead"
+          ]
+        }
+      ],
+      "fact": "Internal component use is linked at the concrete-action level."
+    },
+    {
+      "type": "transfer_interface_resolved",
+      "fact": "Both products cross the boundary through POST /leads after Leadgen declares a lead ready. The JSON package carries lead_id, contacts, consent, source, quality_class, and criterion evidence; receipt gets a technical ack, then internal checking within five minutes. Rejection sends a failed-criterion code within one hour; the same lead_id may be corrected and resent within 24 hours; API outage over 15 minutes falls back to encrypted CSV in a controlled mailbox followed by reconciliation.",
+      "representation": "Two product-specific interface records share one API protocol because the v0.2 interface row has a required product_id."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-external-component-contract-03",
+      "package_hash": "67f725abad3de7d5ecf3f95500a913aa0e591dd8e953e793bfe0441726644fc4",
+      "fact": "A complete proposal package is ready; it is not a write authorization."
+    }
+  ],
+  "draft_package": {
+    "package_id": "pkg-external-component-contract-03",
+    "model_id": "biz-eval",
+    "working_version_id": "v2",
+    "mode": "proposal",
+    "boundary": {
+      "internal_system_id": "sys-attraction",
+      "external_counterparty_id": "cp-leadgen",
+      "excluded": [
+        "Leadgen internal production system",
+        "Leadgen internal processes"
+      ]
+    },
+    "proposed_operations": {
+      "products": [
+        {
+          "product_id": "prod-lead-quality-a",
+          "name": "Лид качества A",
+          "direction": "входящая",
+          "acceptance_criteria": [
+            "полные данные",
+            "подтверждённый интерес",
+            "согласие"
+          ],
+          "identity_basis": "Separately ordered and accepted with a distinct quality criterion and price."
+        },
+        {
+          "product_id": "prod-lead-quality-b",
+          "name": "Лид качества B",
+          "direction": "входящая",
+          "acceptance_criteria": [
+            "проверяемый контакт",
+            "согласие"
+          ],
+          "identity_basis": "Separately ordered and accepted with a distinct quality criterion and price."
+        }
+      ],
+      "contract_items": [
+        {
+          "contract_item_id": "contract-item-lead-quality-a",
+          "contract_id": "contract-leadgen",
+          "product_id": "prod-lead-quality-a",
+          "internal_system_id": "sys-attraction",
+          "direction": "входящая",
+          "pricing": "distinct price; exact value and method remain in the contract source"
+        },
+        {
+          "contract_item_id": "contract-item-lead-quality-b",
+          "contract_id": "contract-leadgen",
+          "product_id": "prod-lead-quality-b",
+          "internal_system_id": "sys-attraction",
+          "direction": "входящая",
+          "pricing": "distinct price; exact value and method remain in the contract source"
+        }
+      ],
+      "transfer_interfaces": [
+        {
+          "interface_id": "if-leadgen-lead-quality-a",
+          "product_id": "prod-lead-quality-a",
+          "shared_protocol": "leadgen-post-leads-v1",
+          "transfer_trigger": "Leadgen declares the lead ready",
+          "channel": "POST /leads",
+          "format_description": "JSON",
+          "package_description": [
+            "lead_id",
+            "contacts",
+            "consent",
+            "source",
+            "quality_class A/B",
+            "criterion evidence"
+          ],
+          "acceptance_action_id": "act-check-lead",
+          "acceptance_evidence": "technical ack and package check completed within five minutes",
+          "rejection_path": "return failed-criterion code within one hour",
+          "return_path": "corrected package with the same lead_id may be resent within 24 hours",
+          "fallback_path": "after API outage exceeding 15 minutes, encrypted CSV to a controlled mailbox followed by reconciliation"
+        },
+        {
+          "interface_id": "if-leadgen-lead-quality-b",
+          "product_id": "prod-lead-quality-b",
+          "shared_protocol": "leadgen-post-leads-v1",
+          "transfer_trigger": "Leadgen declares the lead ready",
+          "channel": "POST /leads",
+          "format_description": "JSON",
+          "package_description": [
+            "lead_id",
+            "contacts",
+            "consent",
+            "source",
+            "quality_class A/B",
+            "criterion evidence"
+          ],
+          "acceptance_action_id": "act-check-lead",
+          "acceptance_evidence": "technical ack and package check completed within five minutes",
+          "rejection_path": "return failed-criterion code within one hour",
+          "return_path": "corrected package with the same lead_id may be resent within 24 hours",
+          "fallback_path": "after API outage exceeding 15 minutes, encrypted CSV to a controlled mailbox followed by reconciliation"
+        }
+      ],
+      "consumer_action_links": [
+        {
+          "product_id": "prod-lead-quality-a",
+          "action_ids": [
+            "act-check-lead",
+            "act-send-lead"
+          ]
+        },
+        {
+          "product_id": "prod-lead-quality-b",
+          "action_ids": [
+            "act-check-lead",
+            "act-call-lead"
+          ]
+        }
+      ]
+    },
+    "open_semantic_unknowns": [],
+    "write_preconditions": [
+      "Identify the human editor and assignment.",
+      "Show an unchanged package hash and obtain that person's explicit confirmation.",
+      "Verify model, version, source, foreign keys, and exact contract pricing fields before one transaction."
+    ],
+    "write_authorization": false,
+    "package_hash": "67f725abad3de7d5ecf3f95500a913aa0e591dd8e953e793bfe0441726644fc4"
+  },
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "proposal_mode": true,
+      "no_model_write": true,
+      "no_supplier_internal_system_invented": true,
+      "counterparty_boundary_preserved": true,
+      "two_distinct_products": true,
+      "one_contract_two_contract_items": true,
+      "consumer_actions_linked": true,
+      "transfer_interface_resolved": true,
+      "one_decisive_question": true,
+      "draft_package_produced": true,
+      "no_supplier_internal_system_invented": true
+    }
+  },
+  "trial_state": {
+    "state": "draft",
+    "active_question": null,
+    "accepted_local_answers": [
+      "Both products use one POST /leads API protocol with a JSON package and technical acknowledgement.",
+      "A and B have distinct acceptance criteria; rejection, correction/resend, and outage fallback are defined."
+    ],
+    "open_unknowns": [],
+    "next_action": "Show the package hash to an identified human editor for explicit confirmation before any write.",
+    "write_state": "not_started"
+  }
+}

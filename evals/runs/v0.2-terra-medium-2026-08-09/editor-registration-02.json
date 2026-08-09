@@ -1,0 +1,357 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-02",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "fixture": {
+    "book_id": "biz-eval",
+    "schema_version": "v0.2",
+    "mode": "write-local-fixture-only",
+    "working_version_id": "v2-draft",
+    "current_version_id": "v1",
+    "target": {
+      "stable_id": "obj-lead",
+      "entity_type": "object",
+      "before_definition": "Лид — любой контакт",
+      "requested_definition": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id."
+    },
+    "known_position": {
+      "position_id": "pos-tech",
+      "position_name": "Технолог систематизации"
+    }
+  },
+  "transcript": [
+    {
+      "turn": 1,
+      "role": "user",
+      "text": "Я новый человек в этой модели, меня ещё нет в Исполнителях. Нужно уточнить определение obj-lead в рабочей v2: лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id. Проведи меня правильно и после полного пакета запиши изменение в тестовый fixture."
+    },
+    {
+      "turn": 1,
+      "role": "assistant",
+      "text": "Назовите, пожалуйста, имя и фамилию полностью. Это нужно, чтобы проверить реестр Исполнителей и включить вас в пакет только при точном совпадении или как нового исполнителя."
+    },
+    {
+      "turn": 2,
+      "role": "user",
+      "text": "Анна Смирнова."
+    },
+    {
+      "turn": 2,
+      "role": "assistant",
+      "text": "По нормализованному ФИО совпадений в реестре Исполнителей нет, поэтому зарегистрирую вас в одном пакете с изменением. Какую позицию в этой модели нужно указать для Анны Смирновой?"
+    },
+    {
+      "turn": 3,
+      "role": "user",
+      "text": "Технолог систематизации, существующая позиция pos-tech."
+    },
+    {
+      "turn": 3,
+      "role": "assistant",
+      "text": "Позиция разрешена: Анна Смирнова — Технолог систематизации [performer_id будет присвоен в пакете; position_id=pos-tech]. Это уточнение уже существующей практики или новое целевое правило для будущей работы? От ответа зависит класс изменения и нужно ли правило миграции живых лидов."
+    },
+    {
+      "turn": 4,
+      "role": "user",
+      "text": "Это исправление описания уже существующей практики. Живая работа не меняется, миграция активных экземпляров не требуется."
+    },
+    {
+      "turn": 4,
+      "role": "assistant",
+      "text": "Пакет pkg-editor-registration-02-v2-obj-lead-r1 готов.\n\nГраница: модель biz-eval, рабочая версия v2-draft, база v1.\n\nРедактор и назначение: создать Исполнителя Анна Смирнова [performer_id=perf-anna-smirnova] и Назначение Анна Смирнова — Технолог систематизации [assignment_id=asn-perf-anna-smirnova-pos-tech-v2-draft; position_id=pos-tech]. Назначение нужно для атрибуции подтверждения, а не как RBAC.\n\nИзменение: исправление описания существующей практики по вашему заявлению. В Объекты добавить разреженную редакцию применить для obj-lead в v2-draft: было «Лид — любой контакт»; станет «Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.» Правило идентичности: самостоятельная коммерческая возможность определяется уникальным lead_id.\n\nВлияние: obj-lead; процессы, действия, состояния, переходы и BPMN/SVG не затронуты по имеющимся сведениям, пересборка проекций не требуется. Миграция: не требуется, так как живая работа и экземпляры не меняются.\n\nЖурнал: создать положительное Решение dec-editor-registration-02 и Изменение модели chg-editor-registration-02-obj-lead-definition с before/after определения, в одной transaction (transaction_id будет создан при commit).\n\nПредусловия: v2-draft по-прежнему основана на v1; в v1 определение obj-lead равно «Лид — любой контакт»; Анна Смирнова отсутствует в Исполнителях; pos-tech существует. Recovery: при неизвестном результате сначала read-back по transaction_id; при частичной записи не создавать новую transaction.\n\nПодтверждаете запись показанного пакета pkg-editor-registration-02-v2-obj-lead-r1 с hash 5c7b600ff3bf?"
+    },
+    {
+      "turn": 5,
+      "role": "user",
+      "text": "Я, Анна Смирнова, человек и технолог этой модели, подтверждаю запись показанного пакета pkg-editor-registration-02-v2-obj-lead-r1 с полным hash 5c7b600ff3bfcee0070e80460ef257e2877c286dd0be3146972a13ba4f468f70 в локальный тестовый fixture."
+    },
+    {
+      "turn": 5,
+      "role": "assistant",
+      "text": "Пакет записан одной локальной transaction txn-editor-registration-02-5c7b600ff3bf и перечитан. Созданы Исполнитель и Назначение Анны Смирновой, положительное Решение и строка Изменения модели; для obj-lead добавлена разреженная редакция в v2-draft. Hash и все строки совпали с подтверждённым пакетом. Миграция и пересборка проекций не требуются."
+    }
+  ],
+  "events": [
+    {
+      "event": "editor_identified",
+      "display_name": "Анна Смирнова",
+      "normalized_name": "анна смирнова"
+    },
+    {
+      "event": "performer_lookup",
+      "normalized_name": "анна смирнова",
+      "result": "no_match"
+    },
+    {
+      "event": "position_resolved",
+      "performer_display_name": "Анна Смирнова",
+      "position_id": "pos-tech",
+      "position_name": "Технолог систематизации",
+      "display_selector": "Анна Смирнова — Технолог систематизации [performer_id=pending; position_id=pos-tech]"
+    },
+    {
+      "event": "draft_package",
+      "package_id": "pkg-editor-registration-02-v2-obj-lead-r1",
+      "package_hash": "5c7b600ff3bfcee0070e80460ef257e2877c286dd0be3146972a13ba4f468f70",
+      "change_class": "исправление",
+      "model_write_authorized": false
+    },
+    {
+      "event": "exact_package_confirmation",
+      "confirmation_id": "cnf-editor-registration-02-5c7b600ff3bf",
+      "package_id": "pkg-editor-registration-02-v2-obj-lead-r1",
+      "package_hash": "5c7b600ff3bfcee0070e80460ef257e2877c286dd0be3146972a13ba4f468f70",
+      "confirmed_by": {
+        "performer_id": "perf-anna-smirnova",
+        "display_name": "Анна Смирнова",
+        "assignment_id": "asn-perf-anna-smirnova-pos-tech-v2-draft",
+        "selector": "Анна Смирнова — Технолог систематизации [performer_id=perf-anna-smirnova; position_id=pos-tech]"
+      },
+      "confirmed_at": "2026-08-09T21:16:42Z",
+      "channel": "simulator",
+      "evidence": "Я, Анна Смирнова, человек и технолог этой модели, подтверждаю запись показанного пакета pkg-editor-registration-02-v2-obj-lead-r1 с полным hash 5c7b600ff3bfcee0070e80460ef257e2877c286dd0be3146972a13ba4f468f70 в локальный тестовый fixture."
+    },
+    {
+      "event": "model_write",
+      "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+      "result": "complete",
+      "destination": "local_test_fixture_only"
+    },
+    {
+      "event": "readback",
+      "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+      "result": "verified",
+      "verified_components": ["Исполнители", "Назначения", "Решения", "Объекты", "Изменения модели"]
+    },
+    {
+      "event": "checkpoint",
+      "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+      "write_state": "verified"
+    }
+  ],
+  "outcome": {
+    "status": "in_progress",
+    "model_write": {
+      "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+      "write_mode": "local_test_fixture_only",
+      "result": "complete",
+      "rows": {
+        "Исполнители": [
+          {
+            "performer_id": "perf-anna-smirnova",
+            "performer_name": "Анна Смирнова",
+            "performer_type": "человек",
+            "active": true,
+            "source_id": "src-editor-confirmation",
+            "source_locator": "simulator turn 5"
+          }
+        ],
+        "Назначения": [
+          {
+            "assignment_id": "asn-perf-anna-smirnova-pos-tech-v2-draft",
+            "performer_id": "perf-anna-smirnova",
+            "performer_selector": "Анна Смирнова [id=perf-anna-smirnova]",
+            "position_id": "pos-tech",
+            "position_selector": "Технолог систематизации [id=pos-tech]",
+            "active_from": "2026-08-09",
+            "assignment_status": "активно",
+            "source_id": "src-editor-confirmation"
+          }
+        ],
+        "Решения": [
+          {
+            "decision_id": "dec-editor-registration-02",
+            "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+            "package_id": "pkg-editor-registration-02-v2-obj-lead-r1",
+            "package_hash": "5c7b600ff3bfcee0070e80460ef257e2877c286dd0be3146972a13ba4f468f70",
+            "confirmation_id": "cnf-editor-registration-02-5c7b600ff3bf",
+            "decided_at": "2026-08-09T21:16:42Z",
+            "confirmed_by_performer_id": "perf-anna-smirnova",
+            "confirmed_by_performer_selector": "Анна Смирнова [id=perf-anna-smirnova]",
+            "confirmation_assignment_id": "asn-perf-anna-smirnova-pos-tech-v2-draft",
+            "confirmation_assignment_selector": "Анна Смирнова — Технолог систематизации [performer_id=perf-anna-smirnova; position_id=pos-tech]",
+            "confirmer_name_snapshot": "Анна Смирнова",
+            "confirmer_position_snapshot": "Технолог систематизации",
+            "decision_text": "Подтвердить исправление определения obj-lead и регистрацию редактора в рабочей версии v2-draft.",
+            "confirmation_evidence": "simulator turn 5 exact package and full hash confirmation",
+            "working_version_id": "v2-draft",
+            "recorded_by_performer_id": "agent-recorder",
+            "source_id": "src-editor-confirmation"
+          }
+        ],
+        "Объекты": [
+          {
+            "object_id": "obj-lead",
+            "version_id": "v2-draft",
+            "version_operation": "применить",
+            "definition": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.",
+            "identity_rule": "Собственная зарегистрированная коммерческая возможность идентифицируется уникальным lead_id.",
+            "source_id": "src-editor-confirmation",
+            "transaction_id": "txn-editor-registration-02-5c7b600ff3bf"
+          }
+        ],
+        "Изменения модели": [
+          {
+            "change_id": "chg-editor-registration-02-obj-lead-definition",
+            "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+            "decision_id": "dec-editor-registration-02",
+            "applied_at": "2026-08-09T21:16:42Z",
+            "operation": "исправить",
+            "entity_type": "object",
+            "stable_id": "obj-lead",
+            "field_name": "definition",
+            "old_value": "Лид — любой контакт",
+            "new_value": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.",
+            "version_id": "v2-draft",
+            "recorded_by_performer_id": "agent-recorder",
+            "validation_result": "passed"
+          }
+        ]
+      }
+    },
+    "readback": {
+      "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+      "result": "verified",
+      "package_hash_match": true,
+      "confirmation_attribution_match": true,
+      "sparse_revision_match": true,
+      "history_match": true,
+      "migration_required": false,
+      "projection_rebuild_required": false,
+      "snapshot_fingerprint": "sha256:fixture-v2-draft-obj-lead-5c7b600ff3bf",
+      "residual_blockers": []
+    },
+    "checkpoint": {
+      "session_id": "editor-registration-02",
+      "state": "checkpoint",
+      "mode": "write",
+      "model_id": "biz-eval",
+      "spreadsheet_id": "biz-eval",
+      "working_version_id": "v2-draft",
+      "current_version_id": "v1",
+      "editor": {
+        "performer_id": "perf-anna-smirnova",
+        "display_name": "Анна Смирнова",
+        "assignment_ids": ["asn-perf-anna-smirnova-pos-tech-v2-draft"],
+        "position_id": "pos-tech",
+        "position_name": "Технолог систематизации",
+        "selector": "Анна Смирнова — Технолог систематизации [performer_id=perf-anna-smirnova; position_id=pos-tech]"
+      },
+      "active_question": null,
+      "accepted_local_answers": [
+        {
+          "field": "editor.display_name",
+          "value": "Анна Смирнова",
+          "status": "verified_no_registry_match"
+        },
+        {
+          "field": "editor.position_id",
+          "value": "pos-tech",
+          "display_value": "Технолог систематизации",
+          "status": "resolved_existing_position"
+        },
+        {
+          "field": "change.classification",
+          "value": "исправление",
+          "status": "accepted_local_answer"
+        },
+        {
+          "field": "change.migration",
+          "value": "не требуется",
+          "status": "accepted_local_answer"
+        }
+      ],
+      "source_locators": ["local fixture: biz-eval"],
+      "package_id": "pkg-editor-registration-02-v2-obj-lead-r1",
+      "package_hash": "5c7b600ff3bfcee0070e80460ef257e2877c286dd0be3146972a13ba4f468f70",
+      "confirmation_id": "cnf-editor-registration-02-5c7b600ff3bf",
+      "transaction_id": "txn-editor-registration-02-5c7b600ff3bf",
+      "write_state": "verified",
+      "open_conflicts": [],
+      "next_action": "Завершено: сохранён проверенный checkpoint; повторная запись запрещена."
+    }
+  ,
+    "draft_package": {
+      "package_id": "pkg-editor-registration-02-v2-obj-lead-r1",
+      "package_hash": "5c7b600ff3bfcee0070e80460ef257e2877c286dd0be3146972a13ba4f468f70",
+      "canonicalization": "UTF-8 JSON, sorted object keys, stable operation order, no temporal fields",
+      "hash_payload": {
+        "package_id": "pkg-editor-registration-02-v2-obj-lead-r1",
+        "model_id": "biz-eval",
+        "working_version_id": "v2-draft",
+        "current_version_id": "v1",
+        "editor": {
+          "performer_id": "perf-anna-smirnova",
+          "display_name": "Анна Смирнова",
+          "position_id": "pos-tech",
+          "position_name": "Технолог систематизации",
+          "assignment_id": "asn-perf-anna-smirnova-pos-tech-v2-draft"
+        },
+        "change": {
+          "class": "исправление",
+          "reason": "Рабочая v2 неверно описывала существующую практику.",
+          "source": "direct_editor_statement_turn_4",
+          "expected_effect": "Определение obj-lead фиксирует самостоятельную идентичность коммерческой возможности по lead_id; живая работа не меняется.",
+          "migration": "Не требуется: активные экземпляры продолжают работу без изменения состояния или данных."
+        },
+        "operations": [
+          {"sheet": "Исполнители", "operation": "create", "stable_id": "perf-anna-smirnova", "full_name": "Анна Смирнова"},
+          {"sheet": "Назначения", "operation": "create", "stable_id": "asn-perf-anna-smirnova-pos-tech-v2-draft", "performer_id": "perf-anna-smirnova", "position_id": "pos-tech"},
+          {"sheet": "Объекты", "operation": "apply", "stable_id": "obj-lead", "version_id": "v2-draft", "before": {"definition": "Лид — любой контакт"}, "after": {"definition": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.", "identity_rule": "Собственная зарегистрированная коммерческая возможность идентифицируется уникальным lead_id."}},
+          {"sheet": "Решения", "operation": "create", "stable_id": "dec-editor-registration-02", "decision": "Подтвердить исправление определения obj-lead и регистрацию редактора в рабочей версии v2-draft."},
+          {"sheet": "Изменения модели", "operation": "create", "stable_id": "chg-editor-registration-02-obj-lead-definition", "field_name": "definition", "old_value": "Лид — любой контакт", "new_value": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id."}
+        ],
+        "projection": {"affected_processes": [], "rebuild_required": false, "rationale": "Изменение определения объекта не изменяет известные процессы, действия, состояния, переходы или их проекции."},
+        "preconditions": ["model_id=biz-eval", "working_version_id=v2-draft", "current_version_id=v1", "obj-lead в v1 имеет definition=Лид — любой контакт", "Анна Смирнова отсутствует в Исполнителях", "pos-tech существует как Технолог систематизации"],
+        "recovery": "До повторной записи искать transaction_id во всех ожидаемых строках; при частичной записи не создавать новую transaction и выполнить read-back."
+      },
+      "editor": {
+        "performer_id": "perf-anna-smirnova",
+        "display_name": "Анна Смирнова",
+        "position_id": "pos-tech",
+        "position_name": "Технолог систематизации",
+        "assignment_id": "asn-perf-anna-smirnova-pos-tech-v2-draft",
+        "selector": "Анна Смирнова — Технолог систематизации [performer_id=perf-anna-smirnova; position_id=pos-tech]"
+      },
+      "change": {
+        "stable_id": "obj-lead",
+        "entity_type": "object",
+        "version_id": "v2-draft",
+        "operation": "apply",
+        "class": "исправление",
+        "source": "direct_editor_statement_turn_4",
+        "before": {
+          "definition": "Лид — любой контакт"
+        },
+        "after": {
+          "definition": "Лид — отдельная зарегистрированная коммерческая возможность с собственным lead_id.",
+          "identity_rule": "Собственная зарегистрированная коммерческая возможность идентифицируется уникальным lead_id."
+        },
+        "migration": "Не требуется: живая работа и активные экземпляры не меняются."
+      },
+      "operations": [
+        {"sheet": "Исполнители", "operation": "create", "stable_id": "perf-anna-smirnova"},
+        {"sheet": "Назначения", "operation": "create", "stable_id": "asn-perf-anna-smirnova-pos-tech-v2-draft"},
+        {"sheet": "Объекты", "operation": "apply", "stable_id": "obj-lead"},
+        {"sheet": "Решения", "operation": "create", "stable_id": "dec-editor-registration-02"},
+        {"sheet": "Изменения модели", "operation": "create", "stable_id": "chg-editor-registration-02-obj-lead-definition"}
+      ],
+      "impact": {
+        "direct": ["obj-lead"],
+        "derived": [],
+        "projection_rebuild_required": false
+      },
+      "preconditions": [
+        "working_version_id=v2-draft and current_version_id=v1",
+        "obj-lead v1 definition remains unchanged",
+        "Анна Смирнова remains absent from Исполнители",
+        "pos-tech remains Технолог систематизации"
+      ],
+      "recovery": "On unknown result, read back by transaction_id before any retry; stop on partial write."
+    }
+  },
+  "trial_state": "complete"
+}

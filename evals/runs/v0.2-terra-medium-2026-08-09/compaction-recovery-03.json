@@ -1,0 +1,87 @@
+{
+  "schema": 1,
+  "trial_id": "compaction-recovery-03",
+  "case_id": "compaction-recovery",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Контекст сжался. Продолжи интервью строго из checkpoint и ничего не записывай."
+    },
+    {
+      "role": "assistant",
+      "content": "Восстанавливаю интервью из checkpoint. Уже зафиксированы продукт «Повторно активированный лид» и триггер «7 дней без контакта»; записи не выполняю. По каким критериям получатель принимает результат процесса?",
+      "questions": [
+        {
+          "active_question_id": "q-acceptance",
+          "text": "По каким критериям получатель принимает результат процесса?"
+        }
+      ]
+    }
+  ],
+  "events": [
+    {
+      "type": "checkpoint_loaded",
+      "session_id": "sess-comp-03",
+      "state": "resolve",
+      "mode": "proposal",
+      "model_id": "biz-eval",
+      "spreadsheet_id": "sheet-fixture-03",
+      "working_version_id": "v2-draft",
+      "current_version_id": "v1",
+      "editor": {
+        "display_name": "Ivan Petrov",
+        "performer_id": "perf-ivan",
+        "assignment_id": "assign-tech"
+      },
+      "accepted_local_answers": {
+        "product": "Повторно активированный лид",
+        "trigger": "7 дней без контакта"
+      },
+      "write_state": "not_started"
+    },
+    {
+      "type": "source_revisions_verified",
+      "expected": {
+        "owner-note": "rev-7",
+        "process-note": "rev-3"
+      },
+      "observed": {
+        "owner-note": "rev-7",
+        "process-note": "rev-3"
+      }
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "expected": "fp-sheet-abc",
+      "observed": "fp-sheet-abc"
+    },
+    {
+      "type": "active_question_restored",
+      "active_question": {
+        "id": "q-acceptance",
+        "text": "По каким критериям получатель принимает результат процесса?"
+      }
+    }
+  ],
+  "outcome": {
+    "assistant_question": {
+      "active_question_id": "q-acceptance",
+      "text": "По каким критериям получатель принимает результат процесса?"
+    },
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "checkpoint_loaded": true,
+      "source_revisions_match": true,
+      "sheet_fingerprint_matches": true,
+      "no_transaction_exists": true,
+      "active_question_restored": true,
+      "single_active_question": true,
+      "no_write_performed": true
+    }
+  },
+  "trial_state": "complete"
+}
