@@ -1,0 +1,152 @@
+schema_version: 1
+cases:
+  - id: identity-lead-lifecycle
+    release_blocking: true
+    skill: resolve-model-element
+    objective: Отличить один объект с состояниями от двух объектов с преобразованием.
+    prompt: Пользователь предлагает заменить термин «лид-кандидат» на «лид» и «квалифицированный лид».
+    expected_trajectory:
+      - установить референты и момент возникновения
+      - проверить сохранение идентичности, жизненный цикл, владельца и отдельное использование
+      - предложить две альтернативы и опровергающий сценарий
+      - задать один решающий вопрос
+      - показать точный пакет определения до записи
+    forbidden:
+      - немедленно создать два объекта
+      - объявить смену CRM-стадии новым объектом без identity test
+      - записать после локального ответа без подтверждения package hash
+
+  - id: interview-confirm-commit
+    release_blocking: true
+    skill: model-production-system
+    objective: Доказать разделение исследования, подтверждения и записи.
+    prompt: Пользователь описывает новый процесс несколькими сообщениями и отвечает «да» на промежуточные вопросы.
+    expected_trajectory:
+      - собрать зависимости и влияние без внешней записи
+      - поддерживать один active_question_id
+      - сформировать полный draft package
+      - запросить подтверждение exact package
+      - после подтверждения создать decision и change transaction
+      - выполнить readback и checkpoint
+    forbidden:
+      - считать любое «да» разрешением записать все накопленные гипотезы
+      - писать по одной строке между вопросами
+      - сообщать об атомарности без transaction_id и readback
+
+  - id: editor-registration
+    release_blocking: true
+    skill: maintain-production-system
+    objective: Идентифицировать человека и сохранить человекочитаемое назначение.
+    prompt: Новый человек просит изменить модель; его нет в реестре исполнителей.
+    expected_trajectory:
+      - спросить имя и фамилию один раз на сессию
+      - проверить реестр исполнителей
+      - спросить позицию
+      - добавить performer и assignment в одной подтверждённой транзакции
+      - сохранить performer_id и читаемый selector с ФИО
+    forbidden:
+      - разрешить AI-агенту подтвердить изменение
+      - скрыть технический ID
+      - создать дублирующего исполнителя с тем же нормализованным ФИО
+
+  - id: material-not-data
+    release_blocking: true
+    skill: resolve-model-element
+    objective: Отличить многократно используемый материал от данных и регламента.
+    prompt: Пользователь приносит текст сообщения, скрипт звонка и презентацию.
+    expected_trajectory:
+      - проверить повторное использование и назначение при исполнении действия
+      - классифицировать короткий текст или ссылочный материал
+      - связать действие использует материал
+      - оставить регламентом только нормативный источник
+    forbidden:
+      - хранить текст в поле формулы или правила
+      - объявить любой документ материалом без использования в действии
+
+  - id: version-inheritance-exclude
+    release_blocking: true
+    skill: maintain-production-system
+    objective: Воспроизвести v2 без копирования неизменённых строк и без потери v1.
+    prompt: В v2 меняется определение лида, один процесс исключается, остальные элементы не меняются.
+    expected_trajectory:
+      - создать линейного преемника v2
+      - добавить apply ревизию определения
+      - добавить exclude ревизию процесса
+      - вычислить effective snapshot v1 и v2
+      - доказать, что неизменённые элементы v2 наследуются из ближайшей ревизии
+    forbidden:
+      - переписать строку v1
+      - скопировать все строки v1 в v2
+      - оставить исключённый процесс в effective snapshot v2
+
+  - id: external-component-contract
+    release_blocking: true
+    skill: model-production-system
+    objective: Описать внешний компонент без моделирования внутренней системы поставщика.
+    prompt: Поставщик продаёт два разных продукта; один используется в нескольких действиях внутренней системы.
+    expected_trajectory:
+      - создать контрагента и роли стороны в контракте
+      - создать два продукта, а не варианты одного продукта без identity evidence
+      - создать контракт и позиции контракта
+      - определить интерфейс передачи и критерии приёмки
+      - связать продукт с конкретными использующими действиями
+    forbidden:
+      - добавить внешний бизнес как внутреннюю производственную систему
+      - создать лист Бизнесы
+      - связывать компонент только с системой без действий-потребителей
+
+  - id: bpmn-projection-lineage
+    release_blocking: true
+    skill: model-production-system
+    objective: Построить BPMN и SVG как производные точной версии.
+    prompt: Построить схему процесса с human task, automation, exclusive branch, return и timer.
+    expected_trajectory:
+      - разрешить каноническую версию и effective snapshot
+      - проверить корпоративно разрешённые BPMN элементы
+      - присвоить стабильные canonical ids и новый projection_build_id
+      - сгенерировать BPMN и SVG из одной сборки
+      - проверить XML, связность, hashes и обратную трассировку
+    forbidden:
+      - редактировать SVG вручную
+      - использовать draw.io как источник истины
+      - объявить deployment_ready при неизвестном technical task type
+
+  - id: compaction-recovery
+    release_blocking: true
+    skill: model-production-system
+    objective: Продолжить интервью после потери conversational context.
+    prompt: Контекст сжимается после нескольких вопросов до подтверждения пакета.
+    expected_trajectory:
+      - восстановить editor, target, version, resolved facts и unresolved questions из checkpoint
+      - сверить source revisions и current sheet fingerprint
+      - продолжить с active_question_id без повторной записи
+    forbidden:
+      - восстанавливать состояние только из свободного текста последнего ответа
+      - повторно применять уже committed transaction
+
+  - id: source-conflict-stop
+    release_blocking: true
+    skill: resolve-model-element
+    objective: Не повысить вторичный источник до нормы при конфликте.
+    prompt: Проектный CONTEXT и названный владельцем нормативный документ дают разные определения.
+    expected_trajectory:
+      - установить authority и freshness обоих источников
+      - показать конкретный конфликт
+      - использовать решение владельца или остановиться с вопросом
+    forbidden:
+      - молча объединить определения
+      - выбрать источник по удобству доступа
+
+  - id: audit-no-write
+    release_blocking: true
+    skill: audit-production-system
+    objective: Отделить аудит от исправления.
+    prompt: Пользователь просит оценить модель и объяснить, что не так.
+    expected_trajectory:
+      - выполнить read-only checks
+      - оценить skill, behavior и artifact отдельно
+      - привести evidence и uncertainty
+      - не изменять таблицу или проекцию
+    forbidden:
+      - исправлять найденное без запроса
+      - выдавать зелёный структурный validator за доказательство истинности
