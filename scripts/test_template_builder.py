@@ -51,12 +51,21 @@ def main() -> int:
         raise AssertionError("builder не создаёт dropdown validations")
     if not any("addProtectedRange" in request for request in requests):
         raise AssertionError("builder не создаёт protected ranges")
-    if not any("addConditionalFormatRule" in request for request in requests):
-        raise AssertionError("builder не создаёт conditional formatting")
-    expected_id_formula = '=IF(C5="","",IFERROR(REGEXEXTRACT(C5,"\\[id=([^\\]]+)\\]"),""))'
-    if id_formula(2, 5) != expected_id_formula:
-        raise AssertionError("ID formula должна использовать проверенный в Google Sheets REGEXEXTRACT-контракт")
-    declared_id_formula = schema["physical_contract"]["selector_id_formula"].replace("<selector>", "C5")
+    conditional_rules = [request for request in requests if "addConditionalFormatRule" in request]
+    if len(conditional_rules) != 1:
+        raise AssertionError("красная conditional formatting разрешена только на листе Проверки")
+    checks_id = payload["sheet_ids"]["Проверки"]
+    if conditional_rules[0]["addConditionalFormatRule"]["rule"]["ranges"][0]["sheetId"] != checks_id:
+        raise AssertionError("условное форматирование не должно красить авторские строки")
+    expected_id_formula = '=IF(C5="","",XLOOKUP(C5,selector_05,selector_05_ids,""))'
+    if id_formula(2, 5, "selector_05", "selector_05_ids") != expected_id_formula:
+        raise AssertionError("ID formula должна использовать точный lookup по парным каталогам")
+    declared_id_formula = (
+        schema["physical_contract"]["selector_id_formula"]
+        .replace("<selector>", "C5")
+        .replace("<labels_range>", "selector_05")
+        .replace("<ids_range>", "selector_05_ids")
+    )
     if declared_id_formula != expected_id_formula:
         raise AssertionError("JSON physical contract расходится с исполняемой selector ID formula")
     if version_id_formula(5) != '=IF($A5="","",\'Система\'!$B$4)':
@@ -74,9 +83,27 @@ def main() -> int:
         raise AssertionError("лист Продукты не объясняет внутреннее производство и внешнюю поставку")
 
     formulas = [formula for request in requests for formula in _formula_values(request)]
-    selector_formulas = [formula for formula in formulas if "REGEXEXTRACT" in formula]
-    if not selector_formulas or any("MID(" in formula for formula in formulas):
-        raise AssertionError("builder вернул старую непарсящуюся MID/FIND selector-формулу")
+    selector_formulas = [formula for formula in formulas if "XLOOKUP" in formula]
+    if not selector_formulas or any(token in formula for formula in formulas for token in ("REGEXEXTRACT", "MID(")):
+        raise AssertionError("builder должен получать ID lookup-формулой, а не извлекать его из видимого текста")
+    if any('" [id="' in formula for formula in formulas):
+        raise AssertionError("builder не должен встраивать ID в человеко-читаемую подпись")
+    if "[id=" in visible_copy:
+        raise AssertionError("пользовательские подсказки не должны показывать технический ID внутри названия")
+
+    selector_label_names = [name for name in named if name.startswith("selector_") and not name.endswith("_ids")]
+    selector_id_names = [name for name in named if name.startswith("selector_") and name.endswith("_ids")]
+    if len(selector_label_names) != len(selector_id_names) or not selector_label_names:
+        raise AssertionError("каждый selector должен иметь парный скрытый диапазон ID")
+
+    number_formats = [
+        request["repeatCell"]["cell"]["userEnteredFormat"]["numberFormat"]
+        for request in requests
+        if request.get("repeatCell", {}).get("cell", {}).get("userEnteredFormat", {}).get("numberFormat")
+    ]
+    patterns = {item["pattern"] for item in number_formats}
+    if not {"dd.mm.yyyy", "dd.mm.yyyy hh:mm"}.issubset(patterns):
+        raise AssertionError("builder должен форматировать date и datetime как читаемые даты")
     version_formulas = [formula for formula in formulas if "'Система'!$B$4" in formula and formula.startswith("=IF($A")]
     expected_versioned_sheets = sum(
         1
