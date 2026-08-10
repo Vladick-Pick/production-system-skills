@@ -6,7 +6,17 @@ from __future__ import annotations
 import json
 import sys
 
-from build_template_v0_2 import build, id_formula, load_schema, validate_batch
+from build_template_v0_2 import (
+    DESCRIPTION_BY_KIND,
+    DESCRIPTION_BY_SHEET,
+    HELP_BY_KIND,
+    HELP_BY_SHEET,
+    build,
+    id_formula,
+    load_schema,
+    validate_batch,
+    version_id_formula,
+)
 
 
 def main() -> int:
@@ -49,11 +59,33 @@ def main() -> int:
     declared_id_formula = schema["physical_contract"]["selector_id_formula"].replace("<selector>", "C5")
     if declared_id_formula != expected_id_formula:
         raise AssertionError("JSON physical contract расходится с исполняемой selector ID formula")
+    if version_id_formula(5) != '=IF($A5="","",\'Система\'!$B$4)':
+        raise AssertionError("version_id должен оставаться пустым до появления stable ID строки")
+    if tuple(DESCRIPTION_BY_SHEET) != tuple(schema["sheet_order"]):
+        raise AssertionError("каждый лист должен иметь отдельное человеко-читаемое описание")
+    visible_copy = " ".join(
+        [*DESCRIPTION_BY_KIND.values(), *DESCRIPTION_BY_SHEET.values(), *HELP_BY_KIND.values(), *HELP_BY_SHEET.values()]
+    ).lower()
+    for internal_term in ("разреженн", "selector", "authoring row"):
+        if internal_term in visible_copy:
+            raise AssertionError(f"пользовательская подсказка содержит внутренний термин: {internal_term}")
+    product_copy = f'{DESCRIPTION_BY_SHEET["Продукты"]} {HELP_BY_SHEET["Продукты"]}'.lower()
+    if not all(term in product_copy for term in ("внутренн", "внешн", "поставщик", "производит")):
+        raise AssertionError("лист Продукты не объясняет внутреннее производство и внешнюю поставку")
 
     formulas = [formula for request in requests for formula in _formula_values(request)]
     selector_formulas = [formula for formula in formulas if "REGEXEXTRACT" in formula]
     if not selector_formulas or any("MID(" in formula for formula in formulas):
         raise AssertionError("builder вернул старую непарсящуюся MID/FIND selector-формулу")
+    version_formulas = [formula for formula in formulas if "'Система'!$B$4" in formula and formula.startswith("=IF($A")]
+    expected_versioned_sheets = sum(
+        1
+        for sheet in schema["sheets"].values()
+        if sheet.get("kind") in {"versioned_authoring", "versioned_authoring_with_settings"}
+        and "version_id" in sheet.get("columns", [])
+    )
+    if len(version_formulas) != expected_versioned_sheets or "='Система'!$B$4" in formulas:
+        raise AssertionError("builder должен скрывать version_id на пустых capacity-строках")
 
     created_sheets = [request["addSheet"]["properties"] for request in requests if "addSheet" in request]
     public_sheets = [properties for properties in created_sheets if properties["title"] != "__v02_migration__"]
