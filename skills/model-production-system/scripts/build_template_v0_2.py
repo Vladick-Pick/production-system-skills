@@ -70,7 +70,7 @@ HELP_BY_KIND = {
     "identity_registry": "Одна реальная сущность получает один стабильный ID. Повторное упоминание не создаёт новую строку.",
     "governance_registry": "Каждая строка фиксирует отдельное состояние или управленческий факт; историю не переписывают задним числом.",
     "relation_registry": "Одна строка связывает две существующие сущности на указанный период.",
-    "versioned_authoring": "Начните строку со стабильного ID. Версия подставится автоматически; связи выбирайте по понятным названиям в соседних списках.",
+    "versioned_authoring": "Начните строку со стабильного ID. Версия подставится автоматически; связи выбирайте по понятным названиям. source_locator — читаемая ссылка на исходный документ и точное место в нём.",
     "append_only_governance": "Лист заполняется при подтверждённой записи и не редактируется задним числом.",
     "computed_registry": "Лист собирается автоматически. Чтобы исправить результат, измените исходные данные, а затем пересоберите представление.",
     "derived_artifact_registry": "Одна строка описывает одну проверенную сборку представления, а не отдельную версию бизнес-модели.",
@@ -92,6 +92,12 @@ DISPLAY_FIELD_OVERRIDES = {
     "Решения": "decision_summary",
     "Изменения модели": "change_id",
     "Диаграммы": "projection_build_id",
+}
+
+HEADER_NOTES = {
+    "version_operation": "Применить — добавить или обновить редакцию в этой версии; исключить — убрать элемент из среза этой и следующих версий.",
+    "source_locator": "Читаемая ссылка на точное место в источнике: документ, лист и строка или диапазон. Не показывать пользователю внутреннюю служебную строку вместо понятной подписи.",
+    "last_reviewed": "Дата последней смысловой проверки записи. Отображается как день.месяц.год.",
 }
 
 
@@ -177,6 +183,29 @@ def repeat_format(sheet_id: int, start_row: int, end_row: int, start_column: int
     }
 
 
+def number_format(sheet_id: int, start_row: int, end_row: int, column: int, pattern: str) -> dict[str, Any]:
+    return {
+        "repeatCell": {
+            "range": {
+                "sheetId": sheet_id,
+                "startRowIndex": start_row,
+                "endRowIndex": end_row,
+                "startColumnIndex": column,
+                "endColumnIndex": column + 1,
+            },
+            "cell": {
+                "userEnteredFormat": {
+                    "numberFormat": {
+                        "type": "DATE_TIME" if "hh" in pattern else "DATE",
+                        "pattern": pattern,
+                    }
+                }
+            },
+            "fields": "userEnteredFormat.numberFormat",
+        }
+    }
+
+
 def merge_range(sheet_id: int, start_row: int, end_row: int, start_column: int, end_column: int) -> dict[str, Any]:
     return {
         "mergeCells": {
@@ -252,24 +281,32 @@ def display_field(sheet_name: str, sheet: dict[str, Any]) -> str | None:
     return columns[0] if columns else None
 
 
-def selector_catalog_formula(schema: dict[str, Any], sheet_name: str, sheet: dict[str, Any], start_row: int) -> str:
+def selector_catalog_formulas(schema: dict[str, Any], sheet_name: str, sheet: dict[str, Any], start_row: int) -> tuple[str, str]:
     kind = sheet.get("kind")
     if kind in {"versioned_authoring", "versioned_authoring_with_settings"}:
         return (
-            "=ARRAYFORMULA(IFERROR(FILTER('Срез модели'!$E$5:$E$1004,"
-            f"'Срез модели'!$C$5:$C$1004=\"{sheet_name}\"),\"\"))"
+            "=ARRAYFORMULA(IFERROR(FILTER(REGEXREPLACE('Срез модели'!$E$5:$E$1004,"
+            '" \\[id=[^\\]]+\\]$",""),'
+            f"'Срез модели'!$C$5:$C$1004=\"{sheet_name}\"),\"\"))",
+            "=ARRAYFORMULA(IFERROR(FILTER('Срез модели'!$D$5:$D$1004,"
+            f"'Срез модели'!$C$5:$C$1004=\"{sheet_name}\"),\"\"))",
         )
     if sheet_name == "Срез модели":
-        return "=ARRAYFORMULA(IF($E$5:$E$1004=\"\",\"\",$E$5:$E$1004))"
+        return (
+            '=ARRAYFORMULA(IF($E$5:$E$1004="","",REGEXREPLACE($E$5:$E$1004," \\[id=[^\\]]+\\]$","")))',
+            '=ARRAYFORMULA(IF($D$5:$D$1004="","",$D$5:$D$1004))',
+        )
     columns = sheet.get("columns", [])
     if not columns:
-        return "=\"\""
+        return '=\"\"', '=\"\"'
     id_col = column_letter(0)
     label_field = display_field(sheet_name, sheet)
     label_col = column_letter(columns.index(label_field)) if label_field in columns else id_col
     return (
         f"=ARRAYFORMULA(IF(${id_col}${start_row}:${id_col}$1004=\"\",\"\","
-        f"${label_col}${start_row}:${label_col}$1004&\" [id=\"&${id_col}${start_row}:${id_col}$1004&\"]\"))"
+        f"${label_col}${start_row}:${label_col}$1004))",
+        f"=ARRAYFORMULA(IF(${id_col}${start_row}:${id_col}$1004=\"\",\"\","
+        f"${id_col}${start_row}:${id_col}$1004))",
     )
 
 
@@ -277,9 +314,15 @@ def selector_source_sheet(target: str) -> str:
     return target.split(".", 1)[0]
 
 
-def id_formula(selector_column: int, row_number: int) -> str:
+def selector_range_names(schema: dict[str, Any], sheet_name: str) -> tuple[str, str]:
+    index = schema["sheet_order"].index(sheet_name) + 1
+    base = f"selector_{index:02d}"
+    return base, f"{base}_ids"
+
+
+def id_formula(selector_column: int, row_number: int, labels_range: str, ids_range: str) -> str:
     selector = f"{column_letter(selector_column)}{row_number}"
-    return f'=IF({selector}="","",IFERROR(REGEXEXTRACT({selector},"\\[id=([^\\]]+)\\]"),""))'
+    return f'=IF({selector}="","",XLOOKUP({selector},{labels_range},{ids_range},""))'
 
 
 def version_id_formula(row_number: int) -> str:
@@ -495,7 +538,7 @@ def sheet_static_rows(schema: dict[str, Any], sheet_name: str, sheet: dict[str, 
             row(["2", "Порядок заполнения", "Начните с источников и версии, затем определите системы, позиции, продукты, процессы, действия, объекты, состояния и связи."]),
             row(["3", "Интервью и подтверждение", "Сначала уточните, куда изменение встраивается, от чего зависит, какой эффект создаёт и как корректно сформулировать определение. Записывайте только после подтверждения."]),
             row(["4", "Версии", "Новая версия хранит только изменения. Неизменённые элементы продолжают действовать из предыдущей версии; история принятых определений не стирается."]),
-            row(["5", "Человеко-читаемые списки", "В выпадающем списке выбирайте понятную подпись вида «Название [id=…]». Соседний ID вычисляется автоматически и остаётся видимым."]),
+            row(["5", "Человеко-читаемые списки", "В выпадающем списке выбирайте только понятное название. Соседний технический ID вычисляется автоматически и остаётся видимым."]),
             row(["6", "BPMN и SVG", "Диаграмма — производная проекция канонической модели. Исправляйте смысл в таблице, затем перестраивайте изображение."]),
             row(["7", "Проверки и восстановление", "Перед вводом версии проверьте лист «Проверки». Решения и изменения модели сохраняют автора, дату, основание и состав обновления."]),
             row([]),
@@ -507,12 +550,15 @@ def sheet_static_rows(schema: dict[str, Any], sheet_name: str, sheet: dict[str, 
             row(["Важно", "Не вставляйте значения поверх формульных ID-столбцов. При ошибке сначала проверьте выбранное значение, рабочую версию и лист «Проверки»."]),
         ]
     if sheet_name == "Рабочая панель":
+        version_labels, version_ids = selector_range_names(schema, "Версии")
+        system_labels, system_ids = selector_range_names(schema, "Система")
+        process_labels, process_ids = selector_range_names(schema, "Процессы")
         values = [
             row(["Рабочая панель модели бизнеса v0.2"]),
             row(["Выберите версию, систему и процесс человеко-читаемыми списками. Технический ID рассчитывается рядом и остаётся видимым."]),
-            row(["Рабочая версия", "", "", "selected_version_id", cell(formula=id_formula(1, 3))]),
-            row(["Система", "", "", "selected_system_id", cell(formula=id_formula(1, 4))]),
-            row(["Процесс", "", "", "selected_process_id", cell(formula=id_formula(1, 5))]),
+            row(["Рабочая версия", "", "", "selected_version_id", cell(formula=id_formula(1, 3, version_labels, version_ids))]),
+            row(["Система", "", "", "selected_system_id", cell(formula=id_formula(1, 4, system_labels, system_ids))]),
+            row(["Процесс", "", "", "selected_process_id", cell(formula=id_formula(1, 5, process_labels, process_ids))]),
             row([]),
             row(["Сводные представления"]),
         ]
@@ -525,12 +571,13 @@ def sheet_static_rows(schema: dict[str, Any], sheet_name: str, sheet: dict[str, 
         DESCRIPTION_BY_KIND.get(sheet.get("kind"), "Лист модели бизнеса v0.2."),
     )
     if sheet_name == "Система":
+        version_labels, version_ids = selector_range_names(schema, "Версии")
         rows = [
             row([sheet_name]),
             row([description]),
             row(["model_id", "", "Одна книга = одна модель бизнеса"]),
-            row(["working_version_id", cell(formula=id_formula(2, 4)), "", "working_version_selector"]),
-            row(["current_version_id", cell(formula=id_formula(2, 5)), "", "current_version_selector"]),
+            row(["working_version_id", cell(formula=id_formula(2, 4, version_labels, version_ids)), "", "working_version_selector"]),
+            row(["current_version_id", cell(formula=id_formula(2, 5, version_labels, version_ids)), "", "current_version_selector"]),
         ]
         while len(rows) < header_row - 1:
             rows.append(row([]))
@@ -696,6 +743,7 @@ def build(
     )
 
     selector_names: dict[str, str] = {}
+    selector_id_names: dict[str, str] = {}
     for index, sheet_name in enumerate(order):
         sheet = schema["sheets"][sheet_name]
         columns = sheet.get("columns", [])
@@ -704,6 +752,27 @@ def build(
         if static_rows:
             requests.append(update_block(sheet_id, 0, 0, static_rows))
         requests.extend(layout_requests(schema, sheet_name, sheet_id))
+        if columns:
+            header_row = int(sheet.get("header_row", default["header_row"])) - 1
+            for field, note in HEADER_NOTES.items():
+                if field not in columns:
+                    continue
+                column = columns.index(field)
+                requests.append(
+                    {
+                        "updateCells": {
+                            "range": {
+                                "sheetId": sheet_id,
+                                "startRowIndex": header_row,
+                                "endRowIndex": header_row + 1,
+                                "startColumnIndex": column,
+                                "endColumnIndex": column + 1,
+                            },
+                            "rows": [{"values": [{"note": note}]}],
+                            "fields": "note",
+                        }
+                    }
+                )
         if sheet_name == "Схема шаблона":
             rows = schema_registry_rows(schema)
             if rows:
@@ -745,21 +814,11 @@ def build(
                     }
                 )
 
-            if required:
-                required_refs = [f"{column_letter(columns.index(name))}{data_start + 1}=\"\"" for name in required if name in columns]
-                if required_refs:
-                    formula = f"=AND($A{data_start + 1}<>\"\",OR({','.join(required_refs)}))"
-                    requests.append(
-                        {
-                            "addConditionalFormatRule": {
-                                "rule": {
-                                    "ranges": [{"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": 0, "endColumnIndex": len(columns)}],
-                                    "booleanRule": {"condition": {"type": "CUSTOM_FORMULA", "values": [{"userEnteredValue": formula}]}, "format": {"backgroundColor": rgb(default["invalid_fill"])}},
-                                },
-                                "index": 0,
-                            }
-                        }
-                    )
+            for field, field_type in sheet.get("types", {}).items():
+                if field not in columns or field_type not in {"date", "datetime"}:
+                    continue
+                pattern = "dd.mm.yyyy hh:mm" if field_type == "datetime" else "dd.mm.yyyy"
+                requests.append(number_format(sheet_id, data_start, data_end, columns.index(field), pattern))
 
             if sheet.get("write_mode") == "generated" or sheet.get("kind") == "computed_registry":
                 requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": 0, "endColumnIndex": len(columns)}, "description": "generated v0.2 range", "warningOnly": True}}})
@@ -768,13 +827,15 @@ def build(
         if columns or sheet_name == "Срез модели":
             helper_column = helper_columns[sheet_name]
             start_row_number = int(sheet.get("data_start_row", default["data_start_row"]))
-            formula = selector_catalog_formula(schema, sheet_name, sheet, start_row_number)
-            requests.append(update_block(sheet_id, start_row_number - 1, helper_column, [row([cell(formula=formula)])]))
-            requests.append({"updateDimensionProperties": {"range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": helper_column, "endIndex": helper_column + 1}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}})
-            requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 1}, "description": "selector catalog v0.2", "warningOnly": True}}})
-            selector_name = f"selector_{index + 1:02d}"
+            labels_formula, ids_formula = selector_catalog_formulas(schema, sheet_name, sheet, start_row_number)
+            requests.append(update_block(sheet_id, start_row_number - 1, helper_column, [row([cell(formula=labels_formula), cell(formula=ids_formula)])]))
+            requests.append({"updateDimensionProperties": {"range": {"sheetId": sheet_id, "dimension": "COLUMNS", "startIndex": helper_column, "endIndex": helper_column + 2}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}})
+            requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 2}, "description": "selector label/id catalogs v0.2", "warningOnly": True}}})
+            selector_name, selector_id_name = selector_range_names(schema, sheet_name)
             selector_names[sheet_name] = selector_name
+            selector_id_names[sheet_name] = selector_id_name
             requests.append({"addNamedRange": {"namedRange": {"name": selector_name, "range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 1}}}})
+            requests.append({"addNamedRange": {"namedRange": {"name": selector_id_name, "range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column + 1, "endColumnIndex": helper_column + 2}}}})
 
     # Selector dropdowns and formulas are added after all named catalogs are declared.
     for sheet_name in order:
@@ -802,12 +863,13 @@ def build(
             else:
                 target_sheet = selector_source_sheet(target)
             source_name = selector_names.get(target_sheet)
-            if not source_name:
+            source_id_name = selector_id_names.get(target_sheet)
+            if not source_name or not source_id_name:
                 continue
             field_column = columns.index(field)
             selector_column = columns.index(selector)
             requests.append({"setDataValidation": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": selector_column, "endColumnIndex": selector_column + 1}, "rule": {"condition": {"type": "ONE_OF_RANGE", "values": [{"userEnteredValue": f"={source_name}"}]}, "strict": True, "showCustomUi": True}}})
-            requests.append({"repeatCell": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": field_column, "endColumnIndex": field_column + 1}, "cell": {"userEnteredValue": {"formulaValue": id_formula(selector_column, data_start + 1)}}, "fields": "userEnteredValue"}})
+            requests.append({"repeatCell": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": field_column, "endColumnIndex": field_column + 1}, "cell": {"userEnteredValue": {"formulaValue": id_formula(selector_column, data_start + 1, source_name, source_id_name)}}, "fields": "userEnteredValue"}})
             requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": field_column, "endColumnIndex": field_column + 1}, "description": f"ID из selector {selector}", "warningOnly": True}}})
 
     # Dashboard selectors use the same readable catalogs.

@@ -231,8 +231,12 @@ def validate_template(errors: list[str]) -> None:
         errors.append("XLSX v0.2 не содержит ожидаемые физические formulas")
     if combined.count(b"<dataValidation") < 20:
         errors.append("XLSX v0.2 не содержит ожидаемые dropdown validations")
-    if combined.count(b"<conditionalFormatting") < 20:
-        errors.append("XLSX v0.2 не содержит ожидаемое conditional formatting")
+    conditional_count = combined.count(b"<conditionalFormatting")
+    if conditional_count != 1:
+        errors.append(
+            "XLSX v0.2 должен содержать ровно одно conditional formatting: "
+            "критические ошибки на листе Проверки, без красной заливки рабочих строк"
+        )
     if b"#REF!" in combined:
         errors.append("XLSX v0.2 содержит формулу или диапазон с #REF!")
 
