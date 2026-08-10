@@ -10,7 +10,7 @@
     "formula_language": "Google Sheets English functions with comma separators",
     "selector_encoding": "читаемая подпись [id=stable_id]",
     "selector_id_formula": "=IF(<selector>=\"\",\"\",IFERROR(REGEXEXTRACT(<selector>,\"\\[id=([^\\]]+)\\]\"),\"\"))",
-    "foreign_key_write_path": "Пользователь выбирает selector; соседний открытый *_id вычисляется формулой по ASCII-маркеру [id=...]. version_id авторской строки берётся из Система!B4.",
+    "foreign_key_write_path": "Пользователь выбирает selector; соседний открытый *_id вычисляется формулой по ASCII-маркеру [id=...]. version_id начатой авторской строки берётся из Система!B4 после появления stable_id; пустые capacity-строки остаются визуально пустыми.",
     "selector_catalogs": "Именованные скрытые диапазоны. Для версионируемых сущностей источник — Срез модели выбранной рабочей версии; для identity/governance registry — собственные строки реестра.",
     "enum_catalogs": "Именованные скрытые диапазоны на листе Система; пользовательские значения только на русском языке.",
     "generated_ranges": "Вычисляемые листы и helper-каталоги защищены warning-only; IDs, selectors и официальные колонки остаются видимыми.",

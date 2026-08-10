@@ -5,9 +5,9 @@ source_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixna
 copy_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy
 access_observed: anyone_with_link_reader
 owner_observed: vladislav.vladimirovich.bogdan@gmail.com
-exported_at: "2026-08-09"
+exported_at: "2026-08-10"
 snapshot: templates/production-system-model-template-v0.2.xlsx
-sha256: ad65c32f49fb4be85c06997c46d4673bfd42c805ba325c787245b6c242f32508
+sha256: 5d51ae9a6fb2006d3925ee076c872ae5d0c4f79759a23652fcf12a93b72945a7
 sheets:
   - Инструкция
   - Система
