@@ -8,7 +8,177 @@
     "Гипотезы",
     "Эксперименты"
   ],
+  "enum_overrides": {
+    "knowledge_status": [
+      "принято",
+      "кандидат",
+      "предположение",
+      "конфликт",
+      "устарело",
+      "неизвестно"
+    ],
+    "object_type": [
+      "объект работы",
+      "данные",
+      "документ",
+      "ресурс"
+    ]
+  },
+  "semantic_migrations": {
+    "knowledge_status": {
+      "гипотеза": "предположение"
+    },
+    "object_type": {
+      "requires_resolution": [
+        "вход",
+        "выход"
+      ],
+      "allowed_targets": [
+        "объект работы",
+        "данные",
+        "документ",
+        "ресурс"
+      ]
+    }
+  },
   "sheet_overrides": {
+    "Позиции контрактов": {
+      "columns": [
+        "contract_item_id",
+        "version_id",
+        "version_operation",
+        "contract_id",
+        "contract_selector",
+        "direction",
+        "product_id",
+        "product_selector",
+        "material_id",
+        "material_selector",
+        "internal_system_id",
+        "internal_system_selector",
+        "pricing_method",
+        "price_value",
+        "price_formula",
+        "currency",
+        "pricing_unit",
+        "billing_trigger",
+        "payment_terms",
+        "interface_id",
+        "interface_selector",
+        "knowledge_status",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "last_reviewed",
+        "notes"
+      ],
+      "required": [
+        "contract_item_id",
+        "version_id",
+        "version_operation",
+        "contract_id",
+        "direction",
+        "internal_system_id",
+        "pricing_method",
+        "currency",
+        "pricing_unit",
+        "knowledge_status",
+        "source_id"
+      ],
+      "foreign_keys": {
+        "version_id": "Версии.version_id",
+        "contract_id": "Контракты.contract_id",
+        "product_id": "Продукты.product_id",
+        "material_id": "Материалы.material_id",
+        "internal_system_id": "Система.system_id",
+        "interface_id": "Интерфейсы передачи.interface_id",
+        "source_id": "Источники.source_id"
+      },
+      "selectors": {
+        "contract_id": "contract_selector",
+        "product_id": "product_selector",
+        "material_id": "material_selector",
+        "internal_system_id": "internal_system_selector",
+        "interface_id": "interface_selector",
+        "source_id": "source_selector"
+      },
+      "constraints": [
+        "exactly_one_product_or_material",
+        "price_value_required_unless_formula",
+        "price_formula_required_for_formula_method"
+      ]
+    },
+    "Интерфейсы передачи": {
+      "columns": [
+        "interface_id",
+        "version_id",
+        "version_operation",
+        "interface_name",
+        "counterparty_id",
+        "counterparty_selector",
+        "internal_system_id",
+        "internal_system_selector",
+        "product_id",
+        "product_selector",
+        "material_id",
+        "material_selector",
+        "transfer_trigger",
+        "channel",
+        "information_system_id",
+        "information_system_selector",
+        "format_description",
+        "package_description",
+        "acceptance_action_id",
+        "acceptance_action_selector",
+        "acceptance_evidence",
+        "rejection_path",
+        "return_path",
+        "fallback_path",
+        "knowledge_status",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "last_reviewed",
+        "notes"
+      ],
+      "required": [
+        "interface_id",
+        "version_id",
+        "version_operation",
+        "interface_name",
+        "counterparty_id",
+        "internal_system_id",
+        "transfer_trigger",
+        "channel",
+        "format_description",
+        "acceptance_evidence",
+        "rejection_path",
+        "knowledge_status",
+        "source_id"
+      ],
+      "foreign_keys": {
+        "version_id": "Версии.version_id",
+        "counterparty_id": "Контрагенты.counterparty_id",
+        "internal_system_id": "Система.system_id",
+        "product_id": "Продукты.product_id",
+        "material_id": "Материалы.material_id",
+        "information_system_id": "Элементы модели.element_id",
+        "acceptance_action_id": "Действия.action_id",
+        "source_id": "Источники.source_id"
+      },
+      "selectors": {
+        "counterparty_id": "counterparty_selector",
+        "internal_system_id": "internal_system_selector",
+        "product_id": "product_selector",
+        "material_id": "material_selector",
+        "information_system_id": "information_system_selector",
+        "acceptance_action_id": "acceptance_action_selector",
+        "source_id": "source_selector"
+      },
+      "constraints": [
+        "exactly_one_product_or_material"
+      ]
+    },
     "Рабочая панель": {
       "dashboard_layout": "v0.3-connected-process",
       "sections": [

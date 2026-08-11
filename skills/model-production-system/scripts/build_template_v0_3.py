@@ -29,11 +29,11 @@ OVERLAY_SCHEMA_PATH = next((path for path in OVERLAY_SCHEMA_CANDIDATES if path.i
 
 
 def load_schema() -> dict[str, Any]:
-    """Разрешить стабильную v0.2 и additive overlay v0.3 в одну схему."""
+    """Разрешить стабильную v0.2 и версионный overlay v0.3 в одну схему."""
     base_schema = json.loads(BASE_SCHEMA_PATH.read_text(encoding="utf-8"))
     overlay = json.loads(OVERLAY_SCHEMA_PATH.read_text(encoding="utf-8"))
     schema = copy.deepcopy(base_schema)
-    if overlay.get("base_schema") != BASE_SCHEMA_PATH.name:
+    if str(overlay.get("base_schema", "")).casefold() != BASE_SCHEMA_PATH.name.casefold():
         raise ValueError("overlay v0.3 ссылается на неожиданную базовую схему")
 
     additions = list(overlay.get("sheet_order_additions", []))
@@ -56,10 +56,17 @@ def load_schema() -> dict[str, Any]:
         if enum_name in schema["enums"]:
             raise ValueError(f"overlay v0.3 пытается заменить enum v0.2: {enum_name}")
         schema["enums"][enum_name] = list(values)
+    for enum_name, values in overlay.get("enum_overrides", {}).items():
+        if enum_name not in base_schema["enums"]:
+            raise ValueError(f"overlay v0.3 заменяет неизвестный enum v0.2: {enum_name}")
+        if not isinstance(values, list) or not values or len(values) != len(set(values)):
+            raise ValueError(f"overlay v0.3 задаёт некорректный enum override: {enum_name}")
+        schema["enums"][enum_name] = list(values)
     schema["schema_version"] = overlay["schema_version"]
     schema["sheet_count"] = overlay["sheet_count"]
     schema["base_schema_version"] = base_schema["schema_version"]
     schema["overlay_schema"] = OVERLAY_SCHEMA_PATH.name
+    schema["semantic_migrations"] = copy.deepcopy(overlay.get("semantic_migrations", {}))
     validate_schema(schema)
     return schema
 

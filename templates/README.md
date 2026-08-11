@@ -12,11 +12,11 @@
 - `production-system-model-template-v0.1.xlsx` — сохранённый исторический снимок до миграции;
 - `template-manifest.yaml` — идентификатор источника, версия, контрольная сумма и состав листов.
 - `template-schema-v0.2.json` — машиночитаемая логическая и декларативная физическая схема 29 листов;
-- `template-schema-v0.3.json` — additive overlay, добавляющий три реестра и новую рабочую панель до итоговых 32 листов;
+- `template-schema-v0.3.json` — версионный overlay, добавляющий три реестра и новую рабочую панель, а также явно уточняющий словари и компонентные ссылки до итоговых 32 листов;
 - `scripts/build_template_v0_2.py` — точные formulas, dropdown ranges, named ranges, protections, filters и formatting;
 - `scripts/build_template_v0_3.py` — композиционный builder release candidate v0.3;
 - `migrations/v0.1-to-v0.2.md` — исполнимый агентный runbook: read-only assessment, классы `copy/derive/split/confirm/new-required/regenerate/archive/drop`, migration dossier, порядок вопросов, bounded batches, reconciliation и rollback.
-- `migrations/v0.2-to-v0.3.md` — additive migration: отдельная копия, сохранение всех значений и stable IDs, три пустых реестра и замена только служебных представлений.
+- `migrations/v0.2-to-v0.3.md` — управляемая миграция: отдельная копия, сохранение stable IDs и референтов, только объявленные семантические преобразования, три пустых реестра и пересборка служебных представлений.
 
 Локальный визуальный макет из `outputs/v0.3-review/` проверяет структуру и читаемость release candidate. Он намеренно не указан в manifest как канонический снимок и не заменяет экспорт из Google Sheets.
 

@@ -54,8 +54,8 @@ DESCRIPTION_BY_SHEET = {
     "Переходы": "Изменения состояния объекта, вызванные действием, условием или решением.",
     "Элементы модели": "Правила, данные, информационные системы, показатели, нормативы, SLA и автоматизации.",
     "Контракты": "Общие договорённости бизнеса с внешними контрагентами.",
-    "Позиции контрактов": "Отдельно принимаемые и рассчитываемые продукты внутри контрактов.",
-    "Интерфейсы передачи": "Способы и условия передачи продуктов через внешнюю границу бизнеса.",
+    "Позиции контрактов": "Отдельно принимаемые и рассчитываемые продукты или материалы внутри контрактов.",
+    "Интерфейсы передачи": "Способы и условия передачи продуктов или материалов через внешнюю границу бизнеса.",
     "Связи модели": "Использование и другие смысловые связи между элементами модели.",
     "Решения": "Кто, когда и какой полный пакет изменений подтвердил.",
     "Изменения модели": "Какие поля и элементы были созданы, изменены или исключены каждой транзакцией.",
@@ -79,7 +79,7 @@ HELP_BY_KIND = {
 HELP_BY_SHEET = {
     "Продукты": "Одна строка = один тип продукта, а не отдельный лид или событие. Внутренний производитель задаётся связью «система → производит → продукт»; внешний поставщик — входящей позицией контракта.",
     "Материалы": "Одна строка = один переиспользуемый материал. Конкретное отправленное сообщение или заполненный документ относится к данным исполнения, а не к этому каталогу.",
-    "Позиции контрактов": "Направление «входящая» означает, что бизнес получает продукт от контрагента; «исходящая» — что бизнес поставляет продукт контрагенту.",
+    "Позиции контрактов": "Выберите ровно один компонент: продукт или материал. Направление «входящая» означает получение от контрагента; «исходящая» — поставку контрагенту.",
     "Связи модели": "Здесь фиксируется, где элемент используется: например, действие использует материал или система производит продукт.",
 }
 
@@ -113,7 +113,7 @@ DASHBOARD_V3_SECTIONS = (
     ("Основной объект", 6, 23, 8, ("object_id", "Объект", "Тип", "Определение", "Идентичность", "Создание", "Завершение", "Статус")),
     ("Состояния основного объекта", 23, 23, 8, ("state_id", "Состояние", "Определение", "Конечное", "Допустимые действия")),
     ("Материалы процесса", 69, 23, 8, ("Действие", "material_id", "Материал", "Роль", "Как используется")),
-    ("Внешние компоненты и контракты", 149, 23, 8, ("Контрагент", "Направление", "Продукт", "Контракт", "Интерфейс", "Документ", "Действие приёмки")),
+    ("Внешние компоненты и контракты", 149, 23, 8, ("Контрагент", "Направление", "Компонент", "Контракт", "Интерфейс", "Документ", "Действие приёмки")),
     ("Проверки", 6, 32, 7, ("check_id", "Категория", "Уровень", "Проверка", "Статус", "Затронуто", "Что сделать")),
     ("BPMN / SVG", 34, 32, 7, ("build_id", "Готовность", "Построено", "Fingerprint", "BPMN", "SVG", "Среда")),
     ("Связано с выбранным процессом", 64, 32, 7, ("Тип", "ID", "Название", "Статус", "Ответственный", "Следующий шаг", "Срок")),
@@ -414,7 +414,11 @@ def field_range(schema: dict[str, Any], sheet_name: str, field: str) -> str:
     return f"{quoted_sheet(sheet_name)}!${letter}$5:${letter}$1004"
 
 
-def resolved_condition(schema: dict[str, Any], sheet_name: str) -> str:
+def resolved_condition(
+    schema: dict[str, Any],
+    sheet_name: str,
+    selected_version_ref: str = "$E$3",
+) -> str:
     """Google Sheets array-condition: raw revision belongs to selected snapshot."""
     stable = field_range(schema, sheet_name, schema["sheets"][sheet_name]["columns"][0])
     version = field_range(schema, sheet_name, "version_id")
@@ -426,7 +430,7 @@ def resolved_condition(schema: dict[str, Any], sheet_name: str) -> str:
     snapshot_key = f'{snapshot_type}&"|"&{snapshot_id}&"|"&{snapshot_version}'
     return (
         "ARRAYFORMULA(ISNUMBER(MATCH("
-        f"{raw_key},IFERROR(FILTER({snapshot_key},{snapshot_selected}=$E$3),\"__none__\"),0)))"
+        f"{raw_key},IFERROR(FILTER({snapshot_key},{snapshot_selected}={selected_version_ref}),\"__none__\"),0)))"
     )
 
 
@@ -1021,6 +1025,8 @@ def dashboard_v3_rows(schema: dict[str, Any]) -> list[dict[str, Any]]:
     item_contract = field_range(schema, "Позиции контрактов", "contract_id")
     item_direction = field_range(schema, "Позиции контрактов", "direction")
     item_product = field_range(schema, "Позиции контрактов", "product_selector")
+    item_material = field_range(schema, "Позиции контрактов", "material_selector")
+    item_component = f'ARRAYFORMULA(IF({item_product}<>"",{item_product},{item_material}))'
     item_interface = field_range(schema, "Позиции контрактов", "interface_id")
     item_interface_selector = field_range(schema, "Позиции контрактов", "interface_selector")
     item_system = field_range(schema, "Позиции контрактов", "internal_system_id")
@@ -1044,7 +1050,7 @@ def dashboard_v3_rows(schema: dict[str, Any]) -> list[dict[str, Any]]:
         (
             f'ARRAYFORMULA(XLOOKUP({item_contract},{contract_lookup_ids},IFERROR(FILTER({contract_counterparty},{resolved_contracts}),""),""))',
             item_direction,
-            item_product,
+            item_component,
             contract_selector,
             item_interface_selector,
             f'ARRAYFORMULA(XLOOKUP({item_contract},{contract_lookup_ids},IFERROR(FILTER({contract_document},{resolved_contracts}),""),""))',
@@ -1236,6 +1242,92 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
         def col(items: list[str], field: str) -> str:
             return column_letter(items.index(field))
 
+        contract_items = schema["sheets"]["Позиции контрактов"]["columns"]
+        interfaces = schema["sheets"]["Интерфейсы передачи"]["columns"]
+        item_id = col(contract_items, "contract_item_id")
+        item_operation = col(contract_items, "version_operation")
+        item_product = col(contract_items, "product_id")
+        item_material = col(contract_items, "material_id")
+        item_interface = col(contract_items, "interface_id")
+        interface_id = col(interfaces, "interface_id")
+        interface_operation = col(interfaces, "version_operation")
+        interface_product = col(interfaces, "product_id")
+        interface_material = col(interfaces, "material_id")
+        rows.append(
+            values(
+                "CHK-CONTRACT-ITEM-COMPONENT",
+                "контракты",
+                "позиция контракта содержит ровно один компонент",
+                f'=SUMPRODUCT(N(\'Позиции контрактов\'!{item_id}5:{item_id}1004<>""),N(\'Позиции контрактов\'!{item_operation}5:{item_operation}1004="применить"),N(((\'Позиции контрактов\'!{item_product}5:{item_product}1004<>"")+(\'Позиции контрактов\'!{item_material}5:{item_material}1004<>""))<>1))',
+                "Выбрать продукт или материал, но не оба компонента",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-INTERFACE-COMPONENT",
+                "контракты",
+                "интерфейс передачи содержит ровно один компонент",
+                f'=SUMPRODUCT(N(\'Интерфейсы передачи\'!{interface_id}5:{interface_id}1004<>""),N(\'Интерфейсы передачи\'!{interface_operation}5:{interface_operation}1004="применить"),N(((\'Интерфейсы передачи\'!{interface_product}5:{interface_product}1004<>"")+(\'Интерфейсы передачи\'!{interface_material}5:{interface_material}1004<>""))<>1))',
+                "Выбрать продукт или материал, но не оба компонента",
+            )
+        )
+
+        resolved_interfaces = resolved_condition(schema, "Интерфейсы передачи", "'Система'!$B$4")
+        resolved_contract_items = resolved_condition(schema, "Позиции контрактов", "'Система'!$B$4")
+        interface_ids = f"'Интерфейсы передачи'!{interface_id}5:{interface_id}1004"
+        interface_products = f"'Интерфейсы передачи'!{interface_product}5:{interface_product}1004"
+        interface_materials = f"'Интерфейсы передачи'!{interface_material}5:{interface_material}1004"
+        item_interfaces = f"'Позиции контрактов'!{item_interface}5:{item_interface}1004"
+        item_products = f"'Позиции контрактов'!{item_product}5:{item_product}1004"
+        item_materials = f"'Позиции контрактов'!{item_material}5:{item_material}1004"
+        linked_interface_product = (
+            f'IFERROR(XLOOKUP({item_interfaces},FILTER({interface_ids},{resolved_interfaces}),'
+            f'FILTER({interface_products},{resolved_interfaces}),""),"")'
+        )
+        linked_interface_material = (
+            f'IFERROR(XLOOKUP({item_interfaces},FILTER({interface_ids},{resolved_interfaces}),'
+            f'FILTER({interface_materials},{resolved_interfaces}),""),"")'
+        )
+        rows.append(
+            values(
+                "CHK-CONTRACT-INTERFACE-COMPONENT",
+                "контракты",
+                "позиция контракта и интерфейс передают один компонент",
+                f'=SUMPRODUCT(N(\'Позиции контрактов\'!{item_id}5:{item_id}1004<>""),N({resolved_contract_items}),N({item_interfaces}<>""),N((({item_products}<>{linked_interface_product})+({item_materials}<>{linked_interface_material}))>0))',
+                "Выбрать в позиции и связанном интерфейсе один и тот же продукт либо материал",
+            )
+        )
+
+        snapshot_selected = field_range(schema, "Срез модели", "selected_version_id")
+        snapshot_type = field_range(schema, "Срез модели", "entity_type")
+        snapshot_id = field_range(schema, "Срез модели", "stable_id")
+        snapshot_status = field_range(schema, "Срез модели", "resolution_status")
+        link_to = field_range(schema, "Связи модели", "to_entity_id")
+        link_from = field_range(schema, "Связи модели", "from_entity_id")
+        link_relation = field_range(schema, "Связи модели", "relation_type")
+        resolved_links = resolved_condition(schema, "Связи модели", "'Система'!$B$4")
+        item_product_range = field_range(schema, "Позиции контрактов", "product_id")
+        item_direction_range = field_range(schema, "Позиции контрактов", "direction")
+        resolved_items = resolved_condition(schema, "Позиции контрактов", "'Система'!$B$4")
+        resolved_products = (
+            f'FILTER({snapshot_id},{snapshot_selected}=\'Система\'!$B$4,'
+            f'{snapshot_type}="Продукты",{snapshot_status}="разрешено")'
+        )
+        resolved_systems = (
+            f'IFERROR(FILTER({snapshot_id},{snapshot_selected}=\'Система\'!$B$4,'
+            f'{snapshot_type}="Система",{snapshot_status}="разрешено"),"__none__")'
+        )
+        internal_producer = f'ISNUMBER(MATCH({link_from},{resolved_systems},0))'
+        rows.append(
+            values(
+                "CHK-PRODUCT-ORIGIN",
+                "продукты",
+                "у каждого продукта явно указан хотя бы один источник происхождения",
+                f'=IFERROR(SUM(MAP({resolved_products},LAMBDA(p,IF(SUMPRODUCT(N({link_to}=p),N({link_relation}="производит"),N({internal_producer}),N({resolved_links}))+SUMPRODUCT(N({item_product_range}=p),N({item_direction_range}="входящая"),N({resolved_items}))=0,1,0)))),0)',
+                "Связать продукт хотя бы с одной внутренней системой-производителем или входящей позицией контракта; несколько и смешанные источники допустимы",
+            )
+        )
+
         def metric_contract_formula(
             sheet_name: str,
             status_column: str,
@@ -1399,6 +1491,29 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "Определить показатель, формулу, единицу, владельца и источник в базовой версии",
             )
         )
+        hyp_evidence = col(hypotheses, "evidence_result")
+        hyp_owner_decision = col(hypotheses, "owner_decision")
+        hyp_owner_decision_id = col(hypotheses, "owner_decision_id")
+        hyp_resulting_version = col(hypotheses, "resulting_version_id")
+        hyp_closed_at = col(hypotheses, "closed_at")
+        rows.append(
+            values(
+                "CHK-HYPOTHESIS-RESULT",
+                "гипотезы",
+                "проверенная гипотеза имеет результат свидетельств",
+                f'=SUMPRODUCT(N(REGEXMATCH(\'Гипотезы\'!{hyp_status}5:{hyp_status}1004,"^(проверена|закрыта)$")),N(\'Гипотезы\'!{hyp_evidence}5:{hyp_evidence}1004=""))',
+                "Зафиксировать поддержана, опровергнута или неопределённо отдельно от решения владельца",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-HYPOTHESIS-CLOSURE",
+                "гипотезы",
+                "закрытая гипотеза имеет решение владельца и дату",
+                f'=SUMPRODUCT(N(\'Гипотезы\'!{hyp_status}5:{hyp_status}1004="закрыта"),N(((\'Гипотезы\'!{hyp_owner_decision}5:{hyp_owner_decision}1004="")+(\'Гипотезы\'!{hyp_owner_decision_id}5:{hyp_owner_decision_id}1004="")+(\'Гипотезы\'!{hyp_closed_at}5:{hyp_closed_at}1004="")+((\'Гипотезы\'!{hyp_owner_decision}5:{hyp_owner_decision}1004="внедрить")*(\'Гипотезы\'!{hyp_resulting_version}5:{hyp_resulting_version}1004="")))>0))',
+                "Записать решение владельца, decision_id и дату; для внедрения связать созданную версию",
+            )
+        )
 
         exp_id = col(experiments, "experiment_id")
         exp_status = col(experiments, "experiment_status")
@@ -1406,6 +1521,17 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
         exp_hyp = col(experiments, "hypothesis_id")
         exp_base_version = col(experiments, "base_version_id")
         exp_metric = col(experiments, "primary_metric_id")
+        exp_launch_decision = col(experiments, "launch_decision_id")
+        exp_actual_start = col(experiments, "actual_start")
+        exp_actual_end = col(experiments, "actual_end")
+        exp_result_channel = col(experiments, "result_channel")
+        exp_result_source = col(experiments, "result_source_id")
+        exp_result_locator = col(experiments, "result_source_locator")
+        exp_actual_result = col(experiments, "actual_result")
+        exp_conclusion = col(experiments, "conclusion")
+        exp_implementation = col(experiments, "implementation_decision")
+        exp_implementation_id = col(experiments, "implementation_decision_id")
+        exp_resulting_version = col(experiments, "resulting_version_id")
         rows.append(
             values(
                 "CHK-EXPERIMENT-ONE-BASIS",
@@ -1459,6 +1585,60 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "подготовленный эксперимент имеет минимальный дизайн",
                 f'=SUMPRODUCT(N(REGEXMATCH(\'Эксперименты\'!{exp_status}5:{exp_status}1004,"^(подготовлен|разрешён|выполняется|завершён|остановлен)$")),N(({missing_experiment})>0))',
                 "Заполнить базовую версию, область, изменение, сравнение, показатель, срок, stop-условие и возврат",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-HYPOTHESIS-EXPERIMENTS",
+                "гипотезы",
+                "статус проверки гипотезы подтверждён связанными экспериментами",
+                f'=SUM(MAP(\'Гипотезы\'!{hyp_status}5:{hyp_status}1004,\'Гипотезы\'!A5:A1004,LAMBDA(s,h,IF(s="проверяется",IF(COUNTIFS(\'Эксперименты\'!{exp_hyp}5:{exp_hyp}1004,h,\'Эксперименты\'!{exp_status}5:{exp_status}1004,"разрешён")+COUNTIFS(\'Эксперименты\'!{exp_hyp}5:{exp_hyp}1004,h,\'Эксперименты\'!{exp_status}5:{exp_status}1004,"выполняется")=0,1,0),IF(REGEXMATCH(s,"^(проверена|закрыта)$"),IF(COUNTIFS(\'Эксперименты\'!{exp_hyp}5:{exp_hyp}1004,h,\'Эксперименты\'!{exp_status}5:{exp_status}1004,"завершён")+COUNTIFS(\'Эксперименты\'!{exp_hyp}5:{exp_hyp}1004,h,\'Эксперименты\'!{exp_status}5:{exp_status}1004,"остановлен")=0,1,0),0)))))',
+                "Связать проверяемую гипотезу с разрешённым/выполняемым экспериментом, а проверенную — с завершённым или остановленным",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-EXPERIMENT-LAUNCH",
+                "эксперименты",
+                "разрешённый эксперимент имеет человеческое решение о запуске",
+                f'=SUMPRODUCT(N(REGEXMATCH(\'Эксперименты\'!{exp_status}5:{exp_status}1004,"^(разрешён|выполняется|завершён|остановлен)$")),N(\'Эксперименты\'!{exp_launch_decision}5:{exp_launch_decision}1004=""))',
+                "Связать решение владельца о запуске до начала исполнения",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-EXPERIMENT-ACTUAL-START",
+                "эксперименты",
+                "начатый эксперимент имеет фактическую дату начала",
+                f'=SUMPRODUCT(N(REGEXMATCH(\'Эксперименты\'!{exp_status}5:{exp_status}1004,"^(выполняется|завершён|остановлен)$")),N(\'Эксперименты\'!{exp_actual_start}5:{exp_actual_start}1004=""))',
+                "Зафиксировать actual_start при начале исполнения",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-EXPERIMENT-COMPLETION",
+                "эксперименты",
+                "завершённый эксперимент имеет источник, результат и вывод",
+                f'=SUMPRODUCT(N(\'Эксперименты\'!{exp_status}5:{exp_status}1004="завершён"),N(((\'Эксперименты\'!{exp_actual_end}5:{exp_actual_end}1004="")+(\'Эксперименты\'!{exp_result_channel}5:{exp_result_channel}1004="")+(\'Эксперименты\'!{exp_result_source}5:{exp_result_source}1004="")+(\'Эксперименты\'!{exp_result_locator}5:{exp_result_locator}1004="")+(\'Эксперименты\'!{exp_actual_result}5:{exp_actual_result}1004="")+(\'Эксперименты\'!{exp_conclusion}5:{exp_conclusion}1004=""))>0))',
+                "Заполнить actual_end, проверяемый источник результата, фактический результат и человеческий вывод",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-EXPERIMENT-STOP",
+                "эксперименты",
+                "остановленный эксперимент имеет дату и причину остановки",
+                f'=SUMPRODUCT(N(\'Эксперименты\'!{exp_status}5:{exp_status}1004="остановлен"),N(((\'Эксперименты\'!{exp_actual_end}5:{exp_actual_end}1004="")+(\'Эксперименты\'!{exp_conclusion}5:{exp_conclusion}1004="")+((\'Эксперименты\'!{exp_actual_result}5:{exp_actual_result}1004<>"")*((\'Эксперименты\'!{exp_result_channel}5:{exp_result_channel}1004="")+(\'Эксперименты\'!{exp_result_source}5:{exp_result_source}1004="")+(\'Эксперименты\'!{exp_result_locator}5:{exp_result_locator}1004=""))))>0))',
+                "Зафиксировать actual_end и причину; если есть фактический результат, указать его проверяемый источник",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-EXPERIMENT-IMPLEMENTATION",
+                "эксперименты",
+                "решение по внедрению связано с человеческим решением и версией",
+                f'=SUMPRODUCT(N(\'Эксперименты\'!{exp_implementation}5:{exp_implementation}1004<>""),N(((\'Эксперименты\'!{exp_implementation_id}5:{exp_implementation_id}1004="")+((\'Эксперименты\'!{exp_implementation}5:{exp_implementation}1004="внедрить")*(\'Эксперименты\'!{exp_resulting_version}5:{exp_resulting_version}1004="")))>0))',
+                "Связать implementation decision; для внедрения создать и указать обычную версию модели",
             )
         )
     return rows

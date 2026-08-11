@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Проверить additive schema, реестры развития и панель шаблона v0.3."""
+"""Проверить версионную schema, реестры развития и панель шаблона v0.3."""
 
 from __future__ import annotations
 
@@ -64,12 +64,26 @@ def main() -> int:
     expected_scope_types = {"действие", "процесс", "производственная система", "объект", "состояние", "продукт", "материал", "показатель"}
     if set(schema["enums"]["development_scope_type"]) != expected_scope_types:
         raise AssertionError("словарь областей развития неполон")
+    if "гипотеза" in schema["enums"]["knowledge_status"] or "предположение" not in schema["enums"]["knowledge_status"]:
+        raise AssertionError("статус знания должен отличаться от сущности Гипотеза развития")
+    if set(schema["enums"]["object_type"]) != {"объект работы", "данные", "документ", "ресурс"}:
+        raise AssertionError("вход/выход должны быть контекстными ролями, а не object_type")
+    for sheet_name in ("Позиции контрактов", "Интерфейсы передачи"):
+        sheet = schema["sheets"][sheet_name]
+        columns = sheet["columns"]
+        if not all(field in columns for field in ("product_id", "product_selector", "material_id", "material_selector")):
+            raise AssertionError(f"{sheet_name}: нет пар product/material с selectors")
+        if "exactly_one_product_or_material" not in sheet.get("constraints", []):
+            raise AssertionError(f"{sheet_name}: не объявлено ровно одного компонента")
+        if "product_id" in sheet.get("required", []) or "material_id" in sheet.get("required", []):
+            raise AssertionError(f"{sheet_name}: один конкретный тип компонента не должен быть обязательным")
 
     payload = base.build(schema, existing_ids=[11, 12], existing_named_range_ids=["nr-old"], title="v0.3 fixture")
     base.validate_batch(payload)
     if tuple(payload["sheet_ids"]) != tuple(schema["sheet_order"]):
         raise AssertionError("builder нарушил порядок 32 листов")
     requests = payload["requests"]
+    serialized = json.dumps(requests, ensure_ascii=False)
     created = [request["addSheet"]["properties"] for request in requests if "addSheet" in request]
     public = [properties for properties in created if not properties["title"].startswith("__v02_")]
     if len(public) != 32 or not all(item["gridProperties"].get("hideGridlines") for item in public):
@@ -119,6 +133,36 @@ def main() -> int:
     for scope_token in ('"объект"', '"состояние"', '"материал"', '"показатель"'):
         if scope_token not in joined:
             raise AssertionError(f"контур развития процесса не учитывает {scope_token}")
+
+    required_check_ids = (
+        "CHK-CONTRACT-ITEM-COMPONENT",
+        "CHK-INTERFACE-COMPONENT",
+        "CHK-CONTRACT-INTERFACE-COMPONENT",
+        "CHK-PRODUCT-ORIGIN",
+        "CHK-HYPOTHESIS-RESULT",
+        "CHK-HYPOTHESIS-EXPERIMENTS",
+        "CHK-EXPERIMENT-LAUNCH",
+        "CHK-EXPERIMENT-ACTUAL-START",
+        "CHK-EXPERIMENT-COMPLETION",
+        "CHK-EXPERIMENT-STOP",
+        "CHK-EXPERIMENT-IMPLEMENTATION",
+    )
+    missing_checks = [check_id for check_id in required_check_ids if check_id not in serialized]
+    if missing_checks:
+        raise AssertionError(f"builder не материализует проверки контрактов/lifecycle: {missing_checks}")
+    component_match_formulas = [
+        formula
+        for formula in formulas
+        if "XLOOKUP" in formula
+        and "Позиции контрактов" in formula
+        and "Интерфейсы передачи" in formula
+        and 'MATCH("Позиции контрактов|"' in formula
+        and "'Система'!$B$4" in formula
+    ]
+    if not component_match_formulas:
+        raise AssertionError("сверка компонента должна проверять только разрешённые строки выбранной версии")
+    if "Компонент" not in serialized:
+        raise AssertionError("панель должна показывать продукт или материал как компонент")
 
     conditional = [request for request in requests if "addConditionalFormatRule" in request]
     if len(conditional) != 1:

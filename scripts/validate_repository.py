@@ -22,6 +22,7 @@ EXPECTED_SKILLS = {
 REQUIRED_REFERENCES = {
     "references/LANGUAGE.md",
     "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
     "references/INTERVIEW-CONTRACT.md",
     "references/TEMPLATE-CONTRACT.md",
     "references/PROJECTION-CONTRACT.md",
@@ -505,7 +506,7 @@ def validate_v3_schema(errors: list[str]) -> None:
         errors.append(f"template-schema-v0.3.json не читается: {exc}")
         return
     if overlay.get("schema_version") != "0.3" or overlay.get("base_schema") != "template-schema-v0.2.json":
-        errors.append("schema v0.3 должна быть additive overlay точной schema v0.2")
+        errors.append("schema v0.3 должна быть версионным overlay точной schema v0.2")
     additions = tuple(overlay.get("sheet_order_additions", ()))
     if overlay.get("sheet_count") != 32 or additions != ("Отклонения", "Гипотезы", "Эксперименты"):
         errors.append("schema v0.3 должна добавлять ровно три принятых реестра и 32 листа")
@@ -521,9 +522,29 @@ def validate_v3_schema(errors: list[str]) -> None:
     sheets = overlay.get("sheets", {})
     if tuple(sheets) != additions:
         errors.append("overlay v0.3 должен объявлять только три новых листа в принятом порядке")
-    overrides = set(overlay.get("sheet_overrides", {}))
-    if overrides != {"Рабочая панель"}:
-        errors.append("overlay v0.3 может менять только вычисляемую Рабочую панель v0.2")
+    override_sheets = overlay.get("sheet_overrides", {})
+    overrides = set(override_sheets)
+    if overrides != {"Позиции контрактов", "Интерфейсы передачи", "Рабочая панель"}:
+        errors.append("overlay v0.3 должен менять только компонентные листы и вычисляемую Рабочую панель")
+    for sheet_name in ("Позиции контрактов", "Интерфейсы передачи"):
+        sheet = override_sheets.get(sheet_name, {})
+        columns = set(sheet.get("columns", []))
+        if not {"product_id", "product_selector", "material_id", "material_selector"} <= columns:
+            errors.append(f"{sheet_name}: v0.3 не задаёт соседние product/material ссылки")
+        if "exactly_one_product_or_material" not in sheet.get("constraints", []):
+            errors.append(f"{sheet_name}: v0.3 не требует ровно одного компонента")
+        if {"product_id", "material_id"} & set(sheet.get("required", [])):
+            errors.append(f"{sheet_name}: нельзя требовать заранее выбранный тип компонента")
+    enum_overrides = overlay.get("enum_overrides", {})
+    if "гипотеза" in enum_overrides.get("knowledge_status", []) or "предположение" not in enum_overrides.get("knowledge_status", []):
+        errors.append("v0.3 должна отделять статус знания предположение от Гипотезы развития")
+    if set(enum_overrides.get("object_type", [])) != {"объект работы", "данные", "документ", "ресурс"}:
+        errors.append("v0.3 должна убрать контекстные роли вход/выход из object_type")
+    semantic_migrations = overlay.get("semantic_migrations", {})
+    if semantic_migrations.get("knowledge_status", {}).get("гипотеза") != "предположение":
+        errors.append("v0.3 не объявляет однозначную миграцию статуса знания")
+    if set(semantic_migrations.get("object_type", {}).get("requires_resolution", [])) != {"вход", "выход"}:
+        errors.append("v0.3 не объявляет stop-gate для старых ролей вход/выход")
     enums = overlay.get("enums", {})
     expected_scope_types = {
         "действие", "процесс", "производственная система", "объект",
@@ -730,6 +751,7 @@ def validate() -> list[str]:
         for reference in (
             "references/LANGUAGE.md",
             "references/METAONTOLOGY.md",
+            "references/METHODOLOGY-COMPATIBILITY.md",
             "references/INTERVIEW-CONTRACT.md",
             "references/TEMPLATE-CONTRACT.md",
         ):
@@ -739,6 +761,7 @@ def validate() -> list[str]:
         for reference_name in (
             "LANGUAGE.md",
             "METAONTOLOGY.md",
+            "METHODOLOGY-COMPATIBILITY.md",
             "INTERVIEW-CONTRACT.md",
             "TEMPLATE-CONTRACT.md",
             "PROJECTION-CONTRACT.md",

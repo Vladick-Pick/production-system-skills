@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 import sys
 import tempfile
@@ -53,6 +54,7 @@ def main() -> int:
             for relative in (
                 "SKILL.md",
                 "references/LANGUAGE.md",
+                "references/METHODOLOGY-COMPATIBILITY.md",
                 "references/TEMPLATE-SCHEMA-v0.2.json",
                 "references/TEMPLATE-SCHEMA-v0.3.json",
                 "references/MIGRATION-v0.1-to-v0.2.md",
@@ -72,9 +74,40 @@ def main() -> int:
             ):
                 if not (target / name / relative).is_file():
                     raise AssertionError(f"{name}: нет {relative}")
+            installed = target / name
+            built = subprocess.run(
+                [sys.executable, "scripts/build_template_v0_3.py", "--summary"],
+                cwd=installed,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if built.returncode != 0:
+                raise AssertionError(f"{name}: установленный builder не запускается\n{built.stdout}\n{built.stderr}")
+            summary = json.loads(built.stdout)
+            if summary.get("schema_version") != "0.3" or len(summary.get("sheet_ids", {})) != 32:
+                raise AssertionError(f"{name}: установленный builder собрал не v0.3/32 листа")
+
+            migrated = subprocess.run(
+                [
+                    sys.executable,
+                    "scripts/migrate_template_v0_2_to_v0_3.py",
+                    str(ROOT / "evals" / "fixtures" / "migration-v0.2-to-v0.3" / "source.json"),
+                    "--build-package",
+                ],
+                cwd=installed,
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if migrated.returncode != 0:
+                raise AssertionError(f"{name}: установленная миграция не запускается\n{migrated.stdout}\n{migrated.stderr}")
+            migration_result = json.loads(migrated.stdout)
+            if migration_result.get("status") != "PASS" or not migration_result.get("settings_restored"):
+                raise AssertionError(f"{name}: установленная миграция не собрала исполнимый пакет")
 
     print("[OK] Installer: чистая установка, stop без --force, удаление stale, сохранение посторонних skills")
-    print("[OK] Самодостаточные migration, versioning, BPMN и template runtime-файлы присутствуют")
+    print("[OK] Самодостаточные builder/migration выполнены из каждой установленной runtime-папки")
     return 0
 
 

@@ -81,6 +81,30 @@ def main() -> int:
         raise AssertionError("batchUpdate не восстанавливает исходную строку процесса")
     if package["restored_counts"]["Процессы"] != 1 or package["restored_counts"]["Решения"] != 1:
         raise AssertionError("migration report не отражает восстановленные значения")
+    system_id = batch["sheet_ids"]["Система"]
+    overwritten_pointer_ids = [
+        request
+        for request in batch["requests"]
+        if request.get("updateCells", {}).get("range", {}).get("sheetId") == system_id
+        and request.get("updateCells", {}).get("range", {}).get("startRowIndex") in (3, 4)
+        and request.get("updateCells", {}).get("range", {}).get("startColumnIndex") == 1
+        and any(
+            cell.get("userEnteredValue", {}).get("stringValue") == "ver-v02"
+            for row in request.get("updateCells", {}).get("rows", [])
+            for cell in row.get("values", [])
+        )
+    ]
+    if overwritten_pointer_ids:
+        raise AssertionError("migration package заменил вычисляемые version ID статическим текстом")
+    restored_selectors = [
+        request
+        for request in batch["requests"]
+        if request.get("updateCells", {}).get("range", {}).get("sheetId") == system_id
+        and request.get("updateCells", {}).get("range", {}).get("startRowIndex") == 3
+        and request.get("updateCells", {}).get("range", {}).get("startColumnIndex") == 2
+    ]
+    if len(restored_selectors) != 1:
+        raise AssertionError("migration package не восстанавливает видимые selectors версий отдельно от ID-формул")
 
     formula_source = copy.deepcopy(source)
     formula_source["sheets"]["Процессы"][0]["system_selector"] = {
@@ -100,10 +124,50 @@ def main() -> int:
     if '=XLOOKUP(D5,selector_02_ids,selector_02,"")' not in formula_cells:
         raise AssertionError("migration package превратил исходную формулу в текст")
 
+    # Sparse inventory должен обновлять только реально присутствующие ячейки:
+    # иначе пустые значения в полном ряду очищают формулы version/selector builder.
+    process_columns = json.loads((ROOT / "templates" / "template-schema-v0.2.json").read_text(encoding="utf-8"))["sheets"]["Процессы"]["columns"]
+    sparse_process_updates = [
+        request["updateCells"]
+        for request in batch["requests"]
+        if request.get("updateCells", {}).get("range", {}).get("sheetId") == process_id
+        and request.get("updateCells", {}).get("range", {}).get("startRowIndex") == 4
+        and request.get("updateCells", {}).get("range", {}).get("startColumnIndex", len(process_columns)) < len(process_columns)
+    ]
+    if not sparse_process_updates or any(
+        body["range"]["endColumnIndex"] - body["range"]["startColumnIndex"] != 1
+        or any("userEnteredValue" not in cell for row in body.get("rows", []) for cell in row.get("values", []))
+        for body in sparse_process_updates
+    ):
+        raise AssertionError("sparse restore развёрнут в полную строку и может очистить формулы builder")
+
+    vocabulary = copy.deepcopy(source)
+    vocabulary["sheets"]["Продукты"][0]["knowledge_status"] = {"stringValue": "гипотеза"}
+    vocabulary_plan = plan_migration(vocabulary)
+    if vocabulary_plan["target_sheets"]["Продукты"][0]["knowledge_status"] != {"stringValue": "предположение"}:
+        raise AssertionError("knowledge_status гипотеза не перенесён в однозначное значение предположение")
+    if vocabulary_plan["exact_value_preservation"] or not vocabulary_plan["semantic_transformations"]:
+        raise AssertionError("migration report скрыл объявленное словарное преобразование")
+
+    legacy_role = copy.deepcopy(source)
+    legacy_role["sheets"]["Объекты"][0]["object_type"] = "вход"
+    expect_error(legacy_role, "SEMANTIC_OBJECT_TYPE_RESOLUTION_REQUIRED")
+    legacy_role["semantic_resolutions"] = {
+        "object_type": {
+            "obj-lead": {"target": "данные", "decision_id": "dec-object-type-001"}
+        }
+    }
+    resolved_plan = plan_migration(legacy_role)
+    if resolved_plan["target_sheets"]["Объекты"][0]["object_type"] != "данные":
+        raise AssertionError("явное решение по контекстной роли вход не применено")
+    if resolved_plan["semantic_transformations"][-1].get("decision_id") != "dec-object-type-001":
+        raise AssertionError("семантическое решение не осталось трассируемым")
+
     target = {
         "schema_version": "0.3",
         "sheet_order": first["target_sheet_order"],
         "sheets": first["target_sheets"],
+        "settings": copy.deepcopy(source["settings"]),
     }
     verified = verify_target(source, target)
     if verified["status"] != "PASS" or verified["source_value_fingerprint"] != verified["target_value_fingerprint"]:
@@ -118,6 +182,12 @@ def main() -> int:
     wrong = copy.deepcopy(source)
     wrong["schema_version"] = "0.1"
     expect_error(wrong, "SOURCE_SCHEMA_MISMATCH")
+    no_settings = copy.deepcopy(source)
+    del no_settings["settings"]
+    expect_error(no_settings, "SOURCE_SETTINGS_MISSING")
+    incomplete_pointer = copy.deepcopy(source)
+    incomplete_pointer["settings"]["working_version_selector"] = ""
+    expect_error(incomplete_pointer, "SOURCE_VERSION_POINTER_INCOMPLETE")
 
     bad_target = copy.deepcopy(target)
     bad_target["sheets"]["Отклонения"] = [{"deviation_id": "invented-history"}]
@@ -130,8 +200,8 @@ def main() -> int:
         raise AssertionError("verify_target принял выдуманную историю развития")
 
     print(
-        "[OK] Migration v0.2→v0.3: executable batch, 29→32 sheets, values preserved, "
-        "new registries empty, drift and invented history rejected"
+        "[OK] Migration v0.2→v0.3: executable sparse batch, 29→32 sheets, formulas preserved, "
+        "controlled vocabulary migrated, object roles require decisions, invented history rejected"
     )
     return 0
 

@@ -22,6 +22,7 @@ FIXTURES = {
             "подтверждённое отклонение",
             "норма наблюдаемости",
             "maintain-production-system",
+            "METHODOLOGY-COMPATIBILITY.md",
         ],
     },
     "model-production-system": {
@@ -34,6 +35,7 @@ FIXTURES = {
             "не создавать строки `отклонения`",
             "пробел модели",
             "нормы наблюдаемости",
+            "минимальный допуск",
         ],
     },
     "maintain-production-system": {
@@ -54,6 +56,9 @@ FIXTURES = {
             "гипотеза развития",
             "базовую версию",
             "--build-package",
+            "подтверждение лёгкой карточки",
+            "полный mutation package",
+            "semantic_compatibility_checked",
         ],
     },
     "audit-production-system": {

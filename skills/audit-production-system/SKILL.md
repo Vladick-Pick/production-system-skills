@@ -26,11 +26,12 @@ description: Использовать для независимого read-only 
 
 1. `references/LANGUAGE.md`;
 2. `references/METAONTOLOGY.md`;
-3. `references/INTERVIEW-CONTRACT.md` — только правила исследования, одного вопроса, checkpoint и recovery; состояния `confirm`/`commit` в аудите запрещены;
-4. `references/TEMPLATE-CONTRACT.md`;
-5. `references/TEMPLATE-SCHEMA-v0.2.json`;
-6. `references/TEMPLATE-SCHEMA-v0.3.json`;
-7. `references/PROJECTION-CONTRACT.md`.
+3. `references/METHODOLOGY-COMPATIBILITY.md`;
+4. `references/INTERVIEW-CONTRACT.md` — только правила исследования, одного вопроса, checkpoint и recovery; состояния `confirm`/`commit` в аудите запрещены;
+5. `references/TEMPLATE-CONTRACT.md`;
+6. `references/TEMPLATE-SCHEMA-v0.2.json`;
+7. `references/TEMPLATE-SCHEMA-v0.3.json`;
+8. `references/PROJECTION-CONTRACT.md`.
 
 Для детерминированной проверки использовать поставляемые вместе со скиллом `scripts/versioning/resolve.py` и `scripts/bpmn/validate.py`; при необходимости воспроизводимой пересборки — `scripts/bpmn/generate.py`, для сверки физического контракта новой книги — `scripts/build_template_v0_3.py`. Не предполагать наличие исходного репозитория рядом с установленным скиллом.
 
@@ -101,7 +102,7 @@ Technical IDs должны быть открыты, включая первый 
 
 ### 5. Проверить семантику
 
-Для каждого существенного или изменённого элемента применить семь тестов `METAONTOLOGY.md`: referent, identity, temporal, role, operation, evidence и boundary.
+Для каждого существенного или изменённого элемента применить ровно семь тестов `METAONTOLOGY.md`: референт; идентичность; жизненный цикл и трансформация; представление; операционное использование; граница и контракт; язык исполнителя. Историческую книгу оценивать в семантике её релиза по `METHODOLOGY-COMPATIBILITY.md`; отличие от v0.3 само по себе не является дефектом старой модели.
 
 Обязательно искать:
 
@@ -109,6 +110,8 @@ Technical IDs должны быть открыты, включая первый 
 - смешение объекта и состояния;
 - ложное разделение `Лид`/`Квалифицированный лид` при сохранённой identity или ложное объединение самостоятельных объектов;
 - продукт, спутанный с экземпляром, материалом или contract condition;
+- продукт без явного внутреннего или внешнего происхождения; несколько и смешанные происхождения не считать ошибкой;
+- позицию контракта без ровно одного продукта/материала либо интерфейс, передающий другой компонент;
 - материал, спутанный с конкретными данными исполнения;
 - информационную систему, названную исполнителем вместо среды;
 - контрагента, для которого выдумана внутренняя производственная система вне границы;

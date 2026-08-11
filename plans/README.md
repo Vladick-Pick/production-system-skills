@@ -6,7 +6,7 @@
 
 | План | Результат | Статус |
 |---|---|---|
-| [production-system-skills-v3.md](active/production-system-skills-v3.md) | Добавить контур развития через отклонения, гипотезы и эксперименты и восстановить полезную Рабочую панель | Локальная реализация WP-1—WP-6 завершена; fresh-agent/live-Sheets приёмка и WP-7 требуют отдельных ворот |
+| [production-system-skills-v3.md](active/production-system-skills-v3.md) | Добавить контур развития через отклонения, гипотезы и эксперименты и восстановить полезную Рабочую панель | RC2 локально проверен; fresh-agent/live-Sheets приёмка и WP-7 требуют отдельных ворот |
 | [production-system-skills-v2.md](active/production-system-skills-v2.md) | Переработать язык, поведение агентов, модель бизнеса, версионность, шаблон и BPMN/Camunda-проекцию | Шаблон v0.2 выпущен; migration runbook готов; живой пилот ждёт точных v0.1-книг и разрешения G-3, behavioral gate остаётся FAIL |
 
 ## Правила

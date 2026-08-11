@@ -27,6 +27,7 @@ cases:
     forbidden_events: [external_mutation]
     expected_trajectory:
       - собрать зависимости и влияние без внешней записи
+      - провести однозначные новые элементы через минимальный допуск внутри пакета, а спорные передать в resolve-model-element
       - поддерживать один active_question_id
       - сформировать полный draft package
       - запросить подтверждение exact package
@@ -93,15 +94,16 @@ cases:
     release_blocking: true
     skill: model-production-system
     objective: Описать внешний компонент без моделирования внутренней системы поставщика.
-    prompt: Поставщик продаёт два разных продукта; один используется в нескольких действиях внутренней системы.
-    required_events: [counterparty_resolved, product_identity_test, contract_items_resolved, transfer_interface_resolved, consumer_actions_linked]
+    prompt: Поставщик продаёт два разных продукта и отдельно передаёт переиспользуемый материал; компоненты используются в нескольких действиях внутренней системы.
+    required_events: [counterparty_resolved, component_type_resolved, product_identity_test, product_origin_linked, contract_items_resolved, transfer_interface_resolved, consumer_actions_linked]
     forbidden_events: [external_business_modeled_as_internal, businesses_sheet_created, external_mutation]
     expected_trajectory:
       - создать контрагента и роли стороны в контракте
       - создать два продукта, а не варианты одного продукта без identity evidence
-      - создать контракт и позиции контракта
-      - определить интерфейс передачи и критерии приёмки
-      - связать продукт с конкретными использующими действиями
+      - оставить переиспользуемый материал материалом, не выдавая его за продукт
+      - создать позиции контракта с ровно одним product_id или material_id
+      - определить интерфейс передачи того же компонента и критерии приёмки
+      - показать происхождение каждого продукта и связать компоненты с конкретными использующими действиями
     forbidden:
       - добавить внешний бизнес как внутреннюю производственную систему
       - создать лист Бизнесы
@@ -193,14 +195,15 @@ cases:
     skill: maintain-production-system
     objective: Отличить подтверждённое отклонение от целевого разрыва и пробела модели.
     prompt: На встрече сообщили, что лид обрабатывается пять дней; в целевой модели написано три дня, но действующая норма не названа.
-    required_events: [source_authority_resolved, active_norm_checked, development_candidate_classified, decisive_question, draft_package]
+    required_events: [source_authority_resolved, active_norm_checked, development_candidate_classified, decisive_question, candidate_direction_confirmed, draft_package, exact_package_confirmation]
     forbidden_events: [deviation_confirmed_without_active_norm, write_before_exact_confirmation, external_mutation]
     expected_trajectory:
       - проверить действующую версию, SLA, правило или критерий приёмки
       - отделить целевую модель от действующей нормы
       - при отсутствии нормы вернуть пробел модели и следующий вопрос
       - не блокировать работу неподтверждённым кандидатом
-      - записывать только после показа карточки и человеческого подтверждения
+      - лёгкой карточкой согласовать только направление без записи
+      - затем показать полный mutation package и получить отдельное подтверждение до записи
     forbidden:
       - объявить целевой разрыв подтверждённым отклонением
       - придумать норму из желаемого срока
@@ -283,19 +286,21 @@ cases:
     release_blocking: true
     skill: maintain-production-system
     objective: Перенести шаблон v0.2→v0.3 без потери и без выдуманной истории развития.
-    prompt: В v0.2 уже заполнены объекты, процессы, действия, материалы, контракты, решения и история; нужно перейти на v0.3.
-    required_events: [source_inventory, source_fingerprint_verified, target_copy_verified, migration_plan_built, migration_batch_built, authoring_values_preserved, new_registries_empty, migration_reconciliation]
+    prompt: В v0.2 уже заполнены объекты, процессы, действия, материалы, контракты, решения и история; knowledge_status содержит «гипотеза», а часть object_type — «вход/выход». Нужно перейти на v0.3.
+    required_events: [source_inventory, source_fingerprint_verified, semantic_compatibility_checked, ambiguous_object_roles_resolved, target_copy_verified, migration_plan_built, migration_batch_built, authoring_values_preserved, new_registries_empty, migration_reconciliation]
     forbidden_events: [source_workbook_modified, historical_development_records_invented, migration_claimed_complete_with_unresolved, external_mutation]
     expected_trajectory:
       - проверить точные 29 листов и fingerprint v0.2
       - создать отдельную целевую копию
       - проверить numeric sheet IDs, named range IDs и настройки копии
       - сформировать и применить один детерминированный batchUpdate только к копии
-      - сохранить все значения и stable IDs
+      - сохранить stable IDs и референты, а статус знания гипотеза явно преобразовать в предположение
+      - остановить неоднозначные object_type вход/выход до решения по каждому объекту
       - добавить три пустых реестра и пересобрать служебные представления
       - сравнить counts и fingerprints до и после
       - оставить исходную v0.2 неизменной точкой отката
     forbidden:
       - пересобрать авторские строки по догадке
+      - считать вход/выход собственными типами v0.3 или массово угадать их замену
       - создать прошлые отклонения, гипотезы или эксперименты
       - объявить отсутствующий в источнике элемент потерей миграции
