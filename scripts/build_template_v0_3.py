@@ -98,6 +98,23 @@ def validate_schema(schema: dict[str, Any]) -> None:
         for field in sheet.get("computed_formulas", {}):
             if field not in columns:
                 raise ValueError(f"{sheet_name}: вычисляемая колонка {field!r} отсутствует")
+        for field, specification in sheet.get("polymorphic_foreign_keys", {}).items():
+            if field not in columns:
+                raise ValueError(f"{sheet_name}: полиморфная связь {field!r} отсутствует в columns")
+            if not isinstance(specification, dict):
+                # Унаследованные v0.2 связи сохраняют общий каталог Среза модели.
+                continue
+            type_field = specification.get("type_field")
+            targets = specification.get("targets")
+            if type_field not in columns or not isinstance(targets, dict) or not targets:
+                raise ValueError(f"{sheet_name}: полиморфная связь {field!r} не задаёт type_field/targets")
+            enum_name = sheet.get("enums", {}).get(type_field)
+            if enum_name and set(targets) != set(schema["enums"][enum_name]):
+                raise ValueError(f"{sheet_name}: targets {field!r} не совпадают со словарём {enum_name}")
+            for target in targets.values():
+                target_sheet, target_field = target.split(".", 1)
+                if target_sheet not in sheets or target_field not in sheets[target_sheet].get("columns", []):
+                    raise ValueError(f"{sheet_name}: неизвестная цель полиморфной связи {target!r}")
 
 
 def configure_copy() -> None:

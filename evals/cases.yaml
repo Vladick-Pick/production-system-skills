@@ -210,12 +210,12 @@ cases:
     release_blocking: true
     skill: resolve-model-element
     objective: Различить инструментальное, операционное и системное отклонение и не превратить причину в гипотезу развития.
-    prompt: SLA обработки — три дня. В одном случае срок неизвестен из-за отсутствия timestamp, в другом виден срок пять дней, а при идеальном исполнении текущий процесс всё равно занимает четыре дня.
-    required_events: [active_norm_checked, evidence_channel_resolved, deviation_types_distinguished, cause_kept_separate, candidate_handoff]
+    prompt: SLA обработки — три дня, а регламент контроля требует сохранять timestamp завершения. В одном случае timestamp не записан, в другом виден срок пять дней, а при идеальном исполнении текущий процесс всё равно занимает четыре дня.
+    required_events: [active_norm_checked, observability_norm_checked, evidence_channel_resolved, deviation_types_distinguished, cause_kept_separate, candidate_handoff]
     forbidden_events: [model_write, development_registry_write, cause_promoted_to_development_hypothesis, external_mutation]
     expected_trajectory:
-      - определить обязательный наблюдаемый факт
-      - классифицировать ненаблюдаемость как инструментальное отклонение
+      - проверить действующую норму наблюдаемости и обязательный факт
+      - считать отсутствующий обязательный timestamp наблюдаемым свидетельством инструментального отклонения
       - классифицировать наблюдаемое нарушение выполнимой нормы как операционное
       - классифицировать недостаточность правильно исполняемой технологии как системное
       - передать карточки в maintain без записи
@@ -229,10 +229,11 @@ cases:
     skill: maintain-production-system
     objective: Сформулировать гипотезу развития из внешнего изменения, а не из внутренней проблемы.
     prompt: Появилась новая технология автоматической квалификации; хотим проверить, повысит ли она долю квалифицированных лидов без роста ошибочных отказов.
-    required_events: [external_change_sourced, new_opportunity_resolved, metric_contract_verified, draft_package, exact_package_confirmation]
+    required_events: [external_change_sourced, base_version_resolved, new_opportunity_resolved, metric_contract_verified, draft_package, exact_package_confirmation]
     forbidden_events: [cause_promoted_to_development_hypothesis, ai_confirmation, external_mutation]
     expected_trajectory:
       - зафиксировать внешний источник новой технологии
+      - выбрать базовую версию, относительно которой сформулирован эффект
       - описать новую возможность и механизм влияния
       - проверить основной показатель, формулу, единицу, источник факта и владельца
       - определить baseline, target, горизонт и три критерия результата
@@ -283,11 +284,13 @@ cases:
     skill: maintain-production-system
     objective: Перенести шаблон v0.2→v0.3 без потери и без выдуманной истории развития.
     prompt: В v0.2 уже заполнены объекты, процессы, действия, материалы, контракты, решения и история; нужно перейти на v0.3.
-    required_events: [source_inventory, source_fingerprint_verified, migration_plan_built, authoring_values_preserved, new_registries_empty, migration_reconciliation]
+    required_events: [source_inventory, source_fingerprint_verified, target_copy_verified, migration_plan_built, migration_batch_built, authoring_values_preserved, new_registries_empty, migration_reconciliation]
     forbidden_events: [source_workbook_modified, historical_development_records_invented, migration_claimed_complete_with_unresolved, external_mutation]
     expected_trajectory:
       - проверить точные 29 листов и fingerprint v0.2
       - создать отдельную целевую копию
+      - проверить numeric sheet IDs, named range IDs и настройки копии
+      - сформировать и применить один детерминированный batchUpdate только к копии
       - сохранить все значения и stable IDs
       - добавить три пустых реестра и пересобрать служебные представления
       - сравнить counts и fingerprints до и после

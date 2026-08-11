@@ -34,7 +34,10 @@
       "действие",
       "процесс",
       "производственная система",
+      "объект",
+      "состояние",
       "продукт",
+      "материал",
       "показатель"
     ],
     "deviation_status": [
@@ -99,6 +102,7 @@
   "sheets": {
     "Отклонения": {
       "kind": "development_registry",
+      "freeze_columns": 3,
       "columns": [
         "deviation_id",
         "deviation_title",
@@ -173,6 +177,7 @@
       },
       "foreign_keys": {
         "applicable_version_id": "Версии.version_id",
+        "norm_element_id": "Элементы модели.element_id",
         "norm_source_id": "Источники.source_id",
         "source_id": "Источники.source_id",
         "responsible_position_id": "Позиции.position_id",
@@ -180,8 +185,19 @@
         "closure_decision_id": "Решения.decision_id"
       },
       "polymorphic_foreign_keys": {
-        "scope_element_id": "scope_type",
-        "norm_element_id": "model_element"
+        "scope_element_id": {
+          "type_field": "scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "показатель": "Элементы модели.element_id"
+          }
+        }
       },
       "selectors": {
         "scope_element_id": "scope_element_selector",
@@ -203,6 +219,7 @@
     },
     "Гипотезы": {
       "kind": "development_registry",
+      "freeze_columns": 3,
       "columns": [
         "hypothesis_id",
         "hypothesis_title",
@@ -212,6 +229,8 @@
         "source_selector",
         "source_locator",
         "new_opportunity",
+        "base_version_id",
+        "base_version_selector",
         "scope_type",
         "scope_element_id",
         "scope_element_selector",
@@ -266,16 +285,30 @@
       },
       "foreign_keys": {
         "source_id": "Источники.source_id",
+        "base_version_id": "Версии.version_id",
         "primary_metric_id": "Элементы модели.element_id",
         "responsible_position_id": "Позиции.position_id",
         "owner_decision_id": "Решения.decision_id",
         "resulting_version_id": "Версии.version_id"
       },
       "polymorphic_foreign_keys": {
-        "scope_element_id": "scope_type"
+        "scope_element_id": {
+          "type_field": "scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "показатель": "Элементы модели.element_id"
+          }
+        }
       },
       "selectors": {
         "source_id": "source_selector",
+        "base_version_id": "base_version_selector",
         "scope_element_id": "scope_element_selector",
         "primary_metric_id": "primary_metric_selector",
         "responsible_position_id": "responsible_position_selector",
@@ -291,6 +324,7 @@
     },
     "Эксперименты": {
       "kind": "development_registry",
+      "freeze_columns": 3,
       "columns": [
         "experiment_id",
         "experiment_title",
@@ -380,7 +414,19 @@
         "resulting_version_id": "Версии.version_id"
       },
       "polymorphic_foreign_keys": {
-        "scope_element_id": "scope_type"
+        "scope_element_id": {
+          "type_field": "scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "показатель": "Элементы модели.element_id"
+          }
+        }
       },
       "selectors": {
         "deviation_id": "deviation_selector",

@@ -139,6 +139,7 @@ ESSENTIAL_V3_COLUMNS = {
         "external_change",
         "source_id",
         "new_opportunity",
+        "base_version_id",
         "scope_element_id",
         "proposed_change",
         "mechanism",
@@ -320,12 +321,33 @@ def validate_template(errors: list[str]) -> None:
     else:
         with zipfile.ZipFile(TEMPLATE_REVIEW_V3) as archive:
             review_workbook = ElementTree.fromstring(archive.read("xl/workbook.xml"))
+            review_worksheet_xml = [
+                archive.read(name)
+                for name in archive.namelist()
+                if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", name)
+            ]
         review_names = tuple(
             node.attrib["name"]
             for node in review_workbook.findall(f".//{namespace}sheet")
         )
         if review_names != EXPECTED_V3_SHEETS:
             errors.append("локальный XLSX review-артефакт не содержит точный порядок 32 листов v0.3")
+        review_roots = [ElementTree.fromstring(value) for value in review_worksheet_xml]
+        review_defined_names = review_workbook.findall(f".//{namespace}definedName")
+        review_formula_count = sum(len(root.findall(f".//{namespace}f")) for root in review_roots)
+        review_validation_count = sum(len(root.findall(f".//{namespace}dataValidation")) for root in review_roots)
+        review_conditional_count = sum(len(root.findall(f".//{namespace}conditionalFormatting")) for root in review_roots)
+        review_combined = b"\n".join(review_worksheet_xml)
+        if len(review_defined_names) < 40:
+            errors.append("локальный XLSX v0.3 не содержит enum и selector named ranges")
+        if review_formula_count < 4:
+            errors.append("локальный XLSX v0.3 остаётся статическим: нет ожидаемых formulas")
+        if review_validation_count < 15:
+            errors.append("локальный XLSX v0.3 не содержит dropdown validations новых реестров")
+        if review_conditional_count != 1:
+            errors.append("локальный XLSX v0.3 должен иметь одно красное правило только для ERROR")
+        if b"#REF!" in review_combined:
+            errors.append("локальный XLSX v0.3 содержит #REF!")
 
 
 def validate_v2_schema(errors: list[str]) -> None:
@@ -503,8 +525,16 @@ def validate_v3_schema(errors: list[str]) -> None:
     if overrides != {"Рабочая панель"}:
         errors.append("overlay v0.3 может менять только вычисляемую Рабочую панель v0.2")
     enums = overlay.get("enums", {})
+    expected_scope_types = {
+        "действие", "процесс", "производственная система", "объект",
+        "состояние", "продукт", "материал", "показатель",
+    }
+    if set(enums.get("development_scope_type", [])) != expected_scope_types:
+        errors.append("development_scope_type должен покрывать все принятые типы области развития")
     for sheet_name, required_columns in ESSENTIAL_V3_COLUMNS.items():
         sheet = sheets.get(sheet_name, {})
+        if sheet.get("freeze_columns") != 3:
+            errors.append(f"{sheet_name}: первые три колонки должны быть закреплены для длинного реестра")
         columns = sheet.get("columns", [])
         missing = required_columns - set(columns)
         if missing:
@@ -520,6 +550,11 @@ def validate_v3_schema(errors: list[str]) -> None:
         for field, enum_name in sheet.get("enums", {}).items():
             if field not in columns or enum_name not in enums:
                 errors.append(f"{sheet_name}: enum {field} → {enum_name} не разрешается в overlay")
+        scope_spec = sheet.get("polymorphic_foreign_keys", {}).get("scope_element_id")
+        if not isinstance(scope_spec, dict) or scope_spec.get("type_field") != "scope_type":
+            errors.append(f"{sheet_name}: scope_element_id не имеет типизированного polymorphic contract")
+        elif set(scope_spec.get("targets", {})) != expected_scope_types:
+            errors.append(f"{sheet_name}: scope_element_id не разрешает все типы области")
     experiment = sheets.get("Эксперименты", {})
     if experiment.get("computed") != ["basis_type"] or "exactly_one_basis" not in experiment.get("constraints", []):
         errors.append("Эксперименты должны вычислять basis_type и требовать ровно одно основание")

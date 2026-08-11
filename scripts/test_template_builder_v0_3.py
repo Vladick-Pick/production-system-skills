@@ -42,6 +42,8 @@ def main() -> int:
         sheet = schema["sheets"][sheet_name]
         if sheet.get("kind") != "development_registry":
             raise AssertionError(f"{sheet_name}: неверный storage class")
+        if sheet.get("freeze_columns") != 3:
+            raise AssertionError(f"{sheet_name}: первые ID, название и статус должны оставаться видимыми")
         columns = sheet["columns"]
         if len(columns) != len(set(columns)):
             raise AssertionError(f"{sheet_name}: повторяющиеся колонки")
@@ -57,6 +59,11 @@ def main() -> int:
         raise AssertionError("basis_type должен вычисляться, а не вводиться человеком")
     if "exactly_one_basis" not in experiment.get("constraints", []):
         raise AssertionError("schema не объявляет инвариант ровно одного основания")
+    if "base_version_id" not in schema["sheets"]["Гипотезы"]["columns"]:
+        raise AssertionError("гипотеза должна быть привязана к базовой версии")
+    expected_scope_types = {"действие", "процесс", "производственная система", "объект", "состояние", "продукт", "материал", "показатель"}
+    if set(schema["enums"]["development_scope_type"]) != expected_scope_types:
+        raise AssertionError("словарь областей развития неполон")
 
     payload = base.build(schema, existing_ids=[11, 12], existing_named_range_ids=["nr-old"], title="v0.3 fixture")
     base.validate_batch(payload)
@@ -68,7 +75,7 @@ def main() -> int:
     if len(public) != 32 or not all(item["gridProperties"].get("hideGridlines") for item in public):
         raise AssertionError("builder должен создавать 32 публичных листа со скрытой сеткой")
     dashboard = next(item for item in public if item["title"] == "Рабочая панель")
-    if dashboard["gridProperties"]["rowCount"] != 260 or dashboard["gridProperties"]["columnCount"] < 39:
+    if dashboard["gridProperties"]["rowCount"] < 1005 or dashboard["gridProperties"]["columnCount"] < 44:
         raise AssertionError("рабочей панели недостаточно места для независимых секций")
 
     formulas = formula_values(requests)
@@ -102,6 +109,16 @@ def main() -> int:
         raise AssertionError("формулы панели не должны использовать полные столбцы")
     if "Нет связанных записей" not in joined:
         raise AssertionError("пустые секции должны иметь понятное состояние")
+    for token in ("dashboard_system_labels_v03", "dashboard_process_labels_v03"):
+        if token not in json.dumps(requests, ensure_ascii=False):
+            raise AssertionError(f"панель не содержит зависимый selector {token}")
+    if 'resolution_status' not in schema["sheets"]["Срез модели"]["columns"] or '"разрешено"' not in joined:
+        raise AssertionError("зависимые selectors и панель должны использовать только разрешённый срез")
+    if "selector_empty_v03" not in json.dumps(requests, ensure_ascii=False):
+        raise AssertionError("полиморфный selector не имеет безопасного пустого диапазона")
+    for scope_token in ('"объект"', '"состояние"', '"материал"', '"показатель"'):
+        if scope_token not in joined:
+            raise AssertionError(f"контур развития процесса не учитывает {scope_token}")
 
     conditional = [request for request in requests if "addConditionalFormatRule" in request]
     if len(conditional) != 1:

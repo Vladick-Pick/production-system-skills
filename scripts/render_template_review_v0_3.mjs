@@ -8,7 +8,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
-import { SpreadsheetFile, Workbook } from "@oai/artifact-tool";
+const artifactToolModule = process.env.CODEX_ARTIFACT_TOOL_MODULE ?? "@oai/artifact-tool";
+const { SpreadsheetFile, Workbook } = await import(artifactToolModule);
 
 const root = process.cwd();
 const outputDir = path.join(root, "outputs", "v0.3-review");
@@ -193,6 +194,13 @@ const newExamples = {
     source_id: "src-demo-crm",
     source_selector: "CRM — журнал лидов",
     source_locator: "lead/demo-42/history",
+    norm_source_id: "src-demo-regulation",
+    norm_source_selector: "Регламент обработки лидов",
+    norm_source_locator: "demo-regulation#sla",
+    responsible_position_id: "pos-demo-owner",
+    responsible_position_selector: "Владелец ПС",
+    confirmation_decision_id: "dec-demo-deviation",
+    confirmation_decision_selector: "Подтвердить отклонение SLA",
     next_step: "Проверить причину задержки",
     due_date: new Date("2026-08-20T00:00:00Z"),
   },
@@ -205,13 +213,23 @@ const newExamples = {
     source_selector: "Обзор технологии расшифровки",
     source_locator: "public-demo-source#capability",
     new_opportunity: "Разбирать звонок без ручного конспекта",
+    base_version_id: "ver-demo-v0.3",
+    base_version_selector: "Текущая модель v0.3",
     scope_type: "процесс",
     scope_element_id: "prc-demo-lead",
     scope_element_selector: "Обработка лида",
     proposed_change: "Добавить расшифровку после звонка",
     mechanism: "Менеджер меньше времени тратит на конспект",
+    primary_metric_id: "metric-demo-duration",
+    primary_metric_selector: "Медианное время квалификации",
     baseline: "20 минут",
     expected_target: "12 минут",
+    effect_horizon: "30 дней",
+    support_criterion: "Медиана не более 12 минут без снижения качества",
+    refutation_criterion: "Медиана не изменилась либо качество снизилось",
+    inconclusive_criterion: "Недостаточно наблюдений для вывода",
+    responsible_position_id: "pos-demo-owner",
+    responsible_position_selector: "Владелец ПС",
     next_step: "Подготовить эксперимент",
     due_date: new Date("2026-08-25T00:00:00Z"),
   },
@@ -230,8 +248,14 @@ const newExamples = {
     temporary_change: "Добавить расшифровку после звонка",
     instances_or_volume: "20 звонков",
     comparison_method: "Сравнить медианное время с baseline",
+    primary_metric_id: "metric-demo-duration",
+    primary_metric_selector: "Медианное время квалификации",
     baseline: "20 минут",
     success_criterion: "Не более 12 минут без снижения качества",
+    planned_start: new Date("2026-08-15T00:00:00Z"),
+    planned_end: new Date("2026-08-25T00:00:00Z"),
+    responsible_position_id: "pos-demo-owner",
+    responsible_position_selector: "Владелец ПС",
     stop_condition: "Утечка данных или ухудшение качества",
     rollback_plan: "Отключить расшифровку",
     next_step: "Получить решение о запуске",
@@ -279,6 +303,7 @@ function buildRegistry(sheet, name, definition) {
   sheet.getRange(`A4:${end}12`).format.borders = { preset: "all", style: "thin", color: COLORS.line };
   sheet.getRange(`A4:${end}12`).format.wrapText = true;
   sheet.freezePanes.freezeRows(4);
+  if (definition.freeze_columns) sheet.freezePanes.freezeColumns(definition.freeze_columns);
 }
 
 const workbook = Workbook.create();
@@ -290,6 +315,82 @@ for (const name of schema.sheet_order) {
   else if (name === "Рабочая панель") buildPanel(sheet);
   else buildRegistry(sheet, name, schema.sheets[name]);
 }
+
+// Минимальный технический слой review-XLSX: реальные formulas, named ranges,
+// validations и одна осмысленная conditional formatting. Каноническая книга
+// всё равно строится Google Sheets builder-ом; этот слой не подменяет его.
+const systemSheet = workbook.worksheets.getItem("Система");
+let helperColumn = 52;
+for (const [enumName, values] of Object.entries(schema.enums)) {
+  const letter = colLetter(helperColumn);
+  setValues(systemSheet, 1, helperColumn, [[enumName], ...values.map((value) => [value])]);
+  workbook.names.add(`enum_${enumName}`, systemSheet.getRange(`${letter}2:${letter}${values.length + 1}`));
+  systemSheet.getRange(`${letter}:${letter}`).format.columnHidden = true;
+  helperColumn += 1;
+}
+
+const selectorCatalogs = {
+  selector_demo_versions: [["Текущая модель v0.3", "ver-demo-v0.3"]],
+  selector_demo_systems: [["Привлечение", "ps-demo-attraction"]],
+  selector_demo_processes: [["Обработка лида", "prc-demo-lead"]],
+  selector_demo_positions: [["Владелец ПС", "pos-demo-owner"]],
+  selector_demo_metrics: [["Медианное время квалификации", "metric-demo-duration"]],
+};
+for (const [name, rows] of Object.entries(selectorCatalogs)) {
+  const labelsColumn = helperColumn;
+  const idsColumn = helperColumn + 1;
+  const labelsLetter = colLetter(labelsColumn);
+  const idsLetter = colLetter(idsColumn);
+  setValues(systemSheet, 1, labelsColumn, rows);
+  workbook.names.add(name, systemSheet.getRange(`${labelsLetter}1:${labelsLetter}${rows.length}`));
+  workbook.names.add(`${name}_ids`, systemSheet.getRange(`${idsLetter}1:${idsLetter}${rows.length}`));
+  systemSheet.getRange(`${labelsLetter}:${idsLetter}`).format.columnHidden = true;
+  helperColumn += 2;
+}
+
+for (const registryName of ["Отклонения", "Гипотезы", "Эксперименты"]) {
+  const definition = schema.sheets[registryName];
+  const sheet = workbook.worksheets.getItem(registryName);
+  for (const [field, enumName] of Object.entries(definition.enums ?? {})) {
+    const column = definition.columns.indexOf(field);
+    sheet.getRange(`${colLetter(column)}5:${colLetter(column)}12`).dataValidation = {
+      rule: { type: "list", formula1: `=enum_${enumName}` },
+    };
+  }
+}
+
+const panel = workbook.worksheets.getItem("Рабочая панель");
+for (const [rowNumber, name] of [[3, "selector_demo_versions"], [4, "selector_demo_systems"], [5, "selector_demo_processes"]]) {
+  panel.getRange(`B${rowNumber}`).dataValidation = { rule: { type: "list", formula1: `=${name}` } };
+  panel.getRange(`E${rowNumber}`).formulas = [[`=IF(B${rowNumber}="","",XLOOKUP(B${rowNumber},${name},${name}_ids,""))`]];
+}
+
+const experimentSheet = workbook.worksheets.getItem("Эксперименты");
+const experimentColumns = schema.sheets["Эксперименты"].columns;
+const basisColumn = colLetter(experimentColumns.indexOf("basis_type"));
+const deviationColumn = colLetter(experimentColumns.indexOf("deviation_id"));
+const hypothesisColumn = colLetter(experimentColumns.indexOf("hypothesis_id"));
+experimentSheet.getRange(`${basisColumn}5`).formulas = [[`=IF(A5="","",IF(AND(${deviationColumn}5<>"",${hypothesisColumn}5=""),"отклонение",IF(AND(${deviationColumn}5="",${hypothesisColumn}5<>""),"гипотеза","")))`]];
+
+const checksSheet = workbook.worksheets.getItem("Проверки");
+const checkColumns = schema.sheets["Проверки"].columns;
+const checkStatusIndex = checkColumns.indexOf("status");
+const checkExample = Object.fromEntries(checkColumns.map((field) => [field, null]));
+Object.assign(checkExample, {
+  check_id: "CHK-DEMO",
+  category: "демонстрация",
+  severity: "предупреждение",
+  check_name: "Review-XLSX содержит технические контракты",
+  status: "OK",
+  blocks_release: "нет",
+  remediation: "Каноническую проверку выполняет Google Sheets builder v0.3",
+});
+setValues(checksSheet, 5, 0, [checkColumns.map((column) => checkExample[column])]);
+const statusLetter = colLetter(checkStatusIndex);
+checksSheet.getRange(`A5:${colLetter(checkColumns.length - 1)}12`).conditionalFormats.addCustom(
+  `=$${statusLetter}5="ERROR"`,
+  { fill: "#F4CCCC", font: { color: "#8A1C1C", bold: true } },
+);
 
 await fs.mkdir(outputDir, { recursive: true });
 const sheetsInspection = await workbook.inspect({ kind: "sheet", include: "id,name", maxChars: 8000 });

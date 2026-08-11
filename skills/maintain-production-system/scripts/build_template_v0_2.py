@@ -330,6 +330,35 @@ def selector_catalog_formulas(schema: dict[str, Any], sheet_name: str, sheet: di
     )
 
 
+def dashboard_selector_catalog_formulas(schema: dict[str, Any]) -> tuple[str, str, str, str]:
+    """Зависимые каталоги: версия → система → процесс для панели v0.3."""
+    snapshot_version = field_range(schema, "Срез модели", "selected_version_id")
+    snapshot_type = field_range(schema, "Срез модели", "entity_type")
+    snapshot_id = field_range(schema, "Срез модели", "stable_id")
+    snapshot_label = field_range(schema, "Срез модели", "entity_selector")
+    snapshot_status = field_range(schema, "Срез модели", "resolution_status")
+    clean_label = f'REGEXREPLACE({snapshot_label}," \\[id=[^\\]]+\\]$","")'
+    system_condition = (
+        f'({snapshot_version}=$E$3)*({snapshot_type}="Система")*({snapshot_status}="разрешено")'
+    )
+    system_labels = f'=ARRAYFORMULA(IFERROR(FILTER({clean_label},{system_condition}),""))'
+    system_ids = f'=ARRAYFORMULA(IFERROR(FILTER({snapshot_id},{system_condition}),""))'
+
+    process_ids = field_range(schema, "Процессы", "process_id")
+    process_systems = field_range(schema, "Процессы", "system_id")
+    allowed_process_ids = (
+        f'IFERROR(FILTER({process_ids},{process_systems}=$E$4,{resolved_condition(schema, "Процессы")}),"__none__")'
+    )
+    process_condition = (
+        f'({snapshot_version}=$E$3)*({snapshot_type}="Процессы")*'
+        f'({snapshot_status}="разрешено")*'
+        f'ARRAYFORMULA(ISNUMBER(MATCH({snapshot_id},{allowed_process_ids},0)))'
+    )
+    process_labels = f'=ARRAYFORMULA(IFERROR(FILTER({clean_label},{process_condition}),""))'
+    process_catalog_ids = f'=ARRAYFORMULA(IFERROR(FILTER({snapshot_id},{process_condition}),""))'
+    return system_labels, system_ids, process_labels, process_catalog_ids
+
+
 def selector_source_sheet(target: str) -> str:
     return target.split(".", 1)[0]
 
@@ -343,6 +372,35 @@ def selector_range_names(schema: dict[str, Any], sheet_name: str) -> tuple[str, 
 def id_formula(selector_column: int, row_number: int, labels_range: str, ids_range: str) -> str:
     selector = f"{column_letter(selector_column)}{row_number}"
     return f'=IF({selector}="","",XLOOKUP({selector},{labels_range},{ids_range},""))'
+
+
+def polymorphic_selector_formula(
+    schema: dict[str, Any],
+    specification: dict[str, Any],
+    columns: list[str],
+    selector_column: int,
+    row_number: int,
+) -> tuple[str, str]:
+    """Вернуть динамический диапазон dropdown и ID-формулу для выбранного типа."""
+    type_field = specification["type_field"]
+    type_cell = f"${column_letter(columns.index(type_field))}{row_number}"
+    selector_cell = f"{column_letter(selector_column)}{row_number}"
+    range_cases: list[str] = []
+    id_cases: list[str] = []
+    for type_value, target in specification["targets"].items():
+        target_sheet = selector_source_sheet(target)
+        labels, ids = selector_range_names(schema, target_sheet)
+        escaped = str(type_value).replace('"', '""')
+        range_cases.extend((f'"{escaped}"', f'"{labels}"'))
+        id_cases.extend(
+            (
+                f'"{escaped}"',
+                f'XLOOKUP({selector_cell},{labels},{ids},"")',
+            )
+        )
+    validation_range = f'=INDIRECT(SWITCH({type_cell},{",".join(range_cases)},"selector_empty_v03"))'
+    id_value = f'=IF({selector_cell}="","",SWITCH({type_cell},{",".join(id_cases)},""))'
+    return validation_range, id_value
 
 
 def version_id_formula(row_number: int) -> str:
@@ -405,9 +463,67 @@ def selected_action_ids(schema: dict[str, Any]) -> str:
     return f'IFERROR(FILTER({action_ids},{process_ids}=$E$5,{resolved}),"__none__")'
 
 
+def selected_state_ids(schema: dict[str, Any]) -> str:
+    state_ids = field_range(schema, "Состояния", "state_id")
+    object_ids = field_range(schema, "Состояния", "object_id")
+    return (
+        f'IFERROR(FILTER({state_ids},{object_ids}={selected_process_field(schema, "work_object_id")},'
+        f'{resolved_condition(schema, "Состояния")}),"__none__")'
+    )
+
+
+def selected_product_ids(schema: dict[str, Any]) -> str:
+    product_ids = field_range(schema, "Продукты", "product_id")
+    primary_objects = field_range(schema, "Продукты", "primary_object_id")
+    required_states = field_range(schema, "Продукты", "required_state_id")
+    condition = (
+        f'(({primary_objects}={selected_process_field(schema, "work_object_id")})+'
+        f'ARRAYFORMULA(ISNUMBER(MATCH({required_states},{selected_state_ids(schema)},0))))>0'
+    )
+    return f'IFERROR(FILTER({product_ids},{condition},{resolved_condition(schema, "Продукты")}),"__none__")'
+
+
+def selected_material_ids(schema: dict[str, Any]) -> str:
+    link_from = field_range(schema, "Связи модели", "from_entity_id")
+    link_relation = field_range(schema, "Связи модели", "relation_type")
+    link_to = field_range(schema, "Связи модели", "to_entity_id")
+    material_ids = field_range(schema, "Материалы", "material_id")
+    resolved_materials = f'IFERROR(FILTER({material_ids},{resolved_condition(schema, "Материалы")}),"__none__")'
+    return (
+        f'IFERROR(FILTER({link_to},{resolved_condition(schema, "Связи модели")},{link_relation}="использует",'
+        f'ARRAYFORMULA(ISNUMBER(MATCH({link_from},{selected_action_ids(schema)},0))),'
+        f'ARRAYFORMULA(ISNUMBER(MATCH({link_to},{resolved_materials},0)))),"__none__")'
+    )
+
+
+def selected_metric_ids(schema: dict[str, Any]) -> str:
+    link_from = field_range(schema, "Связи модели", "from_entity_id")
+    link_relation = field_range(schema, "Связи модели", "relation_type")
+    link_to = field_range(schema, "Связи модели", "to_entity_id")
+    element_ids = field_range(schema, "Элементы модели", "element_id")
+    element_types = field_range(schema, "Элементы модели", "element_type")
+    metric_ids = (
+        f'IFERROR(FILTER({element_ids},{element_types}="показатель",'
+        f'{resolved_condition(schema, "Элементы модели")}),"__none__")'
+    )
+    local_ids = (
+        f'{{$E$5;{selected_process_field(schema, "work_object_id")};{selected_action_ids(schema)};'
+        f'{selected_state_ids(schema)};{selected_product_ids(schema)};{selected_material_ids(schema)}}}'
+    )
+    return (
+        f'IFERROR(FILTER({link_to},{resolved_condition(schema, "Связи модели")},{link_relation}="измеряется",'
+        f'ARRAYFORMULA(ISNUMBER(MATCH({link_from},{local_ids},0))),'
+        f'ARRAYFORMULA(ISNUMBER(MATCH({link_to},{metric_ids},0)))),"__none__")'
+    )
+
+
 def development_rows_formula(schema: dict[str, Any], *, system_wide: bool, limit: int) -> str:
     action_ids = selected_action_ids(schema)
     process_object = selected_process_field(schema, "work_object_id")
+    state_ids = selected_state_ids(schema)
+    product_ids = selected_product_ids(schema)
+    material_ids = selected_material_ids(schema)
+    metric_ids = selected_metric_ids(schema)
 
     def block(
         sheet_name: str,
@@ -428,8 +544,13 @@ def development_rows_formula(schema: dict[str, Any], *, system_wide: bool, limit
             scope = f'({scope_type}="производственная система")*({scope_id}=$E$4)'
         else:
             scope = (
-                f'(({scope_id}=$E$5)+({scope_id}={process_object})+'
-                f'ARRAYFORMULA(ISNUMBER(MATCH({scope_id},{action_ids},0))))>0'
+                f'((({scope_type}="процесс")*({scope_id}=$E$5))+'
+                f'(({scope_type}="объект")*({scope_id}={process_object}))+'
+                f'(({scope_type}="действие")*ARRAYFORMULA(ISNUMBER(MATCH({scope_id},{action_ids},0))))+'
+                f'(({scope_type}="состояние")*ARRAYFORMULA(ISNUMBER(MATCH({scope_id},{state_ids},0))))+'
+                f'(({scope_type}="продукт")*ARRAYFORMULA(ISNUMBER(MATCH({scope_id},{product_ids},0))))+'
+                f'(({scope_type}="материал")*ARRAYFORMULA(ISNUMBER(MATCH({scope_id},{material_ids},0))))+'
+                f'(({scope_type}="показатель")*ARRAYFORMULA(ISNUMBER(MATCH({scope_id},{metric_ids},0)))))>0'
             )
         if closed_values:
             pattern = "|".join(re.escape(value) for value in closed_values)
@@ -713,8 +834,12 @@ def dashboard_v3_rows(schema: dict[str, Any]) -> list[dict[str, Any]]:
         grid[row_index][column_index] = cell(value, formula=formula)
 
     version_labels, version_ids = selector_range_names(schema, "Версии")
-    system_labels, system_ids = selector_range_names(schema, "Система")
-    process_labels, process_ids = selector_range_names(schema, "Процессы")
+    if schema.get("schema_version") == "0.3":
+        system_labels, system_ids = "dashboard_system_labels_v03", "dashboard_system_ids_v03"
+        process_labels, process_ids = "dashboard_process_labels_v03", "dashboard_process_ids_v03"
+    else:
+        system_labels, system_ids = selector_range_names(schema, "Система")
+        process_labels, process_ids = selector_range_names(schema, "Процессы")
     put(0, 0, "Рабочая панель модели бизнеса v0.3")
     put(1, 0, "Выберите версию, систему и процесс. Ниже показан единый связный срез; ID остаются открытыми рядом с читаемыми названиями.")
     put(2, 0, "Версия")
@@ -1111,6 +1236,73 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
         def col(items: list[str], field: str) -> str:
             return column_letter(items.index(field))
 
+        def metric_contract_formula(
+            sheet_name: str,
+            status_column: str,
+            base_version_column: str,
+            metric_column: str,
+            active_statuses: str,
+        ) -> str:
+            element = lambda field: field_range(schema, "Элементы модели", field)
+            snapshot_version = field_range(schema, "Срез модели", "selected_version_id")
+            snapshot_type = field_range(schema, "Срез модели", "entity_type")
+            snapshot_id = field_range(schema, "Срез модели", "stable_id")
+            snapshot_source_version = field_range(schema, "Срез модели", "source_version_id")
+            source_revision = (
+                f'IFERROR(XLOOKUP(v&"|"&m,FILTER({snapshot_version}&"|"&{snapshot_id},'
+                f'{snapshot_type}="Элементы модели"),FILTER({snapshot_source_version},'
+                f'{snapshot_type}="Элементы модели"),""),"")'
+            )
+            required_ranges = (
+                (element("element_type"), '"показатель"'),
+                (element("definition"), '"<>"'),
+                (element("owner_position_id"), '"<>"'),
+                (element("formula_or_rule"), '"<>"'),
+                (element("unit_or_format"), '"<>"'),
+                (element("source_id"), '"<>"'),
+            )
+            count_args = [element("element_id"), "m", element("version_id"), "mv", element("version_operation"), '"применить"']
+            for item_range, criterion in required_ranges:
+                count_args.extend((item_range, criterion))
+            status = f"{quoted_sheet(sheet_name)}!${status_column}$5:${status_column}$1004"
+            base_version = f"{quoted_sheet(sheet_name)}!${base_version_column}$5:${base_version_column}$1004"
+            metric = f"{quoted_sheet(sheet_name)}!${metric_column}$5:${metric_column}$1004"
+            return (
+                f'=SUM(MAP({status},{base_version},{metric},LAMBDA(s,v,m,'
+                f'IF(NOT(REGEXMATCH(s,"{active_statuses}")),0,IF(OR(v="",m=""),0,'
+                f'LET(mv,{source_revision},IF(COUNTIFS({",".join(count_args)})=1,0,1)))))))'
+            )
+
+        def scope_resolution_formula(
+            sheet_name: str,
+            status_column: str,
+            version_column: str,
+            scope_type_column: str,
+            scope_id_column: str,
+            active_statuses: str,
+        ) -> str:
+            snapshot_version = field_range(schema, "Срез модели", "selected_version_id")
+            snapshot_type = field_range(schema, "Срез модели", "entity_type")
+            snapshot_id = field_range(schema, "Срез модели", "stable_id")
+            snapshot_status = field_range(schema, "Срез модели", "resolution_status")
+            type_cases = (
+                '"действие","Действия","процесс","Процессы",'
+                '"производственная система","Система","объект","Объекты",'
+                '"состояние","Состояния","продукт","Продукты",'
+                '"материал","Материалы","показатель","Элементы модели"'
+            )
+            prefix = quoted_sheet(sheet_name)
+            status = f"{prefix}!${status_column}$5:${status_column}$1004"
+            version = f"{prefix}!${version_column}$5:${version_column}$1004"
+            scope_type = f"{prefix}!${scope_type_column}$5:${scope_type_column}$1004"
+            scope_id = f"{prefix}!${scope_id_column}$5:${scope_id_column}$1004"
+            return (
+                f'=SUM(MAP({status},{version},{scope_type},{scope_id},LAMBDA(s,v,t,i,'
+                f'IF(NOT(REGEXMATCH(s,"{active_statuses}")),0,IF(OR(v="",t="",i=""),0,'
+                f'IF(COUNTIFS({snapshot_version},v,{snapshot_type},SWITCH(t,{type_cases},""),'
+                f'{snapshot_id},i,{snapshot_status},"разрешено")=1,0,1))))))'
+            )
+
         dev_status = col(deviations, "deviation_status")
         dev_type = col(deviations, "deviation_type")
         dev_scope = col(deviations, "scope_element_id")
@@ -1135,6 +1327,15 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
         )
         rows.append(
             values(
+                "CHK-DEVIATION-SCOPE",
+                "отклонения",
+                "тип области соответствует элементу применимой версии",
+                scope_resolution_formula("Отклонения", dev_status, dev_version, col(deviations, "scope_type"), dev_scope, "^(подтверждено|в устранении|проверяется|закрыто)$"),
+                "Выбрать тип и элемент области из одной применимой версии",
+            )
+        )
+        rows.append(
+            values(
                 "WARN-DEVIATION-CLOSE-EVIDENCE",
                 "отклонения",
                 "закрытие без подтверждённой результативности явно видно",
@@ -1147,6 +1348,8 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
         )
 
         hyp_status = col(hypotheses, "hypothesis_status")
+        hyp_base_version = col(hypotheses, "base_version_id")
+        hyp_metric = col(hypotheses, "primary_metric_id")
         hyp_required = [
             col(hypotheses, field)
             for field in (
@@ -1154,6 +1357,7 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "source_id",
                 "source_locator",
                 "new_opportunity",
+                "base_version_id",
                 "scope_element_id",
                 "proposed_change",
                 "mechanism",
@@ -1177,11 +1381,31 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "Заполнить внешнее изменение, источник, механизм и полный контракт основного показателя",
             )
         )
+        rows.append(
+            values(
+                "CHK-HYPOTHESIS-SCOPE",
+                "гипотезы",
+                "тип области соответствует элементу базовой версии",
+                scope_resolution_formula("Гипотезы", hyp_status, hyp_base_version, col(hypotheses, "scope_type"), col(hypotheses, "scope_element_id"), "^(сформулирована|проверяется|проверена|закрыта)$"),
+                "Выбрать тип и элемент области из базовой версии гипотезы",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-HYPOTHESIS-METRIC",
+                "гипотезы",
+                "основной показатель имеет полный контракт в базовой версии",
+                metric_contract_formula("Гипотезы", hyp_status, hyp_base_version, hyp_metric, "^(сформулирована|проверяется|проверена|закрыта)$"),
+                "Определить показатель, формулу, единицу, владельца и источник в базовой версии",
+            )
+        )
 
         exp_id = col(experiments, "experiment_id")
         exp_status = col(experiments, "experiment_status")
         exp_dev = col(experiments, "deviation_id")
         exp_hyp = col(experiments, "hypothesis_id")
+        exp_base_version = col(experiments, "base_version_id")
+        exp_metric = col(experiments, "primary_metric_id")
         rows.append(
             values(
                 "CHK-EXPERIMENT-ONE-BASIS",
@@ -1189,6 +1413,24 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "у эксперимента ровно одно основание",
                 f'=SUMPRODUCT(N(\'Эксперименты\'!{exp_id}5:{exp_id}1004<>""),N(((\'Эксперименты\'!{exp_dev}5:{exp_dev}1004<>"")+(\'Эксперименты\'!{exp_hyp}5:{exp_hyp}1004<>""))<>1))',
                 "Выбрать отклонение либо гипотезу, но не оба основания",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-EXPERIMENT-SCOPE",
+                "эксперименты",
+                "тип области соответствует элементу базовой версии",
+                scope_resolution_formula("Эксперименты", exp_status, exp_base_version, col(experiments, "scope_type"), col(experiments, "scope_element_id"), "^(подготовлен|разрешён|выполняется|завершён|остановлен)$"),
+                "Выбрать тип и элемент области из базовой версии эксперимента",
+            )
+        )
+        rows.append(
+            values(
+                "CHK-EXPERIMENT-METRIC",
+                "эксперименты",
+                "основной показатель имеет полный контракт в базовой версии",
+                metric_contract_formula("Эксперименты", exp_status, exp_base_version, exp_metric, "^(подготовлен|разрешён|выполняется|завершён|остановлен)$"),
+                "Определить показатель, формулу, единицу, владельца и источник в базовой версии",
             )
         )
         prepared_fields = [
@@ -1278,8 +1520,8 @@ def build(
         required_columns = enum_base + len(schema["enums"]) + 2 if sheet_name == "Система" else helper_column + 2
         dashboard_v3 = sheet_name == "Рабочая панель" and schema.get("schema_version") == "0.3"
         if dashboard_v3:
-            required_columns = max(required_columns, 39)
-        row_count = 260 if dashboard_v3 else 200 if sheet_name in {"Инструкция", "Рабочая панель"} else int(default["data_end_row"]) + 1
+            required_columns = max(required_columns, 44)
+        row_count = int(default["data_end_row"]) + 1 if dashboard_v3 else 200 if sheet_name in {"Инструкция", "Рабочая панель"} else int(default["data_end_row"]) + 1
         requests.append(
             {
                 "addSheet": {
@@ -1291,6 +1533,7 @@ def build(
                             "rowCount": row_count,
                             "columnCount": max(10, len(columns), required_columns),
                             "frozenRowCount": int(sheet.get("freeze_rows", default["freeze_rows"])) if columns else 0,
+                            "frozenColumnCount": int(sheet.get("freeze_columns", 0)) if columns else 0,
                             "hideGridlines": True,
                         },
                     }
@@ -1323,6 +1566,24 @@ def build(
             }
         }
     )
+    if schema.get("schema_version") == "0.3":
+        empty_column = enum_base + len(schema["enums"]) + 1
+        requests.append(
+            {
+                "addNamedRange": {
+                    "namedRange": {
+                        "name": "selector_empty_v03",
+                        "range": {
+                            "sheetId": system_id,
+                            "startRowIndex": 0,
+                            "endRowIndex": 1,
+                            "startColumnIndex": empty_column,
+                            "endColumnIndex": empty_column + 1,
+                        },
+                    }
+                }
+            }
+        )
 
     selector_names: dict[str, str] = {}
     selector_id_names: dict[str, str] = {}
@@ -1460,6 +1721,17 @@ def build(
             requests.append({"addNamedRange": {"namedRange": {"name": selector_name, "range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 1}}}})
             requests.append({"addNamedRange": {"namedRange": {"name": selector_id_name, "range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column + 1, "endColumnIndex": helper_column + 2}}}})
 
+    if schema.get("schema_version") == "0.3":
+        dashboard_id = sheet_ids["Рабочая панель"]
+        helper_column = 40
+        helper_row = 4
+        dependent_formulas = dashboard_selector_catalog_formulas(schema)
+        requests.append(update_block(dashboard_id, helper_row, helper_column, [row([cell(formula=formula) for formula in dependent_formulas])]))
+        requests.append({"updateDimensionProperties": {"range": {"sheetId": dashboard_id, "dimension": "COLUMNS", "startIndex": helper_column, "endIndex": helper_column + 4}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}})
+        requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": dashboard_id, "startRowIndex": helper_row, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 4}, "description": "Зависимые каталоги версии, системы и процесса v0.3", "warningOnly": True}}})
+        for offset, name in enumerate(("dashboard_system_labels_v03", "dashboard_system_ids_v03", "dashboard_process_labels_v03", "dashboard_process_ids_v03")):
+            requests.append({"addNamedRange": {"namedRange": {"name": name, "range": {"sheetId": dashboard_id, "startRowIndex": helper_row, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column + offset, "endColumnIndex": helper_column + offset + 1}}}})
+
     # Selector dropdowns and formulas are added after all named catalogs are declared.
     for sheet_name in order:
         sheet = schema["sheets"][sheet_name]
@@ -1478,8 +1750,23 @@ def build(
             if field not in columns or selector not in columns:
                 continue
             target = sheet.get("foreign_keys", {}).get(field)
+            polymorphic = sheet.get("polymorphic_foreign_keys", {}).get(field)
             if not target:
-                if field in sheet.get("polymorphic_foreign_keys", {}):
+                if isinstance(polymorphic, dict):
+                    validation_range, formula = polymorphic_selector_formula(
+                        schema,
+                        polymorphic,
+                        columns,
+                        columns.index(selector),
+                        data_start + 1,
+                    )
+                    field_column = columns.index(field)
+                    selector_column = columns.index(selector)
+                    requests.append({"setDataValidation": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": selector_column, "endColumnIndex": selector_column + 1}, "rule": {"condition": {"type": "ONE_OF_RANGE", "values": [{"userEnteredValue": validation_range}]}, "strict": True, "showCustomUi": True}}})
+                    requests.append({"repeatCell": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": field_column, "endColumnIndex": field_column + 1}, "cell": {"userEnteredValue": {"formulaValue": formula}}, "fields": "userEnteredValue"}})
+                    requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": sheet_id, "startRowIndex": data_start, "endRowIndex": data_end, "startColumnIndex": field_column, "endColumnIndex": field_column + 1}, "description": f"ID из зависимого selector {selector}", "warningOnly": True}}})
+                    continue
+                elif polymorphic:
                     target_sheet = "Срез модели"
                 else:
                     continue
@@ -1497,8 +1784,13 @@ def build(
 
     # Dashboard selectors use the same readable catalogs.
     dashboard_id = sheet_ids["Рабочая панель"]
-    for row_index, target_sheet in ((2, "Версии"), (3, "Система"), (4, "Процессы")):
-        requests.append({"setDataValidation": {"range": {"sheetId": dashboard_id, "startRowIndex": row_index, "endRowIndex": row_index + 1, "startColumnIndex": 1, "endColumnIndex": 2}, "rule": {"condition": {"type": "ONE_OF_RANGE", "values": [{"userEnteredValue": f"={selector_names[target_sheet]}"}]}, "strict": True, "showCustomUi": True}}})
+    dashboard_ranges = (
+        (2, selector_names["Версии"]),
+        (3, "dashboard_system_labels_v03" if schema.get("schema_version") == "0.3" else selector_names["Система"]),
+        (4, "dashboard_process_labels_v03" if schema.get("schema_version") == "0.3" else selector_names["Процессы"]),
+    )
+    for row_index, source_range in dashboard_ranges:
+        requests.append({"setDataValidation": {"range": {"sheetId": dashboard_id, "startRowIndex": row_index, "endRowIndex": row_index + 1, "startColumnIndex": 1, "endColumnIndex": 2}, "rule": {"condition": {"type": "ONE_OF_RANGE", "values": [{"userEnteredValue": f"={source_range}"}]}, "strict": True, "showCustomUi": True}}})
     requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": dashboard_id}, "description": "Рабочая панель: редактировать только selectors B3:B5", "warningOnly": True}}})
 
     # Visible error styling on Проверки.

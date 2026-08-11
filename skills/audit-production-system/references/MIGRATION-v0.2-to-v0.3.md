@@ -24,6 +24,7 @@
 - точный порядок 29 листов;
 - counts и значения всех авторских, identity, governance и derived-registry строк;
 - named ranges, formulas, validations и protections;
+- numeric `sheetId` каждого листа и `namedRangeId` каждого диапазона целевой копии;
 - текущие `model_id`, `working_version_id`, `current_version_id`;
 - backup locator.
 
@@ -35,13 +36,23 @@
 {
   "schema_version": "0.2",
   "spreadsheet_id": "...",
+  "spreadsheet_title": "...",
   "build_fingerprint": "...",
+  "settings": {
+    "model_id": "...",
+    "working_version_id": "...",
+    "working_version_selector": "...",
+    "current_version_id": "...",
+    "current_version_selector": "..."
+  },
+  "sheet_ids": {"Инструкция": 123, "...": 456},
+  "named_range_ids": ["..."],
   "sheet_order": ["Инструкция", "...", "Диаграммы"],
   "sheets": {"Система": [], "...": []}
 }
 ~~~
 
-`sheets` содержит каждый лист v0.2 ровно один раз. В production inventory строки должны сохранять точные `userEnteredValue`, а не только отформатированный вид.
+`sheets` содержит каждый лист v0.2 ровно один раз. В production inventory строки должны сохранять точные `userEnteredValue`, а не только отформатированный вид. Примитивы допустимы для обычных значений; формулы передаются как `{"formulaValue":"=..."}` либо полным объектом `{"userEnteredValue":{"formulaValue":"=..."}}`. Мигратор восстанавливает формулу как формулу, а не как строку.
 
 ## 2. Stop-gates
 
@@ -93,11 +104,21 @@ python3 scripts/migrate_template_v0_2_to_v0_3.py source-inventory.json --output 
 
 1. Создать копию исходной v0.2; исходник не менять.
 2. Снять повторный read-only inventory и сравнить source fingerprint.
-3. Применить `template-schema-v0.2.json` + overlay `template-schema-v0.3.json` через `scripts/build_template_v0_3.py` к целевой структуре.
-4. Восстановить точные пользовательские значения сохраняемых листов по исходному inventory, не восстанавливая поверх новых formulas вычисляемые ID и служебные диапазоны.
-5. Оставить три новых реестра пустыми.
-6. Пересобрать resolver snapshot и вычисляемые представления.
-7. Не создавать прошлые отклонения, гипотезы или эксперименты по косвенным признакам.
+3. Снять inventory уже созданной копии и убедиться, что её `sheetId` и `namedRangeId` совпадают с execution inventory.
+4. Собрать один детерминированный пакет:
+
+~~~bash
+python3 scripts/migrate_template_v0_2_to_v0_3.py source-inventory.json \
+  --build-package \
+  --target-title "Модель бизнеса — шаблон v0.3" \
+  --output migration-batch.json
+~~~
+
+5. Применить `migration-batch.json.batch_update.requests` к отдельной копии одной последовательностью requests. Builder пересоберёт точную физическую структуру v0.3, а завершающие restore requests вернут настройки и значения сохраняемых строк.
+6. Не применять пакет к исходному `source_spreadsheet_id`: это отдельный stop-gate оркестратора.
+7. Оставить три новых реестра пустыми.
+8. Пересобрать resolver snapshot и вычисляемые представления.
+9. Не создавать прошлые отклонения, гипотезы или эксперименты по косвенным признакам.
 
 При runtime без настоящей atomic transaction сохранять `migration_id` и checkpoint до первого batch. Timeout сначала проверять read-back, не запускать второй независимый перенос.
 

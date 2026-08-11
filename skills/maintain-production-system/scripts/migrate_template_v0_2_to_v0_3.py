@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-"""Построить и проверить логический migration package шаблона v0.2 → v0.3.
+"""Построить применимый migration package шаблона v0.2 → v0.3.
 
-Скрипт не меняет Google Sheet и не создаёт копию сам. Он принимает read-only
-inventory исходной книги, доказывает точную v0.2-структуру и возвращает
-детерминированный target plan: сохранённые данные, пустые новые реестры и
-перечень служебных поверхностей для пересборки builder v0.3.
+Скрипт не получает доступ к Drive и не создаёт копию сам. Он принимает
+read-only inventory исходной книги, проверяет точную v0.2-структуру и может
+вернуть либо логический план, либо детерминированный Google Sheets batchUpdate
+для уже созданной отдельной копии. Пакет пересобирает физический шаблон v0.3,
+после чего восстанавливает исходные настройки и авторские строки без догадок.
 """
 
 from __future__ import annotations
@@ -16,7 +17,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-from build_template_v0_3 import load_schema as load_v3_schema
+import build_template_v0_2 as base_builder
+from build_template_v0_3 import configure_copy, load_schema as load_v3_schema
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -48,6 +50,21 @@ def load_v2_schema() -> dict[str, Any]:
     return json.loads(V2_SCHEMA_PATH.read_text(encoding="utf-8"))
 
 
+def restore_cell(value: Any) -> dict[str, Any]:
+    """Сохранить точное userEnteredValue, включая формулы исходной книги."""
+    if isinstance(value, dict):
+        if set(value) == {"userEnteredValue"} and isinstance(value["userEnteredValue"], dict):
+            return copy.deepcopy(value)
+        value_kinds = {"stringValue", "numberValue", "boolValue", "formulaValue"}
+        if len(value) == 1 and next(iter(value), None) in value_kinds:
+            return {"userEnteredValue": copy.deepcopy(value)}
+        raise MigrationError(
+            "SOURCE_CELL_VALUE_INVALID",
+            "значение ячейки должно быть примитивом, userEnteredValue или одним typed value",
+        )
+    return base_builder.cell(value)
+
+
 def validate_source(source: dict[str, Any]) -> tuple[dict[str, Any], dict[str, Any]]:
     v2 = load_v2_schema()
     v3 = load_v3_schema()
@@ -66,6 +83,21 @@ def validate_source(source: dict[str, Any]) -> tuple[dict[str, Any], dict[str, A
         if not isinstance(rows, list):
             raise MigrationError("SOURCE_ROWS_INVALID", f"{sheet_name}: rows должны быть JSON-массивом")
     return v2, v3
+
+
+def validate_execution_inventory(source: dict[str, Any], v2: dict[str, Any]) -> tuple[dict[str, int], list[str]]:
+    sheet_ids = source.get("sheet_ids")
+    if not isinstance(sheet_ids, dict) or set(sheet_ids) != set(v2["sheet_order"]):
+        raise MigrationError("SOURCE_SHEET_IDS_MISSING", "для исполнимого пакета нужны numeric sheetId всех 29 листов")
+    if any(not isinstance(value, int) for value in sheet_ids.values()) or len(set(sheet_ids.values())) != len(sheet_ids):
+        raise MigrationError("SOURCE_SHEET_IDS_INVALID", "sheetId должны быть уникальными целыми числами")
+    named_range_ids = source.get("named_range_ids")
+    if not isinstance(named_range_ids, list) or any(not isinstance(value, str) or not value for value in named_range_ids):
+        raise MigrationError("SOURCE_NAMED_RANGE_IDS_MISSING", "нужен список namedRangeId целевой копии")
+    settings = source.get("settings")
+    if not isinstance(settings, dict) or not settings.get("model_id"):
+        raise MigrationError("SOURCE_SETTINGS_MISSING", "inventory должен сохранять настройки Система, включая model_id")
+    return sheet_ids, named_range_ids
 
 
 def plan_migration(source: dict[str, Any]) -> dict[str, Any]:
@@ -123,6 +155,81 @@ def plan_migration(source: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def build_migration_package(source: dict[str, Any], *, target_title: str | None = None) -> dict[str, Any]:
+    """Собрать один batchUpdate для применения к заранее созданной копии v0.2."""
+    v2, v3 = validate_source(source)
+    sheet_ids, named_range_ids = validate_execution_inventory(source, v2)
+    plan = plan_migration(source)
+    configure_copy()
+    title = target_title or f"{source.get('spreadsheet_title', 'Модель бизнеса')} — шаблон v0.3"
+    payload = base_builder.build(v3, list(sheet_ids.values()), named_range_ids, title)
+
+    restore_requests: list[dict[str, Any]] = []
+    restored_counts: dict[str, int] = {}
+    for sheet_name in plan["preserved_sheets"]:
+        target_sheet = v3["sheets"][sheet_name]
+        columns = target_sheet.get("columns", [])
+        source_rows = source["sheets"][sheet_name]
+        if any(not isinstance(item, dict) for item in source_rows):
+            raise MigrationError("SOURCE_ROW_SHAPE_INVALID", f"{sheet_name}: для исполнения каждая строка должна быть объектом field→value")
+        unknown = sorted({field for item in source_rows for field in item if field not in columns})
+        if unknown:
+            raise MigrationError("SOURCE_FIELD_DRIFT", f"{sheet_name}: неизвестные поля {unknown}")
+        if source_rows:
+            rows = [
+                base_builder.row([restore_cell(item.get(field)) for field in columns])
+                for item in source_rows
+            ]
+            restore_requests.append(
+                base_builder.update_block(
+                    payload["sheet_ids"][sheet_name],
+                    int(target_sheet.get("data_start_row", v3["default_table"]["data_start_row"])) - 1,
+                    0,
+                    rows,
+                )
+            )
+        restored_counts[sheet_name] = len(source_rows)
+
+    settings = source["settings"]
+    system_id = payload["sheet_ids"]["Система"]
+    restore_requests.append(
+        base_builder.update_block(
+            system_id,
+            2,
+            1,
+            [
+                base_builder.row([restore_cell(settings.get("model_id"))]),
+                base_builder.row(
+                    [
+                        restore_cell(settings.get("working_version_id")),
+                        restore_cell(settings.get("working_version_selector")),
+                    ]
+                ),
+                base_builder.row(
+                    [
+                        restore_cell(settings.get("current_version_id")),
+                        restore_cell(settings.get("current_version_selector")),
+                    ]
+                ),
+            ],
+        )
+    )
+    payload["requests"].extend(restore_requests)
+    payload["request_count"] = len(payload["requests"])
+    payload["batch_fingerprint"] = canonical_hash(payload["requests"])
+    return {
+        "status": "PASS",
+        "migration_id": plan["migration_id"],
+        "source_spreadsheet_id": source["spreadsheet_id"],
+        "target_copy_required": True,
+        "apply_to": "отдельная копия исходной книги v0.2 с теми же sheetId/namedRangeId из inventory",
+        "source_value_fingerprint": plan["source_value_fingerprint"],
+        "restored_counts": restored_counts,
+        "settings_restored": True,
+        "batch_update": payload,
+    }
+
+
 def verify_target(source: dict[str, Any], target: dict[str, Any]) -> dict[str, Any]:
     plan = plan_migration(source)
     if target.get("schema_version") != "0.3":
@@ -154,15 +261,20 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("source", type=Path, help="read-only inventory JSON книги v0.2")
     parser.add_argument("--target", type=Path, help="необязательная inventory JSON собранной книги v0.3")
+    parser.add_argument("--build-package", action="store_true", help="сформировать применимый batchUpdate для отдельной копии")
+    parser.add_argument("--target-title", help="название целевой копии v0.3")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
     source = json.loads(args.source.read_text(encoding="utf-8"))
     try:
-        result = (
-            verify_target(source, json.loads(args.target.read_text(encoding="utf-8")))
-            if args.target
-            else plan_migration(source)
-        )
+        if args.target and args.build_package:
+            raise MigrationError("CLI_MODE_CONFLICT", "--target и --build-package нельзя использовать одновременно")
+        if args.target:
+            result = verify_target(source, json.loads(args.target.read_text(encoding="utf-8")))
+        elif args.build_package:
+            result = build_migration_package(source, target_title=args.target_title)
+        else:
+            result = plan_migration(source)
         exit_code = 0
     except MigrationError as exc:
         result = {"status": "FAIL", "error_code": exc.code, "detail": exc.detail}
