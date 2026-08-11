@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "trial_id": "development-hypothesis-contract-01",
+  "case_id": "development-hypothesis-contract",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Появилась новая технология автоматической квалификации; хотим проверить, повысит ли она долю квалифицированных лидов без роста ошибочных отказов."
+    },
+    {
+      "role": "assistant",
+      "content": "Это кандидат гипотезы развития, а не отклонение: нужно проверить внешнее изменение, новую возможность и эффект относительно действующей версии. Сначала зафиксирую источник внешнего изменения.",
+      "questions": [
+        "Какой первичный источник подтверждает новую технологию автоматической квалификации?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Первичный источник — release notes поставщика QualiFlow 2.4 от 2026-08-01, раздел «Automatic qualification»: технология автоматически присваивает лиду решение о квалификации и причину отказа по заданным критериям."
+    },
+    {
+      "role": "assistant",
+      "content": "Источник фиксирует внешнее технологическое изменение; новая возможность — автоматизировать решение о квалификации с наблюдаемой причиной отказа. Для сравнения нужна действующая базовая версия модели.",
+      "questions": [
+        "Какая действующая версия модели будет базой сравнения и каков её стабильный идентификатор?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "База — действующая версия v0.2, current_version_id ver-v02-active, model_id model-leadgen-001; рабочий черновик для изменения — ver-v03-draft с predecessor ver-v02-active."
+    },
+    {
+      "role": "assistant",
+      "content": "База и линейный предшественник определены. Перед подготовкой пакета нужна атрибуция человека, который сможет подтвердить его запись.",
+      "questions": [
+        "Кто именно будет редактором и подтверждающим человеком для этого пакета?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Елена Смирнова, performer_id perf-elena-smirnova, уже назначена технологом систематизации: assignment_id assign-tech-01."
+    },
+    {
+      "role": "assistant",
+      "content": "Елена Смирнова идентифицирована; её существующее назначение технологом систематизации найдено и подходит для атрибуции. Для сформулированной гипотезы нужен полный контракт одного основного показателя.",
+      "questions": [
+        "Подтверждаете следующий основной показатель: доля квалифицированных лидов = число лидов, получивших статус «квалифицирован» в течение 24 часов после поступления, делённое на все пригодные к квалификации лиды с завершённым решением за неделю; единица — %, источник — CRM, владелец — руководитель квалификации, базовое значение v0.2 — 32%, критерий успеха — не менее 37%?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Да. Исключаем тестовые, дублирующиеся и лиды без обязательных контактных данных. Ошибочный отказ считаем отдельно: число лидов с автоматическим отказом, которые человек по повторной проверке признал квалифицированными, делённое на все автоматически отклонённые лиды за ту же неделю. Его базовое значение 4%; оно не должно вырасти."
+    },
+    {
+      "role": "assistant",
+      "content": "Карточка кандидата: гипотеза развития. Внешнее изменение: QualiFlow 2.4, release notes от 2026-08-01, «Automatic qualification». Возможность: автоматически принимать решение о квалификации и фиксировать причину отказа. Это не отклонение, потому что нет подтверждённого нарушения действующей нормы; это не эксперимент, потому что эксперимент будет проверять именно эту гипотезу. Основной показатель полностью определён: доля квалифицированных лидов, формула — квалифицированные в течение 24 часов / пригодные лиды с завершённым решением за неделю × 100%; единица — %, период — неделя, источник — CRM, владелец — руководитель квалификации, исключения — тестовые, дублирующиеся и лиды без обязательных контактов, baseline — 32%, критерий успеха — не менее 37%. Ограничение наблюдения: ошибочный отказ = повторно признанные человеком квалифицированными среди автоматически отклонённых / все автоматически отклонённые за неделю × 100%; baseline — 4%, допустимое значение — не выше 4%.",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-development-hypothesis-01 в черновик модели?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "В in-memory контуре записана и перечитана одна транзакция tx-development-hypothesis-01: гипотеза развития и подготовленный эксперимент в ver-v03-draft, одно решение и связанные изменения модели. Внешние системы не изменялись."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Первичным источником признаны release notes поставщика QualiFlow 2.4 от 2026-08-01, раздел «Automatic qualification»."
+    },
+    {
+      "type": "external_change_sourced",
+      "content": "Источник описывает автоматическое решение о квалификации и фиксацию причины отказа."
+    },
+    {
+      "type": "new_opportunity_resolved",
+      "content": "Возможность: автоматизировать решение о квалификации с наблюдаемой причиной отказа."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "model-leadgen-001: действующая база ver-v02-active; рабочий черновик ver-v03-draft с этим predecessor."
+    },
+    {
+      "type": "predecessor_resolved",
+      "content": "Для ver-v03-draft установлен единственный предшественник ver-v02-active."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия Елены Смирновой, performer_id perf-elena-smirnova."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Найден существующий исполнитель perf-elena-smirnova по нормализованному ФИО."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Подтверждено существующее назначение assign-tech-01 на позицию технолога систематизации."
+    },
+    {
+      "type": "development_candidate_classified",
+      "content": "Кандидат классифицирован как гипотеза развития; ближайшие альтернативы — отклонение и эксперимент — отвергнуты на этом шаге."
+    },
+    {
+      "type": "metric_contract_verified",
+      "content": "Зафиксированы формула, единица, период, популяция, исключения, CRM-источник, владелец, baseline 32% и успех не менее 37%; ограничение ошибочного отказа имеет baseline и предел 4%."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "In-memory materialized effective snapshot ver-v02-active содержит baseline основного показателя 32% и ошибочного отказа 4%."
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "In-memory predicted snapshot ver-v03-draft содержит добавление гипотезы и подготовленного эксперимента без изменения действующей v0.2."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-development-hypothesis-01",
+      "package_hash": "3961b0cb36b325057b7fd94a11298122fc84dff303607bd37b2dc7cd922f68ff",
+      "content": "Полный пакет: одна гипотеза развития hyp-auto-qualification-01 и один подготовленный эксперимент exp-auto-qualification-01 в ver-v03-draft; область — квалификация лидов; временное изменение — автоматическое решение QualiFlow 2.4 с причиной отказа; срок — две недели; сравнение — недельные значения с baseline v0.2; stop-условие — ошибочный отказ выше 4%; возврат — отключить автоматическое решение и восстановить ручную квалификацию; launch требует отдельного решения владельца производственной системы. Канонизированное ядро пакета: {\"base_version_id\":\"ver-v02-active\",\"model_id\":\"model-leadgen-001\",\"package_id\":\"pkg-development-hypothesis-01\",\"working_version_id\":\"ver-v03-draft\"}."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "pkg-development-hypothesis-01",
+      "package_hash": "3961b0cb36b325057b7fd94a11298122fc84dff303607bd37b2dc7cd922f68ff",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Смирнова",
+      "content": "Елена Смирнова явно подтвердила запись последнего показанного неизменённого пакета."
+    },
+    {
+      "type": "development_registry_write",
+      "transaction_id": "tx-development-hypothesis-01",
+      "content": "In-memory transaction добавила связанные записи гипотезы развития и подготовленного эксперимента."
+    },
+    {
+      "type": "sparse_apply",
+      "transaction_id": "tx-development-hypothesis-01",
+      "content": "В ver-v03-draft in-memory применены только новые элементы hyp-auto-qualification-01 и exp-auto-qualification-01; элементы ver-v02-active наследуются без перезаписи."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-development-hypothesis-01",
+      "content": "Одна in-memory transaction записала решение, две строки реестра развития и связанные изменения модели."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-development-hypothesis-01",
+      "content": "Перечитана именно транзакция tx-development-hypothesis-01; package_hash, атрибуция, базовая и рабочая версии совпали с показанным пакетом."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-development-hypothesis-01",
+      "content": "Checkpoint: state=verify, mode=write, write_state=verified; следующий шаг — отдельное человеческое решение о запуске эксперимента."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-development-hypothesis-01",
+        "in_memory": true,
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_valid": true,
+      "fresh_agent_contract_consistent": true,
+      "in_memory_transaction_consistent": true
+    }
+  }
+}

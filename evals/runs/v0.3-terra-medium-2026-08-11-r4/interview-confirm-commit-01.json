@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "trial_id": "interview-confirm-commit-01",
+  "case_id": "interview-confirm-commit",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/LANGUAGE.md",
+    "skills/model-production-system/references/METAONTOLOGY.md",
+    "skills/model-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Нужно описать новый процесс: мы готовим и выдаём клиентам проверенные инструкции по настройке оборудования."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала зафиксирую границу, чтобы не включить внутреннюю работу клиента в нашу модель.",
+      "questions": ["Как называется моделируемая внутренняя система, какой результат она поставляет и по какому критерию клиент его принимает?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Внутри компании это система «Технические инструкции». Её продукт — «Проверенная инструкция по настройке оборудования»; клиент принимает PDF, если все шаги применимы к указанной модели и содержат проверку результата."
+    },
+    {
+      "role": "assistant",
+      "content": "Продукт и его приёмка определены. Для первой черновой версии нужны точная модель, версия и человек, который сможет подтвердить пакет; запись будет только в безопасный in-memory fixture.",
+      "questions": ["Назовите модель, working/current version, ваше имя и фамилию и устойчивую позицию, от имени которой вы редактируете модель."],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Модель: model-demo-instructions, книга fixture-demo-instructions, current_version_id ver-001 и working_version_id ver-002-draft. Я Анна Орлова, редактор модели; устойчивой позиции пока нет, создайте «Технический редактор» с active_from 2026-08-11."
+    },
+    {
+      "role": "assistant",
+      "content": "Анна Орлова идентифицирована; в fixture нет совпадающего исполнителя, поэтому исполнитель и назначение войдут в пакет, а не будут записаны сейчас.",
+      "questions": ["Верно ли, что клиент остаётся внешним контрагентом, а в модели описываем только нашу подготовку и передачу инструкции?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Локальное «да» зафиксировало только границу модели; это ещё не подтверждение записи.",
+      "questions": ["Какой объект работы создаётся по запросу клиента и какие его состояния от создания до завершения, включая возврат на исправление?"],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Создаётся один «Запрос на инструкцию»: новый → в подготовке → на проверке → отправлен клиенту → принят или возвращён на исправление. При возврате сохраняется тот же запрос и его история."
+    },
+    {
+      "role": "assistant",
+      "content": "Это один объект в разных состояниях, а не новый объект после проверки.",
+      "questions": ["Опишите один исполнимый путь: триггер, действия с ответственной позицией, решения или исключения, конечный выход и что происходит при отсутствии ответа клиента."],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Триггер — зарегистрированный запрос клиента. Технический редактор уточняет модель оборудования, готовит PDF и проверяет шаги. После успешной внутренней проверки он отправляет PDF клиенту по email. Клиент принимает его либо возвращает с замечанием; замечание возвращает тот же запрос в подготовку. Если ответа нет 3 рабочих дня, редактор напоминает клиенту; ещё через 2 дня без ответа запрос завершается как «нет ответа клиента»."
+    },
+    {
+      "role": "assistant",
+      "content": "Полный in-memory mutation package `pkg-demo-instructions-001` подготовлен (SHA-256 `8acb701a419fc2a3ec3ec57922028a8fdb699f8f366ca1bd17823aeef3b43b9a`). Граница: внутренняя система «Технические инструкции»; клиент остаётся внешним контрагентом. База: model-demo-instructions, fixture-demo-instructions, ver-001 → working draft ver-002-draft. Атрибуция: новая исполнительница Анна Орлова (`performer-anna-orlova`) и назначение «Технический редактор» (`assignment-anna-tech-editor`, active_from 2026-08-11). Применить: систему `system-technical-instructions`; позицию `position-technical-editor`; продукт `product-verified-equipment-instruction` с внутренним происхождением; контрагента `counterparty-client`; объект `object-instruction-request` со состояниями new, preparing, under-review, sent-to-client, accepted, returned-for-correction, closed-no-client-response; процесс `process-prepare-instruction`; действия зарегистрировать запрос, уточнить модель, подготовить PDF, проверить шаги, отправить PDF, зафиксировать приёмку, вернуть на исправление, напомнить клиенту и завершить без ответа. Граф: start → registration → clarification → preparation → review; успешная проверка → send → client acceptance (принят / возвращён); возврат → preparation; timeout 3 рабочих дня → reminder; ещё 2 дня → closed-no-client-response. Добавить relation system → produces → product и action send → delivers → product. Добавить одну позицию контракта и интерфейс передачи для продукта: trigger «успешная внутренняя проверка», channel email, format PDF, package PDF-инструкция, acceptance «клиент подтверждает применимость шагов и наличие проверки результата», rejection «замечание клиента», return «в подготовку», fallback «напоминание через 3 рабочих дня». Операции: только `применить`, без исключений; один `Решения` row, 24 model rows и 24 `Изменения модели` rows; указатель current version не меняется, working version остаётся черновиком. Preconditions: fixture IDs, base version, отсутствие transaction `tx-demo-instructions-001`, FK и состояние редакций неизменны. Recovery: при неизвестном результате сначала read-back по этому transaction ID; частичная запись не считается успехом. Проверки: schema/FK/selectors, достижимость графа, один draft, три сценария (принятие, возврат, timeout), snapshot и projection view readiness. Подтверждаете запись показанного пакета `pkg-demo-instructions-001` в черновик модели?",
+      "questions": ["Подтверждаете запись показанного пакета `pkg-demo-instructions-001` в черновик модели?"],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись показанного пакета pkg-demo-instructions-001 в черновик модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Подтверждение Анны Орловой относится к неизменённому полному пакету. В безопасном in-memory fixture выполнена одна transaction `tx-demo-instructions-001`; внешняя книга не изменялась. Read-back подтвердил решение, 24 authoring rows, 24 change rows, resolved snapshot, целостность FK/selectors и три завершённых сценария: normal path заканчивается `accepted`, возврат сохраняет тот же object ID и возвращает его в `preparing`, timeout заканчивается `closed-no-client-response`. Проекционный IR собран для просмотра; deployment readiness не заявлена, потому что нет Modeler evidence и implementation contracts. Checkpoint: write_state=verified; следующий шаг — передать любые будущие кандидаты развития в maintain-production-system."
+    }
+  ],
+  "events": [
+    {"type": "source_authority_resolved", "content": "The selected skill, its required bundled references, and the fresh-agent contract were used as the sole authorities."},
+    {"type": "scope_checked", "content": "The modeled boundary was limited to the internal Technical Instructions system; the client was retained as an external counterparty."},
+    {"type": "base_version_resolved", "content": "Fixture model-demo-instructions uses current ver-001 and working draft ver-002-draft."},
+    {"type": "editor_identified", "content": "Anna Orlova was identified as the human editor and prospective confirmer."},
+    {"type": "performer_lookup", "content": "The in-memory fixture checked normalized identity and found no matching existing performer."},
+    {"type": "decisive_question", "content": "q-001 established product identity and acceptance; q-003 selected the external-boundary treatment; q-004 selected an object lifecycle; q-005 established the executable graph."},
+    {"type": "identity_test", "content": "A returned request retains its identity and history, so it remains one Instruction Request object in a changed state."},
+    {"type": "position_resolved", "content": "Technical Editor was resolved as the durable responsible position for the process actions."},
+    {"type": "product_origin_linked", "content": "The verified instruction product was explicitly linked to its internal producing system."},
+    {"type": "relation_resolved", "content": "The package links the system to the product and the send action to delivery of that product."},
+    {"type": "transfer_interface_resolved", "content": "The delivery interface was defined with trigger, email channel, PDF format and package, acceptance, rejection, return, and timeout fallback before internal usage was linked."},
+    {"type": "draft_package", "package_id": "pkg-demo-instructions-001", "package_hash": "8acb701a419fc2a3ec3ec57922028a8fdb699f8f366ca1bd17823aeef3b43b9a", "content": "The complete package was shown before confirmation."},
+    {"type": "exact_package_confirmation", "package_id": "pkg-demo-instructions-001", "package_hash": "8acb701a419fc2a3ec3ec57922028a8fdb699f8f366ca1bd17823aeef3b43b9a", "performer_type": "человек", "confirmed_by": "Анна Орлова", "content": "The identified human explicitly confirmed the exact shown package."},
+    {"type": "model_write", "transaction_id": "tx-demo-instructions-001", "content": "One in-memory idempotent transaction wrote the performer and assignment, one decision row, 24 authoring model rows, and 24 model-change rows."},
+    {"type": "readback", "transaction_id": "tx-demo-instructions-001", "content": "The in-memory transaction, its rows, resolved snapshot, foreign keys, selectors, and scenarios were read back and checked."},
+    {"type": "checkpoint", "transaction_id": "tx-demo-instructions-001", "content": "Checkpoint saved after readback with write_state=verified and no external mutation."}
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-demo-instructions-001",
+        "decision_rows": 1,
+        "change_rows": 24,
+        "model_rows": 24,
+        "target": "safe in-memory fixture"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "in_memory_package_preconditions": true,
+      "in_memory_schema_fk_and_selectors": true,
+      "in_memory_graph_reachability": true,
+      "in_memory_three_scenarios": true,
+      "in_memory_transaction_readback": true
+    }
+  }
+}

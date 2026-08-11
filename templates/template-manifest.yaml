@@ -1,13 +1,18 @@
 title: Шаблон канонической модели бизнеса
-version: "0.2"
-spreadsheet_id: 1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k
-source_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/edit?usp=sharing
-copy_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy
+version: "0.3"
+spreadsheet_id: 1W9u-t5a4Uuj2pCBLtia3E60qUHn5ZjeFiicNTCv6fR0
+source_url: https://docs.google.com/spreadsheets/d/1W9u-t5a4Uuj2pCBLtia3E60qUHn5ZjeFiicNTCv6fR0/edit?usp=sharing
+copy_url: https://docs.google.com/spreadsheets/d/1W9u-t5a4Uuj2pCBLtia3E60qUHn5ZjeFiicNTCv6fR0/copy
 access_observed: anyone_with_link_reader
 owner_observed: vladislav.vladimirovich.bogdan@gmail.com
-exported_at: "2026-08-10"
-snapshot: templates/production-system-model-template-v0.2.xlsx
-sha256: f80d79722fa34a0759050d8aa5b5d8de587c94f326804e89aa077d7c9c37ba9e
+exported_at: "2026-08-11"
+snapshot: templates/production-system-model-template-v0.3.xlsx
+sha256: 9cc2762a40c31ad3532568631e0917d9eb81977356f836399826b8931af90b16
+schema: templates/template-schema-v0.3.json
+base_schema: templates/template-schema-v0.2.json
+builder: scripts/build_template_v0_3.py
+migration: templates/migrations/v0.2-to-v0.3.md
+sheet_count: 32
 sheets:
   - Инструкция
   - Система
@@ -33,17 +38,18 @@ sheets:
   - Связи модели
   - Решения
   - Изменения модели
+  - Отклонения
+  - Гипотезы
+  - Эксперименты
   - Срез модели
   - Проверки
   - Реестр процессов
   - Рабочая панель
   - Диаграммы
-candidate:
-  version: "0.3"
-  status: local_release_candidate
-  schema: templates/template-schema-v0.3.json
-  builder: scripts/build_template_v0_3.py
-  migration: templates/migrations/v0.2-to-v0.3.md
-  review_artifact: outputs/v0.3-review/production-system-model-template-v0.3-review.xlsx
-  publication: pending_owner_acceptance_and_release_gate
-  sheet_count: 32
+rollback:
+  version: "0.2"
+  spreadsheet_id: 1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k
+  source_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/edit?usp=sharing
+  copy_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy
+  snapshot: templates/production-system-model-template-v0.2.xlsx
+  sha256: f80d79722fa34a0759050d8aa5b5d8de587c94f326804e89aa077d7c9c37ba9e

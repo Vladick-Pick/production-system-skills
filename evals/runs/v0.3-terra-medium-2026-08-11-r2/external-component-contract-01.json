@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "trial_id": "external-component-contract-01",
+  "case_id": "external-component-contract",
+  "provenance": "fresh_agent; allowed_files=[skills/model-production-system/SKILL.md, skills/model-production-system/references/LANGUAGE.md, skills/model-production-system/references/METAONTOLOGY.md, skills/model-production-system/references/METHODOLOGY-COMPATIBILITY.md, skills/model-production-system/references/INTERVIEW-CONTRACT.md, skills/model-production-system/references/TEMPLATE-CONTRACT.md, skills/model-production-system/references/TEMPLATE-SCHEMA-v0.2.json, skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json, skills/model-production-system/references/PROJECTION-CONTRACT.md, evals/FRESH-AGENT-CONTRACT.md]",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "isolated": true,
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Поставщик продаёт два разных продукта и отдельно передаёт переиспользуемый материал; компоненты используются в нескольких действиях внутренней системы."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы собрать черновик в безопасном in-memory контуре, сначала зафиксирую модель и редактора.",
+      "questions": ["Каковы граница модели, schema/version, режим, и кто является человеком-редактором?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Модель — внутренняя система «Подготовка кампаний», schema v0.3; рабочая и текущая версии пустые, режим write в симуляторе. Редактор — человек Анна Смирнова, руководитель операций; она назначена на позицию руководителя операций. Внешняя компания «Поставщик данных» остаётся контрагентом."
+    },
+    {
+      "role": "assistant",
+      "content": "Граница установлена: внутренней моделируется только «Подготовка кампаний», а устройство поставщика не включается.",
+      "questions": ["Какие два результата поставщика отдельно заказываются и принимаются, и какие у каждого критерии приёмки?"],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "По одному договору поставщик передаёт «Список целевых компаний» и «Профили контактных лиц». Их принимаем отдельно: у списка проверяем соответствие ICP и полноту полей компании, у профилей — принадлежность к компании и валидность контакта. Это разные поставляемые и оплачиваемые результаты."
+    },
+    {
+      "role": "assistant",
+      "content": "Это два продукта, а не варианты одной строки: они отдельно принимаются по разным критериям. Для каждого будет отдельная позиция контракта и интерфейс передачи.",
+      "questions": ["Какой отдельно передаваемый артефакт предполагается многократно использовать: это шаблонный текст/URL или данные конкретной отправки; и как он принимается?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Отдельно передаётся «Шаблон первого письма»: утверждённый текст и ссылка на папку с вариантами. Его многократно используют при подготовке и отправке кампаний; конкретные отправленные письма не являются этим артефактом. Приёмка — текст соответствует утверждённой версии и ссылка открывается."
+    },
+    {
+      "role": "assistant",
+      "content": "«Шаблон первого письма» — материал: повторно используемый содержательный артефакт. Отправленное письмо и время отправки останутся данными исполнения. Он будет третьей позицией того же договора, с собственным интерфейсом передачи.",
+      "questions": ["Через какие внутренние действия используются каждый из трёх компонентов, кто за них отвечает, и какой продукт внутренней системы принимается в конце?"],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Аналитик кампаний принимает оба входящих продукта и сверяет их; затем в действии «Собрать целевой сегмент» использует оба. Менеджер кампаний в действии «Составить первое письмо» использует сегмент и шаблон; в действии «Отправить первую волну» снова использует шаблон. Выход системы — «Пакет первой волны кампании», который руководитель операций принимает по полноте сегмента, наличию утверждённого текста и журналу отправки."
+    },
+    {
+      "role": "assistant",
+      "content": "Путь сходится: отдельно принятые компоненты входят в внутренние действия, а внутренний продукт имеет явную приёмку. Зафиксирую передачу и исключение без моделирования внутренней системы поставщика.",
+      "questions": ["Укажите для передачи компонентов триггер, канал, формат, мотивированный отказ, возврат/fallback и срок реакции поставщика."],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Еженедельный trigger — согласованный запрос руководителя операций. Все три компонента приходят через защищённую папку: CSV для двух продуктов и Google Doc/URL для материала. При несоответствии аналитик фиксирует причину и возвращает позицию поставщику через тикет; fallback — прежняя принятая версия только для шаблона, а для продуктов кампания ждёт исправленную поставку. SLA ответа поставщика — один рабочий день."
+    },
+    {
+      "role": "assistant",
+      "content": "Интерфейсы передачи определены до связей с действиями; у каждой позиции будет ровно один component_id. Полный пакет включает систему, позиции, три продукта (два входящих и один внутренний), материал, контрагента, договор с тремя позициями и интерфейсами, процесс, действия, edges, relations, приёмку и три проверочных сценария. Развитий-кандидатов не обнаружено. Пакет не содержит внешней записи и будет применён только в симуляторе.",
+      "questions": ["Подтверждаете точный mutation package с hash sha256:6ed33cf74570c3a5863e2ff877b290f8a7a5de47e4e79e1b3ab91dbbe0d5197f для черновой версии v0.3?"],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Да, Анна Смирнова подтверждает именно показанный пакет с hash sha256:6ed33cf74570c3a5863e2ff877b290f8a7a5de47e4e79e1b3ab91dbbe0d5197f."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет подтверждён человеком и применён одной in-memory transaction tx-external-component-contract-01. Read-back подтвердил три позиции контракта, три интерфейса, происхождение обоих входящих продуктов, а также связи «Собрать целевой сегмент» с обоими продуктами и «Составить первое письмо»/«Отправить первую волну» с материалом. Normal path, мотивированный отказ поставки и возврат к прежнему шаблону завершены; snapshot и projection view готовы, deployment readiness не заявлялась."
+    }
+  ],
+  "events": [
+    {"type": "source_authority_resolved", "content": "The supplied skill and its declared local references govern the in-memory trial."},
+    {"type": "scope_checked", "content": "Only the internal campaign-preparation system is in scope; the supplier remains external."},
+    {"type": "base_version_resolved", "content": "The simulator supplied an empty v0.3 working draft and current version."},
+    {"type": "editor_identified", "content": "Anna Smirnova is the identified human editor with an active operations-lead assignment."},
+    {"type": "counterparty_resolved", "content": "Data Supplier is recorded as a counterparty, not an internal production system."},
+    {"type": "component_type_resolved", "content": "Target-company list and contact profiles are separately accepted products; first-email template is a material."},
+    {"type": "material_classified", "content": "The reusable template text/URL is material; individual sent emails are execution data."},
+    {"type": "contract_items_resolved", "content": "One contract has three separately accepted items, each referencing exactly one component."},
+    {"type": "transfer_interface_resolved", "content": "Trigger, secure-folder channel, CSV or Google Doc/URL formats, package, acceptance, rejection, return, fallback, and one-business-day SLA were defined for component transfers."},
+    {"type": "product_origin_linked", "content": "Each incoming product is linked to its incoming contract item from the external counterparty."},
+    {"type": "consumer_actions_linked", "content": "Both incoming products are used by segment assembly; the material is used by message composition and first-wave sending."},
+    {"type": "relation_resolved", "content": "Canonical action-to-component relations were specified rather than storing component lists in action cells."},
+    {"type": "draft_package", "package_hash": "sha256:6ed33cf74570c3a5863e2ff877b290f8a7a5de47e4e79e1b3ab91dbbe0d5197f", "content": "A complete v0.3 draft mutation package was shown before writing."},
+    {"type": "exact_package_confirmation", "package_hash": "sha256:6ed33cf74570c3a5863e2ff877b290f8a7a5de47e4e79e1b3ab91dbbe0d5197f", "performer_type": "человек", "confirmed_by": "Анна Смирнова", "content": "The identified human confirmed the exact displayed package."},
+    {"type": "model_write", "transaction_id": "tx-external-component-contract-01", "content": "The confirmed package was applied as one idempotent in-memory transaction."},
+    {"type": "readback", "transaction_id": "tx-external-component-contract-01", "content": "The written transaction, authoring rows, relations, and resolved snapshot were reread in memory."},
+    {"type": "checkpoint", "transaction_id": "tx-external-component-contract-01", "content": "The post-readback checkpoint preserves transaction identity, confirmation hash, scenario evidence, and projection status."},
+    {"type": "projection_build_started", "content": "A projection IR was prepared from the exact in-memory snapshot."},
+    {"type": "projection_validated", "content": "The in-memory view projection passed graph and source-ID checks; deployment readiness was not claimed."}
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-external-component-contract-01",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 29
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "schema_v03_conformance": true,
+      "contract_component_exclusivity": true,
+      "product_origin_coverage": true,
+      "action_component_relations": true,
+      "graph_reachability": true,
+      "normal_path_completed": true,
+      "rejection_path_completed": true,
+      "fallback_path_completed": true,
+      "snapshot_readback": true,
+      "projection_view_readiness": true,
+      "external_mutation_absent": true
+    }
+  }
+}

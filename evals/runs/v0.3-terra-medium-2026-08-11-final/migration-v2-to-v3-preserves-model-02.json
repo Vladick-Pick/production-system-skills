@@ -1,0 +1,211 @@
+{
+  "schema_version": 1,
+  "trial_id": "migration-v2-to-v3-preserves-model-02",
+  "case_id": "migration-v2-to-v3-preserves-model",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/MIGRATION-v0.2-to-v0.3.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v0.2 уже заполнены объекты, процессы, действия, материалы, контракты, решения и история; knowledge_status содержит «гипотеза», а часть object_type — «вход/выход». Нужно перейти на v0.3."
+    },
+    {
+      "role": "assistant",
+      "content": "Запускаю миграцию только в отдельной v0.3-копии in-memory fixture: исходная v0.2 останется неизменной точкой отката. Инвентаризация зафиксировала 29 листов, fingerprint исходника sha256:8b6d6fe2f1e9edc4b1975fc0df8ce2a6987d3c95df7ae2bd51ef4d6b2d006a1c, model_id=model-demo-02, working_version_id=v-02-w и current_version_id=v-02-current. Обнаружены два стоп-фактора: obj-in имеет тип «вход», obj-out — «выход»; остальные авторские значения доступны для точного переноса. Для подтверждения пакета нужен идентифицированный человек-редактор; нормализованного дубля в fixture нет.",
+      "questions": [
+        "Назовите, пожалуйста, имя и фамилию человека, который будет подтверждать точный пакет миграции."
+      ],
+      "active_question_id": "q-editor-001"
+    },
+    {
+      "role": "user",
+      "content": "Ирина Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "Ирина Смирнова идентифицирована в детерминированной fixture как performer_id=perf-irina-smirnova с активным назначением assignment_id=assign-model-owner; она может подтверждать изменение этой модели. Сначала нужно разрешить собственный тип первого неоднозначного объекта: направление «вход» не является типом объекта в v0.3.",
+      "questions": [
+        "Какой собственный тип v0.3 у объекта obj-in «Заявка поставщика»: объект работы, данные, документ или ресурс?"
+      ],
+      "active_question_id": "q-object-role-obj-in-002"
+    },
+    {
+      "role": "user",
+      "content": "документ"
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировано локальное семантическое решение только для obj-in: «вход» → «документ». Оно снимает стоп-фактор для этого stable ID, но не разрешает запись и не меняет source v0.2. Остался второй неоднозначный объект.",
+      "questions": [
+        "Какой собственный тип v0.3 у объекта obj-out «Реестр отгрузки»: объект работы, данные, документ или ресурс?"
+      ],
+      "active_question_id": "q-object-role-obj-out-003"
+    },
+    {
+      "role": "user",
+      "content": "данные"
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировано второе решение: obj-out «выход» → «данные». Детерминированный план migration_id=mig-v02-v03-demo-02 переносит 29 сохранённых листов в порядок 32 листов v0.3; knowledge_status «гипотеза» преобразуется в «предположение», а только два object_type преобразуются по вашим решениям. В fixture сохранены stable IDs, референты, 11 авторских строк, 2 строки истории и 1 решение; 6 служебных листов будут пересобраны, а «Отклонения», «Гипотезы» и «Эксперименты» останутся пустыми. Повторный inventory подтвердил неизменность источника. Создана отдельная target-copy-02; её sheetId и namedRangeId совпали с execution inventory. Собран один migration batch с package_hash=sha256:9c0540c4863e2750aac6ab603bf3072110f4afcde9fca4f44dffbc2370716e50. Rollback — продолжать работу в неизменённой v0.2; при несовпадении read-back миграция не принимается.",
+      "questions": [
+        "Ирина Смирнова, подтверждаете неизменённый пакет mig-v02-v03-demo-02 с hash sha256:9c0540c4863e2750aac6ab603bf3072110f4afcde9fca4f44dffbc2370716e50 для in-memory v0.3-копии?"
+      ],
+      "active_question_id": "q-confirm-package-004"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю пакет с указанным hash."
+    },
+    {
+      "role": "assistant",
+      "content": "Подтверждённый batch применён ровно один раз только к in-memory target-copy-02. Read-back подтвердил порядок 29→32, неизменный исходный fingerprint, сохранение IDs, референтов, авторских значений, истории и решения, а также только три объявленных семантических преобразования. Новые реестры пусты; пересобранные служебные листы не содержат формульных ошибок, selectors разрешаются в v-02-w и v-02-current, а «Рабочая панель» показывает выбранный процесс. Миграция принята в fixture; внешних записей не было."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Migration runbook, both schema versions, and interview contract selected as the authoritative procedure for a v0.2 source."
+    },
+    {
+      "type": "read_only_check",
+      "content": "Trial constrained all workbook activity to an in-memory source and target; no live external write is allowed."
+    },
+    {
+      "type": "source_inventory",
+      "content": "Inventory recorded the v0.2 source, 29 sheets, model and version selectors, authoring counts, source revision, and backup locator."
+    },
+    {
+      "type": "source_fingerprint_verified",
+      "content": "Initial v0.2 source fingerprint sha256:8b6d6fe2f1e9edc4b1975fc0df8ce2a6987d3c95df7ae2bd51ef4d6b2d006a1c was recorded."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "The v0.2 builder fingerprint and exact 29-sheet order matched the deterministic fixture."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "Source revision was stable at inventory; no conflicting stable-ID revisions were present."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "working_version_id=v-02-w and current_version_id=v-02-current were resolved together with their selectors."
+    },
+    {
+      "type": "editor_identified",
+      "content": "The simulator supplied the confirming human's name and surname: Ирина Смирнова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Normalized-name lookup resolved performer_id=perf-irina-smirnova and active assignment_id=assign-model-owner without creating a duplicate."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Asked one role-resolution question for obj-in; the answer selected «документ»."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Asked one role-resolution question for obj-out; the answer selected «данные»."
+    },
+    {
+      "type": "ambiguous_object_roles_resolved",
+      "content": "Recorded semantic resolutions obj-in: вход→документ and obj-out: выход→данные; no other object values changed."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "Confirmed exactly the declared migrations: гипотеза→предположение and the two recorded object-role resolutions."
+    },
+    {
+      "type": "authoring_values_preserved",
+      "content": "Migration plan preserved all userEnteredValue authoring cells, stable IDs, references, decision, and history except declared transformations."
+    },
+    {
+      "type": "new_registries_empty",
+      "content": "Plan created empty Отклонения, Гипотезы, and Эксперименты registries and did not invent historical records."
+    },
+    {
+      "type": "migration_plan_built",
+      "content": "Built deterministic migration_id=mig-v02-v03-demo-02 with target order of 32 sheets and preservation fingerprints."
+    },
+    {
+      "type": "source_fingerprint_verified",
+      "content": "Repeat read-only inventory before copy matched the initial source fingerprint."
+    },
+    {
+      "type": "full_version_copy",
+      "content": "Created isolated in-memory target-copy-02 from the v0.2 source; the source itself was not modified."
+    },
+    {
+      "type": "target_copy_verified",
+      "content": "Target sheetId and namedRangeId inventory matched the execution inventory before batch construction."
+    },
+    {
+      "type": "migration_batch_built",
+      "content": "Built one deterministic batch for target-copy-02 with sparse restores that preserve formulas and calculated version IDs."
+    },
+    {
+      "type": "draft_package",
+      "package_hash": "sha256:9c0540c4863e2750aac6ab603bf3072110f4afcde9fca4f44dffbc2370716e50",
+      "content": "Displayed the exact migration package, stop-gates, verification, and rollback before confirmation."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "sha256:9c0540c4863e2750aac6ab603bf3072110f4afcde9fca4f44dffbc2370716e50",
+      "performer_type": "человек",
+      "confirmed_by": "Ирина Смирнова",
+      "content": "The identified human confirmed the unchanged package."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-mig-v02-v03-demo-02",
+      "content": "Applied the confirmed migration batch once to the in-memory target copy only."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-mig-v02-v03-demo-02",
+      "content": "Read back the recorded migration transaction and target inventory."
+    },
+    {
+      "type": "migration_reconciliation",
+      "content": "Verified 29→32 exact order, source stability, preserved values after declared transformations, empty new registries, resolved selectors, and error-free rebuilt surfaces."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-mig-v02-v03-demo-02",
+      "content": "Saved verified checkpoint for the accepted in-memory migration; next action is none."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-mig-v02-v03-demo-02",
+        "target": "in-memory target-copy-02",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 11
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "source_schema_v02_verified": true,
+      "source_fingerprint_stable": true,
+      "target_copy_inventory_verified": true,
+      "target_order_29_to_32_verified": true,
+      "declared_semantic_migrations_only": true,
+      "authoring_values_preserved": true,
+      "new_registries_empty": true,
+      "reconciliation_passed": true,
+      "external_mutation_absent": true
+    }
+  }
+}

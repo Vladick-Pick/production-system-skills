@@ -27,14 +27,17 @@ REQUIRED_REFERENCES = {
     "references/TEMPLATE-CONTRACT.md",
     "references/PROJECTION-CONTRACT.md",
 }
-PUBLIC_TEMPLATE_ID = "1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k"
+PUBLIC_TEMPLATE_ID = "1W9u-t5a4Uuj2pCBLtia3E60qUHn5ZjeFiicNTCv6fR0"
+ROLLBACK_TEMPLATE_ID = "1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k"
 TEMPLATE_MANIFEST = ROOT / "templates" / "template-manifest.yaml"
-TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.2.xlsx"
+TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.3.xlsx"
+ROLLBACK_TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.2.xlsx"
 TEMPLATE_SCHEMA_V2 = ROOT / "templates" / "template-schema-v0.2.json"
 TEMPLATE_SCHEMA_V3 = ROOT / "templates" / "template-schema-v0.3.json"
-TEMPLATE_REVIEW_V3 = ROOT / "outputs" / "v0.3-review" / "production-system-model-template-v0.3-review.xlsx"
 MIGRATION_V1_TO_V2 = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
 MIGRATION_V2_TO_V3 = ROOT / "templates" / "migrations" / "v0.2-to-v0.3.md"
+BEHAVIORAL_CASES = ROOT / "evals" / "cases.yaml"
+FRESH_AGENT_CONTRACT = ROOT / "evals" / "FRESH-AGENT-CONTRACT.md"
 EXPECTED_V2_SHEETS = (
     "Инструкция",
     "Система",
@@ -234,18 +237,21 @@ def validate_template(errors: list[str]) -> None:
     if not TEMPLATE_SNAPSHOT.is_file():
         errors.append("нет версионного XLSX-снимка шаблона")
         return
+    if not ROLLBACK_TEMPLATE_SNAPSHOT.is_file():
+        errors.append("нет rollback XLSX-снимка v0.2")
+        return
 
     manifest = TEMPLATE_MANIFEST.read_text(encoding="utf-8")
     if manifest_value(manifest, "spreadsheet_id") != PUBLIC_TEMPLATE_ID:
         errors.append("template-manifest.yaml содержит неожиданный spreadsheet_id")
 
-    if manifest_value(manifest, "version") != "0.2":
-        errors.append("template-manifest.yaml должен объявлять текущую версию 0.2")
+    if manifest_value(manifest, "version") != "0.3":
+        errors.append("template-manifest.yaml должен объявлять текущую версию 0.3")
     if manifest_value(manifest, "access_observed") != "anyone_with_link_reader":
         errors.append("template-manifest.yaml должен фиксировать публичный доступ reader")
 
     declared_snapshot = manifest_value(manifest, "snapshot")
-    if declared_snapshot != "templates/production-system-model-template-v0.2.xlsx":
+    if declared_snapshot != "templates/production-system-model-template-v0.3.xlsx":
         errors.append("template-manifest.yaml содержит неожиданный путь snapshot")
 
     expected_sha = manifest_value(manifest, "sha256")
@@ -281,74 +287,54 @@ def validate_template(errors: list[str]) -> None:
     sheet_names = tuple(
         node.attrib["name"] for node in root.findall(f".//{namespace}sheet")
     )
-    if sheet_names != EXPECTED_V2_SHEETS:
+    if sheet_names != EXPECTED_V3_SHEETS:
         errors.append(
             "состав или порядок листов XLSX не совпадает с контрактом; "
             f"найдено {list(sheet_names)}"
         )
     defined_names = root.findall(f".//{namespace}definedName")
-    if len(defined_names) < 40:
-        errors.append("XLSX v0.2 не содержит полный набор enum/selector named ranges")
+    worksheet_roots = [ElementTree.fromstring(value) for value in worksheet_xml]
+    formula_count = sum(len(node.findall(f".//{namespace}f")) for node in worksheet_roots)
+    validation_count = sum(
+        len(node.findall(f".//{namespace}dataValidation")) for node in worksheet_roots
+    )
+    conditional_count = sum(
+        len(node.findall(f".//{namespace}conditionalFormatting")) for node in worksheet_roots
+    )
     combined = b"\n".join(worksheet_xml)
-    if combined.count(b"<f") < 100:
-        errors.append("XLSX v0.2 не содержит ожидаемые физические formulas")
-    if combined.count(b"<dataValidation") < 20:
-        errors.append("XLSX v0.2 не содержит ожидаемые dropdown validations")
-    conditional_count = combined.count(b"<conditionalFormatting")
+    if len(defined_names) < 100:
+        errors.append("XLSX v0.3 не содержит полный набор enum/selector named ranges")
+    if formula_count < 1000:
+        errors.append("XLSX v0.3 не содержит ожидаемые физические formulas")
+    if validation_count < 100:
+        errors.append("XLSX v0.3 не содержит ожидаемые dropdown validations")
     if conditional_count != 1:
         errors.append(
-            "XLSX v0.2 должен содержать ровно одно conditional formatting: "
+            "XLSX v0.3 должен содержать ровно одно conditional formatting: "
             "критические ошибки на листе Проверки, без красной заливки рабочих строк"
         )
     if b"#REF!" in combined:
-        errors.append("XLSX v0.2 содержит формулу или диапазон с #REF!")
+        errors.append("XLSX v0.3 содержит формулу или диапазон с #REF!")
 
-    candidate_markers = (
-        'candidate:',
-        '  version: "0.3"',
-        '  status: local_release_candidate',
-        '  schema: templates/template-schema-v0.3.json',
-        '  builder: scripts/build_template_v0_3.py',
-        '  migration: templates/migrations/v0.2-to-v0.3.md',
-        '  review_artifact: outputs/v0.3-review/production-system-model-template-v0.3-review.xlsx',
-        '  publication: pending_owner_acceptance_and_release_gate',
-        '  sheet_count: 32',
+    release_markers = (
+        'schema: templates/template-schema-v0.3.json',
+        'base_schema: templates/template-schema-v0.2.json',
+        'builder: scripts/build_template_v0_3.py',
+        'migration: templates/migrations/v0.2-to-v0.3.md',
+        'sheet_count: 32',
+        'rollback:',
+        '  version: "0.2"',
+        f'  spreadsheet_id: {ROLLBACK_TEMPLATE_ID}',
+        '  snapshot: templates/production-system-model-template-v0.2.xlsx',
     )
-    for marker in candidate_markers:
+    for marker in release_markers:
         if marker not in manifest:
-            errors.append(f"template-manifest.yaml: отсутствует marker release candidate {marker!r}")
-    if not TEMPLATE_REVIEW_V3.is_file() or not zipfile.is_zipfile(TEMPLATE_REVIEW_V3):
-        errors.append("нет корректного локального XLSX review-артефакта v0.3")
-    else:
-        with zipfile.ZipFile(TEMPLATE_REVIEW_V3) as archive:
-            review_workbook = ElementTree.fromstring(archive.read("xl/workbook.xml"))
-            review_worksheet_xml = [
-                archive.read(name)
-                for name in archive.namelist()
-                if re.fullmatch(r"xl/worksheets/sheet\d+\.xml", name)
-            ]
-        review_names = tuple(
-            node.attrib["name"]
-            for node in review_workbook.findall(f".//{namespace}sheet")
-        )
-        if review_names != EXPECTED_V3_SHEETS:
-            errors.append("локальный XLSX review-артефакт не содержит точный порядок 32 листов v0.3")
-        review_roots = [ElementTree.fromstring(value) for value in review_worksheet_xml]
-        review_defined_names = review_workbook.findall(f".//{namespace}definedName")
-        review_formula_count = sum(len(root.findall(f".//{namespace}f")) for root in review_roots)
-        review_validation_count = sum(len(root.findall(f".//{namespace}dataValidation")) for root in review_roots)
-        review_conditional_count = sum(len(root.findall(f".//{namespace}conditionalFormatting")) for root in review_roots)
-        review_combined = b"\n".join(review_worksheet_xml)
-        if len(review_defined_names) < 40:
-            errors.append("локальный XLSX v0.3 не содержит enum и selector named ranges")
-        if review_formula_count < 4:
-            errors.append("локальный XLSX v0.3 остаётся статическим: нет ожидаемых formulas")
-        if review_validation_count < 15:
-            errors.append("локальный XLSX v0.3 не содержит dropdown validations новых реестров")
-        if review_conditional_count != 1:
-            errors.append("локальный XLSX v0.3 должен иметь одно красное правило только для ERROR")
-        if b"#REF!" in review_combined:
-            errors.append("локальный XLSX v0.3 содержит #REF!")
+            errors.append(f"template-manifest.yaml: отсутствует marker релиза {marker!r}")
+
+    rollback_expected_sha = "f80d79722fa34a0759050d8aa5b5d8de587c94f326804e89aa077d7c9c37ba9e"
+    rollback_actual_sha = hashlib.sha256(ROLLBACK_TEMPLATE_SNAPSHOT.read_bytes()).hexdigest()
+    if rollback_actual_sha != rollback_expected_sha or f"  sha256: {rollback_expected_sha}" not in manifest:
+        errors.append("rollback XLSX v0.2 или его manifest sha256 изменён")
 
 
 def validate_v2_schema(errors: list[str]) -> None:
@@ -592,6 +578,16 @@ def validate_version_lifecycle(errors: list[str]) -> None:
         return
 
     language = language_path.read_text(encoding="utf-8")
+    if "### Продукт производственной системы" in language:
+        errors.append("LANGUAGE.md не должен ограничивать реестр продуктов только выходами внутренней системы")
+    for marker in (
+        "как выходные продукты внутренних производственных систем, так и входящие продукты внешних поставщиков",
+        "`целевая` — предлагаемое или предписываемое будущее устройство",
+    ):
+        if marker not in language:
+            errors.append(f"LANGUAGE.md не содержит принятую семантическую формулировку: {marker}")
+    if "`целевая` — принятую будущую норму" in language:
+        errors.append("LANGUAGE.md смешивает целевой слой с принятием версии")
     status_section = re.search(
         r"^### Статус версии\n(?P<body>.*?)^### Слой модели и статус версии",
         language,
@@ -691,6 +687,48 @@ def validate_migration_contract(errors: list[str]) -> None:
             errors.append(f"v0.2-to-v0.3.md: отсутствует migration marker {marker!r}")
 
 
+def validate_fresh_agent_contract(errors: list[str]) -> None:
+    if not BEHAVIORAL_CASES.is_file() or not FRESH_AGENT_CONTRACT.is_file():
+        errors.append("нет cases.yaml или общего FRESH-AGENT-CONTRACT.md")
+        return
+    cases_text = BEHAVIORAL_CASES.read_text(encoding="utf-8")
+    expected_events: set[str] = set()
+    for body in re.findall(
+        r"^    (?:required_events|forbidden_events): \[(.*?)\]$",
+        cases_text,
+        re.MULTILINE,
+    ):
+        expected_events.update(item.strip() for item in body.split(",") if item.strip())
+    contract_text = FRESH_AGENT_CONTRACT.read_text(encoding="utf-8")
+    vocabulary = re.search(
+        r"^## Канонические типы событий\n\n~~~text\n(?P<body>.*?)\n~~~$",
+        contract_text,
+        re.MULTILINE | re.DOTALL,
+    )
+    if not vocabulary:
+        errors.append("FRESH-AGENT-CONTRACT.md не содержит канонический словарь событий")
+        return
+    contract_events = {
+        line.strip()
+        for line in vocabulary.group("body").splitlines()
+        if line.strip()
+    }
+    missing = expected_events - contract_events
+    if missing:
+        errors.append(
+            "FRESH-AGENT-CONTRACT.md не покрывает события cases.yaml: "
+            f"{sorted(missing)}"
+        )
+    for marker in (
+        '"provenance": "fresh_agent"',
+        '"external_mutations": []',
+        "не читает `cases.yaml`, `rubric.yaml`",
+        "не переписывает transcript, события или outcome",
+    ):
+        if marker not in contract_text:
+            errors.append(f"FRESH-AGENT-CONTRACT.md: отсутствует marker {marker!r}")
+
+
 def validate() -> list[str]:
     errors: list[str] = []
     skills_root = ROOT / "skills"
@@ -711,6 +749,7 @@ def validate() -> list[str]:
     validate_template(errors)
     validate_v2_schema(errors)
     validate_v3_schema(errors)
+    validate_fresh_agent_contract(errors)
 
     for name in sorted(EXPECTED_SKILLS):
         skill_dir = skills_root / name
@@ -839,20 +878,19 @@ def validate() -> list[str]:
             f"skill-package.yaml перечисляет {sorted(listed)}, ожидалось {sorted(EXPECTED_SKILLS)}"
         )
     package_snapshot = re.search(r"^\s{2}snapshot:\s*([^\n]+)$", manifest, re.MULTILINE)
-    if not package_snapshot or package_snapshot.group(1).strip().strip("\"'") != "templates/production-system-model-template-v0.2.xlsx":
-        errors.append("skill-package.yaml должен ссылаться на текущий XLSX v0.2")
+    if not package_snapshot or package_snapshot.group(1).strip().strip("\"'") != "templates/production-system-model-template-v0.3.xlsx":
+        errors.append("skill-package.yaml должен ссылаться на текущий XLSX v0.3")
     package_markers = (
-        'version: "0.3.0-rc.1"',
+        'version: "0.3.0"',
         'template_schema_base: templates/template-schema-v0.2.json',
         'template_schema_overlay: templates/template-schema-v0.3.json',
-        'published_version: "0.2"',
-        'candidate_version: "0.3"',
-        'candidate_status: local_release_candidate',
+        'published_version: "0.3"',
         'migration_v2_to_v3: templates/migrations/v0.2-to-v0.3.md',
+        'rollback_version: "0.2"',
     )
     for marker in package_markers:
         if marker not in manifest:
-            errors.append(f"skill-package.yaml: отсутствует marker release candidate {marker!r}")
+            errors.append(f"skill-package.yaml: отсутствует marker релиза {marker!r}")
     if "identified_assigned_human:" in manifest:
         errors.append("skill-package.yaml не должен трактовать assignment как permission")
     if "assignment: фиксирует атрибуцию, но не является permission или RBAC" not in manifest:
@@ -876,7 +914,10 @@ def validate() -> list[str]:
             r"docs\.google\.com/(document|spreadsheets)/d/([A-Za-z0-9_-]+)", text
         ):
             document_type, document_id = match.groups()
-            if document_type == "spreadsheets" and document_id == PUBLIC_TEMPLATE_ID:
+            if document_type == "spreadsheets" and document_id in {
+                PUBLIC_TEMPLATE_ID,
+                ROLLBACK_TEMPLATE_ID,
+            }:
                 continue
             errors.append(
                 f"{relative}: обнаружена Google-ссылка вне публичного шаблона"
@@ -900,7 +941,7 @@ def main() -> int:
 
     print("[OK] Ровно 4 скилла")
     print("[OK] Frontmatter, UI-метаданные и общие references согласованы")
-    print("[OK] Публичные Google Sheets и XLSX v0.2 согласованы; локальный review v0.3 содержит 32 листа")
+    print("[OK] Публичный Google Sheets и XLSX v0.3 согласованы; rollback v0.2 сохранён")
     print("[OK] TODO, битые относительные ссылки и типовые секреты не найдены")
     return 0
 

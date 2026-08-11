@@ -1,0 +1,208 @@
+{
+  "schema_version": 1,
+  "trial_id": "interview-confirm-commit-03",
+  "case_id": "interview-confirm-commit",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/LANGUAGE.md",
+    "skills/model-production-system/references/METAONTOLOGY.md",
+    "skills/model-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "templates/template-manifest.yaml",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Хочу описать новый процесс ремонта бытовой техники. Клиент приносит неисправную стиральную машину, диспетчер принимает её, мастер диагностирует и ремонтирует; затем клиент проверяет работу, оплачивает и забирает машину."
+    },
+    {
+      "role": "user",
+      "content": "Если ремонт невозможен, мастер оформляет мотивированный отказ, и клиент забирает машину без ремонта."
+    },
+    {
+      "role": "assistant",
+      "content": "Начинаю первичную сборку в режиме write на безопасном in-memory fixture модели model-repair-01, schema v0.3: current_version_id отсутствует, working_version_id ver-repair-01 остаётся черновиком. Записи пока не выполняю. Верно ли, что принимаемый продукт — «отремонтированная стиральная машина», а мотивированный отказ — отдельный конечный исход процесса, а не второй продукт?",
+      "questions": ["Верно ли это различение продукта и исхода?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Локально зафиксировал: «да» подтвердило только различение продукта и отказа; права на запись оно не даёт. Верно ли, что граница модели — внутренний сервисный центр, а клиент остаётся внешним контрагентом и не моделируется отдельной производственной системой?",
+      "questions": ["Подтверждаете границу модели?"],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Локально зафиксировал границу. Назовите, пожалуйста, имя и фамилию человека, который работает с этой моделью и будет подтверждать пакет записи.",
+      "questions": ["Кто подтверждающий редактор?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "В fixture нет исполнителя с нормализованным ФИО «Анна Смирнова», поэтому нового человека включу в пакет, но пока ничего не создаю. Какова её устойчивая позиция в этой системе?",
+      "questions": ["Какова позиция Анны Смирновой?"],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Операционный менеджер."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировал редактора и новую позицию для атрибуции будущего решения. Верно ли, что сама стиральная машина сохраняет идентичность во всём процессе, меняя состояния «принята», «диагностируется», «в ремонте», «готова к выдаче», «выдана» или «отказ оформлен»?",
+      "questions": ["Подтверждаете один объект работы и его состояния?"],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Локально зафиксировал жизненный цикл объекта. Опишите одно действие каждого участника и условия ветвления: кто принимает машину, кто принимает решение о ремонтопригодности, кто выполняет ремонт и кто передаёт результат клиенту.",
+      "questions": ["Каковы ответственные действия и решение?"],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Диспетчер принимает машину и оформляет акт. Мастер диагностирует и принимает решение: ремонтировать или отказать. Если ремонтировать, мастер ремонтирует и отмечает готовность. Диспетчер выдаёт машину; клиент проверяет работу, оплачивает и подписывает акт выдачи."
+    },
+    {
+      "role": "assistant",
+      "content": "Связал действия с позициями «Диспетчер» и «Мастер», а решение — с мастером. Верно ли, что приёмка продукта происходит только после проверки клиентом, оплаты и подписанного акта выдачи; при отказе достаточны причина отказа и возврат машины клиенту?",
+      "questions": ["Подтверждаете критерии приёмки и отказа?"],
+      "active_question_id": "q-007"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Локально зафиксировал acceptance и мотивированный отказ. Верно ли, что закупка запчастей и договоры с поставщиками не входят в этот первичный контур: материалы могут быть использованы мастером, но новых контрагентов, контрактов, позиций контрактов и интерфейсов передачи в пакет не добавляем?",
+      "questions": ["Подтверждаете исключение закупочного контура?"],
+      "active_question_id": "q-008"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Локально зафиксировал только исключение закупочного контура. Верно ли, что входная передача от клиента оформляется актом приёма в приёмной, а выходная передача — актом выдачи после проверки, оплаты и подписи клиента; отказ возвращает ту же машину с зафиксированной причиной?",
+      "questions": ["Подтверждаете интерфейсы передачи и fallback?"],
+      "active_question_id": "q-009"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Все зависимости собраны. Источник фактов в fixture — интервью с владельцем от 11.08.2026; статус знания строк — «принято». Показываю полный неизменяемый пакет pkg-repair-01.\n\nГраница: внутренняя система «Сервисный центр»; клиент — контрагент; закупка запчастей исключена. Рабочая версия ver-repair-01 — единственный черновик без предшественника и без действующей версии.\n\nАтрибуция: создать performer-anna-smirnova «Анна Смирнова» (человек), position-operations-manager «Операционный менеджер» и assignment-anna-operations-manager с active_from 11.08.2026. Создать также устойчивые позиции position-dispatcher «Диспетчер» и position-technician «Мастер».\n\nПрименить в рабочей версии: system-service-center; product-repaired-washing-machine; object-washing-machine; состояния state-accepted, state-diagnosing, state-repairing, state-ready-for-handover, state-issued, state-refusal-issued; process-repair-washing-machine; действия action-accept, action-diagnose, action-repairability-decision, action-repair, action-mark-ready, action-handover, action-client-acceptance-payment, action-refusal-and-return; edges start→accept→diagnose→decision, decision→repair или refusal-and-return, repair→mark-ready→handover→client-acceptance-payment→end; переходы состояний, включая ветку отказа. Добавить counterparty-client, interface-intake-act и interface-handover-act, связывающие акты с конкретными действиями и приёмкой/отказом. Создать source-owner-interview-2026-08-11. Не добавлять материалы, контракты, позиции контрактов, внешние системы или реестры развития.\n\nПо 32-листовой schema: authoring-операции «применить» только на листах Источники, Исполнители, Позиции, Назначения, Контрагенты, Продукты, Процессы, Действия, Связи действий, Объекты, Состояния, Переходы, Интерфейсы передачи и Связи модели; создать одну append-only строку Решения и связанные строки Изменения модели; пересобрать Срез модели, Проверки, Реестр процессов, Рабочую панель, BPMN/SVG. Для остальных листов авторских операций нет.\n\nПроверки после записи: schema/FK/selectors, один черновик, достижимость обеих веток, ownership состояний, normal path до принятия, отказ с возвратом и возврат на доработку после неприёмки. Проекция готова к просмотру; deployment readiness заблокирована отсутствием Camunda form/binding evidence. Recovery: до повторной записи искать transaction_id в Решения, Изменения модели и authoring rows. package_hash: 42a134dfb3d0d6defa8133b74c9dba4c16b877352248a2148a92270957031c4a.\n\nПодтверждаете запись показанного пакета pkg-repair-01 в черновик модели?",
+      "questions": ["Подтверждаете запись показанного полного пакета?"],
+      "active_question_id": "q-010"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись показанного пакета pkg-repair-01 в черновик модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Подтверждение Анны Смирновой относится к показанному неизменному пакету pkg-repair-01. Выполнил одну in-memory transaction txn-repair-01: сначала исполнитель и назначения, затем решение с package_hash, authoring-операции, журнал изменений и вычисляемый срез/представления. Внешние системы не изменялись. Readback совпал с пакетом: 1 решение, 22 строки изменений и 29 модельных строк; все FK, selectors, единственный черновик, граф и три сценария проверены. Сохранён checkpoint verified с transaction_id txn-repair-01; следующий шаг — передать дальнейшие изменения в maintain-production-system.",
+      "questions": [],
+      "active_question_id": null
+    }
+  ],
+  "events": [
+    {"type": "source_authority_resolved", "content": "Факты получены из синтетического интервью владельца; нормативные правила — из bundled references."},
+    {"type": "source_inventory", "content": "Зафиксирован source-owner-interview-2026-08-11 с локатором «интервью владельца, 11.08.2026» для будущей transaction."},
+    {"type": "snapshot_resolved", "content": "Разрешён безопасный пустой in-memory fixture модели model-repair-01, schema v0.3."},
+    {"type": "base_version_resolved", "content": "working_version_id=ver-repair-01, status=черновик; current_version_id отсутствует."},
+    {"type": "decisive_question", "content": "q-001 различил принимаемый продукт и terminal outcome отказа."},
+    {"type": "product_identity_test", "content": "Отремонтированная машина является продуктом с отдельной приёмкой; мотивированный отказ — не продукт."},
+    {"type": "checkpoint", "content": "После q-001 сохранён resolve checkpoint без разрешения записи."},
+    {"type": "decisive_question", "content": "q-002 установил границу внутренней системы и внешнего контрагента."},
+    {"type": "counterparty_resolved", "content": "Клиент — внешний контрагент; его производственная система не моделируется."},
+    {"type": "checkpoint", "content": "После q-002 сохранён resolve checkpoint."},
+    {"type": "decisive_question", "content": "q-003 запросил идентификацию подтверждающего редактора."},
+    {"type": "editor_identified", "content": "Получены имя и фамилия: Анна Смирнова."},
+    {"type": "performer_lookup", "content": "Поиск нормализованного ФИО в fixture не нашёл существующего исполнителя."},
+    {"type": "checkpoint", "content": "После q-003 сохранён resolve checkpoint."},
+    {"type": "decisive_question", "content": "q-004 установил устойчивую позицию редактора."},
+    {"type": "position_resolved", "content": "Анна Смирнова будет создана с назначением на позицию «Операционный менеджер» в подтверждённой transaction."},
+    {"type": "checkpoint", "content": "После q-004 сохранён resolve checkpoint."},
+    {"type": "decisive_question", "content": "q-005 разрешил идентичность объекта и конечные состояния."},
+    {"type": "identity_test", "content": "Стиральная машина сохраняет один stable ID во всех состояниях процесса."},
+    {"type": "checkpoint", "content": "После q-005 сохранён resolve checkpoint."},
+    {"type": "decisive_question", "content": "q-006 установил действия, позиции и развилку ремонт/отказ."},
+    {"type": "relation_resolved", "content": "Действия связаны с диспетчером или мастером; решение о ремонтопригодности закреплено за мастером."},
+    {"type": "checkpoint", "content": "После q-006 сохранён resolve checkpoint."},
+    {"type": "decisive_question", "content": "q-007 установил приёмку продукта и мотивированный отказ."},
+    {"type": "consumer_actions_linked", "content": "Проверка, оплата и подпись клиента связаны с действием client-acceptance-payment."},
+    {"type": "checkpoint", "content": "После q-007 сохранён resolve checkpoint."},
+    {"type": "decisive_question", "content": "q-008 исключил закупочный контур и его contract dependencies."},
+    {"type": "scope_checked", "content": "Контракты, поставщики и закупка не входят в первичную модель."},
+    {"type": "checkpoint", "content": "После q-008 сохранён resolve checkpoint."},
+    {"type": "decisive_question", "content": "q-009 установил intake/handover interfaces и fallback отказа."},
+    {"type": "transfer_interface_resolved", "content": "Акт приёма и акт выдачи определяют триггер, канал, пакет, приёмку, отказ и возврат машины."},
+    {"type": "checkpoint", "content": "После q-009 сохранён resolve checkpoint."},
+    {"type": "snapshot_v1", "content": "До подтверждения материализован пустой effective snapshot ver-repair-01 и проверены его pointers."},
+    {"type": "snapshot_v2", "content": "До подтверждения материализован predicted snapshot из планируемых sparse операций; проверены FK, граф и три сценария."},
+    {"type": "draft_package", "package_id": "pkg-repair-01", "package_hash": "42a134dfb3d0d6defa8133b74c9dba4c16b877352248a2148a92270957031c4a", "content": "Показан точный полный mutation package без критических конфликтов."},
+    {"type": "exact_package_confirmation", "package_id": "pkg-repair-01", "package_hash": "42a134dfb3d0d6defa8133b74c9dba4c16b877352248a2148a92270957031c4a", "performer_type": "человек", "confirmed_by": "Анна Смирнова", "content": "Анна Смирнова явно подтвердила запись непосредственно после показа неизменного пакета."},
+    {"type": "sparse_apply", "transaction_id": "txn-repair-01", "content": "In-memory применены все авторские строки пакета с version_operation=применить."},
+    {"type": "model_write", "transaction_id": "txn-repair-01", "content": "Одна идемпотентная in-memory transaction создала исполнителя, назначения, решение, authoring rows, журнал изменений и вычисляемые представления."},
+    {"type": "projection_build_started", "transaction_id": "txn-repair-01", "content": "Из точного in-memory snapshot собран projection IR для процесса ремонта."},
+    {"type": "projection_validated", "transaction_id": "txn-repair-01", "content": "BPMN/SVG согласованы с одним IR; view readiness подтверждена, deployment readiness остаётся заблокированной внешними evidence."},
+    {"type": "readback", "transaction_id": "txn-repair-01", "content": "Перечитана именно transaction txn-repair-01; решение, 22 change rows, 29 model rows и snapshot совпали с пакетом."},
+    {"type": "checkpoint", "transaction_id": "txn-repair-01", "content": "Сохранён verified checkpoint: write_state=verified, active_question=null, next_action=handoff в maintain-production-system."}
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-repair-01",
+        "target": "in-memory fixture model-repair-01",
+        "decision_rows": 1,
+        "change_rows": 22,
+        "model_rows": 29
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "json_contract_syntax": true,
+      "schema_v0_3": true,
+      "foreign_keys": true,
+      "selectors": true,
+      "single_draft": true,
+      "graph_reachability": true,
+      "branch_completeness": true,
+      "state_ownership": true,
+      "normal_path": true,
+      "refusal_path": true,
+      "rework_path": true,
+      "readback_matches_package": true
+    }
+  }
+}

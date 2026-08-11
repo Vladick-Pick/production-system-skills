@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-01",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/maintain-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Новый человек просит изменить модель; его нет в реестре исполнителей."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверяю новое изменение в режиме proposal. В реестре исполнителей вашей записи нет; регистрацию и назначение можно будет включить только в первый подтверждённый пакет изменения. Какова ваша позиция в модели?",
+      "questions": [
+        "Какова ваша позиция в модели?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Позиция не определена; других сведений о человеке симулятор не предоставляет."
+    },
+    {
+      "role": "assistant",
+      "content": "Работа остановлена как blocker: без позиции нельзя установить активное назначение нового исполнителя и включить его регистрацию в первый подтверждённый пакет. Исполнитель, назначение, версия и само изменение не записывались."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "The isolated in-memory fixture is the authoritative source for the performer registry and scenario facts."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "The in-memory performer registry contains no record for the requesting person."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "The position determines whether a new performer can receive an assignment in the first confirmed mutation package."
+    },
+    {
+      "type": "uncertainty_reported",
+      "content": "The simulator supplied no position or other identifying information, so no performer or assignment can be prepared without invention."
+    }
+  ],
+  "outcome": {
+    "status": "blocked",
+    "blocker": "The requesting person's position and identity are unavailable in the isolated fixture; registration and assignment require those facts in a confirmed mutation package.",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "performer_registry_checked": true
+    }
+  }
+}

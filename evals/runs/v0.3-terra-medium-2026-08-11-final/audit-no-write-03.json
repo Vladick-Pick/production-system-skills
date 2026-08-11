@@ -1,0 +1,243 @@
+{
+  "schema_version": 1,
+  "trial_id": "audit-no-write-03",
+  "case_id": "audit-no-write",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/audit-production-system/SKILL.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
+    "references/INTERVIEW-CONTRACT.md",
+    "references/TEMPLATE-CONTRACT.md",
+    "references/PROJECTION-CONTRACT.md",
+    "skills/audit-production-system/references/LANGUAGE.md",
+    "skills/audit-production-system/references/METAONTOLOGY.md",
+    "skills/audit-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/audit-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/audit-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь просит оценить модель и объяснить, что не так."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы не смешать версии, назовите модель, версию, snapshot fingerprint и build, которые нужно проверить.",
+      "questions": [
+        "Каковы model_id, version_id, snapshot_fingerprint и projection_build_id проверяемого среза?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Детерминированный fixture: model_id=model-demo-001; version_id=v0.3-demo-02, status=действует, predecessor=v0.3-demo-01; snapshot_fingerprint=sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; projection_build_id=build-demo-02. В книге 31 лист вместо 32; у product-lead-a нет внутреннего производителя и позиции внешнего контракта; object-lead и object-qualified-lead ссылаются на одну CRM-карточку и сохраняют одну историю; action-qualify-lead не имеет наблюдаемого выхода и исходящей связи. Manifest build-demo-02 содержит fingerprint sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb, а SVG — sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa. Журнал CRM и интервью для фактического исполнения не предоставлены."
+    },
+    {
+      "role": "assistant",
+      "content": "Read-only аудит завершён. Версия и срез идентифицированы, но модель не готова к просмотру и тем более к вводу. Evidence ledger: (1) fixture inventory: 31 лист при ожидаемых 32, проверка count=31; (2) product-lead-a: нет ни внутреннего производителя, ни позиции контракта, хотя у продукта должно быть явное происхождение; (3) object-lead/object-qualified-lead: одна CRM-идентичность и непрерывная история, поэтому без доказательства самостоятельного жизненного цикла это объект и его состояние, а не два объекта; (4) action-qualify-lead: нет наблюдаемого выхода и исходящей связи, поэтому путь не исполним; (5) build-demo-02: manifest и SVG относятся к разным fingerprints, следовательно projection lineage не доказан. Оценка трёх поверхностей: каноническая модель — 1/5, исполнение — 0/5 (доказательств нет), BPMN/SVG-проекция — 0/5. Findings: F-001 critical — fingerprint build-demo-02 не совпадает с проверяемым snapshot; F-002 high — структура книги неполна; F-003 high — продукт без происхождения; F-004 high — действие без выхода и пути; F-005 medium — вероятно смешаны объект и состояние. Неопределённость: без CRM-лога или наблюдения нельзя утверждать, что живое исполнение расходится с моделью. Handoff: resolve-model-element для F-005; maintain-production-system для подтверждённого исправления F-001–F-004. Ничего не записывал и не менял."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Fixture named the canonical model, version, predecessor, resolved snapshot fingerprint, and projection build; the skill references are the audit contract authority."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "The requested identifiers were required to select one model/version/snapshot/build boundary."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Scope is model-demo-001, v0.3-demo-02, sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, build-demo-02; no mutation is in scope."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "The fixture identifies v0.3-demo-02 as действующая with predecessor v0.3-demo-01 and the stated snapshot fingerprint."
+    },
+    {
+      "type": "evidence_ledger_created",
+      "content": "Five deterministic observations were recorded with locators, observed values, expected contracts, checks, inferences, freshness, and uncertainty."
+    },
+    {
+      "type": "source_inventory",
+      "content": "Available evidence is a deterministic workbook/build fixture; CRM logs and interviews are unavailable."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "The selected snapshot fingerprint is sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; the build manifest reports sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb."
+    },
+    {
+      "type": "identity_test",
+      "content": "object-lead and object-qualified-lead retain one CRM identity and history; a separate lifecycle was not evidenced."
+    },
+    {
+      "type": "product_origin_linked",
+      "content": "Checked product-lead-a for an internal producer or external contract item; neither exists in the fixture."
+    },
+    {
+      "type": "read_only_check",
+      "content": "The audit inspected only supplied evidence and created no model, registry, projection, or external-system change."
+    },
+    {
+      "type": "lineage_verified",
+      "content": "Lineage check failed: the manifest and SVG fingerprints differ from each other and from the selected snapshot."
+    },
+    {
+      "type": "three_surfaces_scored",
+      "content": "Canonical model=1/5, factual execution=0/5 because evidence is absent, BPMN/SVG projection=0/5."
+    },
+    {
+      "type": "uncertainty_reported",
+      "content": "No factual-execution claim is made without CRM logs, interview, or observation."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "The read-only audit hands semantic identity ambiguity to resolve-model-element and confirmed repair work to maintain-production-system without creating a registry row."
+    }
+  ],
+  "outcome": {
+    "scope": {
+      "model_id": "model-demo-001",
+      "version_id": "v0.3-demo-02",
+      "snapshot_fingerprint": "sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "projection_build_id": "build-demo-02"
+    },
+    "evidence_ledger": [
+      {
+        "claim": "Workbook structure is incomplete.",
+        "source_locator": "deterministic fixture.workbook.sheet_count",
+        "observed_value": 31,
+        "check": "Compare count with v0.3 schema requirement.",
+        "expected_value": 32,
+        "inference": "A v0.3 structural contract is violated.",
+        "uncertainty": "Sheet names and column-level details were not supplied.",
+        "freshness": "fixture snapshot"
+      },
+      {
+        "claim": "product-lead-a has no explicit origin.",
+        "source_locator": "deterministic fixture.product-lead-a.origin_links",
+        "observed_value": "no internal producer and no external contract item",
+        "check": "Check for at least one permitted origin relation.",
+        "expected_value": "at least one internal, external, or mixed origin",
+        "inference": "Product lineage is incomplete.",
+        "uncertainty": "None within the fixture.",
+        "freshness": "fixture snapshot"
+      },
+      {
+        "claim": "Two object IDs may encode one object and a state.",
+        "source_locator": "deterministic fixture.object-lead/object-qualified-lead",
+        "observed_value": "one CRM identity and continuous history",
+        "check": "Apply identity/lifecycle test.",
+        "expected_value": "Separate objects require independent identity or lifecycle evidence.",
+        "inference": "Semantic ambiguity; not a proven duplicate without further evidence.",
+        "uncertainty": "A separate lifecycle was not supplied.",
+        "freshness": "fixture snapshot"
+      },
+      {
+        "claim": "action-qualify-lead is not shown as executable.",
+        "source_locator": "deterministic fixture.action-qualify-lead",
+        "observed_value": "no observable output and no outgoing edge",
+        "check": "Check action output and non-terminal reachability.",
+        "expected_value": "observable output and a path to terminal outcome",
+        "inference": "The process path has a dead end.",
+        "uncertainty": "The surrounding graph was not supplied.",
+        "freshness": "fixture snapshot"
+      },
+      {
+        "claim": "Projection lineage is stale or mixed.",
+        "source_locator": "deterministic fixture.build-demo-02.manifest/svg",
+        "observed_value": "manifest=sha256:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb; SVG=sha256:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "check": "Compare each artifact fingerprint with the selected resolved snapshot.",
+        "expected_value": "one matching fingerprint for snapshot, manifest, BPMN, and SVG",
+        "inference": "The projection cannot be accepted as a build of this snapshot.",
+        "uncertainty": "BPMN bytes and Modeler validation evidence were not supplied.",
+        "freshness": "fixture snapshot"
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "F-001",
+        "severity": "critical",
+        "affected_stable_ids": [],
+        "version_id": "v0.3-demo-02",
+        "build_id": "build-demo-02",
+        "violated_contract": "PROJECTION-CONTRACT.md: one model fingerprint across the exact snapshot and build artifacts",
+        "recommended_disposition": "Do not use this build; hand off a verified rebuild to maintain-production-system."
+      },
+      {
+        "finding_id": "F-002",
+        "severity": "high",
+        "affected_stable_ids": [],
+        "version_id": "v0.3-demo-02",
+        "build_id": null,
+        "violated_contract": "v0.3 workbook requires 32 sheets",
+        "recommended_disposition": "Restore or migrate the missing required sheet through a confirmed maintenance package."
+      },
+      {
+        "finding_id": "F-003",
+        "severity": "high",
+        "affected_stable_ids": ["product-lead-a"],
+        "version_id": "v0.3-demo-02",
+        "build_id": null,
+        "violated_contract": "LANGUAGE.md: every product has explicit origin",
+        "recommended_disposition": "Establish the actual producing system or external contract item before maintenance."
+      },
+      {
+        "finding_id": "F-004",
+        "severity": "high",
+        "affected_stable_ids": ["action-qualify-lead"],
+        "version_id": "v0.3-demo-02",
+        "build_id": null,
+        "violated_contract": "LANGUAGE.md: an action has observable output and place in the graph",
+        "recommended_disposition": "Model the observed outcome and valid next edge in a confirmed maintenance package."
+      },
+      {
+        "finding_id": "F-005",
+        "severity": "medium",
+        "affected_stable_ids": ["object-lead", "object-qualified-lead"],
+        "version_id": "v0.3-demo-02",
+        "build_id": null,
+        "violated_contract": "METAONTOLOGY.md identity and lifecycle test",
+        "recommended_disposition": "Resolve whether qualification is a state transition or a new independently identified object."
+      }
+    ],
+    "verdicts": {
+      "schema": "не пройдена",
+      "history": "не проверена: fixture does not provide revisions or transactions",
+      "semantics": "не пройдена: one material identity ambiguity and one missing product origin",
+      "execution": "не пройдена: action dead end; factual execution is unverified",
+      "contracts": "не пройдена: product-lead-a has no origin",
+      "development": "не проверена: fixture provides no registry evidence",
+      "projection": "не пройдена: mixed fingerprints"
+    },
+    "readiness": "не готова",
+    "blockers": [
+      "F-001 mixed projection fingerprints",
+      "F-002 incomplete v0.3 workbook structure",
+      "F-003 missing product origin",
+      "F-004 action path dead end"
+    ],
+    "residual_unknowns": [
+      "Actual CRM execution, interview evidence, and observation were unavailable.",
+      "BPMN XML parse and external Camunda Modeler validation were unavailable.",
+      "The missing workbook sheet and column-level impact were not identified by the fixture."
+    ],
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax": true,
+      "fresh_agent_contract_trace": true,
+      "read_only_outcome": true
+    }
+  }
+}

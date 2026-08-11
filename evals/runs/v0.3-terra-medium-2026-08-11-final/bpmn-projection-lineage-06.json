@@ -1,0 +1,246 @@
+{
+  "schema_version": 1,
+  "trial_id": "bpmn-projection-lineage-06",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Построить схему процесса с human task, automation, exclusive branch, return и timer."
+    },
+    {
+      "role": "assistant",
+      "content": "Для безопасного in-memory черновика нужен один ответ: кто подтверждает пакет и какая позиция отвечает за human task?"
+      ,"questions": [
+        "Укажите ФИО подтверждающего человека и ответственную позицию."
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Алексей Смирнов, аналитик заявок. Моделируем внутренний контур проверки заявки: человек проверяет заявку, автоматизация проверяет её по правилам; при неполных данных заявка возвращается на исправление и повторную проверку. Таймер 30 минут эскалирует просрочку."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет in-memory: система sys-intake, процесс proc-review-request, версия ver-bpmn-projection-lineage-06, lane pos-analyst; human tasks act-review-request и act-correct-request; service tasks act-automatic-check и act-escalate-timeout; exclusive gateway gateway-complete с FEEL-условием `=application.complete = true` и default-веткой возврата; boundary timer PT30M на act-review-request. Полный пакет имеет hash 6d2f26b08543bdc35f7454e0645a518cbc79f63b60cbdce3bc704e5cc202edd6."
+      ,"questions": [
+        "Подтверждаете запись именно этого полного пакета в безопасную in-memory модель?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю запись именно этого полного пакета в безопасную in-memory модель."
+    },
+    {
+      "role": "assistant",
+      "content": "In-memory transaction txn-bpmn-projection-lineage-06 записана и перечитана. Из exact effective snapshot построены BPMN, SVG и manifest с единым fingerprint. Локальная view readiness подтверждена; deployment readiness остаётся заблокированной отсутствующим внешним Modeler evidence и незаданными implementation/worker contracts. Внешних изменений нет."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Сценарий и ответы детерминированного симулятора приняты как единственный свежий источник synthetic in-memory facts; нормативным источником проекции является bundled PROJECTION-CONTRACT."
+    },
+    {
+      "type": "decisive_question",
+      "active_question_id": "q-001",
+      "content": "Запрошены подтверждающий человек и позиция, от которых зависит атрибуция transaction и lane human task."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены ФИО: Алексей Смирнов."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В synthetic in-memory fixture нормализован исполнитель perf-aleksei-smirnov."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Разрешена ответственная позиция pos-analyst (Аналитик заявок)."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Граница: внутренний контур проверки заявки; target: один процесс proc-review-request; не включены внешние pools, deployment и живые системы."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Для новой synthetic модели определена рабочая draft-версия ver-bpmn-projection-lineage-06 без внешней записи."
+    },
+    {
+      "type": "draft_package",
+      "package_hash": "6d2f26b08543bdc35f7454e0645a518cbc79f63b60cbdce3bc704e5cc202edd6",
+      "content": "Показан полный mutation package с stable IDs, графом, boundary timer PT30M, FEEL-условием true-ветки и default return-веткой."
+    },
+    {
+      "type": "decisive_question",
+      "active_question_id": "q-002",
+      "content": "Запрошено явное подтверждение точно показанного полного пакета."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "6d2f26b08543bdc35f7454e0645a518cbc79f63b60cbdce3bc704e5cc202edd6",
+      "performer_type": "человек",
+      "confirmed_by": "Алексей Смирнов",
+      "content": "Человек подтвердил именно показанный in-memory package."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-bpmn-projection-lineage-06",
+      "content": "Одна in-memory transaction добавила решения, изменения и authoring rows для системы, позиции, процесса, четырёх действий и восьми edges."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-bpmn-projection-lineage-06",
+      "content": "Перечитана именно записанная in-memory transaction и связанные stable IDs."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-bpmn-projection-lineage-06",
+      "content": "Сохранён in-memory checkpoint после readback: write complete, projection pending."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Материализован exact effective snapshot версии ver-bpmn-projection-lineage-06; canonical IR fingerprint 93a0dd8e9087b5e6081c19339c8d82f1e29cedd418896506db8627b10100b435."
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "content": "Разрешены только один pool, lane, none start/end events, user tasks, service tasks, exclusive gateway, boundary timer и sequence flows; запрещённые BPMN-элементы отсутствуют."
+    },
+    {
+      "type": "projection_build_started",
+      "content": "Начата in-memory сборка projection_build_id pb-bpmn-projection-lineage-06 из exact snapshot и одного canonical IR."
+    },
+    {
+      "type": "bpmn_generated",
+      "content": "Сгенерирован in-memory BPMN 2.0 XML с boundary timer, exclusive default flow и return sequence flow; sha256 4b2e6d8f7ac0975126e5856e8c4d9a3d3cf1ce9189c5ddd359219139415053a3."
+    },
+    {
+      "type": "svg_generated",
+      "content": "Сгенерирован in-memory SVG из того же canonical IR; sha256 10bf599968227e950b82d701a014d5876007d7d5d2172d2e61a96263b5ad7a56."
+    },
+    {
+      "type": "projection_validated",
+      "content": "Локально проверены разрешённый snapshot, достижимость start/end, исходящие flows, stable-ID resolution, XML/references/DI integrity и deterministic rebuild."
+    },
+    {
+      "type": "lineage_verified",
+      "content": "Manifest, BPMN и SVG связаны с одним process_id, version_id, projection_build_id и model_fingerprint 93a0dd8e9087b5e6081c19339c8d82f1e29cedd418896506db8627b10100b435."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-bpmn-projection-lineage-06",
+        "target": "safe in-memory model only",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 16
+      }
+    ],
+    "external_mutations": [],
+    "snapshot": {
+      "version_id": "ver-bpmn-projection-lineage-06",
+      "system_id": "sys-intake",
+      "process_id": "proc-review-request",
+      "model_fingerprint": "93a0dd8e9087b5e6081c19339c8d82f1e29cedd418896506db8627b10100b435",
+      "included_stable_ids": [
+        "sys-intake",
+        "pos-analyst",
+        "proc-review-request",
+        "act-review-request",
+        "act-automatic-check",
+        "gateway-complete",
+        "act-correct-request",
+        "boundary-timer::act-review-request::pt30m",
+        "act-escalate-timeout",
+        "edge-start-review",
+        "edge-review-auto-check",
+        "edge-auto-gateway",
+        "edge-gateway-accepted",
+        "edge-gateway-return",
+        "edge-correct-return",
+        "edge-timer-escalate",
+        "edge-escalate-end"
+      ],
+      "source_row_keys": [
+        "mem:system:1",
+        "mem:position:1",
+        "mem:process:1",
+        "mem:actions:1-4",
+        "mem:edges:1-8"
+      ]
+    },
+    "projection": {
+      "projection_build_id": "pb-bpmn-projection-lineage-06",
+      "projection_kind": "bpmn-svg",
+      "process_id": "proc-review-request",
+      "version_id": "ver-bpmn-projection-lineage-06",
+      "model_fingerprint": "93a0dd8e9087b5e6081c19339c8d82f1e29cedd418896506db8627b10100b435",
+      "generator_version": "in-memory-trial-v0.3",
+      "layout_algorithm": "deterministic-lane-layout-v1",
+      "bpmn": {
+        "generated_in_memory": true,
+        "sha256": "4b2e6d8f7ac0975126e5856e8c4d9a3d3cf1ce9189c5ddd359219139415053a3",
+        "elements": [
+          "noneStartEvent",
+          "userTask",
+          "boundaryTimerEvent",
+          "serviceTask",
+          "exclusiveGateway",
+          "userTask",
+          "serviceTask",
+          "noneEndEvent",
+          "noneEndEvent",
+          "sequenceFlow"
+        ]
+      },
+      "svg": {
+        "generated_in_memory": true,
+        "sha256": "10bf599968227e950b82d701a014d5876007d7d5d2172d2e61a96263b5ad7a56"
+      },
+      "manifest": {
+        "generated_in_memory": true,
+        "shared_model_fingerprint": "93a0dd8e9087b5e6081c19339c8d82f1e29cedd418896506db8627b10100b435",
+        "coverage": {
+          "human_task": "act-review-request",
+          "automation": "act-automatic-check",
+          "exclusive_branch": "gateway-complete",
+          "return": "edge-correct-return",
+          "timer": "boundary-timer::act-review-request::pt30m"
+        },
+        "view_readiness": "ready",
+        "deployment_readiness": "blocked"
+      }
+    },
+    "validations": {
+      "exact_snapshot_resolved": true,
+      "bpmn_allowlist_checked": true,
+      "graph_reachability_checked": true,
+      "stable_ids_resolved": true,
+      "bpmn_xml_parsed": true,
+      "bpmn_references_and_di_integrity_checked": true,
+      "svg_from_same_ir_checked": true,
+      "deterministic_rebuild_checked": true,
+      "shared_lineage_verified": true,
+      "json_syntax_checked": true
+    },
+    "readiness": {
+      "view": "ready",
+      "deployment": "blocked"
+    },
+    "blockers": [
+      "Не предоставлено внешнее evidence актуального Desktop Modeler или эквивалентного зафиксированного lint.",
+      "Для user tasks не заданы deployment-specific implementation, forms и assignments.",
+      "Для service tasks не заданы worker contracts и target Camunda version."
+    ]
+  }
+}

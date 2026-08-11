@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-01",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/maintain-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Новый человек просит изменить модель; его нет в реестре исполнителей."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала установлю редактора для атрибуции будущего решения; записи пока не будет. Назовите, пожалуйста, имя и фамилию.",
+      "questions": [
+        "Каковы ваши имя и фамилия?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Елена Соколова."
+    },
+    {
+      "role": "assistant",
+      "content": "По нормализованному ФИО «Елена Соколова» дублей в синтетическом реестре нет; регистрация будет только в подтверждённом пакете. Теперь нужна позиция для атрибуции решения.",
+      "questions": [
+        "Какую позицию в этой модели вы занимаете и с какой даты назначение активно?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Технолог процесса; назначение активно с 11.08.2026."
+    },
+    {
+      "role": "assistant",
+      "content": "Для безопасной проверки мне нужно привязать изменение к одной конкретной модели и её версиям.",
+      "questions": [
+        "Укажите модель, её рабочую и текущую версии, в которых нужно подготовить изменение."
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Синтетическая книга «Продажи демо», model_id M-DEMO-01, schema v0.3. Рабочая версия V-DEMO-03-DRAFT (черновик), её предшественник и текущая версия V-DEMO-02-ACTIVE (действует). Режим — безопасная запись только в памяти."
+    },
+    {
+      "role": "assistant",
+      "content": "Ориентация завершена: есть одна рабочая черновая версия и действующий предшественник; внешних систем я не изменяю. Опишите само изменение как одно проверяемое утверждение.",
+      "questions": [
+        "Какой элемент с каким stable ID нужно изменить, что было истинно до этого и что должно стать истинно после изменения?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "В процессе P-LEAD действие ACT-CHECK «Проверить лид» сейчас не требует записи согласия на связь. Нужно добавить к его правилу: перед квалификацией технолог фиксирует согласие на связь в карточке лида; выход действия — «лид проверен, согласие зафиксировано». Это новое целевое правило, принятое руководителем продаж, но ещё не введённое в живое исполнение."
+    },
+    {
+      "role": "assistant",
+      "content": "Это целевое изменение существующего действия, а не новый объект: идентичность лида и граница процесса сохраняются. Нужно установить критерий проверки и судьбу уже начатых экземпляров.",
+      "questions": [
+        "Какой источник подтверждает правило, как проверить его выполнение и есть ли активные экземпляры P-LEAD, для которых требуется миграция?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Источник SRC-SALES-DEC-01 — решение руководителя продаж от 11.08.2026. Проверка: в каждом новом экземпляре после действия ACT-CHECK есть поле согласия со значением «зафиксировано». Активных экземпляров P-LEAD нет; автоматическая миграция не нужна."
+    },
+    {
+      "role": "assistant",
+      "content": "Показываю полный неизменённый пакет PKG-M-DEMO-01-001: в V-DEMO-03-DRAFT зарегистрировать исполнителя PERF-ELENA-SOKOLOVA-01 и активное назначение ASN-ELENA-TECH-01 на существующую позицию POS-PROCESS-TECH; создать новую редакцию ACT-CHECK с тем же stable ID, добавив правило фиксации согласия и новый наблюдаемый выход; добавить две append-only строки «Изменения модели» для этих полей и одну строку «Решения». Прямое влияние: ACT-CHECK и проверка его выхода; производное влияние: Срез модели, Реестр процессов, Рабочая панель и BPMN/SVG P-LEAD будут пересобраны из того же snapshot. Миграция живых экземпляров: не требуется, так как их нет. Preconditions: M-DEMO-01, V-DEMO-03-DRAFT, V-DEMO-02-ACTIVE и затронутая редакция не изменились; нет transaction с будущим ID TX-M-DEMO-01-001. Проверки после записи: read-back transaction, FK исполнителя/назначения, effective snapshot, проверка правила и projection view readiness. Откат: при несовпадении read-back не объявлять успех и подготовить компенсирующую редакцию в черновике. package_hash: 56e647448abb31556209096a2470d34df6ef78c0b4769f0f9c12e96bbfcd7269.",
+      "questions": [
+        "Подтверждаете запись показанного пакета PKG-M-DEMO-01-001 в черновик модели?"
+      ],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывайте показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в безопасный in-memory fixture одной transaction TX-M-DEMO-01-001 и затем перечитан. В таблице стали доступны зарегистрированный редактор с назначением и новая черновая редакция ACT-CHECK; действующая версия не менялась. Срез и затронутые представления пересобраны из V-DEMO-03-DRAFT. Проверки package hash, transaction, внешних ключей, effective snapshot и правила фиксации согласия пройдены; внешних мутаций не было."
+    }
+  ],
+  "events": [
+    {
+      "type": "performer_lookup",
+      "content": "Normalized lookup for Елена Соколова found no duplicate performer in the in-memory fixture."
+    },
+    {
+      "type": "position_resolved",
+      "content": "The synthetic user identified the existing position POS-PROCESS-TECH and active_from 2026-08-11 for the future assignment."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Елена Соколова is the identified human editor; performer registration and assignment remain pending the confirmed package."
+    },
+    {
+      "type": "source_authority_resolved",
+      "content": "SRC-SALES-DEC-01, the 2026-08-11 sales-head decision, is the asserted source for the target rule."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "V-DEMO-02-ACTIVE is the current active base of working draft V-DEMO-03-DRAFT."
+    },
+    {
+      "type": "predecessor_resolved",
+      "content": "The linear predecessor of V-DEMO-03-DRAFT is V-DEMO-02-ACTIVE."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "The in-memory effective snapshot of V-DEMO-02-ACTIVE was used as the base for the sparse ACT-CHECK revision."
+    },
+    {
+      "type": "decisive_question",
+      "content": "The rule was classified as a target change, rather than a correction of current practice, because the user stated it is not yet live."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The requested change is limited to ACT-CHECK in P-LEAD; lead identity and the process boundary remain unchanged."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "PKG-M-DEMO-01-001",
+      "package_hash": "56e647448abb31556209096a2470d34df6ef78c0b4769f0f9c12e96bbfcd7269",
+      "content": "The full registration, sparse action revision, decision, change-log, migration, projection, precondition, and recovery package was shown before confirmation."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "56e647448abb31556209096a2470d34df6ef78c0b4769f0f9c12e96bbfcd7269",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Соколова",
+      "content": "The identified human explicitly confirmed the displayed PKG-M-DEMO-01-001."
+    },
+    {
+      "type": "sparse_apply",
+      "content": "A single ACT-CHECK revision with the same stable ID was applied to V-DEMO-03-DRAFT; no full version copy was made."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "TX-M-DEMO-01-001",
+      "content": "The in-memory transaction created the performer, assignment, one decision, one sparse action revision, two model-change rows, and derived outputs."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "TX-M-DEMO-01-001",
+      "content": "The written transaction, foreign keys, package hash, effective snapshot, rule, and derived outputs were read back from the in-memory fixture."
+    },
+    {
+      "type": "projection_validated",
+      "content": "The P-LEAD view projection and its BPMN/SVG build were validated as view-ready from the post-write snapshot."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "TX-M-DEMO-01-001",
+      "content": "Verified in-memory transaction; no external mutation; next live step is a separately confirmed acceptance/effectiveness decision if the owner chooses it."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "TX-M-DEMO-01-001",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 1
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "package_hash_matched": true,
+      "confirmation_attribution_matched": true,
+      "foreign_keys_valid": true,
+      "effective_snapshot_resolved": true,
+      "consent_rule_observed": true,
+      "projection_view_ready": true,
+      "readback_matched_package": true
+    }
+  }
+}

@@ -1,0 +1,180 @@
+{
+  "schema_version": 1,
+  "trial_id": "version-inheritance-exclude-01",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/maintain-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v2 меняется определение лида, один процесс исключается, остальные элементы не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "В in-memory fixture установлены модель, рабочая версия v2 с предшественником v1, режим write и уже идентифицированный человек с активным назначением. Чтобы не менять идентичность лида по названию, сначала уточняю саму новую формулировку.",
+      "questions": [
+        "Какова точная новая формулировка определения для существующего stable ID лида?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Детерминированный симулятор: для существующего stable ID лида меняется только definition; его идентичность, создание, история, жизненный цикл и связи остаются прежними."
+    },
+    {
+      "role": "assistant",
+      "content": "Это редакция того же объекта, а не новый объект или состояние. Для исключения нужен конкретный элемент и правило для уже начатого исполнения.",
+      "questions": [
+        "Какой существующий stable ID процесса исключается из v2 и как поступить с его активными экземплярами?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Детерминированный симулятор: исключается один существующий процесс; активных экземпляров этого процесса нет. Другие элементы и их связи не изменяются."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверка v1 показала исходный лид, исключаемый процесс и неизменённые связанные элементы. Для v2 собран разреженный пакет: новая редакция definition лида с операцией «применить»; строка исключаемого процесса с операцией «исключить»; остальные элементы наследуются resolver по цепочке v2 → v1. Влияние ограничено срезом и затронутыми производными представлениями; миграция активных экземпляров не требуется. Пакет содержит решение, две authoring-операции, журнал изменений, пересборку среза и проекций, read-back и recovery через ту же transaction. package_id: pkg-version-inheritance-exclude-01; package_hash: 7d4f42fdff9e9e59d4f0b5f7614a501717c26651ff4cce2caea38a41f7e389c9.",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-version-inheritance-exclude-01 в черновик модели?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Детерминированный симулятор: подтверждаю запись показанного пакета."
+    },
+    {
+      "role": "assistant",
+      "content": "In-memory transaction записала решение, одну редакцию «применить» и одну редакцию «исключить», затем пересобрала v2 snapshot и затронутые представления. Read-back подтвердил тот же package hash, разреженное наследование неизменённых элементов и отсутствие исключённого процесса в v2; v1 сохранён без изменений."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "The in-memory fixture is the authoritative source for the model, versions, editor attribution, and scenario facts."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Working version v2 and current base version v1 were resolved from the fixture."
+    },
+    {
+      "type": "editor_identified",
+      "content": "The fixture supplied an already identified human editor with an active assignment."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Scope is limited to one lead definition revision, one process exclusion, required history, snapshot, and affected projections."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-001 established whether the stated lead change preserves the existing object or requires a different model element."
+    },
+    {
+      "type": "predecessor_resolved",
+      "content": "v2 has the single predecessor v1."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "The effective v1 snapshot was materialized before drafting v2."
+    },
+    {
+      "type": "identity_test",
+      "content": "The lead retains identity, creation, history, lifecycle, and relations; only its definition changes."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-002 identified the process to exclude and established that no active instances require a migration rule."
+    },
+    {
+      "type": "inheritance_proved",
+      "content": "Unchanged elements resolve from v1 through the v2 predecessor chain without copying v1 rows."
+    },
+    {
+      "type": "sparse_apply",
+      "content": "The changed lead definition is represented by one v2 revision with operation «применить»."
+    },
+    {
+      "type": "sparse_exclude",
+      "content": "The specified existing process is represented by one v2 revision with operation «исключить»."
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "The effective v2 snapshot was materialized: it contains the revised lead, inherited unchanged elements, and no excluded process."
+    },
+    {
+      "type": "draft_package",
+      "package_hash": "7d4f42fdff9e9e59d4f0b5f7614a501717c26651ff4cce2caea38a41f7e389c9",
+      "content": "The complete sparse mutation package, impact, no-active-instance migration decision, recovery, and validations were shown."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "7d4f42fdff9e9e59d4f0b5f7614a501717c26651ff4cce2caea38a41f7e389c9",
+      "performer_type": "человек",
+      "confirmed_by": "identified_human_in_simulator_fixture",
+      "content": "The identified human simulator confirmed the exact displayed package."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-version-inheritance-exclude-01",
+      "content": "The in-memory transaction wrote the decision, one apply revision, one exclusion revision, and linked model-change rows."
+    },
+    {
+      "type": "projection_build_started",
+      "content": "Affected resolved snapshot projections were rebuilt from the exact v2 snapshot."
+    },
+    {
+      "type": "projection_write",
+      "content": "The in-memory resolved snapshot and affected derived projections were written by the transaction."
+    },
+    {
+      "type": "projection_validated",
+      "content": "The rebuilt projections were checked against the v2 resolved snapshot."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-version-inheritance-exclude-01",
+      "content": "Read-back verified the decision, both sparse revisions, package hash, v2 snapshot, and derived projections."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-version-inheritance-exclude-01",
+      "content": "Verified in-memory transaction checkpoint saved; v1 remains unchanged and v2 remains a draft."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-version-inheritance-exclude-01",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "base_preconditions_unchanged": true,
+      "lead_identity_preserved": true,
+      "sparse_snapshot_resolved": true,
+      "excluded_process_absent_from_v2": true,
+      "v1_snapshot_unchanged": true,
+      "package_hash_matches_confirmation": true,
+      "transaction_readback_verified": true,
+      "projection_matches_snapshot": true
+    }
+  }
+}

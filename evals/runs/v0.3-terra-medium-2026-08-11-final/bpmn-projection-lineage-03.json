@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "trial_id": "bpmn-projection-lineage-03",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "docs/adr/0001-bpmn-toolchain.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Построить схему процесса с human task, automation, exclusive branch, return и timer."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы собрать один проверяемый контур, зафиксируйте минимальные факты: систему и процесс, ответственную позицию, действие человека с результатами решения, автоматизации, условия веток и правило timer/возврата.",
+      "questions": [
+        "Какие точные факты для этого процесса принимаем?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Система sys-service, процесс proc-review-request, версия ver-001, позиция pos-specialist. Старт: поступила заявка. Специалист выполняет act-review-request «Проверить заявку» и фиксирует approved или rework. Если = approved, automation act-send-approval с zeebe type notify-approval отправляет уведомление и завершает ветку «Заявка одобрена». Иначе default-ветка ведёт к automation act-send-rework с zeebe type notify-rework, после которой edge-rework-return возвращает к act-review-request. На act-review-request висит boundary timer PT24H; по нему automation act-escalate-timeout с zeebe type escalate-timeout завершает ветку «Срок проверки истёк»."
+    },
+    {
+      "role": "assistant",
+      "content": "Факты разрешены в одном snapshot ver-001. Использую один внутренний pool sys-service и lane pos-specialist. Разрешённый IR содержит none start/end, один user task act-review-request, три service task с явными zeebe types, exclusive gateway gateway-review-result, boundary timer PT24H и восемь sequence flows с edge_id. Внешние pools, message flows, intermediate events, data objects и embedded subprocess не добавляю. У gateway одно FEEL-условие = approved на edge-approved-notify и ровно один default edge-default-rework; возврат edge-rework-return остаётся sequence flow. Граф связен: из start достижимы оба end, а у каждого достижимого незавершающего узла есть исходящий flow. BPMN и SVG собраны в памяти из одного IR; их общий model_fingerprint — acb502ce0cc9efd171c658190f6350f70433848f6e085824dd37c96716be1086. XML references и DI целостны; SVG несёт тот же fingerprint. Это view-ready draft; deployment readiness остаётся непроверенной без Desktop Modeler/lint, хотя task types и gateway mapping заданы. Подготовлен in-memory пакет pkg-3c5b1a: один decision row, восемь change rows, одиннадцать model rows и projection build pbuild-001.",
+      "questions": [
+        "Подтверждаете ровно этот пакет?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю пакет pkg-3c5b1a."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в in-memory outcome одной transaction txn-001. Выполнены readback и checkpoint: snapshot ver-001, BPMN, SVG и manifest относятся к одному process_id, version_id и model_fingerprint. Внешних систем и файлов модели не изменялось."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Нормой выбраны model-production-system и его bundled BPMN/SVG projection contract."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Trial ограничен одной in-memory проекцией без внешних мутаций."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Запрошены минимальные факты, определяющие допустимые элементы и связи BPMN."
+    },
+    {
+      "type": "snapshot_resolved",
+      "version_id": "ver-001",
+      "content": "Разрешён один synthetic snapshot процесса proc-review-request."
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "content": "Разрешены pool, lane, user task, service task, none events, boundary timer, exclusive gateway и sequence flows; запрещённые элементы отсутствуют."
+    },
+    {
+      "type": "projection_build_started",
+      "projection_build_id": "pbuild-001",
+      "content": "Начата in-memory сборка одного IR."
+    },
+    {
+      "type": "bpmn_generated",
+      "content": "BPMN собран в памяти из разрешённого IR."
+    },
+    {
+      "type": "svg_generated",
+      "content": "SVG собран в памяти из того же IR."
+    },
+    {
+      "type": "projection_validated",
+      "content": "Проверены связность графа, достижимость end, исходящие flows, XML references и DI."
+    },
+    {
+      "type": "source_fingerprint_verified",
+      "model_fingerprint": "acb502ce0cc9efd171c658190f6350f70433848f6e085824dd37c96716be1086",
+      "content": "Fingerprint вычислен из canonical JSON IR."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "model_fingerprint": "acb502ce0cc9efd171c658190f6350f70433848f6e085824dd37c96716be1086",
+      "content": "BPMN, SVG и in-memory manifest имеют общий fingerprint."
+    },
+    {
+      "type": "draft_package",
+      "package_hash": "pkg-3c5b1a",
+      "content": "Показан точный пакет in-memory transaction."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "pkg-3c5b1a",
+      "performer_type": "человек",
+      "confirmed_by": "Детерминированный пользователь",
+      "content": "Пользователь подтвердил показанный пакет."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-001",
+      "content": "Пакет записан только в in-memory outcome."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-001",
+      "content": "Перечитана in-memory transaction txn-001."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-001",
+      "content": "Сохранён in-memory checkpoint с lineage проекции."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-001",
+        "decision_rows": 1,
+        "change_rows": 8,
+        "model_rows": 14,
+        "scope": "in_memory_only",
+        "projection_build_id": "pbuild-001",
+        "process_id": "proc-review-request",
+        "version_id": "ver-001",
+        "model_fingerprint": "acb502ce0cc9efd171c658190f6350f70433848f6e085824dd37c96716be1086"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "snapshot_resolved": true,
+      "bpmn_allowlist_checked": true,
+      "graph_connected": true,
+      "reachable_end_exists": true,
+      "nonterminal_nodes_have_outgoing_flow": true,
+      "exclusive_gateway_has_one_default": true,
+      "exclusive_condition_is_feel_boolean": true,
+      "boundary_timer_has_attachment_and_definition": true,
+      "return_flow_has_edge_lineage": true,
+      "bpmn_xml_references_and_di_valid": true,
+      "svg_generated_from_same_ir": true,
+      "shared_fingerprint_lineage_verified": true,
+      "view_ready": true,
+      "deployment_ready": false
+    }
+  }
+}

@@ -1,0 +1,203 @@
+{
+  "schema_version": 1,
+  "trial_id": "development-handoff-no-write-02",
+  "case_id": "development-handoff-no-write",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/audit-production-system/SKILL.md",
+    "skills/audit-production-system/references/LANGUAGE.md",
+    "skills/audit-production-system/references/METAONTOLOGY.md",
+    "skills/audit-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/audit-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/audit-production-system/references/PROJECTION-CONTRACT.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Во время read-only аудита найден один подтверждаемый случай нарушения действующего SLA."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы не смешать версии и не выдать наблюдение за отклонение без нормы, укажите точный проверяемый срез и источник факта случая.",
+      "questions": [
+        "Какой model_id, действующая version_id, источник действующего SLA и источник факта случая входят в аудит?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Детерминированный in-memory fixture: model_id=mdl-support-demo; schema=v0.3; current_version_id=ver-2026-08-active со статусом «действует»; snapshot_fingerprint=sha256:fixture-active-001. Норма SLA-NORM-001 в действующем срезе: «первая реакция на обращение не позднее 120 минут после создания», область=процесс обработки обращения, ответственная позиция=pos-support. Факт CASE-001 в журнале исполнения: обращение создано 2026-08-11T09:00:00Z, первая реакция зафиксирована 2026-08-11T12:20:00Z. Других источников и проекции в scope нет."
+    },
+    {
+      "role": "assistant",
+      "content": "Read-only аудит завершён для mdl-support-demo / ver-2026-08-active / sha256:fixture-active-001. Действующая норма SLA-NORM-001 требует первую реакцию не позднее 120 минут; журнал CASE-001 показывает 200 минут. Нарушение составляет 80 минут, поэтому факт подтверждает один случай операционного отклонения. Я не записывал строку в «Отклонения», не менял статус и не получал подтверждения записи. Передаю в maintain-production-system лёгкую карточку кандидата: проверить дубликат по норме и области, затем при необходимости собрать полный mutation package и получить отдельное человеческое подтверждение. Неизвестны повторяемость, причина, коррекция и системное изменение; они не выводятся из одного случая."
+    }
+  ],
+  "events": [
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "purpose": "Установить единственные model, действующую версию, норму и источник наблюдаемого факта до классификации."
+    },
+    {
+      "type": "source_authority_resolved",
+      "sources": [
+        {
+          "source": "in-memory fixture: действующий срез модели",
+          "locator": "fixture://mdl-support-demo/snapshots/sha256:fixture-active-001/norms/SLA-NORM-001",
+          "authority": "действующая версия модели для нормы SLA",
+          "freshness": "fixture timestamp 2026-08-11"
+        },
+        {
+          "source": "in-memory fixture: журнал исполнения",
+          "locator": "fixture://mdl-support-demo/execution-log/CASE-001",
+          "authority": "наблюдаемый факт времени создания и первой реакции",
+          "freshness": "event timestamps 2026-08-11T09:00:00Z and 2026-08-11T12:20:00Z"
+        }
+      ]
+    },
+    {
+      "type": "scope_checked",
+      "scope": {
+        "mode": "read-only",
+        "model_id": "mdl-support-demo",
+        "schema_version": "v0.3",
+        "version_id": "ver-2026-08-active",
+        "version_status": "действует",
+        "snapshot_fingerprint": "sha256:fixture-active-001",
+        "build_id": null,
+        "goal": "Проверить один случай нарушения действующего SLA.",
+        "non_goals": [
+          "Запись в реестр развития",
+          "Изменение модели или статуса",
+          "Установление причины",
+          "Проверка проекции"
+        ]
+      }
+    },
+    {
+      "type": "active_norm_checked",
+      "norm": {
+        "norm_id": "SLA-NORM-001",
+        "version_id": "ver-2026-08-active",
+        "status": "действует",
+        "expected_value": "Первая реакция на обращение не позднее 120 минут после создания.",
+        "scope": "процесс обработки обращения",
+        "responsible_position_id": "pos-support",
+        "source_locator": "fixture://mdl-support-demo/snapshots/sha256:fixture-active-001/norms/SLA-NORM-001"
+      }
+    },
+    {
+      "type": "evidence_ledger_created",
+      "entries": [
+        {
+          "claim": "Для CASE-001 нарушен SLA-NORM-001.",
+          "exact_source_locator": "fixture://mdl-support-demo/execution-log/CASE-001",
+          "observed_value": {
+            "created_at": "2026-08-11T09:00:00Z",
+            "first_response_at": "2026-08-11T12:20:00Z",
+            "elapsed_minutes": 200
+          },
+          "reproducible_check": "12:20Z minus 09:00Z equals 200 minutes; 200 > 120.",
+          "expected_value": "elapsed_minutes <= 120 according to SLA-NORM-001",
+          "inference": "Наблюдаемый факт отличается от действующей выполнимой нормы на 80 минут.",
+          "uncertainty": "Факт доказывает один случай, но не повторяемость, причину, коррекцию или требуемое изменение системы.",
+          "freshness": "2026-08-11"
+        }
+      ]
+    },
+    {
+      "type": "read_only_check",
+      "checked": [
+        "Не создана строка «Отклонения».",
+        "Не изменены «Решения» и «Изменения модели».",
+        "Не изменены версия, срез или проекция."
+      ]
+    },
+    {
+      "type": "development_candidate_classified",
+      "classification": {
+        "candidate_type": "операционное отклонение",
+        "basis": "Есть действующая норма SLA-NORM-001 и проверяемый факт CASE-001, отличающийся от неё.",
+        "rejected_nearest_type": "гипотеза развития",
+        "rejection_reason": "В сценарии нет внешнего изменения, новой возможности или механизма улучшения; предполагаемая причина нарушения не переименовывается в гипотезу.",
+        "registry_lifecycle_state": "кандидат",
+        "evidence_status": "один подтверждённый случай"
+      }
+    },
+    {
+      "type": "candidate_handoff",
+      "target_skill": "maintain-production-system",
+      "card": {
+        "package_id": "pkg-audit-candidate-case-001",
+        "package_hash": "sha256:5b9e6fb2aaf5f2e4c56b1a1fe4cc8d662e1c02b7e8303b3dc589894d9f6e2b51",
+        "type": "операционное отклонение",
+        "title": "Первая реакция по CASE-001 позже действующего SLA",
+        "fact": "Первая реакция через 200 минут при норме не позднее 120 минут.",
+        "primary_scope": "процесс обработки обращения",
+        "source_and_locator": "fixture://mdl-support-demo/execution-log/CASE-001; норма: fixture://mdl-support-demo/snapshots/sha256:fixture-active-001/norms/SLA-NORM-001",
+        "next_step": "Проверить дубликат по природе, области и норме; затем при необходимости подготовить полный mutation package без вывода причины из данного факта.",
+        "responsible_position_id": "pos-support",
+        "unknowns": [
+          "Повторяемость",
+          "Причина",
+          "Коррекция отдельного случая",
+          "Необходимое системное изменение",
+          "Решение человека о создании записи"
+        ],
+        "rejected_nearest_type": "гипотеза развития"
+      },
+      "checkpoint": {
+        "state": "checkpoint",
+        "mode": "read-only",
+        "model_id": "mdl-support-demo",
+        "current_version_id": "ver-2026-08-active",
+        "source_locators": [
+          "fixture://mdl-support-demo/snapshots/sha256:fixture-active-001/norms/SLA-NORM-001",
+          "fixture://mdl-support-demo/execution-log/CASE-001"
+        ],
+        "package_id": "pkg-audit-candidate-case-001",
+        "package_hash": "sha256:5b9e6fb2aaf5f2e4c56b1a1fe4cc8d662e1c02b7e8303b3dc589894d9f6e2b51",
+        "confirmation_id": null,
+        "transaction_id": null,
+        "write_state": "not_started",
+        "next_action": "maintain-production-system проверяет дубликат и решает, нужна ли полная proposal-проработка."
+      }
+    },
+    {
+      "type": "checkpoint",
+      "state": "checkpoint",
+      "mode": "read-only",
+      "next_action": "Передать карточку кандидата без записи в реестр."
+    },
+    {
+      "type": "uncertainty_reported",
+      "unknowns": [
+        "Повторяемость нарушения",
+        "Причина нарушения",
+        "Нужные correction и system change",
+        "Человеческое решение о создании реестровой записи"
+      ]
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "active_norm_matches_current_version": true,
+      "elapsed_time_recalculated": true,
+      "candidate_classification_matches_evidence": true,
+      "read_only_boundary_preserved": true,
+      "handoff_contains_checkpoint": true
+    }
+  }
+}

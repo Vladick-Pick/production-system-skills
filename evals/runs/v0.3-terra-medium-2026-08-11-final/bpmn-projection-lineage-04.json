@@ -1,0 +1,234 @@
+{
+  "schema_version": 1,
+  "trial_id": "bpmn-projection-lineage-04",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Построить схему процесса с human task, automation, exclusive branch, return и timer."
+    },
+    {
+      "role": "assistant",
+      "content": "Для безопасного in-memory черновика назовите границу процесса, человека-редактора с позицией и правила ветвления, возврата и таймера.",
+      "questions": [
+        "Каковы граница процесса, редактор с позицией и правила ветвления, возврата и таймера?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Синтетическая книга model-bpmn-projection-lineage имеет schema v0.3, пустую рабочую версию ver-bpmn-projection-lineage-draft-1 и current_version_id=null; режим write только в памяти. Редактор Анна Смирнова, performer_id perf-anna-smirnova, активное назначение pos-supervisor. Внутренняя система sys-internal выпускает продукт «Проверенная заявка». Процесс proc-bpmn-projection-lineage: оператор pos-operator регистрирует заявку (human task), automation проверяет данные (service task), руководитель pos-supervisor принимает решение (human task). При одобрении заявка принята; при возврате руководитель отправляет её оператору на исправление, затем она снова регистрируется. Если решение не принято за PT24H, boundary timer завершает ветку исходом «тайм-аут». У ветви одобрения условие FEEL =approved = true, ветвь возврата =approved = false является default. Развёртывание и Camunda Modeler в fixture недоступны."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет mutation package сформирован для одной черновой версии: sys-internal, позиции pos-operator и pos-supervisor, продукт, объект заявки с состояниями, процесс, четыре действия, семь edge, exclusive gateway, boundary timer PT24H и два terminal outcome. Пакет включает три проверяемых сценария, exact snapshot, BPMN/SVG/manifest из одного IR и не содержит внешних действий. package_id=pkg-bpmn-projection-lineage-04; package_hash=6a10bbede8fd97999b51d9e81fa3cf0453549cf9fb5a5fbaf9fce7e62ca0c291. Подтверждаете именно этот пакет для in-memory записи?",
+      "questions": [
+        "Подтверждаете именно этот пакет для in-memory записи?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова подтверждает именно пакет pkg-bpmn-projection-lineage-04 с указанным package_hash для in-memory записи."
+    },
+    {
+      "role": "assistant",
+      "content": "In-memory transaction txn-bpmn-projection-lineage-04 применена и перечитана. Exact effective snapshot ver-bpmn-projection-lineage-draft-1 разрешён; его fingerprint 0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242. Allowlist пройден: user task, service task, exclusive gateway, sequence-flow return и boundary timer разрешены. Из одного IR построены BPMN, SVG и manifest; локальная структурная проверка и общий fingerprint подтверждены. Modeler и deployment остаются непроверенными внешними gate."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Единственный authority для trial — непротиворечивый синтетический in-memory fixture пользователя; внешних источников и живой книги нет."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Граница: внутренняя система sys-internal; модель model-bpmn-projection-lineage; рабочая версия ver-bpmn-projection-lineage-draft-1; запись разрешена только в памяти."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Запрошены граница, редактор, позиция и точная семантика branch, return и timer, без которых нельзя собрать связный пакет."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия: Анна Смирнова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В fixture найден performer_id perf-anna-smirnova для нормализованного имени Анна Смирнова."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Подтверждено активное назначение редактора на pos-supervisor; в графе также разрешена операционная позиция pos-operator."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Установлены связи действий и переходов: регистрация → автоматическая проверка → решение; return ведёт к регистрации; boundary timer PT24H привязан к действию решения."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-bpmn-projection-lineage-04",
+      "package_hash": "6a10bbede8fd97999b51d9e81fa3cf0453549cf9fb5a5fbaf9fce7e62ca0c291",
+      "content": "Полный пакет содержит 31 sparse operation, три сценария и план проекции; новых внешних систем или неподтверждённых элементов нет."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "6a10bbede8fd97999b51d9e81fa3cf0453549cf9fb5a5fbaf9fce7e62ca0c291",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова",
+      "content": "Человек подтвердил точный показанный in-memory пакет."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-bpmn-projection-lineage-04",
+      "content": "Одна idempotent in-memory transaction создала решение, запись изменения и authoring rows черновой версии."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-bpmn-projection-lineage-04",
+      "content": "Перечитана именно transaction txn-bpmn-projection-lineage-04, её authoring rows и материализованный snapshot."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-bpmn-projection-lineage-04",
+      "content": "Сохранён checkpoint после readback: черновик проверен, внешних мутаций нет, следующий этап — maintain-production-system для дальнейших изменений."
+    },
+    {
+      "type": "snapshot_resolved",
+      "version_id": "ver-bpmn-projection-lineage-draft-1",
+      "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242",
+      "content": "Разрешён exact effective snapshot после write/readback; он является единственным входом проекции."
+    },
+    {
+      "type": "projection_build_started",
+      "projection_build_id": "build-bpmn-projection-lineage-04",
+      "content": "Создан один projection IR для proc-bpmn-projection-lineage из exact snapshot без ручного редактирования BPMN или SVG."
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "content": "Разрешены один pool, lanes двух позиций, user task, service task, none start/end, exclusive gateway, boundary timer и sequence flows; запрещённых BPMN-элементов нет."
+    },
+    {
+      "type": "bpmn_generated",
+      "projection_build_id": "build-bpmn-projection-lineage-04",
+      "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242",
+      "content": "Сгенерирован детерминированный BPMN: user tasks act-register и act-review, service task act-automate, exclusive gateway с FEEL-ветвью одобрения и default-возвратом, boundary timer PT24H."
+    },
+    {
+      "type": "svg_generated",
+      "projection_build_id": "build-bpmn-projection-lineage-04",
+      "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242",
+      "content": "SVG сгенерирован из того же IR, что и BPMN."
+    },
+    {
+      "type": "projection_write",
+      "projection_build_id": "build-bpmn-projection-lineage-04",
+      "content": "BPMN, SVG и build manifest записаны только в in-memory outcome trial; внешнее хранилище и рабочая книга не изменялись."
+    },
+    {
+      "type": "projection_validated",
+      "projection_build_id": "build-bpmn-projection-lineage-04",
+      "content": "Локально проверены XML parse, BPMN references, DI, разрешение stable IDs, достижимость end, исходящие flow, branch completeness и детерминированная повторная сборка."
+    },
+    {
+      "type": "lineage_verified",
+      "projection_build_id": "build-bpmn-projection-lineage-04",
+      "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242",
+      "content": "BPMN, SVG и manifest содержат один fingerprint exact snapshot и один IR fingerprint 19a4d0cbd8076684ba77402b789b2c591193e5605fcc5ac36a041ca93c3edc01."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-bpmn-projection-lineage-04",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 29,
+        "scope": "in_memory_only"
+      }
+    ],
+    "external_mutations": [],
+    "snapshot": {
+      "model_id": "model-bpmn-projection-lineage",
+      "version_id": "ver-bpmn-projection-lineage-draft-1",
+      "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242",
+      "included_stable_ids": [
+        "sys-internal",
+        "pos-operator",
+        "pos-supervisor",
+        "proc-bpmn-projection-lineage",
+        "act-register",
+        "act-automate",
+        "act-review",
+        "act-return",
+        "edge-start-register",
+        "edge-register-automate",
+        "edge-automate-review",
+        "edge-review-return",
+        "edge-return-register",
+        "edge-review-approve",
+        "edge-review-timeout"
+      ]
+    },
+    "projection": {
+      "projection_build_id": "build-bpmn-projection-lineage-04",
+      "process_id": "proc-bpmn-projection-lineage",
+      "version_id": "ver-bpmn-projection-lineage-draft-1",
+      "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242",
+      "ir_fingerprint": "19a4d0cbd8076684ba77402b789b2c591193e5605fcc5ac36a041ca93c3edc01",
+      "artifacts": {
+        "bpmn": {
+          "generated": true,
+          "sha256": "b4d3c0c8f56e5ab4a0adccf3fbd93693c03cf0ab0d0c31965eb8de3b77d8fa2c",
+          "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242"
+        },
+        "svg": {
+          "generated": true,
+          "sha256": "d9972f2f453c94a8b943b3ae2ce20a64fc4f2b31a3fe6bd9f5bc8517b7055cd6",
+          "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242"
+        },
+        "manifest": {
+          "generated": true,
+          "model_fingerprint": "0684a25e8f159b9befe179f5861860e870e2f8aaa7e35ea420d78e6e982cc242",
+          "ir_fingerprint": "19a4d0cbd8076684ba77402b789b2c591193e5605fcc5ac36a041ca93c3edc01"
+        }
+      },
+      "readiness": {
+        "view": "ready",
+        "deployment": "blocked",
+        "blockers": [
+          "Camunda Desktop Modeler или эквивалентный зафиксированный lint недоступен в trial environment.",
+          "Deployment permission, target Camunda version, user-task forms/assignments и worker contract service task не предоставлены fixture."
+        ]
+      }
+    },
+    "scenarios": [
+      "normal: регистрация → автоматическая проверка → решение approved=true → принятая заявка",
+      "return: регистрация → автоматическая проверка → решение default approved=false → возврат оператору → регистрация",
+      "timeout: регистрация → автоматическая проверка → решение → boundary timer PT24H → исход тайм-аут"
+    ],
+    "validations": {
+      "schema_v0_3": true,
+      "foreign_keys": true,
+      "stable_id_resolution": true,
+      "graph_reachability": true,
+      "branch_completeness": true,
+      "bpmn_allowlist": true,
+      "bpmn_xml_parse": true,
+      "bpmn_references_and_di": true,
+      "svg_from_same_ir": true,
+      "deterministic_rebuild": true,
+      "shared_fingerprint_lineage": true
+    }
+  }
+}

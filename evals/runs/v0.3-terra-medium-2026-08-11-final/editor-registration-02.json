@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-02",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Новый человек просит изменить модель; его нет в реестре исполнителей."
+    },
+    {
+      "role": "assistant",
+      "content": "Для атрибуции будущего решения сначала установлю исполнителя. Записи в модели пока не будет.",
+      "questions": [
+        "Назовите, пожалуйста, имя и фамилию человека, который просит изменение."
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Мария Кузнецова."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверил нормализованное ФИО «Мария Кузнецова» в реестре исполнителей: совпадений нет, поэтому дубль не создаётся.",
+      "questions": [
+        "Какую позицию Мария Кузнецова занимает в этой модели?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Технолог систематизации."
+    },
+    {
+      "role": "assistant",
+      "content": "Позиция установлена: Мария Кузнецова — Технолог систематизации. Новые исполнитель и назначение войдут в один пакет с изменением и будут созданы только после его подтверждения.",
+      "questions": [
+        "Какое именно изменение нужно внести в модель: назовите элемент и новые значения?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "В черновике уточнить действие action-001 «Проверить заявку»: новое определение — «Проверить полноту заявки по утверждённому чек-листу и вернуть её на доработку при неполноте». Больше ничего не менять."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасном in-memory fixture установлено: model_id model-demo-001, действующая ver-001, рабочая черновая ver-002 с предшественником ver-001; action-001 существует в действующей версии. Граница изменения — только новая разреженная редакция action-001 в ver-002. Основание — явный запрос Марии Кузнецовой; статус знания и источник сохраняются как пользовательское решение и его проверяемая реплика. Затронуты срез модели и вычисляемые представления; другие элементы, связи и версии не меняются.\n\nПакет pkg-editor-registration-02:\n- Исполнители: создать performer-001 «Мария Кузнецова».\n- Назначения: создать assignment-001 для performer-001 на позиции «Технолог систематизации», active_from — дата подтверждения.\n- Решения: добавить одну строку с подтверждением Марии Кузнецовой и package_hash.\n- Действия: применить редакцию action-001 в ver-002 с показанным определением; прежняя редакция ver-001 не меняется.\n- Изменения модели: добавить одну append-only строку для изменённого определения.\n- После записи: перечитать transaction, пересобрать и проверить predicted/actual срез и затронутые представления.\n\nПредусловия: версия ver-002 остаётся единственной рабочей, action-001 не изменён с момента чтения, в transaction нет дубля, а назначение активно на момент решения. Внешних систем не затрагиваем. package_hash: 0541c220905c45d3a33e897aca84fd2d93491ff14bcf73cde59b4219279480e3.",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-editor-registration-02 в черновик модели?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю запись показанного пакета pkg-editor-registration-02 в черновик модели."
+    },
+    {
+      "role": "assistant",
+      "content": "В in-memory fixture выполнена одна transaction txn-editor-registration-02: созданы исполнитель и назначение, добавлены решение, разреженная редакция action-001 и строка изменения модели. Transaction перечитана; срез ver-002 содержит новую редакцию action-001, а ver-001 сохранён без изменений. Проверки transaction, назначения, hash и ссылок пройдены. Checkpoint сохранён; внешних записей не было."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Для trial использованы выбранный скилл, его bundled contracts и безопасный in-memory fixture."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия: Мария Кузнецова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Нормализованное ФИО «Мария Кузнецова» проверено; совпадений в Исполнителях нет."
+    },
+    {
+      "type": "position_resolved",
+      "content": "После отдельного ответа установлена позиция «Технолог систематизации»."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Запрошено точное изменение элемента и новые значения; ответ определяет единственную авторскую редакцию в пакете."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Изменение ограничено действием action-001; другие элементы и связи исключены из пакета."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Установлены current_version_id ver-001 и working_version_id ver-002 с предшественником ver-001."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "Проверен effective snapshot ver-001: он содержит исходную редакцию action-001."
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "Материализован predicted snapshot ver-002 с планируемой разреженной редакцией action-001."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-editor-registration-02",
+      "package_hash": "0541c220905c45d3a33e897aca84fd2d93491ff14bcf73cde59b4219279480e3",
+      "content": "Показан полный пакет с новым исполнителем, назначением, решением, редакцией действия, журналом изменений и проверками."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "pkg-editor-registration-02",
+      "package_hash": "0541c220905c45d3a33e897aca84fd2d93491ff14bcf73cde59b4219279480e3",
+      "performer_type": "человек",
+      "confirmed_by": "Мария Кузнецова",
+      "content": "Мария Кузнецова явно подтвердила запись показанного неизменённого пакета."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-editor-registration-02",
+      "content": "Одна in-memory transaction записала исполнителя, назначение, решение, редакцию действия и строку изменения модели."
+    },
+    {
+      "type": "sparse_apply",
+      "transaction_id": "txn-editor-registration-02",
+      "content": "В in-memory transaction применена редакция action-001 в ver-002."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-editor-registration-02",
+      "content": "Перечитана именно записанная transaction и разрешённые срезы ver-001/ver-002."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-editor-registration-02",
+      "content": "Сохранено проверяемое состояние после readback; следующий шаг не требуется."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-editor-registration-02",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 3
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "preconditions_unchanged": true,
+      "package_hash_matched": true,
+      "performer_assignment_active": true,
+      "transaction_readback_matched": true,
+      "snapshot_ver_001_preserved": true,
+      "snapshot_ver_002_resolved": true,
+      "external_mutation_absent": true
+    }
+  }
+}

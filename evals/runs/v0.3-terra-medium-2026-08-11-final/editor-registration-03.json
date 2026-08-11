@@ -1,0 +1,159 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-03",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Новый человек просит изменить модель; его нет в реестре исполнителей."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала зафиксирую, кто подтверждает изменение. Назовите, пожалуйста, имя и фамилию.",
+      "questions": [
+        "Назовите, пожалуйста, имя и фамилию."
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверка нормализованного ФИО не нашла Анну Смирнову в реестре исполнителей. Для нового назначения нужна позиция. Какую позицию следует указать?",
+      "questions": [
+        "Какую позицию следует указать?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Руководитель производства."
+    },
+    {
+      "role": "assistant",
+      "content": "Позиция «Руководитель производства» существует; подготовлено новое активное назначение Анны Смирновой. Какое конкретное изменение модели требуется?",
+      "questions": [
+        "Какое конкретное изменение модели требуется?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Уточнить название действия контроля качества: вместо «Проверить изделие» — «Провести приёмочный контроль изделия». Смысл, граница и живое исполнение не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет pkg-editor-registration-03 для черновика ver-draft-03: редакционное изменение действия act-quality-check от «Проверить изделие» к «Провести приёмочный контроль изделия»; базовая действующая версия ver-active-02; новый исполнитель perf-anna-smirnova-01 «Анна Смирнова»; новое активное назначение asn-anna-smirnova-head-production-01 «Руководитель производства» с 2026-08-11; одна строка решения и одна строка изменения модели; после записи — пересборка среза и проверок. Пакет не меняет границу, смысл или живое исполнение. package_hash: 4cd862b89cf19bde1e2f978bc3f57b714d5250cdd8370d16591c7dc1257e4050. Подтверждаете запись показанного пакета pkg-editor-registration-03 в черновик модели?",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-editor-registration-03 в черновик модели?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись показанного пакета."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасной in-memory модели выполнена одна транзакция tx-editor-registration-03: зарегистрированы исполнитель и назначение, записаны решение, разреженная редакция действия и журнал изменения; затем перечитаны транзакция, срез и проверки. Checkpoint сохранён. Внешние системы не изменялись."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Для trial использованы только выбранный скилл, его bundled-контракты и безопасная in-memory fixture."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия: Анна Смирнова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Нормализованное ФИО «Анна Смирнова» проверено; совпадений в Исполнителях нет."
+    },
+    {
+      "type": "position_resolved",
+      "content": "После отдельного ответа разрешена существующая позиция pos-head-production «Руководитель производства» и подготовлено новое назначение."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Изменение ограничено переименованием act-quality-check; смысл, граница и живое исполнение не меняются."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "In-memory fixture: model-demo-03, базовая действующая версия ver-active-02, рабочий черновик ver-draft-03."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Базовый effective snapshot проверен; act-quality-check разрешается как «Проверить изделие»."
+    },
+    {
+      "type": "draft_package",
+      "content": "Показан полный пакет с новым исполнителем, назначением, разреженной редакцией, решением, журналом, preconditions и post-write checks.",
+      "package_id": "pkg-editor-registration-03",
+      "package_hash": "4cd862b89cf19bde1e2f978bc3f57b714d5250cdd8370d16591c7dc1257e4050"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "content": "Анна Смирнова явно подтвердила запись неизменённого показанного пакета.",
+      "package_id": "pkg-editor-registration-03",
+      "package_hash": "4cd862b89cf19bde1e2f978bc3f57b714d5250cdd8370d16591c7dc1257e4050",
+      "performer_type": "человек",
+      "confirmed_by": "perf-anna-smirnova-01"
+    },
+    {
+      "type": "model_write",
+      "content": "Одна in-memory transaction зарегистрировала исполнителя и назначение, добавила решение, редакцию действия и строку журнала.",
+      "transaction_id": "tx-editor-registration-03"
+    },
+    {
+      "type": "sparse_apply",
+      "content": "В tx-editor-registration-03 применена разреженная редакция act-quality-check в ver-draft-03.",
+      "transaction_id": "tx-editor-registration-03"
+    },
+    {
+      "type": "readback",
+      "content": "Перечитана именно transaction tx-editor-registration-03, затем проверены materialized snapshot и проверки.",
+      "transaction_id": "tx-editor-registration-03"
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint завершённой in-memory transaction; следующий шаг отсутствует.",
+      "transaction_id": "tx-editor-registration-03"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-editor-registration-03",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "in_memory": true
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "normalized_performer_duplicate_check": true,
+      "position_resolved_after_identity": true,
+      "exact_package_hash_confirmed": true,
+      "transaction_readback": true,
+      "resolved_snapshot_check": true,
+      "checkpoint_saved": true,
+      "external_mutation_absent": true
+    }
+  }
+}

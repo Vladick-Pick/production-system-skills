@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "trial_id": "source-conflict-stop-01",
+  "case_id": "source-conflict-stop",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/resolve-model-element/SKILL.md",
+    "skills/resolve-model-element/references/INTERVIEW-CONTRACT.md",
+    "skills/resolve-model-element/references/LANGUAGE.md",
+    "skills/resolve-model-element/references/METAONTOLOGY.md",
+    "skills/resolve-model-element/references/METHODOLOGY-COMPATIBILITY.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В проектном CONTEXT сказано: «Лид — любой входящий контакт». В названном владельцем нормативном документе сказано: «Лид — организация, для которой подтверждена потребность». Нужно разрешить, что именно называет «лид» в модели. Режим read-only; существующую модель не менять."
+    },
+    {
+      "role": "assistant",
+      "content": "Обнаружен критический конфликт источников, поэтому семантическое продвижение кандидата остановлено.\n\n| Измерение | Проектный CONTEXT | Названный нормативный документ | Последствие |\n|---|---|---|---|\n| Референт «лида» | любой входящий контакт | организация с подтверждённой потребностью | меняются тип, правило идентичности, момент создания и связи с квалификацией |\n\nЯ не буду усреднять эти определения и не сформирую semantic-resolution package, пока владелец не установит авторитет источника для этого допуска.\n\nКакой источник владелец устанавливает авторитетным для определения «лид» в этой модели: проектный CONTEXT или названный нормативный документ?",
+      "questions": [
+        "Какой источник владелец устанавливает авторитетным для определения «лид» в этой модели: проектный CONTEXT или названный нормативный документ?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Владелец пока не установил приоритет ни одного из источников."
+    },
+    {
+      "role": "assistant",
+      "content": "Checkpoint: исход — «зафиксировать конфликт». Авторитет источника не разрешён; поэтому определение, тип, stable ID и операция модели не определены. Semantic-resolution package не сформирован, подтверждение не запрашивалось, запись и передача на изменение модели запрещены. Следующий шаг — получить от владельца явное решение об авторитете одного источника или принятое правило их соотношения."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_conflict_exposed",
+      "content": "Показано противоречие между двумя определениями референта «лид» и его последствия для идентичности и жизненного цикла."
+    },
+    {
+      "type": "owner_resolution_requested",
+      "content": "Запрошено явное решение владельца об авторитете одного источника для семантического допуска."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Один вопрос выбирает между источниками, от чего зависят референт, тип, правило идентичности и дальнейший пакет."
+    },
+    {
+      "type": "checkpoint",
+      "content": "После отсутствия решения владельца сохранён исход «зафиксировать конфликт» и запрет на semantic-resolution package и mutation." 
+    }
+  ],
+  "outcome": {
+    "semantic_resolution": {
+      "status": "source_conflict_unresolved",
+      "semantic_promotion": "stopped",
+      "package_created": false,
+      "confirmation_requested": false,
+      "handoff": "none"
+    },
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_valid": true,
+      "contract_consistency_valid": true
+    }
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "schema_version": 1,
+  "trial_id": "development-hypothesis-contract-03",
+  "case_id": "development-hypothesis-contract",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Появилась новая технология автоматической квалификации; хотим проверить, повысит ли она долю квалифицированных лидов без роста ошибочных отказов."
+    },
+    {
+      "role": "assistant",
+      "content": "Это кандидат гипотезы развития, а не отклонение: речь о новой возможности, а не о доказанном нарушении действующей нормы. Какой проверяемый внешний источник подтверждает появление технологии?",
+      "questions": [
+        "Какой проверяемый внешний источник подтверждает появление технологии?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Release notes QualiFlow от 09.08.2026, раздел «Automatic Qualification»: новая функция автоматически классифицирует входящие лиды и фиксирует основание решения."
+    },
+    {
+      "role": "assistant",
+      "content": "Источник и внешнее изменение определены. Новая возможность — автоматически квалифицировать входящие лиды с фиксируемым основанием решения; ближайшая отвергнутая классификация — причина отклонения, поскольку действующее нарушение нормы не заявлено. Какая действующая версия модели будет базовой для проверки?",
+      "questions": [
+        "Какая действующая версия модели будет базовой для проверки?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Модель «Привлечение», model_id=model-attraction-001; действующая базовая версия version-v3-0-0. Для подготовки есть черновик version-v3-0-1-draft той же модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Базовая действующая версия и черновик разрешены; новая возможность относится к действию «Квалифицировать входящий лид». Кто именно будет подтверждать запись пакета в черновик?",
+      "questions": [
+        "Кто именно будет подтверждать запись пакета в черновик?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "В реестре исполнителей найдена Анна Смирнова (performer_id=performer-anna-smirnova-001) с активным назначением «Руководитель Sales Operations» (assignment_id=assignment-salesops-001). Какой полный контракт основного показателя подтверждаете: формула, популяция, период, базовое значение, критерий успеха, владелец и источник?",
+      "questions": [
+        "Какой полный контракт основного показателя подтверждаете: формула, популяция, период, базовое значение, критерий успеха, владелец и источник?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Основной показатель — доля квалифицированных лидов: число уникальных входящих лидов с первым завершённым решением «квалифицирован» за календарную неделю / число уникальных входящих лидов с первым завершённым решением за ту же неделю × 100%. Популяция — все новые лиды канала «Входящие» без тестовых записей. База — 38,0% за четыре полные недели до запуска. Успех — не менее 43,0% две подряд полные недели. Владелец — Руководитель Sales Operations; источник — еженедельная выгрузка CRM Analytics из lead_events и qualification_decisions. Ограничение ошибочных отказов: по независимой QA-выборке доля отменённых человеком отказов не выше 1,5% и не выше базового значения более чем на 0,3 п.п."
+    },
+    {
+      "role": "assistant",
+      "content": "Контракт основного показателя проверен: у него есть формула, популяция, период, базовое значение, критерий успеха, владелец и источник; ошибочные отказы остаются отдельным ограничением. Показан точный пакет pkg-hyp-auto-qualification-001 (hash 1893d5cc967eba576945ca334bdd2585aebf7764390163d5e2d7437b5050b4bd): в version-v3-0-1-draft без изменения действующей нормы добавить гипотезу hyp-auto-qualification-001 со статусом «сформулирована»; зафиксировать внешний источник, возможность, действие «Квалифицировать входящий лид», механизм «автоматическое решение с основанием сокращает потери подходящих лидов», основной показатель и ограничение; добавить решение decision-hyp-auto-qualification-001 и запись изменения change-hyp-auto-qualification-001. Миграция активных экземпляров не требуется, запуск эксперимента и переход версии не входят в пакет; predicted snapshot черновика равен базовому по элементам модели. После in-memory записи: перечитать transaction, реестр гипотез, решение, изменение и snapshots; при расхождении не объявлять пакет записанным. Подтверждаете запись показанного пакета pkg-hyp-auto-qualification-001 в черновик модели?",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-hyp-auto-qualification-001 в черновик модели?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывайте показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в in-memory fixture одной транзакцией transaction-hyp-auto-qualification-001 и успешно перечитан. В «Гипотезах» доступна сформулированная гипотеза с источником, базовой версией, механизмом, контрактом показателя и ограничением ошибочных отказов. Действующая норма и живое исполнение не менялись; следующий шаг — отдельным пакетом подготовить и получить человеческое разрешение на эксперимент."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "source": "QualiFlow release notes, 2026-08-09, section Automatic Qualification"
+    },
+    {
+      "type": "external_change_sourced",
+      "change": "QualiFlow introduced Automatic Qualification with recorded decision grounds"
+    },
+    {
+      "type": "development_candidate_classified",
+      "classification": "гипотеза развития",
+      "rejected_alternative": "причина отклонения"
+    },
+    {
+      "type": "base_version_resolved",
+      "model_id": "model-attraction-001",
+      "base_version_id": "version-v3-0-0",
+      "working_version_id": "version-v3-0-1-draft"
+    },
+    {
+      "type": "new_opportunity_resolved",
+      "opportunity": "Automatic qualification of incoming leads with recorded decision grounds",
+      "primary_area": "action:qualify-incoming-lead"
+    },
+    {
+      "type": "editor_identified",
+      "display_name": "Анна Смирнова"
+    },
+    {
+      "type": "performer_lookup",
+      "performer_id": "performer-anna-smirnova-001",
+      "assignment_id": "assignment-salesops-001"
+    },
+    {
+      "type": "metric_contract_verified",
+      "metric": "qualified-lead-share",
+      "owner": "Руководитель Sales Operations",
+      "source": "CRM Analytics weekly export: lead_events and qualification_decisions"
+    },
+    {
+      "type": "snapshot_v1",
+      "version_id": "version-v3-0-0",
+      "snapshot_fingerprint": "in-memory-base-snapshot-v3-0-0"
+    },
+    {
+      "type": "snapshot_v2",
+      "version_id": "version-v3-0-1-draft",
+      "snapshot_fingerprint": "in-memory-predicted-snapshot-v3-0-1",
+      "result": "No authoring-element delta; development registry entry is outside the inherited model-element snapshot."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-hyp-auto-qualification-001",
+      "package_hash": "1893d5cc967eba576945ca334bdd2585aebf7764390163d5e2d7437b5050b4bd"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "1893d5cc967eba576945ca334bdd2585aebf7764390163d5e2d7437b5050b4bd",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "transaction-hyp-auto-qualification-001",
+      "mode": "in-memory"
+    },
+    {
+      "type": "development_registry_write",
+      "transaction_id": "transaction-hyp-auto-qualification-001",
+      "registry": "Гипотезы",
+      "stable_id": "hyp-auto-qualification-001"
+    },
+    {
+      "type": "readback",
+      "transaction_id": "transaction-hyp-auto-qualification-001",
+      "result": "decision, change, hypothesis registry entry, and unchanged snapshots match the confirmed package"
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "transaction-hyp-auto-qualification-001",
+      "state": "verified",
+      "next_action": "Prepare a separate experiment package and obtain a human launch decision."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "transaction-hyp-auto-qualification-001",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "registry_rows": 1,
+        "mode": "in-memory"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_valid": true,
+      "fresh_agent_contract_checked": true,
+      "in_memory_transaction_readback_verified": true
+    }
+  }
+}

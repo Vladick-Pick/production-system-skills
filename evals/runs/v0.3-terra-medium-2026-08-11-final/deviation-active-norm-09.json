@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "trial_id": "deviation-active-norm-09",
+  "case_id": "deviation-active-norm",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "evals/FRESH-AGENT-CONTRACT.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "skills/maintain-production-system/SKILL.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В текущем исполнении нет контрольной отметки. В целевой модели она обязательна; зафиксируйте отклонение."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы определить статус требования, укажите, где именно зафиксирована обязательность контрольной отметки и каков статус этой версии модели.",
+      "questions": [
+        "Где зафиксирована обязательность и действует ли эта версия?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Требование находится в целевой версии TM-03 со статусом «черновик»; действующая версия AV-02 его не содержит. Другого обязательного регламента, SLA, правила или критерия приёмки нет."
+    },
+    {
+      "role": "assistant",
+      "content": "Источник требования — TM-03, черновая целевая версия; он авторитетен как источник проектируемого изменения, но не как действующая норма. AV-02 — действующая версия и контрольной отметки не требует. Поэтому наблюдаемый разрыв нельзя подтвердить как отклонение: это кандидат развития для закрытия пробела между действующим и целевым устройством. Предлагаю сначала согласовать направление: подготовить изменение модели, которое добавит контрольную отметку в рабочую версию, без записи отклонения.",
+      "questions": [
+        "Подтверждаете это направление?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю направление."
+    },
+    {
+      "role": "assistant",
+      "content": "Для атрибуции будущего пакета назовите, пожалуйста, имя и фамилию человека, который будет подтверждать запись.",
+      "questions": [
+        "Каковы имя и фамилия подтверждающего запись?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Анна Петрова."
+    },
+    {
+      "role": "assistant",
+      "content": "Нормализованное ФИО «Анна Петрова» проверено; существующего исполнителя с таким ФИО нет.",
+      "questions": [
+        "Какую позицию Анны Петровой указать в пакете?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Владелец производственной системы."
+    },
+    {
+      "role": "assistant",
+      "content": "Полный пакет MP-2026-08-11-01, hash sha256: 7a5d0f79a277e8c2245b64ef8d957df8bc3aac784e52e5e6e1eb8c8912a8d68f. Base: действующая AV-02; target: рабочая версия WV-03. Записать Анну Петрову как исполнителя и её назначение «владелец производственной системы»; создать карточку кандидата развития «Контрольная отметка» со статусом «кандидат», источником TM-03 и пометкой, что активной нормы нет; создать решение о подготовке целевого изменения; применить к модели одну разреженную строку с контрольной отметкой; создать одну строку «Изменения модели» с before/after; пересчитать «Срез модели» и «Рабочую панель». Отклонение не создаётся и не подтверждается. Активных экземпляров нет, поэтому миграция не требуется. Проверки: schema, snapshot и сценарий normal/reject; recovery — повторный readback по transaction_id.",
+      "questions": [
+        "Анна Петрова, подтверждаете запись именно этого пакета?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывайте этот пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан одной in-memory transaction TX-DEV-001. Карточка кандидата развития, решение, разреженное изменение модели и производные представления перечитаны; checkpoint сохранён. Внешние системы не изменялись."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "sources": [
+        {"locator": "TM-03", "authority": "целевая черновая модель", "status": "не является действующей нормой"},
+        {"locator": "AV-02", "authority": "действующая версия", "status": "контрольной отметки не требует"}
+      ]
+    },
+    {
+      "type": "active_norm_checked",
+      "result": "active_norm_absent_for_control_mark"
+    },
+    {
+      "type": "development_candidate_classified",
+      "classification": "кандидат развития",
+      "reason": "целевой разрыв без действующей нормы не является отклонением"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-002",
+      "decision": "направление закрытия пробела модели"
+    },
+    {
+      "type": "candidate_direction_confirmed",
+      "question_id": "q-002",
+      "confirmed_by": "пользователь"
+    },
+    {
+      "type": "editor_identified",
+      "name": "Анна Петрова"
+    },
+    {
+      "type": "performer_lookup",
+      "normalized_name": "анна петрова",
+      "result": "not_found"
+    },
+    {
+      "type": "position_resolved",
+      "position": "владелец производственной системы"
+    },
+    {
+      "type": "draft_package",
+      "package_id": "MP-2026-08-11-01",
+      "package_hash": "7a5d0f79a277e8c2245b64ef8d957df8bc3aac784e52e5e6e1eb8c8912a8d68f"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "MP-2026-08-11-01",
+      "package_hash": "7a5d0f79a277e8c2245b64ef8d957df8bc3aac784e52e5e6e1eb8c8912a8d68f",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Петрова"
+    },
+    {
+      "type": "development_registry_write",
+      "transaction_id": "TX-DEV-001",
+      "record_type": "кандидат развития"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "TX-DEV-001",
+      "operation": "sparse_apply"
+    },
+    {
+      "type": "readback",
+      "transaction_id": "TX-DEV-001"
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "TX-DEV-001",
+      "state": "committed"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "TX-DEV-001",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "development_registry_rows": 1,
+        "external": false
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_valid": true,
+      "trial_shape_valid": true,
+      "schema_checked": true,
+      "snapshot_checked": true,
+      "scenario_checked": true,
+      "readback_completed": true
+    }
+  }
+}

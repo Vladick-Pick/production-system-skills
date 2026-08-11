@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "trial_id": "migration-v2-to-v3-preserves-model-05",
+  "case_id": "migration-v2-to-v3-preserves-model",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "evals/FRESH-AGENT-CONTRACT.md",
+    "templates/migrations/v0.2-to-v0.3.md",
+    "references/TEMPLATE-CONTRACT.md",
+    "skills/maintain-production-system/SKILL.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Нужно перенести заполненную модель v0.2 в v0.3 в безопасной in-memory копии. Содержимое действующей модели менять нельзя."
+    },
+    {
+      "role": "assistant",
+      "content": "Исходник v0.2 зафиксирован только для чтения: 29 листов в ожидаемом порядке, fingerprint 8c8d6d62f0c34f5a98c9d1cf2d1d7db6559ce869d533970ff275fbd0c20c0c47. В нём 12 авторских строк со stable ID: sys-sales, pos-manager, prod-qualified-lead, proc-lead-generation, act-qualify-lead, obj-lead, state-new, state-qualified, tr-qualify-lead, rel-system-produces-product, ctr-client, ci-qualified-lead; а также 1 решение dec-v2-001 и 1 запись истории изменения ch-v2-001. Есть одно записанное разрешение роли obj-lead: данные, поэтому неоднозначности «вход/выход» нет. Совместимость полная: единственное объявленное преобразование — knowledge_status «гипотеза» в одной сохранённой строке станет «предположение»; остальные авторские значения, stable ID, связи, версии, решения и история сохраняются без смысловых изменений.\n\nПодготовлен неизменяемый пакет mig-v2-v3-001 (hash 4fda0da7b0c8228a3d913c76f5421e51dfc7ca8bdb3d49a4f35940c33d78e221): создать отдельную in-memory копию, добавить пустые «Отклонения», «Гипотезы» и «Эксперименты», пересобрать «Инструкция», «Схема шаблона», «Срез модели», «Проверки», «Реестр процессов» и «Рабочая панель» точным builder v0.3, восстановить сохранённые строки и selectors, затем сверить 29→32 листа, counts, IDs, ссылки и формулы. Исходная v0.2 останется rollback-точкой; при несовпадении приёмка копии остановится. Подтверждаете именно этот пакет?",
+      "questions": [
+        "Подтверждаете именно этот пакет?"
+      ],
+      "active_question_id": "q-migration-confirm-001"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю пакет mig-v2-v3-001 с hash 4fda0da7b0c8228a3d913c76f5421e51dfc7ca8bdb3d49a4f35940c33d78e221."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет применён к отдельной in-memory копии одной transaction mig-tx-001. Исходная v0.2 не менялась. Read-back подтвердил 32 листа в порядке v0.3, 12 сохранённых авторских строк, те же 12 stable ID и все 3 сохранённые связи/референта; три новых реестра пусты. selectors вновь разрешают working_version_id=v2-working и current_version_id=v2-current, а пересобранные представления не содержат формульных ошибок. Целевая копия принята; rollback — неизменённый исходник v0.2."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Нормативным источником миграции признаны runbook v0.2→v0.3 и контракт шаблона v0.3; исходная in-memory книга — источник авторских значений, но не новых норм."
+    },
+    {
+      "type": "source_inventory",
+      "content": "Снята read-only inventory v0.2: schema_version=0.2; spreadsheet_id=memory-v2-source-001; revision=17; backup_locator=memory://backup/v2-source-001-r17; 29 листов в исходном порядке; 12 авторских строк, 1 решение и 1 запись истории; named ranges, validations, protections и exact userEnteredValue включены в inventory.",
+      "source_fingerprint": "8c8d6d62f0c34f5a98c9d1cf2d1d7db6559ce869d533970ff275fbd0c20c0c47",
+      "stable_ids": [
+        "sys-sales",
+        "pos-manager",
+        "prod-qualified-lead",
+        "proc-lead-generation",
+        "act-qualify-lead",
+        "obj-lead",
+        "state-new",
+        "state-qualified",
+        "tr-qualify-lead",
+        "rel-system-produces-product",
+        "ctr-client",
+        "ci-qualified-lead"
+      ]
+    },
+    {
+      "type": "source_fingerprint_verified",
+      "content": "Точный v0.2 fingerprint и revision повторно совпали с inventory; source не изменён."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "Совместимость классифицирована как сохраняющая: все существующие сущности, связи, версии, решения и история переносятся; разрешено только объявленное преобразование knowledge_status «гипотеза» → «предположение» для одной строки."
+    },
+    {
+      "type": "ambiguous_object_roles_resolved",
+      "content": "Для obj-lead найдено существующее отдельное решение object_type=данные; записей object_type=вход/выход нет, поэтому новое человеческое решение не требуется."
+    },
+    {
+      "type": "migration_plan_built",
+      "content": "Построен план mig-v2-v3-001: сохранить 29 исходных листов и значения согласно compatibility report, получить 32 листа по порядку v0.3, добавить три пустых реестра, пересобрать шесть служебных поверхностей builder v0.3, восстановить selectors и сверить fingerprints.",
+      "migration_id": "mig-v2-v3-001",
+      "plan_fingerprint": "6e446e17848bc7c82e7e207c2226426ad8d68d73c590951220e1373fe4a6155d"
+    },
+    {
+      "type": "target_copy_verified",
+      "content": "Создана отдельная in-memory target-копия memory-v3-target-001; её execution inventory имеет собственные sheetId и namedRangeId, согласованные с batch. Источник memory-v2-source-001 не является target."
+    },
+    {
+      "type": "migration_batch_built",
+      "content": "Собран один детерминированный batch: 29→32 листа, sparse restore только присутствующих authoring values и selectors, без замены вычисляемых version ID статическим текстом; три новых реестра и шесть builder-поверхностей включены.",
+      "migration_id": "mig-v2-v3-001",
+      "package_hash": "4fda0da7b0c8228a3d913c76f5421e51dfc7ca8bdb3d49a4f35940c33d78e221"
+    },
+    {
+      "type": "draft_package",
+      "content": "Человеку показан полный неизменённый пакет с source/target, counts, fingerprints, единственным преобразованием, пустыми реестрами, stop-gates, reconciliation и rollback.",
+      "package_hash": "4fda0da7b0c8228a3d913c76f5421e51dfc7ca8bdb3d49a4f35940c33d78e221"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "content": "Человек явно подтвердил показанный пакет mig-v2-v3-001 без изменения состава.",
+      "package_hash": "4fda0da7b0c8228a3d913c76f5421e51dfc7ca8bdb3d49a4f35940c33d78e221",
+      "performer_type": "человек",
+      "confirmed_by": "Симулированный владелец модели"
+    },
+    {
+      "type": "model_write",
+      "content": "Один batch применён только к in-memory target-копии; source v0.2 не затронут.",
+      "transaction_id": "mig-tx-001"
+    },
+    {
+      "type": "authoring_values_preserved",
+      "content": "В target восстановлены все 12 авторских строк, 1 решение и 1 запись истории; stable IDs и референты сохранены."
+    },
+    {
+      "type": "new_registries_empty",
+      "content": "«Отклонения», «Гипотезы» и «Эксперименты» созданы и содержат по 0 строк; исторические записи развития не выдумывались."
+    },
+    {
+      "type": "readback",
+      "content": "Перечитана именно transaction mig-tx-001: exact target order содержит 32 листа; selectors разрешают исходные рабочую и текущую версии; шесть builder-поверхностей и их формулы пересобраны без формульных ошибок.",
+      "transaction_id": "mig-tx-001"
+    },
+    {
+      "type": "migration_reconciliation",
+      "content": "Reconciliation приняла target: counts сохранённых листов совпали, 12/12 stable IDs и все сохранённые ссылки совпали, source fingerprint после миграции остался исходным, а target fingerprint=d3a732d4bc250623347b1b0e83d2dc64f7e79175e2bcbd6eff7c99a146e04036."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint успешной transaction с доказательством rollback: source memory-v2-source-001 revision 17 и fingerprint 8c8d6d62f0c34f5a98c9d1cf2d1d7db6559ce869d533970ff275fbd0c20c0c47 остаётся неизменённой точкой продолжения работы.",
+      "transaction_id": "mig-tx-001"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "mig-tx-001",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 12,
+        "target": "in-memory:memory-v3-target-001"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "source_fingerprint_verified": true,
+      "v02_inventory_complete": true,
+      "semantic_compatibility_checked": true,
+      "target_copy_verified": true,
+      "target_sheet_order_29_to_32": true,
+      "authoring_values_preserved": true,
+      "new_development_registries_empty": true,
+      "selectors_resolved": true,
+      "builder_formulas_error_free": true,
+      "migration_reconciliation": true,
+      "rollback_source_unchanged": true
+    },
+    "rollback": {
+      "source": "in-memory:memory-v2-source-001",
+      "source_revision": 17,
+      "source_fingerprint": "8c8d6d62f0c34f5a98c9d1cf2d1d7db6559ce869d533970ff275fbd0c20c0c47",
+      "evidence": "read-only source fingerprint matched before and after target transaction"
+    }
+  }
+}

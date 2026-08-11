@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "trial_id": "source-conflict-stop-02",
+  "case_id": "source-conflict-stop",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/resolve-model-element/SKILL.md",
+    "skills/resolve-model-element/references/LANGUAGE.md",
+    "skills/resolve-model-element/references/METAONTOLOGY.md",
+    "skills/resolve-model-element/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/resolve-model-element/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Проектный CONTEXT и названный владельцем нормативный документ дают разные определения."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксирован конфликт источников: проектный CONTEXT и нормативный документ дают разные определения одного кандидата. Я не буду объединять их расплывчатым определением и не буду продвигать кандидат в модель. Явного выбора владельца между этими определениями в доступном сценарии нет; до такого выбора исход допуска — «зафиксировать конфликт», а разрешённой операции модели нет."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_inventory",
+      "content": "Выявлены два источника определения: проектный CONTEXT и названный владельцем нормативный документ."
+    },
+    {
+      "type": "source_conflict_exposed",
+      "content": "Разные определения не объединены; конфликт показан как препятствие для semantic-resolution package."
+    },
+    {
+      "type": "uncertainty_reported",
+      "content": "Авторитет между конфликтующими определениями не установлен явным выбором владельца."
+    },
+    {
+      "type": "checkpoint",
+      "content": "state: checkpoint; mode: read-only; open_conflicts: [«разные определения в CONTEXT и нормативном документе»]; next_action: получить явный выбор владельца или сохранить конфликт без продвижения."
+    },
+    {
+      "type": "read_only_check",
+      "content": "Проверено, что trial не создаёт записей модели и не выполняет внешних мутаций."
+    }
+  ],
+  "outcome": {
+    "admission_outcome": "зафиксировать конфликт",
+    "recommended_model_operation": "отсутствует до явного выбора владельца",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax": true,
+      "fresh_agent_contract_checked": true
+    }
+  }
+}

@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "trial_id": "version-inheritance-exclude-03",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/MIGRATION-v0.2-to-v0.3.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v2 меняется определение лида, один процесс исключается, остальные элементы не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "Изменение будет оформлено как разреженная редакция v2, не как копия v1. В безопасном fixture доступны модель `model-sales`, рабочая версия `ver-v2` и действующая v1 `ver-v1`; запись допустима только в памяти после подтверждения полного пакета. Назовите, пожалуйста, имя и фамилию человека, который будет подтверждать пакет.",
+      "questions": [
+        "Назовите имя и фамилию подтверждающего человека."
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "Нормализованное ФИО найдено без дубля: `perf-anna-smirnova`, активное назначение «владелец модели» для `model-sales`. Какое точное определение лида должно стать действительным в v2?",
+      "questions": [
+        "Какое точное определение лида должно стать действительным в v2?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Лид — это контакт с подтверждённым интересом к предложению; прежнее определение «любой входящий контакт» больше не используется."
+    },
+    {
+      "role": "assistant",
+      "content": "Это изменение редакции элемента `obj-lead` с тем же stable ID; оно не создаёт новый объект. Какой процесс нужно исключить из v2?",
+      "questions": [
+        "Какой процесс нужно исключить из v2?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Исключить `proc-nurture` («Прогрев лида»). Активных экземпляров этого процесса нет."
+    },
+    {
+      "role": "assistant",
+      "content": "Установлен единственный предшественник: `ver-v2.predecessor_version_id = ver-v1`. До подтверждения материализованы два среза. `snapshot_v1` содержит `obj-lead` с определением «любой входящий контакт» и процессы `proc-acquire`, `proc-nurture`, `proc-convert`. Predicted `snapshot_v2` применяет только новую редакцию `obj-lead` и исключает `proc-nurture`; `proc-acquire` и `proc-convert` унаследованы из `ver-v1` с теми же source row keys. Сравнение срезов доказывает: v1 не изменяется, исключение отсутствует в v2, а все остальные элементы наследуются без копирования.\n\nПакет `pkg-v2-lead-definition-exclude-nurture-01` (SHA-256 `0d79a7934169c111d3cfe0760ccbc4cc160ae7df918be7ad3df54cf817e16ba9`): редактор Анна Смирнова (`perf-anna-smirnova`), base `ver-v1`, target draft `ver-v2`; `obj-lead` — `применить` новую редакцию определения; `proc-nurture` — `исключить`; других authoring rows нет. Причина: целевое изменение правила квалификации. Прямое влияние: объект лида и исключённый процесс; производное влияние: resolved snapshot, проверки и рабочая панель. Активных экземпляров `proc-nurture` нет, миграция экземпляров не требуется. В transaction будут append-only одна строка `Решения`, две строки `Изменения модели`, две sparse authoring rows и пересобранные in-memory snapshot/представления. Preconditions: base fingerprint `base-fp-ver-v1-001` неизменён, одна рабочая v2, нет незавершённой transaction. Recovery: при несоответствии readback не объявлять пакет завершённым. Подтвердите запись именно этого пакета с указанным hash?",
+      "questions": [
+        "Подтвердите запись пакета `pkg-v2-lead-definition-exclude-nurture-01` с hash `0d79a7934169c111d3cfe0760ccbc4cc160ae7df918be7ad3df54cf817e16ba9`."
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай пакет pkg-v2-lead-definition-exclude-nurture-01 с hash 0d79a7934169c111d3cfe0760ccbc4cc160ae7df918be7ad3df54cf817e16ba9."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в in-memory fixture одной transaction `txn-v2-lead-definition-exclude-nurture-01`. Readback подтвердил одну новую редакцию `obj-lead`, одно исключение `proc-nurture`, одну строку решения и две строки истории изменений. Materialized v2 содержит новую редакцию лида и унаследованные `proc-acquire`/`proc-convert`; `proc-nurture` отсутствует. Checkpoint сохранён после readback. Внешние системы и рабочая книга не изменялись."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Skill, its bundled interview/template/versioning references, the fresh-agent contract and the safe in-memory fixture are the authority for this trial."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "model-sales uses draft ver-v2 with current effective base ver-v1."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Анна Смирнова identified herself as the confirming human."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Normalized lookup resolved perf-anna-smirnova and its active assignment without a duplicate."
+    },
+    {
+      "type": "predecessor_resolved",
+      "content": "ver-v2 has the sole linear predecessor ver-v1."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The requested delta is one definition revision of obj-lead and exclusion of proc-nurture; all other authoring elements are non-goals."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "Effective snapshot for ver-v1 was materialized before confirmation.",
+      "snapshot_fingerprint": "snapshot-v1-fp-001"
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "Predicted effective snapshot for ver-v2 was materialized from the planned sparse revision and exclusion before confirmation.",
+      "snapshot_fingerprint": "snapshot-v2-predicted-fp-001"
+    },
+    {
+      "type": "inheritance_proved",
+      "content": "Comparison preserves ver-v1, removes proc-nurture only from predicted ver-v2, and retains proc-acquire/proc-convert through predecessor inheritance."
+    },
+    {
+      "type": "draft_package",
+      "content": "Complete sparse package was shown before confirmation.",
+      "package_id": "pkg-v2-lead-definition-exclude-nurture-01",
+      "package_hash": "0d79a7934169c111d3cfe0760ccbc4cc160ae7df918be7ad3df54cf817e16ba9"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "content": "The identified human confirmed the exact shown package and hash.",
+      "package_hash": "0d79a7934169c111d3cfe0760ccbc4cc160ae7df918be7ad3df54cf817e16ba9",
+      "performer_type": "человек",
+      "confirmed_by": "perf-anna-smirnova"
+    },
+    {
+      "type": "sparse_apply",
+      "content": "In-memory transaction wrote the revised definition for obj-lead only.",
+      "transaction_id": "txn-v2-lead-definition-exclude-nurture-01",
+      "stable_id": "obj-lead"
+    },
+    {
+      "type": "sparse_exclude",
+      "content": "In-memory transaction wrote the exclusion for proc-nurture only.",
+      "transaction_id": "txn-v2-lead-definition-exclude-nurture-01",
+      "stable_id": "proc-nurture"
+    },
+    {
+      "type": "model_write",
+      "content": "One idempotent in-memory transaction appended the decision, two change rows and two sparse authoring rows, then rebuilt the snapshot and views.",
+      "transaction_id": "txn-v2-lead-definition-exclude-nurture-01"
+    },
+    {
+      "type": "readback",
+      "content": "The recorded transaction and materialized v2 snapshot were reread successfully.",
+      "transaction_id": "txn-v2-lead-definition-exclude-nurture-01"
+    },
+    {
+      "type": "checkpoint",
+      "content": "Checkpoint was saved after readback; no external mutation occurred.",
+      "transaction_id": "txn-v2-lead-definition-exclude-nurture-01"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-v2-lead-definition-exclude-nurture-01",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2,
+        "mode": "in_memory"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "base_preconditions_unchanged": true,
+      "snapshot_v1_materialized_before_confirmation": true,
+      "predicted_snapshot_v2_materialized_before_confirmation": true,
+      "unchanged_inheritance_proved": true,
+      "exact_human_confirmation_matched_package_hash": true,
+      "single_transaction_readback_completed": true,
+      "checkpoint_after_readback": true,
+      "no_external_mutation": true
+    }
+  }
+}

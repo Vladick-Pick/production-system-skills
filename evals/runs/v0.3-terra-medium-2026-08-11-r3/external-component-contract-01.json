@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "trial_id": "external-component-contract-01",
+  "case_id": "external-component-contract",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/LANGUAGE.md",
+    "skills/model-production-system/references/METAONTOLOGY.md",
+    "skills/model-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Поставщик продаёт два разных продукта и отдельно передаёт переиспользуемый материал; компоненты используются в нескольких действиях внутренней системы."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала зафиксирую режим работы, потому что без него нельзя отличить исследование от записи.",
+      "questions": ["В каком режиме вести эту сессию: read-only, proposal или write?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "proposal; это безопасная in-memory модель, внешних записей не будет."
+    },
+    {
+      "role": "assistant",
+      "content": "Режим proposal принят; пакет можно подготовить, но не записывать. Теперь нужна точная v0.3 модель, к которой относится контур.",
+      "questions": ["Каковы идентификаторы модели, книги, рабочей и текущей версии в fixture?"],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "model_id=model-external-components; workbook=in-memory://external-components; working_version_id=ver-draft-01; current_version_id=ver-current-01; schema_version=0.3."
+    },
+    {
+      "role": "assistant",
+      "content": "Версия и пустой in-memory snapshot разрешены. Для атрибуции будущего пакета нужен идентифицированный человек и активное назначение.",
+      "questions": ["Кто является редактором fixture и какое его активное назначение в моделируемой внутренней системе?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Редактор — человек Мария Воронова, performer_id=performer-maria-voronova, assignment_id=assignment-maria-system-owner; активное назначение: владелец внутренней системы."
+    },
+    {
+      "role": "assistant",
+      "content": "Редактор и назначение найдены. Нужно проверить, действительно ли два поставляемых результата — отдельные продукты, а не варианты одного.",
+      "questions": ["Заказываются и принимаются ли два результата отдельно по разным устойчивым критериям качества или назначения?"],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Да. Продукт «Набор заявок базовый» принимается по полноте обязательных полей; продукт «Набор заявок приоритетный» — по тем же полям и обязательному признаку приоритета. Их заказывают, оплачивают и принимают отдельно."
+    },
+    {
+      "role": "assistant",
+      "content": "Это два продукта: разные independently accepted предложения, а не только разные цены или сроки. Отдельно проверю третий компонент, чтобы не смешать его с данными исполнения.",
+      "questions": ["Что именно представляет собой переиспользуемый компонент и используется ли один и тот же его текст или URL повторно в действиях?"],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Это «Шаблон сообщения для уточнения заявки», фиксированный текст. Один и тот же шаблон используют повторно; отправленные конкретные сообщения и их время — данные исполнения."
+    },
+    {
+      "role": "assistant",
+      "content": "Компонент классифицирован как материал, а не продукт и не отправленное сообщение. Нужна внешняя граница поставки, без моделирования внутреннего устройства поставщика.",
+      "questions": ["Как называется внешний контрагент и какие три позиции контракта с одним компонентом каждая он передаёт внутренней системе?"],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Контрагент «Внешний поставщик». Один входящий контракт содержит три позиции: базовый набор заявок, приоритетный набор заявок и шаблон сообщения; каждая позиция имеет свой объём, цену и критерий приёмки."
+    },
+    {
+      "role": "assistant",
+      "content": "Контрагент останется внешним; для каждой позиции будет ровно один из product_id или material_id. Перед связыванием с действиями фиксирую интерфейс передачи.",
+      "questions": ["Для каждого компонента назовите триггер, канал, формат, пакет и действие приёмки, а также путь мотивированного отказа."
+      ],
+      "active_question_id": "q-007"
+    },
+    {
+      "role": "user",
+      "content": "Триггер — готовность поставки. Канал — защищённая папка обмена. Формат — CSV для обоих наборов и TXT для шаблона. Пакет — файл, идентификатор позиции и контрольная сумма. Действие «Проверить входящий компонент» подтверждает приёмку; при несоответствии он направляет мотивированный отказ поставщику."
+    },
+    {
+      "role": "assistant",
+      "content": "Граница передачи определена. Осталось зафиксировать внутреннее использование на уровне действий, а не выводить его только из договора.",
+      "questions": ["Какие конкретные внутренние действия используют каждый из двух продуктов и материал?"],
+      "active_question_id": "q-008"
+    },
+    {
+      "role": "user",
+      "content": "«Проверить входящий компонент» использует оба набора и шаблон. «Распределить заявку» использует оба набора. «Уточнить заявку» использует шаблон сообщения. «Сформировать приоритетную очередь» использует только приоритетный набор."
+    },
+    {
+      "role": "assistant",
+      "content": "Связи использования заданы на конкретных действиях. Для сквозной проверки нужен один объект работы и конечная приёмка внутреннего результата.",
+      "questions": ["Какой основной объект работы проходит процесс и какой выход внутренней системы принимается или мотивированно отклоняется?"],
+      "active_question_id": "q-009"
+    },
+    {
+      "role": "user",
+      "content": "Основной объект — заявка. После проверки, распределения и при необходимости уточнения внутренний результат «Подготовленная заявка» принимается ответственным владельцем очереди или возвращается на уточнение при неполных обязательных данных."
+    },
+    {
+      "role": "assistant",
+      "content": "Собран proposal package для черновика ver-draft-01: два разных входящих продукта, один переиспользуемый материал, внешний контрагент без выдуманной системы, три позиции контракта и три интерфейса передачи; использование связано с четырьмя внутренними действиями. package_id=pkg-external-components-01; package_hash=3b11d7c38e6c5cded6f28790d63d5581eb1bd3bc248f7a09cfce2e2dcb17e4ac. Режим proposal не допускает подтверждения и transaction; in-memory прогон покрывает normal path, мотивированный отказ входящего компонента и возврат подготовленной заявки на уточнение."
+    }
+  ],
+  "events": [
+    {"type": "scope_checked", "content": "The fixture boundary contains one internal system; the supplier is external."},
+    {"type": "source_authority_resolved", "content": "The deterministic in-memory simulator is the sole scenario source."},
+    {"type": "snapshot_resolved", "content": "An empty v0.3 in-memory snapshot for model-external-components was resolved."},
+    {"type": "base_version_resolved", "content": "working_version_id=ver-draft-01 and current_version_id=ver-current-01 were resolved."},
+    {"type": "editor_identified", "content": "A human editor and active system-owner assignment were supplied by the simulator."},
+    {"type": "performer_lookup", "content": "The supplied performer_id and assignment_id were located in the in-memory fixture."},
+    {"type": "decisive_question", "content": "The two supplied outcomes were tested for separate ordering and acceptance."},
+    {"type": "product_identity_test", "content": "Separate ordering, payment, and acceptance criteria established two product identities."},
+    {"type": "component_type_resolved", "content": "The reusable message template was distinguished from products and execution data."},
+    {"type": "material_classified", "content": "The reusable fixed text was classified as a material; sent messages remain execution data."},
+    {"type": "counterparty_resolved", "content": "The supplier was retained as an external counterparty, not modeled as an internal system."},
+    {"type": "contract_items_resolved", "content": "Three incoming contract items were resolved, each carrying exactly one component."},
+    {"type": "transfer_interface_resolved", "content": "Trigger, channel, format, package, acceptance, rejection, and return handling were established before internal-use links."},
+    {"type": "consumer_actions_linked", "content": "Both products and the material were linked to their stated internal consumer actions."},
+    {"type": "relation_resolved", "content": "Action-to-product and action-to-material usage relations were resolved."},
+    {"type": "product_origin_linked", "content": "Each incoming product was explicitly linked to its contract item from the external supplier."},
+    {"type": "draft_package", "package_hash": "3b11d7c38e6c5cded6f28790d63d5581eb1bd3bc248f7a09cfce2e2dcb17e4ac", "content": "A complete proposal-only in-memory package was prepared; no confirmation was requested."},
+    {"type": "checkpoint", "content": "The proposal package, scenario evidence, and no-write next state were checkpointed."}
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "schema_v03_resolved": true,
+      "separate_product_identity_confirmed": true,
+      "exactly_one_component_per_contract_item": true,
+      "interfaces_precede_internal_links": true,
+      "consumer_actions_linked": true,
+      "normal_path_simulated": true,
+      "rejection_path_simulated": true,
+      "return_path_simulated": true,
+      "no_external_mutation": true
+    }
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "trial_id": "development-handoff-no-write-01",
+  "case_id": "development-handoff-no-write",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/audit-production-system/SKILL.md",
+    "skills/audit-production-system/references/LANGUAGE.md",
+    "skills/audit-production-system/references/METAONTOLOGY.md",
+    "skills/audit-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/audit-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/audit-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Во время read-only аудита найден один подтверждаемый случай нарушения действующего SLA."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы не смешать версии и доказать отклонение по действующей норме, назовите проверяемую версию и дайте точные локаторы SLA и факта исполнения.",
+      "questions": [
+        "Каковы version_id и точные локаторы действующего SLA и факта исполнения?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Синтетическая fixture: model_id=model-demo-01, schema_version=v0.3, version_id=ver-2026-08-01, status=действует, snapshot_fingerprint=sha256:fixture-snapshot-01. В строке SLA-NORM-01 раздела «Интерфейсы передачи» указано: «Ответ на обращение клиента — не позднее 4 часов от timestamp_received». Журнал исполнения EVENT-2026-08-10-17 содержит timestamp_received=2026-08-10T09:00:00Z и timestamp_first_response=2026-08-10T14:30:00Z. Источник нормы и журнал доступны только для чтения; иных событий или записей реестра не изменять."
+    },
+    {
+      "role": "assistant",
+      "content": "Scope: model-demo-01, действующая ver-2026-08-01, snapshot sha256:fixture-snapshot-01; проекция не входит в цель аудита. Evidence ledger: (1) SLA-NORM-01 задаёт действующую норму первого ответа не позднее 4 часов после получения; (2) EVENT-2026-08-10-17 показывает получение в 09:00 UTC и первый ответ в 14:30 UTC. Воспроизводимая проверка: 14:30 − 09:00 = 5 часов 30 минут, что превышает норму на 1 час 30 минут. Это подтверждённый факт нарушения выполнимой действующей нормы, а не гипотеза развития и не пробел наблюдаемости: норма и timestamps имеют точные локаторы.\n\nЛёгкая карточка кандидата: тип — отклонение; область — интерфейс передачи и действие первого ответа; факт — EVENT-2026-08-10-17; источник и локаторы — SLA-NORM-01, EVENT-2026-08-10-17; отклонённая альтернатива — гипотеза развития, потому что нет внешнего изменения и новой возможности. Неизвестны ответственный, correction, причина и системное изменение; они не выводятся из одного события. Передаю карточку, ledger и checkpoint в maintain-production-system для подготовки пакета. В реестр «Отклонения» ничего не записываю, статусы и решения не меняю."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Нормативным источником признана действующая версия ver-2026-08-01 и её строка SLA-NORM-01; журнал EVENT-2026-08-10-17 признан read-only свидетельством фактического исполнения."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Запрошены version_id и точные локаторы нормы и факта, без которых нельзя отличить подтверждённое отклонение от непроверенного сигнала.",
+      "question_id": "q-001"
+    },
+    {
+      "type": "scope_checked",
+      "content": "Зафиксированы model-demo-01, schema_version=v0.3, действующая ver-2026-08-01 и snapshot_fingerprint=sha256:fixture-snapshot-01; проекция исключена из scope."
+    },
+    {
+      "type": "evidence_ledger_created",
+      "content": "В ledger добавлены SLA-NORM-01 и EVENT-2026-08-10-17 с observed values, ожидаемой нормой, вычислением 5 ч 30 мин и freshness из синтетической fixture."
+    },
+    {
+      "type": "active_norm_checked",
+      "content": "Проверено, что SLA-NORM-01 принадлежит действующей ver-2026-08-01 и устанавливает предел 4 часа от timestamp_received до первого ответа."
+    },
+    {
+      "type": "read_only_check",
+      "content": "Детерминированно вычислено: 2026-08-10T14:30:00Z minus 2026-08-10T09:00:00Z equals 5 ч 30 мин; превышение SLA составляет 1 ч 30 мин."
+    },
+    {
+      "type": "development_candidate_classified",
+      "content": "Сигнал классифицирован как кандидат отклонения: проверяемый факт расходится с действующей нормой; гипотеза развития отвергнута, поскольку внешнее изменение и новая возможность отсутствуют."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "В maintain-production-system переданы лёгкая карточка, источники SLA-NORM-01 и EVENT-2026-08-10-17, неизвестные ответственный/correction/причина/system change и read-only checkpoint; строка реестра не создана."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Режим read-only завершён: доказательство нарушения сохранено в trial, следующий шаг — maintain-production-system собирает и при необходимости подтверждает mutation package; внешних записей нет."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_checked": true,
+      "contract_consistency_checked": true
+    }
+  }
+}

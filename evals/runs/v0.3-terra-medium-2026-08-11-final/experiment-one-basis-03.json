@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "trial_id": "experiment-one-basis-03",
+  "case_id": "experiment-one-basis",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {"role":"user","content":"Пользователь хочет одним экспериментом одновременно проверить фикс отклонения и независимую рыночную гипотезу."},
+    {"role":"assistant","content":"Сначала зафиксирую, кто будет подтверждать пакет и принимать решение о запуске; ИИ этого решения не принимает.","questions":["Назовите, пожалуйста, имя и фамилию человека, который отвечает за эту производственную систему."],"active_question_id":"q-001"},
+    {"role":"user","content":"Анна Петрова. В fixture она уже зарегистрирована как технолог и имеет активное назначение на эту систему."},
+    {"role":"assistant","content":"Анна Петрова найдена как активный технолог. В действующей версии v0.3-active подтверждено отклонение dev-response-sla: норма — первый ответ на входящую заявку не позднее двух рабочих часов; в проверяемой выборке 5 из 20 заявок превысили срок. Отдельно есть рыночная гипотеза hyp-self-service: у целевого сегмента появился спрос на самостоятельное оформление, и новый канал может увеличить долю квалифицированных заявок. Это разные основания: первое — отклонение от действующей нормы, второе — новая внешняя возможность.","questions":["Какое одно основание вы выбираете для ближайшего эксперимента: устранение отклонения dev-response-sla или проверку гипотезы hyp-self-service?"],"active_question_id":"q-002"},
+    {"role":"user","content":"Сначала устраняем dev-response-sla. Рыночную гипотезу оставляем отдельной и вернёмся к ней следующим экспериментом."},
+    {"role":"assistant","content":"Основание ближайшего эксперимента — только dev-response-sla. hyp-self-service остаётся самостоятельной гипотезой развития и будет проверяться отдельным будущим экспериментом; его нельзя добавлять в этот пакет. Минимальный дизайн для dev-response-sla: на 14 календарных дней назначить дежурного менеджера только для новых входящих заявок основного канала; сравнить долю заявок с первым ответом не позднее двух рабочих часов с зафиксированной исходной выборкой; основной показатель — доля заявок в норме; успех — не менее 95% при не меньшем объёме 20 заявок; stop-условие — две заявки подряд без ответа более четырёх рабочих часов; возврат — снять временное дежурство и вернуться к действующему распределению заявок. Область не расширяется на новый самостоятельный канал и не проверяет рыночный спрос.","questions":["Подтверждаете точный пакет для записи в реестр: experiment-response-sla-01 с единственным основанием dev-response-sla и указанным минимальным дизайном?"],"active_question_id":"q-003"},
+    {"role":"user","content":"Да, подтверждаю именно этот пакет."},
+    {"role":"assistant","content":"Пакет experiment-response-sla-01 записан в безопасный in-memory outcome одной транзакцией tx-experiment-response-sla-01 и перечитан: основание только dev-response-sla, базовая действующая версия v0.3-active, дизайн полный. Внешних систем и рабочей книги я не изменял. Рыночная hyp-self-service остаётся отдельным будущим экспериментом после отдельного дизайна и решения о запуске.","questions":["Анна, разрешаете запустить experiment-response-sla-01 по показанному дизайну?"],"active_question_id":"q-004"}
+  ],
+  "events": [
+    {"type":"source_authority_resolved","content":"Для trial использованы только указанный скилл, его необходимые bundled contracts и контракт fresh-agent trial."},
+    {"type":"base_version_resolved","content":"В fixture установлена действующая базовая версия v0.3-active."},
+    {"type":"editor_identified","content":"Получены имя и фамилия: Анна Петрова."},
+    {"type":"performer_lookup","content":"Нормализованное ФИО найдено в synthetic fixture."},
+    {"type":"position_resolved","content":"Активное назначение: технолог производственной системы."},
+    {"type":"active_norm_checked","content":"Проверена действующая норма первого ответа на входящую заявку не позднее двух рабочих часов."},
+    {"type":"deviation_types_distinguished","content":"dev-response-sla классифицировано как отклонение от действующей нормы, а hyp-self-service — как независимая гипотеза развития."},
+    {"type":"experiment_with_zero_or_two_bases","content":"Исходное намерение объединить отклонение и гипотезу выявлено как недопустимый эксперимент с двумя основаниями."},
+    {"type":"decisive_question","content":"Поставлен выбор единственного основания ближайшего эксперимента."},
+    {"type":"experiment_basis_resolved","content":"Пользователь выбрал единственное основание: dev-response-sla."},
+    {"type":"development_candidate_classified","content":"hyp-self-service сохранена как отдельная гипотеза развития для будущего эксперимента, не как второе основание текущего."},
+    {"type":"metric_contract_verified","content":"Основной показатель — доля заявок с первым ответом в пределах двух рабочих часов; источник — журнал входящих заявок, владелец — технолог."},
+    {"type":"minimum_design_built","content":"Определены временное дежурство, область, сравнение, показатель, критерий успеха, срок, stop-условие и возврат."},
+    {"type":"draft_package","package_hash":"sha256:3c655298c2c3cde9d6162e362af1886372515b1edc12cb42e56b9eb3b335d18f","content":"Показан точный пакет experiment-response-sla-01 для in-memory транзакции."},
+    {"type":"exact_package_confirmation","package_hash":"sha256:3c655298c2c3cde9d6162e362af1886372515b1edc12cb42e56b9eb3b335d18f","performer_type":"человек","confirmed_by":"Анна Петрова","content":"Человек подтвердил именно показанный пакет."},
+    {"type":"development_registry_write","transaction_id":"tx-experiment-response-sla-01","content":"В безопасный in-memory outcome записана карточка experiment-response-sla-01 с единственным deviation_id dev-response-sla."},
+    {"type":"readback","transaction_id":"tx-experiment-response-sla-01","content":"Перечитана записанная in-memory transaction и её единственное основание."},
+    {"type":"checkpoint","transaction_id":"tx-experiment-response-sla-01","content":"Проверено: пакет записан без второго основания и без внешней мутации."},
+    {"type":"human_launch_decision_requested","content":"У Анны Петровой запрошено отдельное человеческое решение о запуске; запуск не выполнен."}
+  ],
+  "outcome": {
+    "writes": [{"transaction_id":"tx-experiment-response-sla-01","decision_rows":1,"change_rows":1,"model_rows":1,"scope":"in-memory development registry only"}],
+    "external_mutations": [],
+    "validations": {"single_experiment_basis":true,"minimum_design_complete":true,"exact_human_confirmation_recorded":true,"external_mutation_absent":true}
+  }
+}

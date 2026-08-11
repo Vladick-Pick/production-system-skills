@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trial_id": "migration-v2-to-v3-preserves-model-04",
+  "case_id": "migration-v2-to-v3-preserves-model",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "evals/FRESH-AGENT-CONTRACT.md",
+    "templates/migrations/v0.2-to-v0.3.md",
+    "references/TEMPLATE-CONTRACT.md",
+    "skills/maintain-production-system/SKILL.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Перенеси заполненную модель из v0.2 в v0.3 в безопасной in-memory копии. Сохрани весь существующий смысл и исходную v0.2."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверила точный снимок источника: schema_version=0.2, известный builder fingerprint, 29 листов в нормативном порядке, согласованные stable ID и неизменный source fingerprint. Инвентаризированы авторские строки, identity/governance-реестры, формулы, selectors и связи; вычисляемые листы не посчитаны повторно. Совместимость однозначна: existing values сохраняются, а `knowledge_status: гипотеза` при наличии переносится как `предположение`; объектов с неразрешённым `object_type: вход/выход` нет. Целевая in-memory копия отделена от источника и проверена. План migration_id `mig-v2-v3-inmemory-01`: сохранить 29 исходных листов и stable IDs, создать v0.3 из 32 листов, оставить пустыми `Отклонения`, `Гипотезы`, `Эксперименты`, а `Инструкция`, `Схема шаблона`, `Срез модели`, `Проверки`, `Реестр процессов` и `Рабочая панель` пересобрать builder v0.3. Пакет `migration-v2-v3-inmemory-01` с hash `2e2ee7f555e9921b178ba838d6f57684502595e59e71e6d2cde70eb8710f34c5` применит один batch только к целевой копии; затем будут read-back, сверка counts/ID/references и checkpoint. Rollback: исходная v0.2 остаётся неизменной. Подтверждаете именно этот пакет?",
+      "questions": [
+        "Подтверждаете именно этот пакет?"
+      ],
+      "active_question_id": "q-confirm-migration-batch"
+    },
+    {
+      "role": "user",
+      "content": "Да, применяйте именно показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Готово в in-memory целевой копии: один migration batch применён, затем выполнены read-back и checkpoint. Сохранены существующие авторские, identity и governance-значения, stable IDs, референты и связи; добавлены только три пустых реестра развития. Шесть служебных поверхностей пересобраны builder v0.3. Сверка подтверждает 29→32 листа, сохранность counts/ID/references и неизменность source fingerprint. Внешних изменений не было; точка rollback — исходная v0.2."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_inventory",
+      "content": "Read-only inventory of the in-memory v0.2 source recorded its 29-sheet order, authoring and governance rows, stable IDs, relations, formulas, selectors, and derived registries."
+    },
+    {
+      "type": "source_fingerprint_verified",
+      "content": "The exact v0.2 source schema, known builder fingerprint, revision snapshot, and post-inventory fingerprint matched."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "Compatibility classification preserved existing semantics; only the declared knowledge_status mapping гипотеза to предположение was applicable."
+    },
+    {
+      "type": "ambiguous_object_roles_resolved",
+      "content": "The inventory contained no object_type вход/выход requiring a separate human type decision; no ambiguity remained."
+    },
+    {
+      "type": "target_copy_verified",
+      "content": "A separate in-memory target copy was prepared and its execution inventory was verified; it is not the source v0.2 workbook."
+    },
+    {
+      "type": "migration_plan_built",
+      "content": "Built migration plan mig-v2-v3-inmemory-01 for the exact 29-to-32 sheet conversion, preservation, regeneration, and rollback conditions."
+    },
+    {
+      "type": "migration_batch_built",
+      "content": "Built one deterministic v0.3 builder batch with sparse restore of source authoring values and selectors, without replacing computed version-ID formulas."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "migration-v2-v3-inmemory-01",
+      "package_hash": "2e2ee7f555e9921b178ba838d6f57684502595e59e71e6d2cde70eb8710f34c5",
+      "content": "Displayed the exact target, counts, declared semantic transformation, regenerated surfaces, empty new registries, stop-gates, reconciliation, and rollback."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "2e2ee7f555e9921b178ba838d6f57684502595e59e71e6d2cde70eb8710f34c5",
+      "performer_type": "человек",
+      "confirmed_by": "in-memory model owner",
+      "content": "The human confirmed the unchanged displayed migration package."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-mig-v2-v3-inmemory-01",
+      "content": "Applied the confirmed migration batch once to the in-memory target copy only."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-mig-v2-v3-inmemory-01",
+      "content": "Read back the written target transaction, rebuilt v0.3 computed views, and verified the preserved selectors and source/target values."
+    },
+    {
+      "type": "authoring_values_preserved",
+      "content": "Read-back established preservation of source authoring, identity, governance values, stable IDs, referents, and relations except for the declared compatibility mapping."
+    },
+    {
+      "type": "new_registries_empty",
+      "content": "Read-back established that Отклонения, Гипотезы, and Эксперименты were newly present and empty."
+    },
+    {
+      "type": "migration_reconciliation",
+      "content": "Reconciled source and target: exact 29-to-32 order, counts, IDs, references, formula-backed selectors, regenerated derived surfaces, and unchanged source fingerprint all passed."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-mig-v2-v3-inmemory-01",
+      "content": "Saved completed migration checkpoint with source v0.2 unchanged as rollback evidence."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-mig-v2-v3-inmemory-01",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "target": "in-memory v0.3 copy",
+        "source_unchanged": true,
+        "rollback": "unchanged in-memory v0.2 source snapshot"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "source_fingerprint_match": true,
+      "source_schema_and_order_verified": true,
+      "source_stable_ids_and_references_reconciled": true,
+      "target_copy_isolated": true,
+      "target_32_sheet_order_verified": true,
+      "new_development_registries_empty": true,
+      "derived_views_rebuilt": true,
+      "selectors_and_formulas_verified": true,
+      "source_unchanged_after_migration": true,
+      "rollback_evidence_recorded": true
+    }
+  }
+}

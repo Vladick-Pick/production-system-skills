@@ -206,7 +206,7 @@ description: Использовать для первичной сборки н�
 
 ### 15. Построить проекцию
 
-Из exact snapshot подготовить projection IR, BPMN, SVG и manifest по `PROJECTION-CONTRACT.md`. Не строить draw.io. Unknown job type, FEEL, form, binding или Modeler evidence блокирует deployment readiness, но не обязательно view readiness.
+Сначала разрешить exact effective snapshot и его fingerprint, затем до начала сборки проверить BPMN allowlist. Из одного принятого snapshot подготовить projection IR, BPMN, SVG и manifest по `PROJECTION-CONTRACT.md`; после structural validation отдельно доказать lineage одного fingerprint для всех трёх артефактов. Не строить draw.io. Unknown job type, FEEL, form, binding или отсутствие Modeler evidence записывается как blocker deployment readiness, но не как провал уже выполненных локальных проверок и не обязательно блокирует view readiness.
 
 ## Postconditions
 

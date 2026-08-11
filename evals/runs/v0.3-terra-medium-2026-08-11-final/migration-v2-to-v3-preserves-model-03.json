@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "trial_id": "migration-v2-to-v3-preserves-model-03",
+  "case_id": "migration-v2-to-v3-preserves-model",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/MIGRATION-v0.2-to-v0.3.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v0.2 уже заполнены объекты, процессы, действия, материалы, контракты, решения и история; knowledge_status содержит «гипотеза», а часть object_type — «вход/выход». Нужно перейти на v0.3."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасном fixture я зафиксировал исходную книгу v0.2: 29 листов, стабильные ID, референты, версии, решения и историю; fingerprint и резервная точка совпали. «гипотеза» будет детерминированно заменена на «предположение». До создания отдельной v0.3-копии нужно снять одну смысловую неоднозначность: строка obj-input-03 помечена «вход», что не является собственным типом объекта.",
+      "questions": [
+        "Какой собственный тип у obj-input-03: «данные» или «материал»?"
+      ],
+      "active_question_id": "q-object-input-03"
+    },
+    {
+      "role": "user",
+      "content": "Данные."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировал только локальное решение для obj-input-03: «данные». Вторая строка obj-output-03 также помечена ролью «выход» и требует самостоятельного решения; ответ на первый вопрос не разрешает перенос.",
+      "questions": [
+        "Какой собственный тип у obj-output-03: «данные» или «материал»?"
+      ],
+      "active_question_id": "q-object-output-03"
+    },
+    {
+      "role": "user",
+      "content": "Материал."
+    },
+    {
+      "role": "assistant",
+      "content": "Неоднозначные роли разрешены: obj-input-03 → «данные», obj-output-03 → «материал». Создана отдельная fixture-копия v0.3; её execution inventory совпал с ожидаемым идентификатором копии. Пакет mig-v02-v03-fixture-03 сохранит все авторские значения, stable IDs, референты, решения и append-only историю; применит только три перечисленных преобразования; пересоберёт служебные листы; добавит пустые «Отклонения», «Гипотезы» и «Эксперименты». Исходная v0.2 остаётся rollback. Подтверждающей указана человек Анна Тестова из fixture, назначение «Технолог». Подтверждаете применение показанного migration package к отдельной v0.3-копии?",
+      "questions": [
+        "Подтверждаете применение показанного migration package к отдельной v0.3-копии?"
+      ],
+      "active_question_id": "q-confirm-migration-batch"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "In-memory batch применён только к отдельной fixture-копии. Сверка подтвердила порядок 32 листов, сохранность авторских значений и истории с тремя объявленными преобразованиями, пустоту новых реестров, разрешение selectors и отсутствие формульных ошибок в пересобранных представлениях. Исходная v0.2 не менялась; rollback — продолжить работу в ней."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Migration mode is governed by the bundled v0.2-to-v0.3 runbook and schemas."
+    },
+    {
+      "type": "source_inventory",
+      "spreadsheet_id": "fixture-source-v02-03",
+      "schema_version": "0.2",
+      "sheet_count": 29,
+      "authoring_surfaces": ["Объекты", "Процессы", "Действия", "Материалы", "Контракты", "Решения", "Изменения модели"]
+    },
+    {
+      "type": "source_fingerprint_verified",
+      "fingerprint": "sha256:source-fixture-v02-03",
+      "backup_locator": "fixture://backup/source-v02-03"
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "sheet_order": "v0.2-canonical-29",
+      "build_fingerprint": "fixture-builder-v0.2-03"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-object-input-03",
+      "object_id": "obj-input-03",
+      "content": "Requested the own type required to replace the role label «вход»."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-object-output-03",
+      "object_id": "obj-output-03",
+      "content": "Requested the own type required to replace the role label «выход»."
+    },
+    {
+      "type": "ambiguous_object_roles_resolved",
+      "resolutions": {
+        "obj-input-03": "данные",
+        "obj-output-03": "материал"
+      }
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "transformations": [
+        "knowledge_status: гипотеза → предположение",
+        "obj-input-03: вход → данные",
+        "obj-output-03: выход → материал"
+      ],
+      "exact_preservation_for_all_other_existing_values": true
+    },
+    {
+      "type": "full_version_copy",
+      "source_spreadsheet_id": "fixture-source-v02-03",
+      "target_spreadsheet_id": "fixture-target-v03-03"
+    },
+    {
+      "type": "target_copy_verified",
+      "target_spreadsheet_id": "fixture-target-v03-03",
+      "execution_inventory_verified": true
+    },
+    {
+      "type": "migration_plan_built",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "source_fingerprint": "sha256:source-fixture-v02-03",
+      "target_sheet_count": 32
+    },
+    {
+      "type": "draft_package",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "package_hash": "2721adccfb47e39ee1af0c41e427eeb1acae551b54c6505cb612f87b2cefed72",
+      "content": "One deterministic structural batch for the separate target copy."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "package_hash": "2721adccfb47e39ee1af0c41e427eeb1acae551b54c6505cb612f87b2cefed72",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Тестова"
+    },
+    {
+      "type": "migration_batch_built",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "target_spreadsheet_id": "fixture-target-v03-03",
+      "source_spreadsheet_id_excluded": true
+    },
+    {
+      "type": "authoring_values_preserved",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "stable_ids_preserved": true,
+      "referents_preserved": true,
+      "decisions_preserved": true,
+      "history_preserved": true
+    },
+    {
+      "type": "new_registries_empty",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "registries": ["Отклонения", "Гипотезы", "Эксперименты"]
+    },
+    {
+      "type": "migration_reconciliation",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "source_fingerprint_unchanged": true,
+      "target_sheet_order_verified": true,
+      "selectors_resolved": true,
+      "rebuilt_surfaces_valid": true,
+      "result": "verified"
+    },
+    {
+      "type": "checkpoint",
+      "migration_id": "mig-v02-v03-fixture-03",
+      "state": "checkpoint",
+      "write_state": "verified",
+      "next_action": "Use the verified v0.3 copy; retain the unchanged v0.2 source as rollback."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "kind": "in_memory_migration_batch",
+        "migration_id": "mig-v02-v03-fixture-03",
+        "target_spreadsheet_id": "fixture-target-v03-03",
+        "source_spreadsheet_id": "fixture-source-v02-03",
+        "source_modified": false,
+        "target_sheet_count": 32
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "source_inventory_complete": true,
+      "source_fingerprint_unchanged": true,
+      "target_copy_verified": true,
+      "semantic_transformations_allowlisted": true,
+      "authoring_values_preserved": true,
+      "new_registries_empty": true,
+      "migration_reconciled": true
+    }
+  }
+}

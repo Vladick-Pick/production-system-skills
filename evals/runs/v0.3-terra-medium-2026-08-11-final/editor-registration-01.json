@@ -1,0 +1,174 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-01",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/maintain-production-system/SKILL.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
+    "references/INTERVIEW-CONTRACT.md",
+    "references/TEMPLATE-CONTRACT.md",
+    "references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Новый человек просит изменить модель; его нет в реестре исполнителей."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы атрибутировать изменение и не создать дубль, сначала назовите, пожалуйста, имя и фамилию человека.",
+      "questions": [
+        "Как его зовут полностью?"
+      ],
+      "active_question_id": "q-001-editor-name"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "Нормализованное ФИО «Анна Смирнова» проверено в синтетическом реестре: совпадений нет. Для нового исполнителя нужно отдельное назначение; оно войдёт в тот же пакет, но пока ничего не записано.",
+      "questions": [
+        "Какую позицию Анна Смирнова занимает в этой модели?"
+      ],
+      "active_question_id": "q-002-editor-position"
+    },
+    {
+      "role": "user",
+      "content": "Технолог."
+    },
+    {
+      "role": "assistant",
+      "content": "Позиция «Технолог» существует в синтетическом срезе и будет назначена Анне Смирновой с датой начала 2026-08-11.",
+      "questions": [
+        "Какую именно модель и какое изменение нужно внести?"
+      ],
+      "active_question_id": "q-003-change-request"
+    },
+    {
+      "role": "user",
+      "content": "Книга «Демонстрационная система», model_id model-demo-01, режим write; рабочая версия ver-draft-02, действующая ver-active-01. В черновике измените определение существующего элемента metric-lead-response: вместо «Время ответа на лид» укажите «Время от создания лида до первого содержательного ответа ответственной позиции». Это описательная коррекция уже существующей практики; активные экземпляры не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "Источником изменения служит подтверждённое описание существующей практики. В синтетическом срезе metric-lead-response существует; его предшественник — ver-active-01. Влияние ограничено определением показателя, его срезом и производными представлениями; новых продуктов, объектов, процессов, контрактов или миграции живых экземпляров нет."
+    },
+    {
+      "role": "assistant",
+      "content": "Показан полный пакет maint-editor-registration-01: (1) создать исполнителя perf-anna-smirnova «Анна Смирнова»; (2) создать активное назначение assign-anna-technologist на позицию pos-technologist с 2026-08-11; (3) в ver-draft-02 создать разреженную редакцию metric-lead-response с новой формулировкой; (4) добавить одну строку «Решения» и одну строку «Изменения модели»; (5) материализовать прогнозный срез и пересобрать затронутые представления. base_version_id = ver-active-01; migration активных экземпляров: не требуется. package_hash: 8a5e3b4fb59a5ef16180de2db59f56f4db5df54a561d3a46e7deceab59e59789.",
+      "questions": [
+        "Подтверждаете запись показанного пакета maint-editor-registration-01 в черновик модели?"
+      ],
+      "active_question_id": "q-004-package-confirmation"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасном in-memory fixture выполнена одна transaction txn-editor-registration-01: сначала исполнитель и назначение, затем решение, разреженная редакция и изменение модели. Read-back совпал с подтверждённым пакетом; предсказанный срез содержит новую формулировку, а действующая версия не изменена. Внешних записей не было."
+    }
+  ],
+  "events": [
+    {
+      "type": "editor_identified",
+      "display_name": "Анна Смирнова"
+    },
+    {
+      "type": "performer_lookup",
+      "normalized_display_name": "анна смирнова",
+      "match_count": 0
+    },
+    {
+      "type": "position_resolved",
+      "position_id": "pos-technologist",
+      "position_name": "Технолог"
+    },
+    {
+      "type": "source_authority_resolved",
+      "source": "подтверждённое описание существующей практики"
+    },
+    {
+      "type": "base_version_resolved",
+      "base_version_id": "ver-active-01",
+      "working_version_id": "ver-draft-02"
+    },
+    {
+      "type": "scope_checked",
+      "changed_stable_id": "metric-lead-response",
+      "non_goals": "миграция активных экземпляров, изменение процессов, объектов, продуктов, контрактов"
+    },
+    {
+      "type": "snapshot_v1",
+      "version_id": "ver-active-01",
+      "result": "materialized and verified in memory"
+    },
+    {
+      "type": "snapshot_v2",
+      "version_id": "ver-draft-02",
+      "result": "predicted sparse revision snapshot materialized and verified in memory"
+    },
+    {
+      "type": "inheritance_proved",
+      "base_version_id": "ver-active-01",
+      "working_version_id": "ver-draft-02"
+    },
+    {
+      "type": "draft_package",
+      "package_id": "maint-editor-registration-01",
+      "package_hash": "8a5e3b4fb59a5ef16180de2db59f56f4db5df54a561d3a46e7deceab59e59789"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "maint-editor-registration-01",
+      "package_hash": "8a5e3b4fb59a5ef16180de2db59f56f4db5df54a561d3a46e7deceab59e59789",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-editor-registration-01",
+      "mode": "in-memory"
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-editor-registration-01",
+      "result": "matched confirmed package"
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-editor-registration-01",
+      "write_state": "verified",
+      "next_action": "none"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-editor-registration-01",
+        "scope": "in-memory fixture only",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 3
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "editor_identification_order_verified": true,
+      "normalized_performer_lookup_verified": true,
+      "position_resolved_after_separate_answer": true,
+      "one_active_question_per_assistant_turn_verified": true,
+      "exact_package_confirmation_verified": true,
+      "in_memory_readback_matched_package": true,
+      "external_mutation_absent": true
+    }
+  }
+}

@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "trial_id": "interview-confirm-commit-01",
+  "case_id": "interview-confirm-commit",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/LANGUAGE.md",
+    "skills/model-production-system/references/METAONTOLOGY.md",
+    "skills/model-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Нужно описать новый процесс в модели."
+    },
+    {
+      "role": "user",
+      "content": "Он новый: в текущей модели его ещё нет."
+    },
+    {
+      "role": "user",
+      "content": "Хочу, чтобы вы начали интервью."
+    },
+    {
+      "role": "assistant",
+      "content": "Начинаю с ориентации: без точной модели нельзя безопасно определить её книгу, рабочую версию и границу нового процесса. Укажите model_id модели, в которой нужно собрать процесс.",
+      "questions": [
+        "Укажите model_id модели, в которой нужно собрать процесс."
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "да"
+    },
+    {
+      "role": "assistant",
+      "content": "Ответ «да» в этом вопросе не содержит model_id и поэтому не закрывает ориентацию. Это только локальный ответ, не подтверждение пакета и не разрешение на запись. Сохраняю checkpoint без записи: для продолжения нужен точный model_id."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "The in-memory fixture contains only the user's three statements; no model snapshot, workbook, or external source was supplied."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The stated scope is a new process, but the model boundary cannot be established because no model_id was supplied."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Requested the model_id because it determines the book, working version, current version, and permissible model boundary."
+    },
+    {
+      "type": "checkpoint",
+      "content": "In-memory session remains in orient with no model_id, no package, no confirmation, no transaction, and next action to obtain the exact model_id."
+    }
+  ],
+  "outcome": {
+    "status": "blocked",
+    "blocker": "The deterministic simulator supplied only «да» after the single model_id question, so required orientation facts are absent and the skill cannot safely enter investigate or draft.",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "single_question_enforced": true,
+      "local_yes_not_treated_as_write_confirmation": true,
+      "no_external_mutations_performed": true
+    }
+  }
+}

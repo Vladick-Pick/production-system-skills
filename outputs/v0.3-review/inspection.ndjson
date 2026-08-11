@@ -1,35 +1,35 @@
-{"kind":"sheet","id":"ws/xyhen5","name":"Инструкция","index":0,"range":"A1:C11","address":"A1:C11"}
-{"kind":"sheet","id":"ws/yoxpdg","name":"Система","index":1,"range":"A1:CQ11","address":"A1:CQ11"}
-{"kind":"sheet","id":"ws/3oox9x","name":"Схема шаблона","index":2,"range":"A1:G4","address":"A1:G4"}
-{"kind":"sheet","id":"ws/ud6epr","name":"Источники","index":3,"range":"A1:M4","address":"A1:M4"}
-{"kind":"sheet","id":"ws/vvc5r3","name":"Версии","index":4,"range":"A1:T4","address":"A1:T4"}
-{"kind":"sheet","id":"ws/41fawr","name":"Исполнители","index":5,"range":"A1:H4","address":"A1:H4"}
-{"kind":"sheet","id":"ws/efvx53","name":"Позиции","index":6,"range":"A1:P4","address":"A1:P4"}
-{"kind":"sheet","id":"ws/hszkjy","name":"Назначения","index":7,"range":"A1:L4","address":"A1:L4"}
-{"kind":"sheet","id":"ws/ocbdh8","name":"Контрагенты","index":8,"range":"A1:I4","address":"A1:I4"}
-{"kind":"sheet","id":"ws/ktu9lv","name":"Продукты","index":9,"range":"A1:T4","address":"A1:T4"}
-{"kind":"sheet","id":"ws/ybq2o5","name":"Материалы","index":10,"range":"A1:P4","address":"A1:P4"}
-{"kind":"sheet","id":"ws/erhtmf","name":"Процессы","index":11,"range":"A1:AB4","address":"A1:AB4"}
-{"kind":"sheet","id":"ws/9e1zaz","name":"Действия","index":12,"range":"A1:AH4","address":"A1:AH4"}
-{"kind":"sheet","id":"ws/4hc9c1","name":"Связи действий","index":13,"range":"A1:AA4","address":"A1:AA4"}
-{"kind":"sheet","id":"ws/ord38x","name":"Объекты","index":14,"range":"A1:V4","address":"A1:V4"}
-{"kind":"sheet","id":"ws/ro5ua5","name":"Состояния","index":15,"range":"A1:O4","address":"A1:O4"}
-{"kind":"sheet","id":"ws/mcqzir","name":"Переходы","index":16,"range":"A1:AA4","address":"A1:AA4"}
-{"kind":"sheet","id":"ws/ndkqm3","name":"Элементы модели","index":17,"range":"A1:U4","address":"A1:U4"}
-{"kind":"sheet","id":"ws/97wbw9","name":"Контракты","index":18,"range":"A1:R4","address":"A1:R4"}
-{"kind":"sheet","id":"ws/a4b5ad","name":"Позиции контрактов","index":19,"range":"A1:AA4","address":"A1:AA4"}
-{"kind":"sheet","id":"ws/3scm06","name":"Интерфейсы передачи","index":20,"range":"A1:AD4","address":"A1:AD4"}
-{"kind":"sheet","id":"ws/e33o9b","name":"Связи модели","index":21,"range":"A1:U4","address":"A1:U4"}
-{"kind":"sheet","id":"ws/ojvwej","name":"Решения","index":22,"range":"A1:W4","address":"A1:W4"}
-{"kind":"sheet","id":"ws/eyz7j1","name":"Изменения модели","index":23,"range":"A1:P4","address":"A1:P4"}
-{"kind":"sheet","id":"ws/m1b58l","name":"Отклонения","index":24,"range":"A1:AR5","address":"A1:AR5"}
-{"kind":"sheet","id":"ws/5injc6","name":"Гипотезы","index":25,"range":"A1:AP5","address":"A1:AP5"}
-{"kind":"sheet","id":"ws/nj67xm","name":"Эксперименты","index":26,"range":"A1:AV5","address":"A1:AV5"}
-{"kind":"sheet","id":"ws/txnsi7","name":"Срез модели","index":27,"range":"A1:K4","address":"A1:K4"}
-{"kind":"sheet","id":"ws/tqqmll","name":"Проверки","index":28,"range":"A1:I5","address":"A1:I5"}
-{"kind":"sheet","id":"ws/ft61i1","name":"Реестр процессов","index":29,"range":"A1:U4","address":"A1:U4"}
-{"kind":"sheet","id":"ws/o1l470","name":"Рабочая панель","index":30,"range":"A1:L34","address":"A1:L34"}
-{"kind":"sheet","id":"ws/orlgie","name":"Диаграммы","index":31,"range":"A1:S4","address":"A1:S4"}
+{"kind":"sheet","id":"ws/9p52uo","name":"Инструкция","index":0,"range":"A1:C11","address":"A1:C11"}
+{"kind":"sheet","id":"ws/jflzsz","name":"Система","index":1,"range":"A1:CQ11","address":"A1:CQ11"}
+{"kind":"sheet","id":"ws/hslrmx","name":"Схема шаблона","index":2,"range":"A1:G4","address":"A1:G4"}
+{"kind":"sheet","id":"ws/4ikykb","name":"Источники","index":3,"range":"A1:M4","address":"A1:M4"}
+{"kind":"sheet","id":"ws/9eoaov","name":"Версии","index":4,"range":"A1:T4","address":"A1:T4"}
+{"kind":"sheet","id":"ws/pqjh3f","name":"Исполнители","index":5,"range":"A1:H4","address":"A1:H4"}
+{"kind":"sheet","id":"ws/oahsg2","name":"Позиции","index":6,"range":"A1:P4","address":"A1:P4"}
+{"kind":"sheet","id":"ws/2yx1hi","name":"Назначения","index":7,"range":"A1:L4","address":"A1:L4"}
+{"kind":"sheet","id":"ws/vhuopf","name":"Контрагенты","index":8,"range":"A1:I4","address":"A1:I4"}
+{"kind":"sheet","id":"ws/wdx1gk","name":"Продукты","index":9,"range":"A1:T4","address":"A1:T4"}
+{"kind":"sheet","id":"ws/obv7ve","name":"Материалы","index":10,"range":"A1:P4","address":"A1:P4"}
+{"kind":"sheet","id":"ws/r8vuy5","name":"Процессы","index":11,"range":"A1:AB4","address":"A1:AB4"}
+{"kind":"sheet","id":"ws/q6rfrh","name":"Действия","index":12,"range":"A1:AH4","address":"A1:AH4"}
+{"kind":"sheet","id":"ws/nfpi6w","name":"Связи действий","index":13,"range":"A1:AA4","address":"A1:AA4"}
+{"kind":"sheet","id":"ws/3pj5u7","name":"Объекты","index":14,"range":"A1:V4","address":"A1:V4"}
+{"kind":"sheet","id":"ws/q38fow","name":"Состояния","index":15,"range":"A1:O4","address":"A1:O4"}
+{"kind":"sheet","id":"ws/sgmyax","name":"Переходы","index":16,"range":"A1:AA4","address":"A1:AA4"}
+{"kind":"sheet","id":"ws/mtt5zn","name":"Элементы модели","index":17,"range":"A1:U4","address":"A1:U4"}
+{"kind":"sheet","id":"ws/0h9gt7","name":"Контракты","index":18,"range":"A1:R4","address":"A1:R4"}
+{"kind":"sheet","id":"ws/z3sh8r","name":"Позиции контрактов","index":19,"range":"A1:AA4","address":"A1:AA4"}
+{"kind":"sheet","id":"ws/5by16y","name":"Интерфейсы передачи","index":20,"range":"A1:AD4","address":"A1:AD4"}
+{"kind":"sheet","id":"ws/km8s2q","name":"Связи модели","index":21,"range":"A1:U4","address":"A1:U4"}
+{"kind":"sheet","id":"ws/nwrlav","name":"Решения","index":22,"range":"A1:W4","address":"A1:W4"}
+{"kind":"sheet","id":"ws/h4uf8y","name":"Изменения модели","index":23,"range":"A1:P4","address":"A1:P4"}
+{"kind":"sheet","id":"ws/i635n6","name":"Отклонения","index":24,"range":"A1:AR5","address":"A1:AR5"}
+{"kind":"sheet","id":"ws/aq5fpe","name":"Гипотезы","index":25,"range":"A1:AP5","address":"A1:AP5"}
+{"kind":"sheet","id":"ws/n4q8a5","name":"Эксперименты","index":26,"range":"A1:AV5","address":"A1:AV5"}
+{"kind":"sheet","id":"ws/0hdfqh","name":"Срез модели","index":27,"range":"A1:K4","address":"A1:K4"}
+{"kind":"sheet","id":"ws/cdj2xk","name":"Проверки","index":28,"range":"A1:I5","address":"A1:I5"}
+{"kind":"sheet","id":"ws/rndpgn","name":"Реестр процессов","index":29,"range":"A1:U4","address":"A1:U4"}
+{"kind":"sheet","id":"ws/nf83mr","name":"Рабочая панель","index":30,"range":"A1:L34","address":"A1:L34"}
+{"kind":"sheet","id":"ws/yms6r3","name":"Диаграммы","index":31,"range":"A1:S4","address":"A1:S4"}
 {"kind":"region","sheet":"Рабочая панель","address":"A12:L14","rows":3,"cols":12,"nonEmpty":26,"blank":10,"text":26,"maxTextLength":20,"preview":[["Действия и состояния",null,null,null,null,null],["action_id","действие","состояние до","состояние после","позиция","срок"],["act-demo-qualify","Квалифицировать лид","Новый","Квалифицирован","Менеджер","3 дня"]],"previewAddress":"A12:F14","previewRows":3,"previewCols":6}
 {"kind":"region","sheet":"Рабочая панель","address":"A22:L24","rows":3,"cols":12,"nonEmpty":26,"blank":10,"text":26,"maxTextLength":29,"preview":[["Связано с выбранным процессом",null,null,null,null,null],["тип","ID","название","статус","следующий шаг","срок"],["отклонение","dev-demo-sla","Нарушается SLA","в устранении","Проверить исправление","2026-08-20"]],"previewAddress":"A22:F24","previewRows":3,"previewCols":6}
 {"kind":"region","sheet":"Рабочая панель","address":"A27:L29","rows":3,"cols":12,"nonEmpty":26,"blank":10,"text":26,"maxTextLength":34,"preview":[["Продукты системы",null,null,null,null,null],["product_id","продукт","определение","критерий приёмки","владелец","статус"],["prd-demo-qualified-lead","Квалифицированный лид","Лид, соответствующий критериям","Все обязательные поля подтверждены","Владелец ПС","действует"]],"previewAddress":"A27:F29","previewRows":3,"previewCols":6}

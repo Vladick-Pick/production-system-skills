@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "trial_id": "version-inheritance-exclude-01",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v2 меняется определение лида, один процесс исключается, остальные элементы не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасном fixture разрешены действующая v1 и единственный черновик v2 с тем же model_id; редактор Мария Иванова и её назначение уже существуют. В v2 нельзя копировать все строки v1: неизменённые элементы должны наследоваться. Чтобы выбрать операцию для лида, нужно проверить его идентичность.",
+      "questions": [
+        "После нового определения каждый лид сохраняет прежние stable ID и историю, или создаётся самостоятельный новый объект?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Сохраняет: это тот же лид с той же историей. Новое определение уточняет, что лидом считается контакт с подтверждённым интересом. Исключить нужно процесс process::legacy-nurture; активных его экземпляров нет."
+    },
+    {
+      "role": "assistant",
+      "content": "Идентичность лида сохраняется, поэтому это новая редакция stable ID object::lead, а не новый объект или состояние. Исключение process::legacy-nurture меняет состав целевой версии; связанных активных экземпляров для миграции нет. Процессы, действия, состояния и связи, не названные в изменении, остаются только в v1 и будут унаследованы resolver в v2. Подготовлен полный пакет package-version-inheritance-exclude-01: base_version_id=version::v1, working_version_id=version::v2; причина — новое целевое решение; операции: (1) в «Объекты» применить новую редакцию object::lead с определением «контакт с подтверждённым интересом», сохранив stable ID; (2) в «Процессы» записать process::legacy-nurture с version_operation=исключить; (3) добавить одну запись «Решения» и две записи «Изменения модели». Прямое влияние: срез, реестр процессов, проверки и связанные BPMN/SVG пересобираются для v2; ранее не изменённые элементы не записываются. v2 остаётся черновиком, переход статуса и ввод в действие не входят в пакет. Предусловия: base snapshot и assignment Марии не изменились; восстановление при ошибке — не переписывать v1, а создать корректирующую редакцию в v2. package_hash=89a7cd6a5e9633d031590b9c56a4699ea5d7586ae8e2c9a7a7f18c2048b3c4d2.",
+      "questions": [
+        "Подтверждаете запись показанного пакета package-version-inheritance-exclude-01 в черновик модели?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай показанный пакет в черновик."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в in-memory fixture одной transaction. В срезе v2 действует уточнённая редакция object::lead, process::legacy-nurture отсутствует, а остальные элементы разрешены по predecessor v1 без дублирования. Read-back подтвердил две редакции, решение, изменения модели и пересобранные представления; внешних систем не изменялось."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "In-memory fixture is the only authority for model, versions, editor assignment, source rows, and active-instance inventory."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "current_version_id=version::v1; working_version_id=version::v2; v2 is the sole draft predecessor of v1."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Resolved v1 snapshot before investigation; object::lead and process::legacy-nurture exist in the base snapshot."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Maria Ivanova is the identified human editor with an active assignment in the fixture."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Scope is limited to the definition revision of object::lead and exclusion of process::legacy-nurture; no other authoring rows are changed."
+    },
+    {
+      "type": "identity_test",
+      "content": "The simulated user confirmed that a lead retains its stable ID and history under the new definition."
+    },
+    {
+      "type": "inheritance_proved",
+      "content": "Resolver traversal v2 to v1 returns v2 revisions for the two changed stable IDs and inherits all other base elements from v1."
+    },
+    {
+      "type": "sparse_apply",
+      "content": "Prepared one v2 apply revision for object::lead with the clarified definition and unchanged stable ID."
+    },
+    {
+      "type": "sparse_exclude",
+      "content": "Prepared one v2 exclusion revision for process::legacy-nurture; fixture inventory contains no active instances requiring migration."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "package-version-inheritance-exclude-01",
+      "package_hash": "89a7cd6a5e9633d031590b9c56a4699ea5d7586ae8e2c9a7a7f18c2048b3c4d2",
+      "content": "Full package includes the two sparse revisions, one decision row, two model-change rows, impact on derived views, preconditions, and recovery."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "package-version-inheritance-exclude-01",
+      "package_hash": "89a7cd6a5e9633d031590b9c56a4699ea5d7586ae8e2c9a7a7f18c2048b3c4d2",
+      "performer_type": "человек",
+      "confirmed_by": "Мария Иванова",
+      "content": "The identified editor explicitly confirmed the unchanged shown package."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-version-inheritance-exclude-01",
+      "content": "Applied the package atomically to the in-memory v2 draft: one decision row, two sparse model revisions, and two change rows."
+    },
+    {
+      "type": "projection_build_started",
+      "transaction_id": "tx-version-inheritance-exclude-01",
+      "content": "Started derived-view rebuild from the exact resolved v2 snapshot."
+    },
+    {
+      "type": "projection_validated",
+      "transaction_id": "tx-version-inheritance-exclude-01",
+      "content": "Resolved snapshot, process registry, checks, and affected v2 projections agree with the sparse revisions."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-version-inheritance-exclude-01",
+      "content": "Read-back found all expected transaction records and no writes to v1 or an external system."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-version-inheritance-exclude-01",
+      "content": "write_state=verified; v2 remains draft and requires a separate future decision for acceptance or activation."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-version-inheritance-exclude-01",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "base_snapshot_unchanged": true,
+      "identity_preserved": true,
+      "sparse_inheritance_resolved": true,
+      "excluded_process_absent_from_v2_snapshot": true,
+      "transaction_readback_matched_package": true,
+      "projection_snapshot_consistent": true
+    }
+  }
+}

@@ -1,0 +1,272 @@
+{
+  "schema_version": 1,
+  "trial_id": "development-hypothesis-contract-02",
+  "case_id": "development-hypothesis-contract",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Появилась новая технология автоматической квалификации; хотим проверить, повысит ли она долю квалифицированных лидов без роста ошибочных отказов."
+    },
+    {
+      "role": "assistant",
+      "content": "Это кандидат гипотезы развития, а не отклонение: речь о новой возможности, а не о доказанном нарушении действующей нормы. Нужен проверяемый внешний источник технологии.",
+      "questions": [
+        "Какой конкретный внешний источник подтверждает появление этой технологии?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Источник: публичная документация поставщика AutoQual, релиз 2026-08-01, раздел «Automated lead qualification»; в ней описаны автоматическое ранжирование и решение об отказе по заданным правилам."
+    },
+    {
+      "role": "assistant",
+      "content": "Внешнее изменение и его локатор зафиксированы. Новая возможность — перенести часть решения о квалификации в ограниченную автоматизацию с последующей проверкой качества; она не доказывает, что действующая норма уже нарушена.",
+      "questions": [
+        "Какая действующая версия модели является базой для этой гипотезы?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "База — действующая версия ver-3-001 модели model-leadgen-001 «Лидогенерация»; для подготовки записи есть единственный черновик ver-3-002, его предшественник — ver-3-001."
+    },
+    {
+      "role": "assistant",
+      "content": "Базовая и рабочая версии определены линейно. Для атрибуции решения нужен идентифицированный человек; ИИ не может подтвердить запись.",
+      "questions": [
+        "Назовите имя и фамилию человека, который работает с этой моделью и сможет подтвердить пакет."
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "Нормализованный поиск не нашёл дубликат «Анна Смирнова» среди исполнителей; для нового исполнителя позицию можно установить только отдельным следующим ответом.",
+      "questions": [
+        "Какую позицию Анна Смирнова занимает в этой модели?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Руководитель лидогенерации."
+    },
+    {
+      "role": "assistant",
+      "content": "Для гипотезы требуется один полный контракт основного показателя; «без роста ошибочных отказов» будет отдельным ограничением, а не вторым основным показателем.",
+      "questions": [
+        "Укажите определение, формулу, единицу, источник, владельца, baseline, target, горизонт и три критерия результата для основного показателя."
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Основной показатель: доля лидов, признанных квалифицированными после проверки качества = число квалифицированных лидов / число лидов, прошедших квалификацию × 100%, единица — %. Источник — CRM: журнал квалификации и выборочная проверка специалистом; владелец — Руководитель лидогенерации. Baseline — 42,0% за 2026-07-01—2026-07-31; target — не менее 47,0%; горизонт — 30 календарных дней после запуска проверки. Критерии: (1) доля не ниже 47,0%; (2) доля ошибочных отказов по контрольной выборке не увеличилась более чем на 1,0 п.п. от baseline; (3) в журнале есть решение и результат проверки не менее чем для 95% обработанных лидов."
+    },
+    {
+      "role": "assistant",
+      "content": "Контракт основного показателя полный: определение, формула, единица, источник, владелец, baseline, target, горизонт и три критерия результата установлены. Граница гипотезы — новые входящие лиды; предлагаемое изменение — подготовить ограниченную проверку AutoQual, не меняя действующую версию до отдельного решения о запуске. Механизм: автоматическое ранжирование быстрее отбирает лиды с признаками квалификации, а контрольная проверка удерживает риск ошибочного отказа.\n\nПакет pkg-hyp-autoqual-001 (hash 2e5fa48ac091d81eecb8e838cb41912c75e236d82340b9d475d22a8bca0110e6):\n• База: model-leadgen-001, ver-3-001 (действует); рабочая версия: ver-3-002 (черновик), предшественник ver-3-001.\n• Атрибуция: новый исполнитель perf-anna-smirnova-001 и назначение asg-anna-smirnova-leadgen-001 «Анна Смирнова — Руководитель лидогенерации».\n• «Гипотезы»: добавить hyp-autoqual-001 со статусом «сформулирована», внешним изменением AutoQual 2026-08-01 и указанным локатором, возможностью, областью, изменением, механизмом, полным контрактом метрики, ограничением ошибочных отказов и тремя критериями результата.\n• «Решения»: добавить dec-hyp-autoqual-001 с подтверждением записи пакета. «Изменения модели»: добавить chg-hyp-autoqual-001, связывающую решение, hypothesis_id и transaction_id. «Рабочая панель»: пересчитать строку гипотезы.\n• Нет sparse-редакций процессов, действий или состояний; новая норма, эксперимент и version transition не создаются. Активные экземпляры остаются на ver-3-001.\n• Проверки после in-memory transaction: совпадение hash, FK исполнителя/назначения/решения/гипотезы/изменения, полнота metric contract и контрольных критериев, read-back transaction и checkpoint. Recovery: при timeout сначала поиск transaction_id; частичную запись не объявлять завершённой.\n\nПодтверждаете запись показанного пакета pkg-hyp-autoqual-001 в черновик модели?",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-hyp-autoqual-001 в черновик модели?"
+      ],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в in-memory fixture одной transaction tx-hyp-autoqual-001 и успешно перечитан. Гипотеза сформулирована; действующая версия и живое исполнение не изменялись. Следующий шаг — отдельным пакетом подготовить и затем получить человеческое решение о запуске ограниченного эксперимента."
+    }
+  ],
+  "events": [
+    {
+      "type": "development_candidate_classified",
+      "classification": "гипотеза развития",
+      "rejected_alternative": "отклонение",
+      "reason": "Есть новая возможность, но нет факта нарушения действующей нормы."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "purpose": "Получить проверяемый внешний источник изменения."
+    },
+    {
+      "type": "source_authority_resolved",
+      "source": "Публичная документация AutoQual, релиз 2026-08-01, раздел Automated lead qualification",
+      "authority": "внешний первичный источник поставщика"
+    },
+    {
+      "type": "external_change_sourced",
+      "external_change": "Появление технологии AutoQual с автоматическим ранжированием и решением об отказе по правилам.",
+      "source_locator": "AutoQual documentation / 2026-08-01 / Automated lead qualification"
+    },
+    {
+      "type": "new_opportunity_resolved",
+      "opportunity": "Ограниченно автоматизировать квалификацию новых входящих лидов с последующей проверкой качества.",
+      "mechanism": "Автоматическое ранжирование ускоряет отбор лидов с признаками квалификации."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-002",
+      "purpose": "Выбрать действующую базовую версию и единственный рабочий черновик."
+    },
+    {
+      "type": "base_version_resolved",
+      "model_id": "model-leadgen-001",
+      "base_version_id": "ver-3-001",
+      "working_version_id": "ver-3-002",
+      "base_status": "действует"
+    },
+    {
+      "type": "predecessor_resolved",
+      "working_version_id": "ver-3-002",
+      "predecessor_version_id": "ver-3-001"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-003",
+      "purpose": "Идентифицировать человека, способного подтвердить пакет."
+    },
+    {
+      "type": "editor_identified",
+      "display_name": "Анна Смирнова"
+    },
+    {
+      "type": "performer_lookup",
+      "normalized_name": "анна смирнова",
+      "result": "not_found"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-004",
+      "purpose": "Разрешить позицию нового исполнителя после проверки дубликата."
+    },
+    {
+      "type": "position_resolved",
+      "position": "Руководитель лидогенерации",
+      "performer_id": "perf-anna-smirnova-001",
+      "assignment_id": "asg-anna-smirnova-leadgen-001"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-005",
+      "purpose": "Получить полный контракт единственного основного показателя."
+    },
+    {
+      "type": "metric_contract_verified",
+      "metric": "Доля лидов, признанных квалифицированными после проверки качества",
+      "formula": "квалифицированные лиды / лиды, прошедшие квалификацию × 100%",
+      "unit": "%",
+      "source": "CRM: журнал квалификации и выборочная проверка специалистом",
+      "owner": "Руководитель лидогенерации",
+      "baseline": "42,0% за 2026-07-01—2026-07-31",
+      "target": "не менее 47,0%",
+      "horizon": "30 календарных дней после запуска проверки",
+      "result_criteria_count": 3
+    },
+    {
+      "type": "scope_checked",
+      "scope": "Новые входящие лиды; текущий живой процесс не меняется до отдельного решения о запуске.",
+      "non_goals": [
+        "Не менять ver-3-001",
+        "Не запускать эксперимент",
+        "Не создавать новую норму"
+      ]
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-hyp-autoqual-001",
+      "package_hash": "2e5fa48ac091d81eecb8e838cb41912c75e236d82340b9d475d22a8bca0110e6",
+      "registry": "Гипотезы",
+      "lifecycle_status": "сформулирована",
+      "transaction_id": "tx-hyp-autoqual-001"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-006",
+      "purpose": "Получить явное человеческое подтверждение неизменённого полного пакета."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "pkg-hyp-autoqual-001",
+      "package_hash": "2e5fa48ac091d81eecb8e838cb41912c75e236d82340b9d475d22a8bca0110e6",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова",
+      "confirmation_id": "cnf-hyp-autoqual-001"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-hyp-autoqual-001",
+      "mode": "in_memory",
+      "operations": [
+        "Исполнители: perf-anna-smirnova-001",
+        "Назначения: asg-anna-smirnova-leadgen-001",
+        "Решения: dec-hyp-autoqual-001",
+        "Гипотезы: hyp-autoqual-001",
+        "Изменения модели: chg-hyp-autoqual-001",
+        "Рабочая панель: пересчёт строки гипотезы"
+      ]
+    },
+    {
+      "type": "development_registry_write",
+      "transaction_id": "tx-hyp-autoqual-001",
+      "registry": "Гипотезы",
+      "record_id": "hyp-autoqual-001",
+      "lifecycle_status": "сформулирована"
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-hyp-autoqual-001",
+      "verified": [
+        "package_hash",
+        "FK исполнителя, назначения, решения, гипотезы и изменения",
+        "полнота контракта показателя",
+        "три критерия результата"
+      ]
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-hyp-autoqual-001",
+      "state": "checkpoint",
+      "write_state": "verified",
+      "next_action": "Подготовить отдельный пакет ограниченного эксперимента и запросить человеческое launch decision."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-hyp-autoqual-001",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "in_memory": true
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "package_hash_match": true,
+      "foreign_keys_valid": true,
+      "metric_contract_complete": true,
+      "result_criteria_complete": true,
+      "readback_matches_package": true,
+      "checkpoint_saved": true
+    }
+  }
+}

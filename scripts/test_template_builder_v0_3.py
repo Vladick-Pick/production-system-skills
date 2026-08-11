@@ -88,6 +88,31 @@ def main() -> int:
     public = [properties for properties in created if not properties["title"].startswith("__v02_")]
     if len(public) != 32 or not all(item["gridProperties"].get("hideGridlines") for item in public):
         raise AssertionError("builder должен создавать 32 публичных листа со скрытой сеткой")
+    frozen_by_sheet = {
+        properties["sheetId"]: properties["gridProperties"].get("frozenColumnCount", 0)
+        for properties in public
+    }
+    for request in requests:
+        if "mergeCells" not in request:
+            continue
+        grid_range = request["mergeCells"]["range"]
+        boundary = frozen_by_sheet.get(grid_range["sheetId"], 0)
+        if boundary and grid_range["startColumnIndex"] < boundary < grid_range["endColumnIndex"]:
+            raise AssertionError("объединение ячеек не должно пересекать границу закреплённых столбцов")
+    instruction_id = payload["sheet_ids"]["Инструкция"]
+    instruction_merges = {
+        (
+            item["mergeCells"]["range"]["startRowIndex"],
+            item["mergeCells"]["range"]["endRowIndex"],
+            item["mergeCells"]["range"]["startColumnIndex"],
+            item["mergeCells"]["range"]["endColumnIndex"],
+        )
+        for item in requests
+        if "mergeCells" in item and item["mergeCells"]["range"]["sheetId"] == instruction_id
+    }
+    for expected_merge in ((11, 12, 2, 8), (13, 14, 0, 8), (18, 19, 1, 8)):
+        if expected_merge not in instruction_merges:
+            raise AssertionError(f"лист Инструкция v0.3 не адаптирован к добавленной строке: {expected_merge}")
     dashboard = next(item for item in public if item["title"] == "Рабочая панель")
     if dashboard["gridProperties"]["rowCount"] < 1005 or dashboard["gridProperties"]["columnCount"] < 44:
         raise AssertionError("рабочей панели недостаточно места для независимых секций")

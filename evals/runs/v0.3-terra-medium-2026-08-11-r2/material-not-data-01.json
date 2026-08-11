@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "trial_id": "material-not-data-01",
+  "case_id": "material-not-data",
+  "provenance": "fresh_agent",
+  "isolated": true,
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь приносит текст сообщения, скрипт звонка и презентацию."
+    },
+    {
+      "role": "assistant",
+      "content": "Я не буду превращать файлы в данные или действия по одному названию. Сначала зафиксирую срез, к которому относится разбор.",
+      "questions": [
+        "Какой точный идентификатор модели и рабочей версии содержит действие, для которого предназначены эти материалы?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Это модель model-demo-sales-01. Рабочий черновик — version-demo-draft-03, действующая версия — version-demo-current-02; в черновике есть действие «провести первичный контакт с лидом». Режим — proposal."
+    },
+    {
+      "role": "assistant",
+      "content": "Срез установлен. Нужен факт, который отличит переиспользуемые материалы от данных конкретного исполнения.",
+      "questions": [
+        "Используются ли текст сообщения, скрипт звонка и презентация повторно разными исполнителями при действии «провести первичный контакт с лидом», а не описывают один конкретный контакт?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да. Менеджеры используют один шаблон сообщения, один скрипт и одну презентацию в разных контактах. Отправленный конкретному лиду текст, запись звонка и время показа презентации фиксируются отдельно как факты исполнения."
+    },
+    {
+      "role": "assistant",
+      "content": "Повторное применение подтверждает тип «материал»; записи о конкретном контакте остаются данными исполнения. Для подтверждения пакета нужен идентифицированный человек, работающий с моделью.",
+      "questions": [
+        "Кто подтверждает этот пакет как человек, работающий с моделью?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Елена Смирнова, технолог систематизации этой модели; performer_id performer-elena-smirnova-01, assignment_id assignment-elena-tech-01."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет srp-material-not-data-01: исход — «принять». Каноническое название: «Материалы первичного контакта с лидом». Референт и тип: три переиспользуемых содержательных артефакта — шаблон текста сообщения, скрипт звонка и презентация; каждый получает отдельный material_id, а новая версия содержания не создаёт новый ID. Включаются эти повторно используемые артефакты; исключаются отправленный конкретному лиду текст, запись конкретного звонка и факт показа презентации. Контрпример: текст, отправленный конкретному лиду 11 августа, — данные исполнения, а не новый материал. Материалы используются действием «провести первичный контакт с лидом»; файлы или ссылки только представляют их. Граница — внутренняя система продаж; внешние системы не добавляются. Затронутые существующие ID не выявлены. Источники: исходное сообщение и ваши ответы; статус знания — принято; открытых конфликтов нет. Рекомендуемая операция: передать пакет в maintain-production-system без записи resolve-model-element. package_hash: 4d721d6f2d485d2fc6cae3375b5a7c74c56b5d44c73504c6af47c95e74128284.",
+      "questions": [
+        "Подтверждаете передачу показанного пакета srp-material-not-data-01 без изменения его смысла?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю передачу показанного пакета без изменений."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет подтверждён Еленой Смирновой и передан в maintain-production-system. Этот скилл не записывает материалы или строки реестров; внешних изменений не выполнено. Checkpoint: state=checkpoint, mode=proposal, next_action=maintain-production-system prepares its own mutation package if a model change is required."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_inventory",
+      "content": "Allowed sources used: skills/resolve-model-element/SKILL.md; skills/resolve-model-element/references/LANGUAGE.md; skills/resolve-model-element/references/METAONTOLOGY.md; skills/resolve-model-element/references/METHODOLOGY-COMPATIBILITY.md; skills/resolve-model-element/references/INTERVIEW-CONTRACT.md; evals/FRESH-AGENT-CONTRACT.md."
+    },
+    {
+      "type": "source_authority_resolved",
+      "content": "The skill and its bundled references governed the trial; the scenario and deterministic user replies were evidence about the candidate."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The in-memory session was proposal mode for model-demo-sales-01, working version version-demo-draft-03."
+    },
+    {
+      "type": "reuse_test",
+      "content": "The user confirmed that each artifact is reused across multiple primary contacts; this distinguishes it from one execution record."
+    },
+    {
+      "type": "identity_test",
+      "content": "Each material keeps its own material_id across content versions; a sent message or recorded call is a distinct execution fact, not a material instance."
+    },
+    {
+      "type": "material_classified",
+      "content": "The message template, call script, and presentation were classified as three materials used by the primary-contact action."
+    },
+    {
+      "type": "alternatives_presented",
+      "content": "The package rejected the closest alternative: treating sent text, a call record, or a presentation-showing fact as materials rather than data of a particular execution."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "srp-material-not-data-01",
+      "package_hash": "4d721d6f2d485d2fc6cae3375b5a7c74c56b5d44c73504c6af47c95e74128284",
+      "content": "A proposal-mode semantic-resolution package with outcome «принять» was shown in full."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "srp-material-not-data-01",
+      "package_hash": "4d721d6f2d485d2fc6cae3375b5a7c74c56b5d44c73504c6af47c95e74128284",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Смирнова",
+      "content": "The identified human confirmed transfer of the unchanged displayed package."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "The confirmed semantic-resolution package and checkpoint were handed off to maintain-production-system; no model or development-registry row was written."
+    },
+    {
+      "type": "read_only_check",
+      "content": "The resolve-model-element trial performed no model write and no external mutation."
+    },
+    {
+      "type": "checkpoint",
+      "content": "state=checkpoint; mode=proposal; model_id=model-demo-sales-01; working_version_id=version-demo-draft-03; current_version_id=version-demo-current-02; active_question=null; package_id=srp-material-not-data-01; package_hash=4d721d6f2d485d2fc6cae3375b5a7c74c56b5d44c73504c6af47c95e74128284; write_state=not_started; next_action=handoff accepted by maintain-production-system."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "one_active_question_at_a_time": true,
+      "package_hash_consistent": true,
+      "resolve_model_unchanged": true,
+      "external_mutations_absent": true
+    }
+  }
+}

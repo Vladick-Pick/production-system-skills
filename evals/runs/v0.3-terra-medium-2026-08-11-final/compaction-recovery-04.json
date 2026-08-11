@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "trial_id": "compaction-recovery-04",
+  "case_id": "compaction-recovery",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Контекст сжимается после нескольких вопросов до подтверждения пакета."
+    },
+    {
+      "role": "assistant",
+      "content": "Работаю в режиме proposal с синтетической книгой v0.3; записей не будет. Для атрибуции будущего пакета сначала нужен редактор.",
+      "questions": [
+        "Как вас зовут и какая ваша фамилия?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Марина Сергеева."
+    },
+    {
+      "role": "assistant",
+      "content": "Нормализованный поиск синтетического реестра не нашёл совпадения; новая запись исполнителя и назначение могут войти только в будущий подтверждённый пакет.",
+      "questions": [
+        "Какую позицию вы занимаете в моделируемой системе?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Руководитель производственного контура."
+    },
+    {
+      "role": "assistant",
+      "content": "Позиция принята как локальный факт для будущей атрибуции, но ничего не записано.",
+      "questions": [
+        "Как называется результат, который этот новый контур производит для получателя?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Проверенный пакет заказа для клиента."
+    },
+    {
+      "role": "assistant",
+      "content": "Продукт-кандидат зафиксирован только в checkpoint; он ещё не является строкой модели.",
+      "questions": [
+        "Какой наблюдаемый критерий приёмки подтверждает, что пакет заказа проверен?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Контекст сжат."
+    },
+    {
+      "role": "assistant",
+      "content": "Checkpoint восстановлен: режим proposal, состояние resolve, подтверждённого пакета и transaction нет. Ревизии источников и fingerprint синтетической книги совпали с сохранёнными значениями, поэтому продолжаю без новой записи и без предположения ответа.",
+      "questions": [
+        "Какой наблюдаемый критерий приёмки подтверждает, что пакет заказа проверен?"
+      ],
+      "active_question_id": "q-004"
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Единственным нормативным источником поведения выбран bundled INTERVIEW-CONTRACT; сценарий служит синтетическим входом, а не нормой."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "Перед интервью сохранены ревизии bundled INTERVIEW-CONTRACT, TEMPLATE-CONTRACT и TEMPLATE-SCHEMA-v0.3 синтетического fixture."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "До интервью проверен fingerprint синтетической v0.3-книги: fixture-sheet-fp-6c91."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Запрошены имя и фамилия редактора, необходимые для атрибуции потенциального пакета."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получено имя Марина Сергеева."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В синтетическом реестре выполнен нормализованный поиск; совпадения не найдено."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-002",
+      "content": "Запрошена позиция редактора для потенциального назначения в подтверждаемом пакете."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Получена позиция: Руководитель производственного контура."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-003",
+      "content": "Запрошена идентичность результата нового контура."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-004",
+      "content": "Запрошен наблюдаемый критерий приёмки продукта-кандидата."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint session_id=trial-compaction-recovery-04, state=resolve, mode=proposal, active_question=q-004, package_id=null, package_hash=null, confirmation_id=null, transaction_id=null, write_state=not_started; включены локальные ответы и сохранённые source revisions/fingerprint."
+    },
+    {
+      "type": "checkpoint_loaded",
+      "content": "После compaction восстановлен сохранённый checkpoint trial-compaction-recovery-04."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "После восстановления повторно сверены source revisions с checkpoint; расхождений нет."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "После восстановления повторно сверён fingerprint synthetic v0.3-книги fixture-sheet-fp-6c91; расхождений нет."
+    },
+    {
+      "type": "active_question_restored",
+      "question_id": "q-004",
+      "content": "Восстановлен ровно один активный вопрос q-004 без повторного создания пакета или transaction."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "checkpoint_loaded": true,
+      "source_revisions_match_checkpoint": true,
+      "sheet_fingerprint_match_checkpoint": true,
+      "one_active_question_restored": true,
+      "no_duplicate_transaction": true
+    },
+    "readiness": {
+      "state": "resolve",
+      "mode": "proposal",
+      "package_hash": null,
+      "transaction_id": null,
+      "write_state": "not_started"
+    }
+  }
+}

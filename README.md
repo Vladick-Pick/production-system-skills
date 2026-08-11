@@ -6,7 +6,7 @@
 
 [![Скиллов: 4](https://img.shields.io/badge/скиллов-4-2563eb)](docs/SKILL-MAP.md)
 [![Язык: русский](https://img.shields.io/badge/язык-русский-0f766e)](references/LANGUAGE.md)
-[![Шаблон: Google Sheets](https://img.shields.io/badge/шаблон-Google_Sheets-34a853)](https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy)
+[![Шаблон: Google Sheets](https://img.shields.io/badge/шаблон-Google_Sheets-34a853)](https://docs.google.com/spreadsheets/d/1W9u-t5a4Uuj2pCBLtia3E60qUHn5ZjeFiicNTCv6fR0/copy)
 [![Лицензия: MIT](https://img.shields.io/badge/лицензия-MIT-f59e0b)](LICENSE)
 [![Проверка](https://github.com/Vladick-Pick/production-system-skills/actions/workflows/validate.yml/badge.svg)](https://github.com/Vladick-Pick/production-system-skills/actions/workflows/validate.yml)
 
@@ -14,15 +14,13 @@
 
 Репозиторий содержит ровно четыре скилла. Они не создают новую «бизнес-онтологию» и не переносят старый пакет резидентного аналитика. Их задача уже и конкретнее: научить агента правильно наполнять, проверять и сопровождать принятую модель производственной системы.
 
-Сейчас в репозитории реализован **локальный release candidate v0.3**. Публичный Google Sheets-шаблон и его XLSX-снимок пока остаются стабильной v0.2 до отдельной приёмки и публикации. Это не две конкурирующие версии продукта: v0.3 продолжает v0.2, но содержит явно описанные семантические уточнения и поэтому получает собственный путь миграции и [карту совместимости](references/METHODOLOGY-COMPATIBILITY.md).
+Текущий стабильный релиз — **v0.3**. Он продолжает v0.2, добавляет контур управляемого развития и содержит явно описанные семантические уточнения, поэтому переход выполняется по отдельному runbook и [карте совместимости](references/METHODOLOGY-COMPATIBILITY.md). V0.2 сохранена как неизменяемая точка отката, а не как конкурирующая текущая версия.
 
 ## Шаблон модели
 
-Основной рабочий артефакт — [создать личную копию шаблона v0.2 в Google Sheets](https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy). В репозитории также лежит [точный XLSX-снимок v0.2](templates/production-system-model-template-v0.2.xlsx), чтобы структура модели не зависела только от внешней ссылки.
+Основной рабочий артефакт — [создать личную копию шаблона v0.3 в Google Sheets](https://docs.google.com/spreadsheets/d/1W9u-t5a4Uuj2pCBLtia3E60qUHn5ZjeFiicNTCv6fR0/copy). В репозитории также лежит [точный XLSX-снимок v0.3](templates/production-system-model-template-v0.3.xlsx), чтобы структура модели не зависела только от внешней ссылки.
 
-Опубликованный v0.2 содержит 29 листов: исполнителей, контрагентов, продукты, материалы, позиции контрактов, интерфейсы передачи, решения, историю изменений и разрешённый срез версии. Его физический контракт образуют вместе [JSON-схема](templates/template-schema-v0.2.json) и [детерминированный builder](scripts/build_template_v0_2.py), который задаёт formulas, dropdown, named ranges, защиты, filters и форматирование.
-
-Release candidate v0.3 добавляет к этой базе три неверсионируемых рабочих реестра — `Отклонения`, `Гипотезы`, `Эксперименты` — и связанную `Рабочую панель`. [Schema overlay v0.3](templates/template-schema-v0.3.json) композиционно разрешается со стабильной базой в книгу из 32 листов и одновременно уточняет несколько контролируемых словарей и компонентных ссылок; [builder v0.3](scripts/build_template_v0_3.py) воспроизводит итоговый физический контракт.
+Опубликованный v0.3 содержит 32 листа. К базе v0.2 добавлены три неверсионируемых рабочих реестра — `Отклонения`, `Гипотезы`, `Эксперименты` — и связная `Рабочая панель`. [Schema overlay v0.3](templates/template-schema-v0.3.json) композиционно разрешается с [базовой схемой v0.2](templates/template-schema-v0.2.json) и одновременно уточняет контролируемые словари и компонентные ссылки; [builder v0.3](scripts/build_template_v0_3.py) воспроизводит итоговые formulas, dropdown, named ranges, защиты, filters и форматирование.
 
 Исходная таблица доступна всем по ссылке только для чтения; редактирование сохраняется у владельца. Публичная документация ведёт на режим «создать копию»: не используйте общий оригинал как рабочую модель. Точный источник, контрольная сумма и дата снимка записаны в [манифесте шаблона](templates/template-manifest.yaml).
 
@@ -32,7 +30,7 @@ Release candidate v0.3 добавляет к этой базе три невер
 |---|---|---|
 | [resolve-model-element](skills/resolve-model-element/SKILL.md) | Разрешить смысл спорного элемента до записи | Semantic-resolution package с референтом, типом, определением, решением и hash; модель не изменяется |
 | [model-production-system](skills/model-production-system/SKILL.md) | Собрать новую систему или контур | Подтверждённая transaction в одной черновой версии; обнаруженные сигналы развития передаются в maintain без записи |
-| [maintain-production-system](skills/maintain-production-system/SKILL.md) | Изменить систему, вести контур развития или перенести рабочую книгу | Разреженная редакция, подтверждённые карточки отклонений/гипотез/экспериментов либо migration dossier и проверенные batches |
+| [maintain-production-system](skills/maintain-production-system/SKILL.md) | Изменить систему, вести контур развития или перенести рабочую книгу | Редакция новой версии с изменёнными строками, подтверждённые карточки отклонений/гипотез/экспериментов либо migration dossier и проверенные batches |
 | [audit-production-system](skills/audit-production-system/SKILL.md) | Найти дефекты без изменения модели | Evidence-backed audit точных version/snapshot/build без каких-либо записей |
 
 Ни один из этих скиллов не принимает бизнес-истину вместо человека. Изменение подтверждает идентифицированный человек, работающий с моделью; исполнитель и назначение фиксируются в пакете для атрибуции решения, а не как полноценный permission/RBAC. ИИ может исследовать, предлагать и записывать подтверждённую транзакцию, но не подтверждать её.
@@ -134,7 +132,7 @@ python3 scripts/install_codex.py --force
 - данных конкретных компаний;
 - отдельного скилла для схем.
 
-Подготовка схемы входит в контракт модели и сопровождения. v0.2 генерирует `.bpmn` и `.svg` из одного разрешённого среза с общим fingerprint; новые draw.io не создаются, а старые остаются только миграционным свидетельством v0.1.
+Подготовка схемы входит в контракт модели и сопровождения. Текущий toolchain генерирует `.bpmn` и `.svg` из одного разрешённого среза с общим fingerprint; новые draw.io не создаются, а старые остаются только миграционным свидетельством v0.1.
 
 ## Публичная граница
 
@@ -142,6 +140,6 @@ python3 scripts/install_codex.py --force
 
 Архитектура: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md). Карта запуска: [docs/SKILL-MAP.md](docs/SKILL-MAP.md). Правила развития: [CONTRIBUTING.md](CONTRIBUTING.md).
 
-Командные обзоры: [стабильный релиз v0.2](docs/RELEASE-NOTES-v0.2.md) и [release candidate v0.3](docs/RELEASE-NOTES-v0.3.md).
+Командные обзоры: [предыдущий релиз v0.2](docs/RELEASE-NOTES-v0.2.md) и [текущий релиз v0.3](docs/RELEASE-NOTES-v0.3.md).
 
 Лицензия: [MIT](LICENSE).

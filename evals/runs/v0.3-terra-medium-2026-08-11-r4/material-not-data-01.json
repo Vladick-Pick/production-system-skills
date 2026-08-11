@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "trial_id": "material-not-data-01",
+  "case_id": "material-not-data",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/resolve-model-element/SKILL.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
+    "references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь приносит текст сообщения, скрипт звонка и презентацию."
+    },
+    {
+      "role": "assistant",
+      "content": "Вижу неоднозначность: это могут быть переиспользуемые материалы либо данные конкретного исполнения. Рекомендую материалы, если ими многократно пользуются при названных действиях; сильная альтернатива — данные, если это только запись конкретного контакта. От ответа зависит тип и связи. Используются ли эти три артефакта повторно при конкретных действиях?",
+      "questions": [
+        "Используются ли эти три артефакта повторно при конкретных действиях?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Да: текст первого сообщения используют при «Отправить первое сообщение», скрипт — при «Провести первичный звонок», презентацию — при «Провести презентацию предложения»; это утверждённые шаблоны, а не записи конкретных лидов."
+    },
+    {
+      "role": "assistant",
+      "content": "Семантический пакет `srp-material-not-data-01`\n\n- кандидат: текст первого сообщения, скрипт первичного звонка и презентация предложения;\n- исход допуска: принять;\n- канонические названия и stable ID: `Текст первого сообщения` / `material-first-message`, `Скрипт первичного звонка` / `material-first-call-script`, `Презентация предложения` / `material-offer-presentation`;\n- определение: переиспользуемые содержательные артефакты, которые исполнители применяют при выполнении названных действий; это не данные конкретного исполнения и не сами действия;\n- референт и тип: три утверждённых шаблона, каждый — материал;\n- включение: содержательный шаблон, который повторно используется в действии;\n- исключение и контрпример: отправленный конкретному лиду текст, время звонка или факт показа презентации — данные исполнения, а не материал;\n- правило идентичности: каждый материал различается по самостоятельному назначению и содержательному артефакту; новая версия того же шаблона сохраняет ID, а другой самостоятельный шаблон получает новый ID;\n- создание и завершение: создаётся при утверждении шаблона; прекращает использоваться при отзыве или замене;\n- жизненный цикл: черновик → утверждён для использования → заменён или отозван;\n- синонимы: «шаблон первого сообщения», «скрипт», «презентация»;\n- операционное использование и связи: `Отправить первое сообщение → использует → material-first-message`; `Провести первичный звонок → использует → material-first-call-script`; `Провести презентацию предложения → использует → material-offer-presentation`; по одной связи использования для каждого материала;\n- представления: файлы или ссылки на шаблоны; они не являются CRM-записями конкретных лидов;\n- граница и контракты: внутренние средства исполнения; внешнего контрагента или продуктовой поставки из фактов не следует;\n- карта противоречий: проверены слово, референт, тип, представление, использование и граница; конфликтов не обнаружено;\n- опровергающий сценарий: удаление CRM-записи лида не удаляет утверждённый шаблон, поэтому шаблон не является данными исполнения;\n- затронутые ID: три новых `material_id` и три связи с перечисленными действиями; ID модели и рабочей версии не предоставлены, поэтому пакет не разрешает запись;\n- источники и статус знания: единственный источник — сообщение пользователя в этой сессии; статус `принято` только для семантического вывода, не для строк модели;\n- рекомендуемая операция модели: передать в `maintain-production-system` для проверки модели, версии, владельца, влияния и отдельного mutation package.\n\nДетерминированный hash пакета: `862b180a57e24f34048aa6678cafc354f67c9b06f28be53b1ce43fa3557bba44`. Подтверждаете именно этот неизменённый пакет для передачи без записи?",
+      "questions": [
+        "Подтверждаете именно этот неизменённый пакет для передачи без записи?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю пакет srp-material-not-data-01 для передачи без записи. Я — Мария Соколова, человек, работающий с моделью."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет подтверждён Марией Соколовой только для semantic handoff. Записей модели и внешних изменений не выполнено. Передаю пакет, локальные ответы и checkpoint в `maintain-production-system`; следующий workflow обязан установить модель и версию, собрать собственный mutation package и получить отдельное подтверждение на запись."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "The user message is the sole synthetic session source; no model or external source was read."
+    },
+    {
+      "type": "checkpoint",
+      "state": "orient",
+      "mode": "proposal",
+      "active_question": null,
+      "content": "No model_id, spreadsheet_id, or version_id was supplied; the trial remains no-write."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The candidate is limited to the three supplied artefacts; no model rows or external system may be changed."
+    },
+    {
+      "type": "alternatives_presented",
+      "content": "Reusable material was contrasted with execution data before classification."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Asked whether the artefacts are reused in named actions; the answer determines material versus execution-data classification."
+    },
+    {
+      "type": "reuse_test",
+      "content": "The user confirmed that all three artefacts are reused as approved templates."
+    },
+    {
+      "type": "material_classified",
+      "content": "The three artefacts were classified as materials, not records of individual lead execution."
+    },
+    {
+      "type": "identity_test",
+      "content": "Each material has a distinct reusable purpose and artefact identity; a CRM-record deletion does not remove it."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Resolved three action-to-material relations: first message, first call, and offer presentation each use one named material."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "The classification was checked against the material-versus-data, representation, boundary, and operational-use distinctions."
+    },
+    {
+      "type": "checkpoint",
+      "state": "draft",
+      "mode": "proposal",
+      "active_question": null,
+      "package_id": "srp-material-not-data-01",
+      "package_hash": "862b180a57e24f34048aa6678cafc354f67c9b06f28be53b1ce43fa3557bba44",
+      "content": "Full semantic-resolution package shown; no model/version context permits a write."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "srp-material-not-data-01",
+      "package_hash": "862b180a57e24f34048aa6678cafc354f67c9b06f28be53b1ce43fa3557bba44",
+      "content": "A complete semantic-resolution package with outcome принять was presented."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "srp-material-not-data-01",
+      "package_hash": "862b180a57e24f34048aa6678cafc354f67c9b06f28be53b1ce43fa3557bba44",
+      "performer_type": "человек",
+      "confirmed_by": "Мария Соколова",
+      "content": "The identified human confirmed the exact shown package for no-write handoff."
+    },
+    {
+      "type": "read_only_check",
+      "content": "Confirmed that the resolver made no model writes and no external mutations."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "Transferred the confirmed package, local answers, and checkpoint to maintain-production-system; that workflow must establish model/version and obtain a separate write confirmation."
+    },
+    {
+      "type": "checkpoint",
+      "state": "checkpoint",
+      "mode": "proposal",
+      "active_question": null,
+      "package_id": "srp-material-not-data-01",
+      "package_hash": "862b180a57e24f34048aa6678cafc354f67c9b06f28be53b1ce43fa3557bba44",
+      "content": "Semantic handoff complete; next action is maintain-production-system intake without granted write authority."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_parseable": true,
+      "single_active_question_per_assistant_turn": true,
+      "no_model_write": true,
+      "package_hash_reconciled": true
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "schema_version": 1,
+  "trial_id": "deviation-active-norm-08",
+  "case_id": "deviation-active-norm",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "evals/FRESH-AGENT-CONTRACT.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "skills/maintain-production-system/SKILL.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Вчера клиенту не отправили уведомление в течение 24 часов. В целевой модели есть требование отправлять его за 24 часа. Это отклонение?"
+    },
+    {
+      "role": "assistant",
+      "content": "Пока это не подтверждённое отклонение. Требование в целевой модели описывает желаемое будущее устройство, но не является действующей нормой исполнения; поэтому наблюдаемый случай — целевой разрыв и кандидат записи развития, а не нарушение активной нормы. Подтверждаете, что в действующей версии правила об уведомлении за 24 часа нет, а требование существует только в целевой модели?",
+      "questions": [
+        "Подтверждаете, что в действующей версии правила об уведомлении за 24 часа нет, а требование существует только в целевой модели?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Да, в действующей версии такого правила нет; оно только в целевой модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Направление согласовано: фиксируем не отклонение от активной нормы, а кандидат развития — целевой разрыв между текущим исполнением и требованием целевой модели. Он не блокирует текущую приёмку и не подтверждает нарушение. Согласны вести запись именно в этом направлении?",
+      "questions": [
+        "Согласны вести запись именно в этом направлении?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы приписать решение человеку, назовите, пожалуйста, ваши имя и фамилию.",
+      "questions": [
+        "Как ваши имя и фамилия?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Анна Ильина."
+    },
+    {
+      "role": "assistant",
+      "content": "Анна Ильина найдена как исполнитель без активного назначения в этой fixture. Какую позицию закрепить для атрибуции решения?",
+      "questions": [
+        "Какую позицию закрепить для атрибуции решения?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Руководитель операций."
+    },
+    {
+      "role": "assistant",
+      "content": "Полный пакет pkg-dev-gap-001: (1) создать запись dev-gap-001 в реестре развития со статусом «кандидат → не подтверждено», типом «целевой разрыв», областью «уведомление клиента» и ссылкой на требование target-rule-notify-24h; явно указать, что действующей нормы нет и это не отклонение; (2) создать назначение Анны Ильиной на позицию «Руководитель операций» для атрибуции; (3) записать решение decision-dev-gap-001 о фиксации этой классификации; (4) добавить change-dev-gap-001 в «Изменения модели» и обновить «Рабочую панель». Действующая версия, её нормы и живое исполнение не меняются; переход версии и миграция не требуются. Проверки: наличие активной нормы, совпадение hash, целостность transaction и readback. package_hash: 8fb53ddfff52f64c237858436a15ead1923bcb646fc482a56b5d72481e68b536. Подтверждаете запись именно этого неизменённого пакета?",
+      "questions": [
+        "Подтверждаете запись именно этого неизменённого пакета?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывайте этот пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан в безопасную in-memory fixture одной transaction txn-dev-gap-001. В реестре есть кандидат целевого разрыва, но отклонение от действующей нормы не подтверждено. Transaction перечитана, checkpoint сохранён; внешние системы не изменялись."
+    }
+  ],
+  "events": [
+    {
+      "type": "active_norm_checked",
+      "content": "В fixture проверено: target-rule-notify-24h существует только в целевой модели; в действующей версии эквивалентной нормы нет."
+    },
+    {
+      "type": "development_candidate_classified",
+      "content": "Случай классифицирован как кандидат развития: целевой разрыв, не подтверждённое отклонение."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Запрошено подтверждение отсутствия активной нормы."
+    },
+    {
+      "type": "checkpoint",
+      "checkpoint_id": "cp-001",
+      "content": "Ответ подтвердил отсутствие активной нормы и сохранил классификацию до согласования направления."
+    },
+    {
+      "type": "candidate_direction_confirmed",
+      "content": "Человек согласовал направление: целевой разрыв как кандидат развития, без подтверждения отклонения."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия: Анна Ильина."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В in-memory fixture выполнен поиск нормализованного ФИО; найден performer-anna-ilina без активного назначения."
+    },
+    {
+      "type": "position_resolved",
+      "content": "После отдельного ответа определена позиция для атрибуции: Руководитель операций."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-dev-gap-001",
+      "package_hash": "8fb53ddfff52f64c237858436a15ead1923bcb646fc482a56b5d72481e68b536",
+      "content": "Показан точный пакет записи кандидата, назначения, решения, изменения модели и панели; действующая норма и версия не меняются."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "8fb53ddfff52f64c237858436a15ead1923bcb646fc482a56b5d72481e68b536",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Ильина",
+      "content": "Анна Ильина подтвердила именно показанный неизменённый пакет."
+    },
+    {
+      "type": "development_registry_write",
+      "transaction_id": "txn-dev-gap-001",
+      "content": "In-memory transaction создала dev-gap-001: кандидат целевого разрыва, статус «кандидат → не подтверждено», без активной нормы и без подтверждённого отклонения."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-dev-gap-001",
+      "content": "Одна in-memory transaction записала назначение, decision-dev-gap-001, change-dev-gap-001, строку реестра развития и обновление панели."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-dev-gap-001",
+      "content": "Перечитана записанная transaction: hash, атрибуция, статус кандидата и отсутствие изменения действующей нормы совпали с пакетом."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-dev-gap-001",
+      "checkpoint_id": "cp-002",
+      "content": "Сохранён checkpoint после readback: transaction завершена, внешних мутаций нет."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-dev-gap-001",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "development_registry_id": "dev-gap-001",
+        "classification": "целевой разрыв; кандидат развития; не подтверждённое отклонение",
+        "active_norm": false,
+        "confirmed_deviation": false,
+        "attribution": {
+          "performer_id": "performer-anna-ilina",
+          "performer_name": "Анна Ильина",
+          "position": "Руководитель операций"
+        },
+        "package_id": "pkg-dev-gap-001",
+        "package_hash": "8fb53ddfff52f64c237858436a15ead1923bcb646fc482a56b5d72481e68b536"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "active_norm_checked": true,
+      "package_hash_matched": true,
+      "transaction_readback": true,
+      "checkpoint_recorded": true
+    }
+  }
+}

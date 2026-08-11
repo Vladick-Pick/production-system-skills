@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "trial_id": "version-inheritance-exclude-01",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/maintain-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v2 меняется определение лида, один процесс исключается, остальные элементы не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "Для атрибуции изменения сначала установлю человека, работающего с моделью.",
+      "questions": ["Назовите, пожалуйста, имя и фамилию текущего человека, работающего с моделью."],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Ирина Петрова."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасном fixture совпадений по нормализованному ФИО нет; нужно установить позицию Ирины до подготовки пакета.",
+      "questions": ["Какую позицию занимает Ирина Петрова в этой модели?"],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Технолог систематизации; она уже зарегистрирована как исполнитель и назначена на эту позицию."
+    },
+    {
+      "role": "assistant",
+      "content": "Нужен точный контекст безопасной книги и режима записи.",
+      "questions": ["Каковы имя fixture-книги, model_id, версия схемы и допустимый режим записи?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Книга «Синтетические продажи», model_id model-sales-001, schema v0.3; разрешена только in-memory запись для этого trial."
+    },
+    {
+      "role": "assistant",
+      "content": "Теперь фиксирую линейку версий и состояние исходного снимка.",
+      "questions": ["Укажите current, base и working version_id, их статусы, predecessor рабочей версии и есть ли незавершённая transaction, конфликт редакторов или stale snapshot."],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "current_version_id и base_version_id — version-v1 со статусом «действует»; working_version_id — version-v2 со статусом «черновик», её predecessor — version-v1. Незавершённых transaction, конфликтов и stale snapshot нет; fingerprint v1 — fp-v1-verified."
+    },
+    {
+      "role": "assistant",
+      "content": "Изменение определения требует проверить, сохраняется ли тот же референт, а не создать новый объект.",
+      "questions": ["Каковы stable_id, прежнее и новое точные определения лида, и сохраняются ли идентичность и жизненный цикл того же объекта?"],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "stable_id obj-lead. В v1: «Лид — зафиксированный контакт, по которому начата обработка». В v2: «Лид — потенциальный клиент, по которому подтверждено основание для дальнейшей обработки; идентичность сохраняется при изменении признаков». Это тот же объект и тот же жизненный цикл."
+    },
+    {
+      "role": "assistant",
+      "content": "Для разреженного исключения нужно исключить не только название процесса, но и риск нарушения связей в итоговом срезе.",
+      "questions": ["Какой stable_id исключаемого процесса, какова его граница и есть ли у него дочерние или внешние связи, которые останутся в version-v2?"],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Исключается proc-legacy-qualification: это самостоятельный устаревший процесс без действий, состояний, переходов, контрактов, интерфейсов или иных зависимых строк. В version-v2 он не нужен; остальные stable IDs и связи остаются без изменений."
+    },
+    {
+      "role": "assistant",
+      "content": "Изменение затрагивает версию, поэтому отдельно определяю судьбу уже начатого исполнения.",
+      "questions": ["Есть ли активные экземпляры obj-lead или proc-legacy-qualification, для которых требуется правило миграции?"],
+      "active_question_id": "q-007"
+    },
+    {
+      "role": "user",
+      "content": "Нет: активных экземпляров этого процесса и лида в fixture нет, автоматическая миграция не требуется."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасном расчёте materialized snapshot version-v1 содержит исходную редакцию obj-lead и proc-legacy-qualification. Predicted snapshot version-v2 берёт новую редакцию obj-lead, исключает proc-legacy-qualification и наследует без копирования все остальные rows из version-v1; FK и линейная predecessor-цепочка проходят. Подготовлен полный пакет pkg-version-inheritance-exclude-01: две разреженные операции (применить obj-lead и исключить proc-legacy-qualification), одна запись решения и две записи «Изменения модели»; v2 остаётся «черновик». Правило живых экземпляров: миграция не требуется, потому что активных экземпляров нет. После записи будут пересобраны «Срез модели», «Реестр процессов» и «Рабочая панель». package_hash: ee1bedd46cdded7f675696f6ff219b3d4d65875e7ac3fee2398f21a3b7f30b93.",
+      "questions": ["Ирина Петрова, подтверждаете запись именно этого полного пакета в безопасный in-memory fixture?"],
+      "active_question_id": "q-008"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись именно этого полного пакета в безопасный in-memory fixture."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан одной in-memory transaction txn-version-inheritance-exclude-01. Read-back подтвердил одну запись решения, две записи изменений модели и две разреженные редакции; resolved snapshot version-v2 сохраняет все неизменённые элементы через predecessor, содержит новую редакцию obj-lead и не содержит proc-legacy-qualification. Производные представления пересобраны и сверены. Внешних систем не изменялось; version-v2 остаётся черновиком и ещё не является действующей нормой."
+    }
+  ],
+  "events": [
+    {"type": "source_authority_resolved", "content": "The selected skill and its required bundled contracts were used as authority for the in-memory trial."},
+    {"type": "editor_identified", "content": "Ирина Петрова identified as the human working with the model."},
+    {"type": "performer_lookup", "content": "The in-memory performer registry was checked for the normalized name; the fixture then established the existing performer and assignment."},
+    {"type": "position_resolved", "content": "Ирина Петрова is assigned to «Технолог систематизации»."},
+    {"type": "base_version_resolved", "content": "model-sales-001 uses действующая version-v1 as base and current version; version-v2 is the sole working draft."},
+    {"type": "predecessor_resolved", "content": "version-v2 has the linear predecessor version-v1."},
+    {"type": "sheet_fingerprint_verified", "content": "The synthetic v1 fingerprint fp-v1-verified was accepted for the in-memory source snapshot."},
+    {"type": "identity_test", "content": "The fixture established that obj-lead keeps the same identity and lifecycle; only its definition is revised."},
+    {"type": "scope_checked", "content": "Scope is one revised object definition and one excluded standalone process; all other stable IDs and relations are non-goals."},
+    {"type": "decisive_question", "content": "The dependency question established that proc-legacy-qualification has no child or remaining external relations."},
+    {"type": "snapshot_v1", "content": "The effective snapshot of version-v1 was materialized in memory before planning the delta."},
+    {"type": "snapshot_v2", "content": "The predicted effective snapshot of version-v2 was materialized in memory from the predecessor plus the planned sparse operations."},
+    {"type": "inheritance_proved", "content": "Comparison of both snapshots proved that unchanged rows inherit from version-v1, obj-lead is revised, and proc-legacy-qualification is absent only from version-v2."},
+    {"type": "draft_package", "package_hash": "ee1bedd46cdded7f675696f6ff219b3d4d65875e7ac3fee2398f21a3b7f30b93", "content": "The exact package contains one apply revision, one exclusion, a decision row, two model-change rows, reconstruction of projections, and no active-instance migration."},
+    {"type": "exact_package_confirmation", "package_hash": "ee1bedd46cdded7f675696f6ff219b3d4d65875e7ac3fee2398f21a3b7f30b93", "performer_type": "человек", "confirmed_by": "Ирина Петрова"},
+    {"type": "sparse_apply", "content": "A new version-v2 revision for obj-lead was applied in memory without copying inherited rows."},
+    {"type": "sparse_exclude", "content": "proc-legacy-qualification was excluded in memory for version-v2."},
+    {"type": "model_write", "transaction_id": "txn-version-inheritance-exclude-01", "content": "One confirmed in-memory transaction wrote the decision, two sparse model rows, two model-change rows, and reconstructed projections."},
+    {"type": "projection_build_started", "content": "Derived views were rebuilt from the exact resolved version-v2 snapshot."},
+    {"type": "projection_validated", "content": "The regenerated model snapshot, process registry, and dashboard were consistent with the resolved version-v2 snapshot."},
+    {"type": "projection_write", "transaction_id": "txn-version-inheritance-exclude-01", "content": "The derived in-memory views were stored as part of the same transaction."},
+    {"type": "readback", "transaction_id": "txn-version-inheritance-exclude-01", "content": "The transaction and exact effective version-v2 snapshot were reread in memory."},
+    {"type": "checkpoint", "transaction_id": "txn-version-inheritance-exclude-01", "content": "Read-back completed with the target still in draft state and no external mutation."}
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-version-inheritance-exclude-01",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "predecessor_chain_linear": true,
+      "base_snapshot_materialized": true,
+      "predicted_snapshot_materialized": true,
+      "inheritance_proved": true,
+      "foreign_keys_valid": true,
+      "package_hash_confirmed": true,
+      "readback_matches_package": true,
+      "projections_match_snapshot": true,
+      "external_system_unchanged": true
+    }
+  }
+}

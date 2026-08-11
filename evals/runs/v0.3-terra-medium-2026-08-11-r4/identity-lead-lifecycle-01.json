@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "trial_id": "identity-lead-lifecycle-01",
+  "case_id": "identity-lead-lifecycle",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/resolve-model-element/SKILL.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
+    "references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь предлагает заменить термин «лид-кандидат» на «лид» и «квалифицированный лид»."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала проверю, сохраняется ли один и тот же референт: если да, рекомендую один объект «Лид» и состояние «квалифицирован»; сильная альтернатива — два объекта с явным преобразованием. После квалификации сохраняются ли у экземпляра те же ID и история, или создаётся самостоятельный экземпляр, который можно отдельно вести и завершать?",
+      "questions": [
+        "После квалификации сохраняются ли у экземпляра те же ID и история, или создаётся самостоятельный экземпляр, который можно отдельно вести и завершать?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "В синтетической модели действие «Квалифицировать лид» меняет стадию той же записи: lead_id и история сохраняются, отдельный экземпляр не создаётся. Лид создаётся при регистрации обращения, после квалификации ему доступны продажные действия; он завершается как отклонённый или конвертированный, а повторное открытие сохраняет его историю."
+    },
+    {
+      "role": "assistant",
+      "content": "Это подтверждает один непрерывный объект и изменение допустимых действий, а не создание второго объекта. Для пакета нужно зафиксировать затрагиваемый срез и конкурирующие идентификаторы: каковы синтетические model_id, текущая и рабочая версии, stable ID нынешнего «лид-кандидат» и ID его состояний?",
+      "questions": [
+        "Каковы синтетические model_id, текущая и рабочая версии, stable ID нынешнего «лид-кандидат» и ID его состояний?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "model_id: demo-leadgen; current_version_id: v0.3-demo-current; working_version_id: v0.3-demo-draft. Нынешнее название объекта object-lead — «Лид-кандидат»; состояния: state-lead-new («новый») и state-lead-qualified («квалифицирован»). Отдельного stable ID для «Квалифицированного лида» нет. Процесс: process-lead-qualification; действие: action-qualify-lead."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверка идентичности и среза не выявила второго объекта: «квалифицированный лид» — имя состояния object-lead, а «лид-кандидат» остаётся его историческим синонимом. Кто является идентифицированным человеком, работающим с этой синтетической моделью, чтобы подтвердить полный semantic-resolution package?",
+      "questions": [
+        "Кто является идентифицированным человеком, работающим с этой синтетической моделью, чтобы подтвердить полный semantic-resolution package?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Пакет подтверждает Елена Смирнова, человек и технолог систематизации этой синтетической модели; performer_id: performer-elena-smirnova; assignment_id: assignment-elena-systematization."
+    },
+    {
+      "role": "assistant",
+      "content": "Semantic-resolution package\npackage_id: srp-demo-lead-lifecycle-01\nкандидат: заменить термин «лид-кандидат» на «лид» и «квалифицированный лид»\nисход допуска: принять и переименовать\nканоническое название: Лид\nstable_id: object-lead (сохраняется)\nопределение: Лид — объект работы, идентифицируемый потенциальный клиент, созданный при регистрации обращения и ведущийся до отклонения или конвертации. Квалификация не создаёт новый лид, а переводит тот же экземпляр в состояние «квалифицирован».\nреферент и тип: непрерывно распознаваемый объект работы; CRM-карточка и запись стадии — его представления и данные.\nпризнаки включения: один lead_id и одна история сохраняются после квалификации; продажные действия становятся допустимыми.\nисключения и контрпример: отдельный «квалифицированный лид» с собственным созданием, ID, жизненным циклом или независимым использованием; таких фактов нет.\nправило идентичности: экземпляры различаются lead_id; квалификация и повторное открытие сохраняют идентичность и историю.\nсоздание и завершение: создаётся при регистрации обращения; завершается как отклонённый или конвертированный; повторное открытие не создаёт новый экземпляр.\nжизненный цикл: новый → квалифицирован → отклонён или конвертирован; возможен возврат в работу с той же историей.\nсинонимы: «лид-кандидат» — исторический синоним «Лида».\nоперационное использование: action-qualify-lead в process-lead-qualification переводит object-lead из state-lead-new в state-lead-qualified и открывает продажные действия.\nпредставления: CRM-карточка лида; запись её стадии.\nсвязи и кратности: action-qualify-lead → переводит → object-lead из state-lead-new в state-lead-qualified; один экземпляр имеет одно актуальное состояние.\nграница и контракты: изменение остаётся внутри demo-leadgen; внешняя граница и контракты не затронуты.\nзатронутые ID: object-lead, state-lead-new, state-lead-qualified, action-qualify-lead, process-lead-qualification.\nкарта влияния: переименовать отображаемое название object-lead; закрепить «лид-кандидат» как синоним; не создавать отдельный объект или state ID для «квалифицированного лида»; maintain-production-system должен проверить связанные определения, действия, переходы и представления в новой разреженной версии.\nисточники и статусы знания: синтетические ответы Елены Смирновой — принято для данного fixture; нормативные контракты — приняты.\nоткрытые конфликты: нет.\nрекомендуемая операция модели: передать подтверждённый пакет в maintain-production-system для собственного полного mutation package; resolve-model-element сам модель не записывает.\npackage_hash: 789e8a174ba0ed6acc455283649c0bb76800f626dfe94be05876b640c9fc9539\nПодтверждаете передачу именно этого полного пакета в maintain-production-system для подготовки изменения модели?",
+      "questions": [
+        "Подтверждаете передачу именно этого полного пакета в maintain-production-system для подготовки изменения модели?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю передачу показанного полного пакета srp-demo-lead-lifecycle-01 в maintain-production-system."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет srp-demo-lead-lifecycle-01 подтверждён Еленой Смирновой и передан в maintain-production-system. Исход: «принять и переименовать»; object-lead сохраняет ID, «лид-кандидат» становится синонимом, а «квалифицированный лид» фиксируется как состояние state-lead-qualified. Записей модели не выполнено: следующий скилл обязан собрать собственный полный mutation package и отдельную transaction. Checkpoint: state=checkpoint, mode=proposal, model_id=demo-leadgen, working_version_id=v0.3-demo-draft, package_id=srp-demo-lead-lifecycle-01, package_hash=789e8a174ba0ed6acc455283649c0bb76800f626dfe94be05876b640c9fc9539, next_action=maintain-production-system."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "The selected skill and its directly required normative references were used as the authority for the synthetic trial."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Opened an orient/investigate checkpoint in proposal mode for the synthetic model; no model rows were accessed or written."
+    },
+    {
+      "type": "alternatives_presented",
+      "content": "Presented one object plus a state as the recommendation and two independently managed objects as the strongest alternative."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Asked whether qualification preserves identity and history or creates an independently managed instance."
+    },
+    {
+      "type": "identity_test",
+      "content": "The fixture established that lead_id and history persist through qualification and reopening; qualification changes permissible actions."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Updated the resolve checkpoint with the accepted local identity fact."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-002",
+      "content": "Asked for the model slice and competing IDs needed to bind the semantic conclusion to a concrete synthetic context."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The fixture located the change inside demo-leadgen and identified the current and working versions plus the affected IDs."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Resolved action-qualify-lead as the action that transitions object-lead from state-lead-new to state-lead-qualified."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Updated the resolve checkpoint with model and relation facts."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-003",
+      "content": "Asked for the identified human who can confirm the complete semantic package."
+    },
+    {
+      "type": "editor_identified",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Смирнова",
+      "content": "Identified the synthetic model's human systematization technologist together with performer and assignment IDs."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "Checked that the resolved meaning treats the CRM record as representation, preserves object identity, and models qualification as a state transition."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "srp-demo-lead-lifecycle-01",
+      "package_hash": "789e8a174ba0ed6acc455283649c0bb76800f626dfe94be05876b640c9fc9539",
+      "content": "Presented the full semantic-resolution package with the single outcome 'принять и переименовать'."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "srp-demo-lead-lifecycle-01",
+      "package_hash": "789e8a174ba0ed6acc455283649c0bb76800f626dfe94be05876b640c9fc9539",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Смирнова",
+      "content": "The identified human confirmed transfer of the exact displayed package."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "Handed the confirmed semantic-resolution package and checkpoint to maintain-production-system; resolve-model-element made no model write."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Saved the final proposal-mode checkpoint with the confirmed package hash and maintain-production-system as the next action."
+    }
+  ],
+  "outcome": {
+    "semantic_resolution": {
+      "package_id": "srp-demo-lead-lifecycle-01",
+      "package_hash": "789e8a174ba0ed6acc455283649c0bb76800f626dfe94be05876b640c9fc9539",
+      "decision": "принять и переименовать",
+      "handoff": "maintain-production-system",
+      "confirmation": "confirmed by Елена Смирнова"
+    },
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_checked": true,
+      "one_active_question_per_assistant_turn_checked": true,
+      "no_model_write_checked": true,
+      "package_hash_consistency_checked": true
+    }
+  }
+}

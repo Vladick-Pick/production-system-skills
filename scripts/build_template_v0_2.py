@@ -656,39 +656,45 @@ def layout_requests(schema: dict[str, Any], sheet_name: str, sheet_id: int) -> l
     ]
 
     if sheet_name == "Инструкция":
+        instruction_v3 = schema.get("schema_version") == "0.3"
+        item_end_row = 12 if instruction_v3 else 11
+        colors_header_row = 13 if instruction_v3 else 12
+        colors_start_row = colors_header_row + 1
+        colors_end_row = colors_start_row + 3
+        important_row = colors_end_row + 1
         requests.extend(
             [
                 merge_range(sheet_id, 0, 1, 0, 8),
                 merge_range(sheet_id, 1, 2, 0, 8),
                 merge_range(sheet_id, 3, 4, 0, 8),
-                merge_range(sheet_id, 12, 13, 0, 8),
-                merge_range(sheet_id, 17, 18, 1, 8),
+                merge_range(sheet_id, colors_header_row, colors_header_row + 1, 0, 8),
+                merge_range(sheet_id, important_row, important_row + 1, 1, 8),
                 repeat_format(sheet_id, 0, 1, 0, 8, visual_format("#D9EAF7", "#1F4E78", size=16, bold=True)),
                 repeat_format(sheet_id, 1, 2, 0, 8, visual_format("#FFFFFF", "#455A64", italic=True)),
                 repeat_format(sheet_id, 3, 4, 0, 8, visual_format("#BDD7EE", "#1F4E78", size=11, bold=True)),
-                repeat_format(sheet_id, 12, 13, 0, 8, visual_format("#BDD7EE", "#1F4E78", size=11, bold=True)),
-                repeat_format(sheet_id, 4, 11, 0, 1, visual_format("#D9EAF7", "#1F4E78", size=11, bold=True, horizontal="CENTER", borders=True)),
-                repeat_format(sheet_id, 4, 11, 1, 2, visual_format("#F3F9FD", "#1F4E78", bold=True, borders=True)),
-                repeat_format(sheet_id, 4, 11, 2, 8, visual_format("#FFFFFF", vertical="TOP", borders=True)),
-                repeat_format(sheet_id, 13, 16, 0, 8, visual_format("#FFFFFF", borders=True)),
-                repeat_format(sheet_id, 13, 14, 1, 2, visual_format("#FFF2CC", "#6D4C00", bold=True, borders=True)),
-                repeat_format(sheet_id, 14, 15, 1, 2, visual_format("#D9EAF7", "#1F4E78", bold=True, borders=True)),
-                repeat_format(sheet_id, 15, 16, 1, 2, visual_format("#F3F9FD", "#1F4E78", bold=True, borders=True)),
-                repeat_format(sheet_id, 17, 18, 0, 8, visual_format("#FCE8E6", "#8A1C1C", bold=True, borders=True)),
+                repeat_format(sheet_id, colors_header_row, colors_header_row + 1, 0, 8, visual_format("#BDD7EE", "#1F4E78", size=11, bold=True)),
+                repeat_format(sheet_id, 4, item_end_row, 0, 1, visual_format("#D9EAF7", "#1F4E78", size=11, bold=True, horizontal="CENTER", borders=True)),
+                repeat_format(sheet_id, 4, item_end_row, 1, 2, visual_format("#F3F9FD", "#1F4E78", bold=True, borders=True)),
+                repeat_format(sheet_id, 4, item_end_row, 2, 8, visual_format("#FFFFFF", vertical="TOP", borders=True)),
+                repeat_format(sheet_id, colors_start_row, colors_end_row, 0, 8, visual_format("#FFFFFF", borders=True)),
+                repeat_format(sheet_id, colors_start_row, colors_start_row + 1, 1, 2, visual_format("#FFF2CC", "#6D4C00", bold=True, borders=True)),
+                repeat_format(sheet_id, colors_start_row + 1, colors_start_row + 2, 1, 2, visual_format("#D9EAF7", "#1F4E78", bold=True, borders=True)),
+                repeat_format(sheet_id, colors_start_row + 2, colors_end_row, 1, 2, visual_format("#F3F9FD", "#1F4E78", bold=True, borders=True)),
+                repeat_format(sheet_id, important_row, important_row + 1, 0, 8, visual_format("#FCE8E6", "#8A1C1C", bold=True, borders=True)),
                 dimension_size(sheet_id, "COLUMNS", 0, 1, 55),
                 dimension_size(sheet_id, "COLUMNS", 1, 2, 190),
                 dimension_size(sheet_id, "COLUMNS", 2, 8, 125),
                 dimension_size(sheet_id, "ROWS", 0, 1, 42),
                 dimension_size(sheet_id, "ROWS", 1, 2, 42),
                 dimension_size(sheet_id, "ROWS", 3, 4, 34),
-                dimension_size(sheet_id, "ROWS", 4, 11, 62),
-                dimension_size(sheet_id, "ROWS", 12, 13, 34),
-                dimension_size(sheet_id, "ROWS", 13, 16, 42),
-                dimension_size(sheet_id, "ROWS", 17, 18, 50),
+                dimension_size(sheet_id, "ROWS", 4, item_end_row, 62),
+                dimension_size(sheet_id, "ROWS", colors_header_row, colors_header_row + 1, 34),
+                dimension_size(sheet_id, "ROWS", colors_start_row, colors_end_row, 42),
+                dimension_size(sheet_id, "ROWS", important_row, important_row + 1, 50),
             ]
         )
-        requests.extend(merge_range(sheet_id, row_index, row_index + 1, 2, 8) for row_index in range(4, 11))
-        requests.extend(merge_range(sheet_id, row_index, row_index + 1, 2, 8) for row_index in range(13, 16))
+        requests.extend(merge_range(sheet_id, row_index, row_index + 1, 2, 8) for row_index in range(4, item_end_row))
+        requests.extend(merge_range(sheet_id, row_index, row_index + 1, 2, 8) for row_index in range(colors_start_row, colors_end_row))
         return requests
 
     if dashboard_v3:
@@ -769,9 +775,20 @@ def layout_requests(schema: dict[str, Any], sheet_name: str, sheet_id: int) -> l
     header_row = int(sheet.get("header_row", default["header_row"])) - 1
     data_start = int(sheet.get("data_start_row", default["data_start_row"])) - 1
     data_end = int(default["data_end_row"])
-    requests.extend([merge_range(sheet_id, 0, 1, 0, column_count), merge_range(sheet_id, 1, 2, 0, column_count)])
+    frozen_columns = int(sheet.get("freeze_columns", 0))
+    # Google Sheets rejects a merged range that crosses the boundary between
+    # frozen and non-frozen columns. Keep the title, description and help text
+    # inside the frozen identity block when a registry freezes columns; the
+    # visual row formatting still spans the complete table width.
+    heading_merge_end = frozen_columns if frozen_columns else column_count
+    requests.extend(
+        [
+            merge_range(sheet_id, 0, 1, 0, heading_merge_end),
+            merge_range(sheet_id, 1, 2, 0, heading_merge_end),
+        ]
+    )
     if sheet_name != "Система":
-        requests.append(merge_range(sheet_id, 2, 3, 0, column_count))
+        requests.append(merge_range(sheet_id, 2, 3, 0, heading_merge_end))
     requests.extend(
         [
             repeat_format(sheet_id, 0, 1, 0, column_count, visual_format("#D9EAF7", "#1F4E78", size=16, bold=True)),
@@ -1993,6 +2010,16 @@ def build(
 
 def validate_batch(payload: dict[str, Any]) -> None:
     requests = payload["requests"]
+    frozen_boundaries: dict[int, tuple[int, int]] = {}
+    for request in requests:
+        properties = request.get("addSheet", {}).get("properties", {})
+        if "sheetId" not in properties:
+            continue
+        grid = properties.get("gridProperties", {})
+        frozen_boundaries[int(properties["sheetId"])] = (
+            int(grid.get("frozenRowCount", 0)),
+            int(grid.get("frozenColumnCount", 0)),
+        )
     for index, request in enumerate(requests):
         if not isinstance(request, dict) or len(request) != 1:
             raise ValueError(f"request[{index}] должен иметь ровно один request-type key")
@@ -2006,6 +2033,21 @@ def validate_batch(payload: dict[str, Any]) -> None:
                 raise ValueError(f"request[{index}] updateCells height mismatch")
             if any(len(row_data.get("values", [])) != expected_width for row_data in rows):
                 raise ValueError(f"request[{index}] updateCells width mismatch")
+        if "mergeCells" in request:
+            grid_range = request["mergeCells"]["range"]
+            frozen_rows, frozen_columns = frozen_boundaries.get(int(grid_range["sheetId"]), (0, 0))
+            crosses_frozen_rows = (
+                frozen_rows
+                and int(grid_range["startRowIndex"]) < frozen_rows < int(grid_range["endRowIndex"])
+            )
+            crosses_frozen_columns = (
+                frozen_columns
+                and int(grid_range["startColumnIndex"]) < frozen_columns < int(grid_range["endColumnIndex"])
+            )
+            if crosses_frozen_rows or crosses_frozen_columns:
+                raise ValueError(
+                    f"request[{index}] mergeCells пересекает границу закреплённых строк/столбцов"
+                )
 
 
 def main() -> int:

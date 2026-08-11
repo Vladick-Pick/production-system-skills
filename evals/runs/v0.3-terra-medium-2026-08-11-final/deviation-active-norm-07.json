@@ -1,0 +1,128 @@
+{
+  "schema_version": 1,
+  "trial_id": "deviation-active-norm-07",
+  "case_id": "deviation-active-norm",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "evals/FRESH-AGENT-CONTRACT.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "skills/maintain-production-system/SKILL.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Я, Ирина Соколова, владелец модели, сообщаю: в экземпляре WI-208 не зафиксирована временная метка контроля. В целевой версии есть требование rule-evidence-timestamp, поэтому считаю это отклонением."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверила основание: rule-evidence-timestamp есть только в целевой версии model-v3-0008-draft и не введено как действующая норма текущей версии model-v3-0007. Наблюдаемый факт WI-208 поэтому не подтверждает отклонение. Классифицирую сигнал как кандидат развития типа «пробел модели»: нужно отдельно решить, вводить ли это требование в модель и затем в живое исполнение. Согласны продолжить именно в этом направлении, не регистрируя WI-208 как подтверждённое отклонение?",
+      "questions": [
+        "Согласны продолжить именно в этом направлении, не регистрируя WI-208 как подтверждённое отклонение?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Да, продолжим как пробел модели; отклонение не подтверждаем."
+    },
+    {
+      "role": "assistant",
+      "content": "Показываю полный неизменённый пакет pkg-model-gap-01 (SHA-256 b0f6703b4817900fa01b5d88f66f066e66168ab063038a169cb422c7accd687d). Атрибуция: Ирина Соколова, performer_id perf-irina-sokolova, назначение assignment-model-owner-01, позиция «владелец модели». База: действующая model-v3-0007; рабочая цель: model-v3-0008-draft. Основание: WI-208 без временной метки; source locator: target-requirement/rule-evidence-timestamp. Классификация: целевое изменение и кандидат «пробел модели», не отклонение; ожидаемый эффект: требование остаётся явно целевым до отдельного решения о вводе. Операции одной transaction tx-model-gap-01: создать строку кандидата в «Отклонения» со статусом «кандидат» и отвергнутым типом «отклонение»; создать строку «Решения» о проработке пробела; создать строку «Изменения модели» для rule-evidence-timestamp без перевода model-v3-0008-draft в «действует»; пересобрать in-memory «Рабочую панель» с состоянием «кандидат, норма не действует». Прямое влияние: правило и реестр развития; производное: панель. Миграция активных экземпляров отсутствует, поскольку норма не вводится. Preconditions: base snapshot model-v3-0007 не изменён; recovery: readback по tx-model-gap-01, при несовпадении hash — без записи. Подтверждаете запись именно этого полного пакета?",
+      "questions": [
+        "Подтверждаете запись именно этого полного пакета?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай именно пакет pkg-model-gap-01."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасной in-memory копии записана одна transaction tx-model-gap-01. В таблице доступны карточка кандидата «пробел модели», решение, изменение модели и обновлённая Рабочая панель; WI-208 не помечен подтверждённым отклонением. Перечитаны записанные строки и checkpoint сохранён. Внешних систем и живой книги не изменяла."
+    }
+  ],
+  "events": [
+    {
+      "type": "active_norm_checked",
+      "rule_id": "rule-evidence-timestamp",
+      "current_version_id": "model-v3-0007",
+      "target_version_id": "model-v3-0008-draft",
+      "active": false
+    },
+    {
+      "type": "development_candidate_classified",
+      "candidate_type": "пробел модели",
+      "rejected_type": "отклонение",
+      "fact": "WI-208 не содержит временную метку контроля"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "question": "Согласны продолжить именно в этом направлении, не регистрируя WI-208 как подтверждённое отклонение?"
+    },
+    {
+      "type": "candidate_direction_confirmed",
+      "question_id": "q-001",
+      "confirmed_by": "Ирина Соколова"
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-model-gap-01",
+      "package_hash": "b0f6703b4817900fa01b5d88f66f066e66168ab063038a169cb422c7accd687d",
+      "transaction_id": "tx-model-gap-01"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "pkg-model-gap-01",
+      "package_hash": "b0f6703b4817900fa01b5d88f66f066e66168ab063038a169cb422c7accd687d",
+      "performer_type": "человек",
+      "confirmed_by": "Ирина Соколова"
+    },
+    {
+      "type": "development_registry_write",
+      "transaction_id": "tx-model-gap-01",
+      "registry": "Отклонения",
+      "record_type": "пробел модели",
+      "lifecycle_status": "кандидат"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-model-gap-01",
+      "decision_rows": 1,
+      "change_rows": 1,
+      "model_rows": 1
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-model-gap-01"
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-model-gap-01",
+      "state": "completed"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-model-gap-01",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "development_registry_rows": 1,
+        "projection_rows": 1,
+        "mode": "in-memory"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax": true,
+      "contract_shape": true
+    }
+  }
+}

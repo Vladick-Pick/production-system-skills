@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "trial_id": "deviation-active-norm-04",
+  "case_id": "deviation-active-norm",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "На встрече сообщили, что лид обрабатывается пять дней; в целевой модели написано три дня, но действующая норма не названа."
+    },
+    {
+      "role": "assistant",
+      "content": "Сообщение со встречи — проверяемый канал факта: в нём названо фактическое время пять дней. Запись «три дня» находится в целевой модели; она описывает желаемое устройство, но без введённой в действие версии, SLA или правила с проверяемым источником не является действующей нормой. Поэтому это пробел модели, а не отклонение: разницу пять против трёх дней сейчас нельзя подтвердить как нарушение. Карточка кандидата: исправить пробел нормы для действия обработки лида; ближайший отвергнутый тип — операционное отклонение. Неизвестно, должна ли норма три дня быть введена как новое правило.\n\nПодтверждаете направление: не создавать отклонение и подготовить изменение модели, которое явно установит норму обработки лида в три дня?",
+      "questions": [
+        "Подтверждаете направление: не создавать отклонение и подготовить изменение модели, которое явно установит норму обработки лида в три дня?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Да, направление верное: сначала явно установим норму три дня; отклонение пока не создаём."
+    },
+    {
+      "role": "assistant",
+      "content": "Направление подтверждено только для проработки. Полный пакет `pkg-active-norm-3d-v1` (hash `cfb442336188aac967e69cb205a76442e349682fe3fb22d3cfca1cd72f85e8f4`): редактор — Мария Орлова, Технолог; базовая действующая версия `ver-current-01`, новая рабочая версия `ver-draft-02`, предшественник `ver-current-01`. Источник факта: встреча, запись `meeting-01`; статус знания факта — принято. Источник значения три дня — подтверждённое направление владельца; это новое целевое правило, а не ретроспективный факт действующего исполнения.\n\nОперации: (1) в рабочей версии создать разреженную редакцию `norm-lead-processing-time` с операцией «применить»: для действия `action-lead-processing` норма обработки — 3 календарных дня, измерение от регистрации лида до завершения обработки; (2) добавить решение `dec-active-norm-3d-01` о принятии нормы в черновик; (3) добавить запись изменения `chg-active-norm-3d-01` с before: норма отсутствует, after: 3 календарных дня; (4) пересобрать срез модели и рабочую панель. Строка отклонения не создаётся.\n\nВлияние: прямое — действие обработки лида и его контроль срока; производное — срез и панель. Продукты, контракты, материалы, контрагенты, состояния, назначения, интерфейсы и активные экземпляры не меняются. Миграция активных экземпляров не требуется, потому что пакет создаёт черновик и не вводит норму в действие. Проверки: базовый и predicted snapshots, наследование неизменённых элементов, наличие нормы в predicted snapshot, соответствие решения и изменения пакету. Восстановление: при неполной записи искать `txn-active-norm-3d-01` и дописывать только при неизменных preconditions.\n\nПодтверждаете запись показанного пакета `pkg-active-norm-3d-v1` в черновик модели?",
+      "questions": [
+        "Подтверждаете запись показанного пакета `pkg-active-norm-3d-v1` в черновик модели?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывайте показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в in-memory fixture одной транзакцией `txn-active-norm-3d-01` и перечитан. В черновике появилась норма три календарных дня для обработки лида, решение и запись изменения; отклонение не создано. Базовая действующая версия не изменена. Checkpoint: рабочая версия остаётся `черновик`; для превращения нормы в действующую потребуется отдельный пакет, решение о вводе и судьба активных экземпляров."
+    }
+  ],
+  "events": [
+    {
+      "type": "scope_checked",
+      "content": "In-memory model fixture, action-lead-processing, write mode, and no-external-mutation boundary established."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Current active version ver-current-01 and working draft ver-draft-02 established."
+    },
+    {
+      "type": "source_authority_resolved",
+      "content": "Meeting is authoritative for the observed five-day fact; the target-model value is not an active norm source."
+    },
+    {
+      "type": "evidence_channel_resolved",
+      "content": "Meeting record meeting-01 is the evidence channel for observed duration."
+    },
+    {
+      "type": "active_norm_checked",
+      "content": "No introduced version, SLA, or rule establishes three days as an active norm."
+    },
+    {
+      "type": "development_candidate_classified",
+      "content": "Classified as a model gap; deviation rejected because active norm is absent."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Asked q-001 to choose between a model-norm change and a deviation record."
+    },
+    {
+      "type": "candidate_direction_confirmed",
+      "content": "Human confirmed the candidate direction only: establish the three-day norm and do not create a deviation."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Maria Orlova identified as the human editor in the in-memory fixture."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Normalized performer lookup resolved existing performer perf-maria-orlova-01."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Existing active assignment as Технолог resolved."
+    },
+    {
+      "type": "predecessor_resolved",
+      "content": "ver-current-01 is the linear predecessor of ver-draft-02."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "Effective base snapshot materialized before planned sparse operation."
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "Predicted draft snapshot materialized with norm-lead-processing-time applied."
+    },
+    {
+      "type": "inheritance_proved",
+      "content": "Base snapshot remains unchanged and all unrelated elements are inherited by the predicted draft snapshot."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-active-norm-3d-v1",
+      "package_hash": "cfb442336188aac967e69cb205a76442e349682fe3fb22d3cfca1cd72f85e8f4",
+      "content": "Full sparse model/norm mutation package shown before confirmation."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "pkg-active-norm-3d-v1",
+      "package_hash": "cfb442336188aac967e69cb205a76442e349682fe3fb22d3cfca1cd72f85e8f4",
+      "performer_type": "человек",
+      "confirmed_by": "Мария Орлова",
+      "content": "Human explicitly confirmed the unchanged full package."
+    },
+    {
+      "type": "sparse_apply",
+      "transaction_id": "txn-active-norm-3d-01",
+      "content": "Applied norm-lead-processing-time revision in the in-memory draft version."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-active-norm-3d-01",
+      "content": "One in-memory transaction wrote the decision, sparse norm revision, model change, snapshot, and dashboard projection."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-active-norm-3d-01",
+      "content": "Read back the transaction, decision, change row, and predicted snapshot against the package hash."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-active-norm-3d-01",
+      "content": "Verified checkpoint saved; draft is not an active norm and requires a separate introduction package."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-active-norm-3d-01",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "in_memory": true
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "base_snapshot_materialized": true,
+      "predicted_snapshot_materialized": true,
+      "inheritance_proved": true,
+      "package_hash_matched": true,
+      "transaction_readback_matched": true,
+      "active_norm_not_invented": true,
+      "no_deviation_created_without_active_norm": true,
+      "no_external_mutation": true
+    },
+    "readiness": {
+      "draft_norm_written": true,
+      "introduced_as_active_norm": false
+    },
+    "blockers": [
+      "A separate accepted-and-introduced version package is required before the three-day norm can be treated as active."
+    ]
+  }
+}

@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "trial_id": "audit-no-write-02",
+  "case_id": "audit-no-write",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/audit-production-system/SKILL.md",
+    "skills/audit-production-system/references/LANGUAGE.md",
+    "skills/audit-production-system/references/METAONTOLOGY.md",
+    "skills/audit-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/audit-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/audit-production-system/references/PROJECTION-CONTRACT.md",
+    "skills/audit-production-system/scripts/versioning/resolve.py",
+    "skills/audit-production-system/scripts/bpmn/validate.py",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь просит оценить модель и объяснить, что не так."
+    },
+    {
+      "role": "assistant",
+      "content": "Для доказательного read-only аудита нужно зафиксировать единственную версию модели: иначе нельзя смешивать срезы и проекции. Какую модель и version_id проверить?",
+      "questions": ["Какую модель и version_id проверить?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Симулятор: модель «Приём обращения», model_id=model-demo-01, schema v0.3, version_id=ver-demo-03, status=действует, predecessor=ver-demo-02, resolved snapshot fingerprint=sha256:demo-snapshot-03. В книге 32 листа и структурная проверка пройдена. Для критического process_id=proc-intake есть start и normal path, но у action_id=act-clarify нет исходящего edge после возврата на уточнение. Журнала фактического исполнения нет. Есть BPMN+SVG build_id=build-demo-03 с тем же fingerprint; XML и DI валидны, но доказательства проверки в Camunda Modeler, формы, FEEL и worker bindings отсутствуют."
+    },
+    {
+      "role": "assistant",
+      "content": "Read-only audit завершён. Структурный срез и lineage build подтверждены, но модель не готова к вводу: ветка возврата на уточнение обрывается на act-clarify, а deployment evidence отсутствует. Это не доказывает сбой живого исполнения, потому что журнал не предоставлен. Карточка кандидата: устранить подтверждённый dead end в рабочей версии через maintain-production-system; audit ничего не записывал."
+    }
+  ],
+  "events": [
+    {
+      "type": "scope_checked",
+      "content": "Read-only scope set to model-demo-01 / ver-demo-03; no model, registry, decision, projection, or external writes permitted."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Requested the exact model and version because the scenario did not name one."
+    },
+    {
+      "type": "source_authority_resolved",
+      "content": "Synthetic in-memory workbook snapshot is authoritative for model structure; the supplied build is authoritative only for its stated lineage; no execution log is available."
+    },
+    {
+      "type": "snapshot_resolved",
+      "model_id": "model-demo-01",
+      "version_id": "ver-demo-03",
+      "snapshot_fingerprint": "sha256:demo-snapshot-03",
+      "content": "Resolved active version ver-demo-03 and predecessor ver-demo-02 without mixing versions."
+    },
+    {
+      "type": "evidence_ledger_created",
+      "content": "Created a read-only ledger with structural, process, execution-evidence, and projection claims."
+    },
+    {
+      "type": "active_norm_checked",
+      "content": "The process contract requires every reachable non-terminal action to have an outgoing edge and a path to an end event."
+    },
+    {
+      "type": "read_only_check",
+      "content": "Verified the stated 32-sheet structural result and inspected the supplied process facts without mutation."
+    },
+    {
+      "type": "lineage_verified",
+      "build_id": "build-demo-03",
+      "snapshot_fingerprint": "sha256:demo-snapshot-03",
+      "content": "BPMN and SVG build lineage matches the resolved snapshot fingerprint; XML/DI validation is not treated as Modeler validation."
+    },
+    {
+      "type": "projection_validated",
+      "content": "View-level XML and DI evidence is positive; deployment readiness remains unverified because Camunda Modeler, forms, FEEL, and worker bindings have no evidence."
+    },
+    {
+      "type": "three_surfaces_scored",
+      "content": "Scored model structure, process execution-path, and projection/deployment surfaces independently."
+    },
+    {
+      "type": "uncertainty_reported",
+      "content": "No live execution journal was supplied, so no conclusion about actual execution divergence was made."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "Handed off a read-only candidate to maintain-production-system: repair or explicitly terminate the return path at act-clarify, then rebuild and re-audit."
+    }
+  ],
+  "audit_report": {
+    "scope": {
+      "model_id": "model-demo-01",
+      "model_name": "Приём обращения",
+      "schema_version": "v0.3",
+      "version_id": "ver-demo-03",
+      "version_status": "действует",
+      "predecessor_version_id": "ver-demo-02",
+      "snapshot_fingerprint": "sha256:demo-snapshot-03",
+      "build_id": "build-demo-03",
+      "mode": "read-only"
+    },
+    "evidence_ledger": [
+      {
+        "claim": "Структурный контракт v0.3 пройден.",
+        "source_locator": "in-memory fixture: workbook/model-demo-01",
+        "observed_value": "32 листа; заявленная структурная проверка пройдена",
+        "verification": "сопоставление с требованием audit skill для v0.3",
+        "expected_value": "32 листа и корректная структура",
+        "inference": "структурная готовность подтверждена только в пределах fixture",
+        "uncertainty": "строки, FK, selectors и formulas не были предоставлены для построчной проверки",
+        "freshness": "synthetic trial fixture"
+      },
+      {
+        "claim": "Возвратная ветка процесса не завершается.",
+        "source_locator": "in-memory fixture: proc-intake / act-clarify",
+        "observed_value": "после возврата на уточнение у act-clarify отсутствует исходящий edge",
+        "verification": "проверка reachability и outgoing edge для non-terminal action",
+        "expected_value": "исходящий edge и путь к terminal outcome",
+        "inference": "подтверждённый дефект исполнимости модели",
+        "uncertainty": "неизвестно, является ли это намеренно неописанной terminal state; fixture называет действие уточнением, а не terminal outcome",
+        "freshness": "synthetic trial fixture"
+      },
+      {
+        "claim": "Build согласован со срезом, но не доказанно готов к deployment.",
+        "source_locator": "in-memory fixture: build-demo-03",
+        "observed_value": "BPMN+SVG fingerprint совпадает; XML/DI валидны; отсутствуют Modeler evidence, forms, FEEL, worker bindings",
+        "verification": "проверка lineage и deployment gates по projection contract",
+        "expected_value": "все deployment gates подтверждены отдельно от XML validation",
+        "inference": "готовность к просмотру условно подтверждена; готовность к вводу не подтверждена",
+        "uncertainty": "внешняя проверка Camunda Modeler не выполнялась",
+        "freshness": "synthetic trial fixture"
+      }
+    ],
+    "findings": [
+      {
+        "finding_id": "AUD-001",
+        "severity": "high",
+        "affected_stable_ids": ["proc-intake", "act-clarify"],
+        "version_id": "ver-demo-03",
+        "build_id": "build-demo-03",
+        "violated_contract": "audit-production-system §8; PROJECTION-CONTRACT readiness: each reachable non-terminal node has an outgoing flow and path to end",
+        "actual": "act-clarify has no outgoing edge after the return path",
+        "expected": "defined next edge or explicit terminal outcome",
+        "consequence": "return/correction scenario is not executable and the active model is not acceptable for introduction",
+        "recommended_disposition": "Create a confirmed change package in maintain-production-system; then rebuild the projection and repeat path audit.",
+        "handoff": "maintain-production-system",
+        "unknown": "whether an omitted explicit terminal outcome was intended",
+        "recheck_condition": "re-audit a resolved snapshot containing the repaired edge or explicit terminal state"
+      },
+      {
+        "finding_id": "AUD-002",
+        "severity": "high",
+        "affected_stable_ids": ["proc-intake"],
+        "version_id": "ver-demo-03",
+        "build_id": "build-demo-03",
+        "violated_contract": "PROJECTION-CONTRACT deployment readiness",
+        "actual": "no evidence for Camunda Modeler validation, forms, FEEL conditions, or worker bindings",
+        "expected": "deployment gates independently evidenced",
+        "consequence": "parseable BPMN cannot be accepted as deployment-ready",
+        "recommended_disposition": "Keep deployment blocked; collect the missing evidence after the process-path correction.",
+        "handoff": "maintain-production-system",
+        "unknown": "target Camunda environment and implementation contracts",
+        "recheck_condition": "fixed build plus recorded Modeler/lint and implementation evidence"
+      }
+    ],
+    "surface_scores": {
+      "model_structure": {"score": "partial", "basis": "32-sheet structural claim is positive; detailed row-level evidence absent"},
+      "process_execution": {"score": "fail", "basis": "confirmed dead end at act-clarify"},
+      "projection_deployment": {"score": "fail", "basis": "lineage and XML/DI pass, deployment gates absent"}
+    },
+    "verdicts": {
+      "schema": "частично подтверждено",
+      "history": "не проверено: fixture не содержит transaction/history evidence",
+      "semantics": "не проверено: fixture не содержит definitions or referents",
+      "execution": "не готова: return path has a dead end",
+      "contracts": "не проверено: fixture не содержит contract/item evidence",
+      "development": "не проверено: fixture не содержит registries evidence",
+      "projection": "готова к просмотру условно; не готова к вводу"
+    },
+    "readiness": "не готова",
+    "blockers": ["AUD-001", "AUD-002"],
+    "residual_unknowns": ["фактическое исполнение", "история и транзакции", "семантика элементов", "контрактная граница", "реестры развития"],
+    "handoff": {
+      "resolve-model-element": "Не требуется по имеющимся evidence; использовать только если намеренный terminal outcome у act-clarify семантически спорен.",
+      "maintain-production-system": "Подготовить подтверждаемый пакет исправления пути; аудит не создаёт строки и не меняет статус."
+    }
+  },
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "structural_claim_observed": true,
+      "process_dead_end_observed": true,
+      "projection_lineage_observed": true,
+      "json_syntax_validated": true
+    }
+  }
+}

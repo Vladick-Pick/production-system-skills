@@ -1,0 +1,331 @@
+{
+  "schema_version": 1,
+  "trial_id": "compaction-recovery-01",
+  "case_id": "compaction-recovery",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "skills/model-production-system/references/LANGUAGE.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Нужно впервые описать контур подготовки еженедельного отчёта для клиента. Работаем в режиме write в синтетической книге модели m-demo-01, рабочая версия v-draft-01, действующая версия v-current-01. Редактор — Анна Смирнова, руководитель аналитики."
+    },
+    {
+      "role": "assistant",
+      "content": "Ориентир зафиксирован: модель m-demo-01, черновик v-draft-01, режим write; Анна Смирнова идентифицирована как редактор и её активное назначение найдено. Исходные данные синтетической книги и её листов прочитаны без записи. Сначала определим принимаемый результат, потому что от него зависят граница и процесс.",
+      "questions": [
+        "Какой конкретный результат клиент принимает по итогам еженедельного контура и по какому критерию?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Клиент принимает еженедельный отчёт по рекламе в PDF: все согласованные кампании включены, данные сверены с источником и объяснены отклонения более 10 %."
+    },
+    {
+      "role": "assistant",
+      "content": "Принято как локальное определение продукта и его приёмки; записи в модель ещё нет. Чтобы не подменить внешнюю сторону внутренней системой, уточню границу.",
+      "questions": [
+        "Кто является внутренним производителем отчёта, а кто внешним получателем?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Внутренний производитель — команда аналитики агентства, внешний получатель — клиент ООО «Север»."
+    },
+    {
+      "role": "assistant",
+      "content": "Граница зафиксирована: команда аналитики остаётся внутри модели, ООО «Север» — внешний контрагент без моделирования его внутренних процессов. Теперь нужен запускающий факт процесса.",
+      "questions": [
+        "Какой триггер создаёт экземпляр подготовки отчёта?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Каждый понедельник в 09:00 по московскому времени начинается подготовка отчёта за предыдущую неделю."
+    },
+    {
+      "role": "assistant",
+      "content": "Триггер и три локальных ответа сохранены в checkpoint; авторские строки и пакет ещё не созданы."
+    },
+    {
+      "role": "user",
+      "content": "Контекст сжался. Продолжим."
+    },
+    {
+      "role": "assistant",
+      "content": "Восстановил checkpoint состояния resolve: модель, версии, режим, редактор и три локальных ответа совпали с сохранённым состоянием. До продолжения повторно сверил ревизии источников и fingerprint листов синтетической книги: расхождений нет. Возвращаю тот же единственный следующий вопрос; подтверждения и записи до показа полного пакета не было.",
+      "questions": [
+        "Какой объект работы проходит через этот процесс и какие его состояния нужны до приёмки отчёта?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Объект — еженедельный отчёт; состояния: собирается, проверяется аналитиком, отправлен клиенту, принят или возвращён на доработку."
+    },
+    {
+      "role": "assistant",
+      "content": "Состояния объекта отделены от статусов отправителя. Чтобы граф был исполнимым, определим первое наблюдаемое действие и его ответственного.",
+      "questions": [
+        "Какое первое действие после триггера, какой у него вход, выход и ответственная позиция?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Аналитик выгружает показатели кампаний из рекламных систем; вход — данные за неделю, выход — черновик отчёта со сводными метриками."
+    },
+    {
+      "role": "assistant",
+      "content": "Первое действие и его ответственный определены. Нужны проверка и ветка возврата, иначе приёмка не будет полной.",
+      "questions": [
+        "Кто и по какому правилу проверяет черновик до отправки клиенту, а что происходит при ошибке?"
+      ],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Старший аналитик сверяет суммы с рекламными системами и наличие объяснений отклонений более 10 %. При ошибке возвращает отчёт аналитику на доработку."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверка и возврат определены. Осталось зафиксировать интерфейс внешней передачи и приёмку клиента.",
+      "questions": [
+        "Как отчёт передаётся клиенту, какое свидетельство приёмки нужно и какой путь действует при мотивированном отказе?"
+      ],
+      "active_question_id": "q-007"
+    },
+    {
+      "role": "user",
+      "content": "Аккаунт-менеджер отправляет PDF по согласованной электронной почте; ответ клиента «принято» служит свидетельством. Если клиент указывает неполноту или неверные цифры, отчёт возвращается аналитику на доработку."
+    },
+    {
+      "role": "assistant",
+      "content": "Собран полный пакет pkg-weekly-report-01 для одного черновика v-draft-01: продукт «Еженедельный отчёт по рекламе в PDF» с приёмкой клиента; внутренняя система «Команда аналитики агентства»; внешний контрагент ООО «Север»; процесс от понедельничного триггера через выгрузку, проверку, отправку и приёмку; объект «Еженедельный отчёт» со состояниями собирается, проверяется, отправлен, принят и возвращён на доработку; роли аналитика, старшего аналитика и аккаунт-менеджера; интерфейс email с PDF, мотивированным отказом и возвратом. Пакет добавит 1 решение, 1 изменение модели и 18 авторских строк только в памяти trial; predicted snapshot проходит FK, selectors, один черновик, достижимость нормального пути и обеих возвратных веток. package_hash: 6d4c5b7c31f84289077af84d6c60c6b33ff6b52910f3c64b082a070a332e0b6f. Сценарии: нормальный путь завершается «принят»; внутренняя проверка возвращает «на доработку»; отказ клиента возвращает «на доработку». После подтверждения будет одна идемпотентная in-memory transaction с последующим read-back и сборкой предварительной BPMN/SVG-проекции.",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-weekly-report-01 в черновик модели?"
+      ],
+      "active_question_id": "q-008"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись показанного пакета."
+    },
+    {
+      "role": "assistant",
+      "content": "Подтверждение Анны Смирновой относится к неизменённому пакету. In-memory transaction tx-weekly-report-01 записала пакет; read-back подтвердил решение, изменение модели, 18 авторских строк, срез и три сценария. BPMN и SVG построены из одного IR с fingerprint 8c38bcce4a53b249c4f425d9c3640132431446a9e5d3f024b92aaec6d9b40316; view readiness готова, deployment readiness не заявлена. Внешние системы не изменялись."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_inventory",
+      "content": "Синтетическая книга m-demo-01 и необходимые листы инвентаризированы в памяти trial."
+    },
+    {
+      "type": "source_authority_resolved",
+      "content": "Каноническим источником назначена синтетическая книга m-demo-01 версии schema v0.3."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "До первого вопроса проверены исходные ревизии v-draft-01 и v-current-01."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "До первого вопроса проверен fingerprint листов синтетической книги."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Рабочая версия v-draft-01 и действующая v-current-01 установлены."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия редактора: Анна Смирнова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В синтетическом каталоге найден performer Анны Смирновой."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Установлено активное назначение «руководитель аналитики»."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Граница ограничена внутренней командой аналитики агентства; внешние стороны не моделируются как внутренние системы."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-001: запрошены принимаемый продукт и критерии приёмки."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint resolve после ответа q-001; следующая неизвестность — граница производителя и получателя."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-002: запрошены внутренний производитель и внешний получатель."
+    },
+    {
+      "type": "counterparty_resolved",
+      "content": "ООО «Север» разрешено как внешний контрагент."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint resolve после ответа q-002; следующая неизвестность — триггер процесса."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-003: запрошен триггер процесса."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint resolve после ответа q-003 с active_question q-004 и write_state not_started."
+    },
+    {
+      "type": "checkpoint_loaded",
+      "content": "После compaction загружен сохранённый checkpoint resolve без confirmation, package_id и transaction_id."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "После compaction повторно сверены ревизии источников, working_version_id и current_version_id с checkpoint."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "После compaction повторно сверены fingerprints листов с сохранённым checkpoint; дрейф не обнаружен."
+    },
+    {
+      "type": "active_question_restored",
+      "content": "После успешной сверки восстановлен один активный вопрос q-004."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-004: запрошены объект работы и состояния до приёмки."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint resolve после ответа q-004; следующая неизвестность — первое действие."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-005: запрошены первое действие, вход, выход и позиция."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Действие выгрузки связано с объектом «Еженедельный отчёт» и позицией аналитика."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint resolve после ответа q-005; следующая неизвестность — проверка и возврат."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-006: запрошены проверка, правило и путь возврата."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Проверка старшего аналитика и возврат на доработку связаны с объектом и действием выгрузки."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint resolve после ответа q-006; следующая неизвестность — интерфейс передачи."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-007: запрошены канал передачи, приёмка и путь мотивированного отказа."
+    },
+    {
+      "type": "transfer_interface_resolved",
+      "content": "Определены email, PDF, ответ «принято», отказ и возврат на доработку."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint resolve после ответа q-007; данные достаточны для полного пакета."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "Материализован и проверен effective snapshot базовой v-current-01 до показа пакета."
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "Материализован и проверен predicted snapshot v-draft-01 из планируемых sparse-операций."
+    },
+    {
+      "type": "draft_package",
+      "package_hash": "6d4c5b7c31f84289077af84d6c60c6b33ff6b52910f3c64b082a070a332e0b6f",
+      "content": "Показан полный mutation package pkg-weekly-report-01 без записи."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "6d4c5b7c31f84289077af84d6c60c6b33ff6b52910f3c64b082a070a332e0b6f",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова",
+      "content": "Анна Смирнова явно подтвердила запись показанного неизменённого пакета."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-weekly-report-01",
+      "content": "В памяти trial выполнена одна идемпотентная transaction с решением, изменением модели и 18 авторскими строками."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-weekly-report-01",
+      "content": "Перечитана записанная in-memory transaction, срез и связанные записи."
+    },
+    {
+      "type": "projection_build_started",
+      "content": "Из exact snapshot начата сборка проекции."
+    },
+    {
+      "type": "bpmn_generated",
+      "content": "BPMN построена из canonical IR."
+    },
+    {
+      "type": "svg_generated",
+      "content": "SVG построен из того же canonical IR."
+    },
+    {
+      "type": "projection_validated",
+      "content": "Проверены один model fingerprint для BPMN/SVG и view readiness."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-weekly-report-01",
+      "content": "После read-back сохранён checkpoint verified для tx-weekly-report-01."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-weekly-report-01",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 18,
+        "target": "in_memory_trial_fixture"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "source_revisions_match_checkpoint": true,
+      "sheet_fingerprint_matches_checkpoint": true,
+      "predicted_snapshot_valid": true,
+      "transaction_readback_matches_package": true,
+      "normal_path_completed": true,
+      "internal_return_path_completed": true,
+      "client_rejection_return_path_completed": true,
+      "projection_fingerprint_matches": true
+    }
+  }
+}

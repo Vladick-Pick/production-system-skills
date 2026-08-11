@@ -13,6 +13,7 @@
   ],
   "events": [
     {"type": "source_authority_resolved"},
+    {"type": "checkpoint", "checkpoint_id": "cp-before-package"},
     {"type": "decisive_question", "active_question_id": "q-object"},
     {"type": "draft_package", "package_hash": "h-001"},
     {"type": "exact_package_confirmation", "package_hash": "h-001", "performer_type": "человек", "confirmed_by": "Иван Иванов"},

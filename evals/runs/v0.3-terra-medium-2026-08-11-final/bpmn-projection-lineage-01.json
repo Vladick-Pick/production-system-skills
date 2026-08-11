@@ -1,0 +1,255 @@
+{
+  "schema_version": 1,
+  "trial_id": "bpmn-projection-lineage-01",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Построить схему процесса с human task, automation, exclusive branch, return и timer."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала зафиксирую границу и результат, чтобы схема была проекцией модели, а не свободным рисунком. Какой внутренний процесс моделируем, какой его принимаемый результат и в каком режиме работать с синтетической книгой: proposal или write?",
+      "questions": [
+        "Какой внутренний процесс моделируем, какой его принимаемый результат и в каком режиме работать с синтетической книгой: proposal или write?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "В write-режиме собери новый контур «Обработка заявки на консультацию»: результат — подтверждённая консультация или мотивированный отказ; синтетическая книга v0.3 пуста, model_id=model-demo, working_version_id=ver-demo-draft, current_version_id=ver-demo-base."
+    },
+    {
+      "role": "assistant",
+      "content": "Нужна атрибуция будущей transaction. Назовите, пожалуйста, имя и фамилию человека, который будет подтверждать точный пакет записи.",
+      "questions": [
+        "Назовите, пожалуйста, имя и фамилию человека, который будет подтверждать точный пакет записи."
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "Какую устойчивую позицию Анны назначить ответственной за человеческие действия этого процесса?",
+      "questions": [
+        "Какую устойчивую позицию Анны назначить ответственной за человеческие действия этого процесса?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Менеджер по консультациям; в синтетической книге это новая позиция."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксируйте один основной объект работы и критерий приёмки результата: что именно считается заявкой и по какому наблюдаемому признаку консультация подтверждена?",
+      "questions": [
+        "Зафиксируйте один основной объект работы и критерий приёмки результата: что именно считается заявкой и по какому наблюдаемому признаку консультация подтверждена?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Объект — заявка на консультацию; подтверждение — клиенту отправлены дата и ссылка на согласованную консультацию, отказ содержит причину."
+    },
+    {
+      "role": "assistant",
+      "content": "Опишите исполнимый маршрут после поступления заявки: какое человеческое действие принимает решение, каков критерий ветвления, что считается возвратом и куда он ведёт?",
+      "questions": [
+        "Опишите исполнимый маршрут после поступления заявки: какое человеческое действие принимает решение, каков критерий ветвления, что считается возвратом и куда он ведёт?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Менеджер проверяет полноту заявки; если данных достаточно — готовит консультацию, иначе отправляет запрос уточнения и после уточнения возвращается к проверке; при неподходящей заявке фиксирует мотивированный отказ."
+    },
+    {
+      "role": "assistant",
+      "content": "Какое действие автоматизировано и к какому уже выполняемому действию привязан таймер: укажите timer definition и исход по таймауту?",
+      "questions": [
+        "Какое действие автоматизировано и к какому уже выполняемому действию привязан таймер: укажите timer definition и исход по таймауту?"
+      ],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "После подготовки автоматизация отправляет клиенту дату и ссылку; boundary timer PT24H привязан к «Ожидать уточнение клиента», по таймауту менеджер фиксирует отказ «нет ответа»."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет `pkg-process-consultation-v1` готов к записи в синтетическую книгу. Он создаёт систему `sys-consultation`, позицию `pos-consultation-manager`, процесс `proc-consultation-request`, объект `obj-consultation-request`, действия `act-check-request` (user task), `act-request-details` (user task), `act-await-details` (user task), `act-prepare-consultation` (user task), `act-send-confirmation` (service task) и `act-record-rejection` (user task). После `act-check-request` exclusive gateway направляет результат по FEEL-условиям `= request.complete = true` к подготовке, `= request.suitable = false` к отказу, а default — к запросу уточнения; возврат `edge-details-return` ведёт от ожидания уточнения обратно к проверке. Boundary timer `PT24H` на `act-await-details` ведёт к отказу «нет ответа». В пакете есть none start, два подписанных end, трассируемые edge_id, predicted snapshot и BPMN/SVG build с view readiness; deployment readiness остаётся заблокированной, потому что не заданы Camunda forms, assignments, worker contract и целевая версия. SHA-256 пакета: `f3f7c6de7ea2b9f561287e95f8ed2b470cbf9e2a258a7076dcd8e9a14d99d570`. Подтверждаете запись именно этого полного пакета?",
+      "questions": [
+        "Подтверждаете запись именно этого полного пакета?"
+      ],
+      "active_question_id": "q-007"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю запись пакета pkg-process-consultation-v1 с hash f3f7c6de7ea2b9f561287e95f8ed2b470cbf9e2a258a7076dcd8e9a14d99d570."
+    },
+    {
+      "role": "assistant",
+      "content": "В синтетической книге записана одна transaction `tx-consultation-v1`, затем перечитаны её строки и срез. Из того же in-memory IR собраны BPMN и SVG: разрешены только допустимые элементы, есть достижимые исходы «консультация подтверждена» и «отказ», возврат и boundary timer. Проекция готова к просмотру; к deployment она пока не готова из-за явно перечисленных недостающих контрактов реализации."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Для trial использованы только выбранный skill, его bundled projection contract и in-memory fixture."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Запрошен новый внутренний контур; пользователь выбрал write-режим для синтетической книги v0.3."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001"
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Разрешены model_id=model-demo, current_version_id=ver-demo-base и working_version_id=ver-demo-draft."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получено имя и фамилия: Анна Смирнова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В in-memory fixture выполнен поиск нормализованного ФИО; исполнителя нет, он войдёт в подтверждённую transaction."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-003"
+    },
+    {
+      "type": "position_resolved",
+      "content": "Ответственная позиция: Менеджер по консультациям."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-004"
+    },
+    {
+      "type": "identity_test",
+      "content": "Заявка определена как один основной объект работы, а подтверждённая консультация и мотивированный отказ — terminal outcomes, не новые объекты."
+    },
+    {
+      "type": "product_origin_linked",
+      "content": "Результат процесса имеет внутреннего производителя: sys-consultation."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-005"
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Связаны действия проверки, запроса уточнения, ожидания, подготовки, автоматической отправки и мотивированного отказа; возврат сохранён как edge-details-return."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-006"
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Автоматическая отправка подтверждения определена как service task; boundary timer PT24H явно привязан к act-await-details."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "Материализован и проверен effective snapshot ver-demo-base до подтверждения записи."
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "Материализован predicted effective snapshot ver-demo-draft из планируемых sparse-операций."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-process-consultation-v1",
+      "package_hash": "f3f7c6de7ea2b9f561287e95f8ed2b470cbf9e2a258a7076dcd8e9a14d99d570"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "f3f7c6de7ea2b9f561287e95f8ed2b470cbf9e2a258a7076dcd8e9a14d99d570",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-consultation-v1",
+      "content": "Одна in-memory transaction записала исполнителя, назначение, решение, authoring rows и журнал изменений."
+    },
+    {
+      "type": "projection_build_started",
+      "transaction_id": "tx-consultation-v1",
+      "content": "Из exact in-memory snapshot ver-demo-draft создан projection IR процесса proc-consultation-request."
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "transaction_id": "tx-consultation-v1",
+      "content": "IR содержит только pool, lane, user/service tasks, none events, boundary timer, exclusive gateway и sequence flows."
+    },
+    {
+      "type": "bpmn_generated",
+      "transaction_id": "tx-consultation-v1",
+      "content": "BPMN сгенерирован из projection IR; sequence flows трассируются к edge_id."
+    },
+    {
+      "type": "svg_generated",
+      "transaction_id": "tx-consultation-v1",
+      "content": "SVG сгенерирован из того же projection IR."
+    },
+    {
+      "type": "projection_validated",
+      "transaction_id": "tx-consultation-v1",
+      "content": "Проверены связность, достижимость конечных исходов, целостность ссылок и одинаковый fingerprint BPMN/SVG; deployment blockers зафиксированы."
+    },
+    {
+      "type": "projection_write",
+      "transaction_id": "tx-consultation-v1",
+      "content": "В in-memory transaction записаны lineage и manifest projection build."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-consultation-v1",
+      "content": "Перечитана именно записанная transaction и её resolved snapshot."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-consultation-v1",
+      "content": "Сохранён checkpoint после readback: draft version и view-ready projection."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-consultation-v1",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 20
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "base_snapshot_resolved": true,
+      "predicted_snapshot_resolved": true,
+      "graph_reachability": true,
+      "bpmn_allowlist": true,
+      "bpmn_references_and_di": true,
+      "svg_from_same_ir": true,
+      "deterministic_rebuild": true,
+      "deployment_ready": false
+    }
+  }
+}
