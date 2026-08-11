@@ -41,7 +41,7 @@ surfaces:
         criterion: Агент сначала устанавливает референт, источник, авторитет и конфликт, а не выбирает удобный документ.
       - id: semantic_reasoning
         weight: 2
-        criterion: Агент проверяет идентичность, жизненный цикл, зависимости, влияние и опровергающий сценарий.
+        criterion: Агент проверяет идентичность, жизненный цикл, зависимости, влияние и опровергающий сценарий; отличает отклонение, пробел модели, причину, гипотезу развития и эксперимент.
       - id: interview_discipline
         weight: 1
         criterion: Агент задаёт один решающий вопрос за раз и не повторяет уже найденный факт.
@@ -53,7 +53,7 @@ surfaces:
         criterion: Показывает весь точный пакет записи и отличает ответ на вопрос от подтверждения commit package.
       - id: write_discipline
         weight: 2
-        criterion: Не пишет до подтверждения; после него пишет decision, changes и model rows одной логической транзакцией.
+        criterion: Не пишет до подтверждения; после него пишет decision, changes и model rows одной логической транзакцией; только maintain изменяет три реестра развития.
       - id: continuation
         weight: 1
         criterion: После readback создаёт checkpoint и продолжает с правильного unresolved question.
@@ -63,7 +63,7 @@ surfaces:
     dimensions:
       - id: semantics
         weight: 2
-        criterion: Определения различают референты, состояния, данные, материалы, продукты, системы и представления.
+        criterion: Определения различают референты, состояния, данные, материалы, продукты, системы, представления, отклонения, причины, гипотезы развития и эксперименты.
       - id: consistency
         weight: 1
         criterion: Нет противоречий между language, ontology, template, skills и projections.
@@ -78,7 +78,7 @@ surfaces:
         criterion: Процессы имеют связный граф, владельцев, входы, выходы, решения, исключения и проверяемые результаты.
       - id: human_readability
         weight: 1
-        criterion: Открытые технические ID соседствуют с читаемыми selectors; материалы и схемы доступны человеку.
+        criterion: Открытые технические ID соседствуют с читаемыми selectors; Рабочая панель показывает связный процесс, материалы, внешнюю границу и контур развития.
       - id: validation
         weight: 2
         criterion: Static, behavioral, migration и projection checks подтверждают результат, а не только заполненность.
@@ -91,3 +91,8 @@ critical_violations:
   - projection_promoted_to_canonical_model
   - partial_write_reported_as_atomic
   - unauthorized_external_mutation
+  - deviation_confirmed_without_active_norm
+  - cause_promoted_to_development_hypothesis
+  - experiment_with_zero_or_two_bases
+  - experimental_model_version_created
+  - development_registry_write_by_non_maintain_skill

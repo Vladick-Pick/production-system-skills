@@ -38,3 +38,12 @@ sheets:
   - Реестр процессов
   - Рабочая панель
   - Диаграммы
+candidate:
+  version: "0.3"
+  status: local_release_candidate
+  schema: templates/template-schema-v0.3.json
+  builder: scripts/build_template_v0_3.py
+  migration: templates/migrations/v0.2-to-v0.3.md
+  review_artifact: outputs/v0.3-review/production-system-model-template-v0.3-review.xlsx
+  publication: pending_owner_acceptance_and_release_gate
+  sheet_count: 32

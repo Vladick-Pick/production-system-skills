@@ -30,7 +30,10 @@ PUBLIC_TEMPLATE_ID = "1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k"
 TEMPLATE_MANIFEST = ROOT / "templates" / "template-manifest.yaml"
 TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.2.xlsx"
 TEMPLATE_SCHEMA_V2 = ROOT / "templates" / "template-schema-v0.2.json"
+TEMPLATE_SCHEMA_V3 = ROOT / "templates" / "template-schema-v0.3.json"
+TEMPLATE_REVIEW_V3 = ROOT / "outputs" / "v0.3-review" / "production-system-model-template-v0.3-review.xlsx"
 MIGRATION_V1_TO_V2 = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
+MIGRATION_V2_TO_V3 = ROOT / "templates" / "migrations" / "v0.2-to-v0.3.md"
 EXPECTED_V2_SHEETS = (
     "Инструкция",
     "Система",
@@ -62,6 +65,11 @@ EXPECTED_V2_SHEETS = (
     "Рабочая панель",
     "Диаграммы",
 )
+EXPECTED_V3_SHEETS = EXPECTED_V2_SHEETS[:24] + (
+    "Отклонения",
+    "Гипотезы",
+    "Эксперименты",
+) + EXPECTED_V2_SHEETS[24:]
 EXPECTED_VERSION_STATUSES = {
     "черновик",
     "принято",
@@ -107,6 +115,59 @@ ESSENTIAL_V2_COLUMNS = {
     "Срез модели": {"selected_version_id", "stable_id", "source_version_id", "resolved_operation", "resolution_status"},
     "Диаграммы": {"projection_build_id", "model_fingerprint", "bpmn_sha256", "svg_sha256", "readiness_status"},
 }
+ESSENTIAL_V3_COLUMNS = {
+    "Отклонения": {
+        "deviation_id",
+        "deviation_status",
+        "deviation_type",
+        "scope_element_id",
+        "applicable_version_id",
+        "norm_element_id",
+        "norm_source_id",
+        "observed_fact",
+        "source_id",
+        "correction",
+        "cause",
+        "system_change",
+        "verification_status",
+        "confirmation_decision_id",
+        "closure_decision_id",
+    },
+    "Гипотезы": {
+        "hypothesis_id",
+        "hypothesis_status",
+        "external_change",
+        "source_id",
+        "new_opportunity",
+        "scope_element_id",
+        "proposed_change",
+        "mechanism",
+        "primary_metric_id",
+        "support_criterion",
+        "refutation_criterion",
+        "inconclusive_criterion",
+        "evidence_result",
+        "owner_decision",
+    },
+    "Эксперименты": {
+        "experiment_id",
+        "experiment_status",
+        "basis_type",
+        "deviation_id",
+        "hypothesis_id",
+        "base_version_id",
+        "scope_element_id",
+        "temporary_change",
+        "comparison_method",
+        "primary_metric_id",
+        "success_criterion",
+        "stop_condition",
+        "rollback_plan",
+        "launch_decision_id",
+        "conclusion",
+        "implementation_decision",
+    },
+}
 
 
 def reject_duplicate_json_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
@@ -151,7 +212,7 @@ def markdown_links(path: Path) -> list[Path]:
 
 
 def text_files() -> list[Path]:
-    allowed = {".json", ".md", ".yaml", ".yml", ".py", ".txt"}
+    allowed = {".json", ".md", ".yaml", ".yml", ".py", ".mjs", ".txt"}
     return [
         path
         for path in ROOT.rglob("*")
@@ -239,6 +300,32 @@ def validate_template(errors: list[str]) -> None:
         )
     if b"#REF!" in combined:
         errors.append("XLSX v0.2 содержит формулу или диапазон с #REF!")
+
+    candidate_markers = (
+        'candidate:',
+        '  version: "0.3"',
+        '  status: local_release_candidate',
+        '  schema: templates/template-schema-v0.3.json',
+        '  builder: scripts/build_template_v0_3.py',
+        '  migration: templates/migrations/v0.2-to-v0.3.md',
+        '  review_artifact: outputs/v0.3-review/production-system-model-template-v0.3-review.xlsx',
+        '  publication: pending_owner_acceptance_and_release_gate',
+        '  sheet_count: 32',
+    )
+    for marker in candidate_markers:
+        if marker not in manifest:
+            errors.append(f"template-manifest.yaml: отсутствует marker release candidate {marker!r}")
+    if not TEMPLATE_REVIEW_V3.is_file() or not zipfile.is_zipfile(TEMPLATE_REVIEW_V3):
+        errors.append("нет корректного локального XLSX review-артефакта v0.3")
+    else:
+        with zipfile.ZipFile(TEMPLATE_REVIEW_V3) as archive:
+            review_workbook = ElementTree.fromstring(archive.read("xl/workbook.xml"))
+        review_names = tuple(
+            node.attrib["name"]
+            for node in review_workbook.findall(f".//{namespace}sheet")
+        )
+        if review_names != EXPECTED_V3_SHEETS:
+            errors.append("локальный XLSX review-артефакт не содержит точный порядок 32 листов v0.3")
 
 
 def validate_v2_schema(errors: list[str]) -> None:
@@ -382,6 +469,66 @@ def validate_v2_schema(errors: list[str]) -> None:
         errors.append("Связи модели не содержат минимальный словарь отношений v0.2")
 
 
+def validate_v3_schema(errors: list[str]) -> None:
+    if not TEMPLATE_SCHEMA_V3.is_file():
+        errors.append("нет templates/template-schema-v0.3.json")
+        return
+    try:
+        overlay = json.loads(
+            TEMPLATE_SCHEMA_V3.read_text(encoding="utf-8"),
+            object_pairs_hook=reject_duplicate_json_keys,
+        )
+        base = json.loads(TEMPLATE_SCHEMA_V2.read_text(encoding="utf-8"))
+    except (json.JSONDecodeError, OSError, ValueError) as exc:
+        errors.append(f"template-schema-v0.3.json не читается: {exc}")
+        return
+    if overlay.get("schema_version") != "0.3" or overlay.get("base_schema") != "template-schema-v0.2.json":
+        errors.append("schema v0.3 должна быть additive overlay точной schema v0.2")
+    additions = tuple(overlay.get("sheet_order_additions", ()))
+    if overlay.get("sheet_count") != 32 or additions != ("Отклонения", "Гипотезы", "Эксперименты"):
+        errors.append("schema v0.3 должна добавлять ровно три принятых реестра и 32 листа")
+    order = list(base.get("sheet_order", []))
+    try:
+        anchor = order.index(overlay.get("insert_after")) + 1
+    except ValueError:
+        errors.append("schema v0.3 содержит неизвестную точку вставки")
+        return
+    order[anchor:anchor] = additions
+    if tuple(order) != EXPECTED_V3_SHEETS:
+        errors.append("итоговый порядок 32 листов v0.3 не соответствует контракту")
+    sheets = overlay.get("sheets", {})
+    if tuple(sheets) != additions:
+        errors.append("overlay v0.3 должен объявлять только три новых листа в принятом порядке")
+    overrides = set(overlay.get("sheet_overrides", {}))
+    if overrides != {"Рабочая панель"}:
+        errors.append("overlay v0.3 может менять только вычисляемую Рабочую панель v0.2")
+    enums = overlay.get("enums", {})
+    for sheet_name, required_columns in ESSENTIAL_V3_COLUMNS.items():
+        sheet = sheets.get(sheet_name, {})
+        columns = sheet.get("columns", [])
+        missing = required_columns - set(columns)
+        if missing:
+            errors.append(f"{sheet_name}: отсутствуют обязательные v0.3 колонки {sorted(missing)}")
+        if len(columns) != len(set(columns)):
+            errors.append(f"{sheet_name}: повторяющиеся колонки v0.3")
+        selectors = sheet.get("selectors", {})
+        for field, selector in selectors.items():
+            if field not in columns or selector not in columns:
+                errors.append(f"{sheet_name}: нарушена ID/selector пара {field} → {selector}")
+            elif columns.index(selector) != columns.index(field) + 1:
+                errors.append(f"{sheet_name}: selector {selector} должен идти сразу после {field}")
+        for field, enum_name in sheet.get("enums", {}).items():
+            if field not in columns or enum_name not in enums:
+                errors.append(f"{sheet_name}: enum {field} → {enum_name} не разрешается в overlay")
+    experiment = sheets.get("Эксперименты", {})
+    if experiment.get("computed") != ["basis_type"] or "exactly_one_basis" not in experiment.get("constraints", []):
+        errors.append("Эксперименты должны вычислять basis_type и требовать ровно одно основание")
+    if "{row}" not in str(experiment.get("computed_formulas", {}).get("basis_type", "")):
+        errors.append("formula basis_type должна быть копируемой по строкам")
+    if not (ROOT / "scripts" / "build_template_v0_3.py").is_file():
+        errors.append("нет scripts/build_template_v0_3.py")
+
+
 def validate_version_lifecycle(errors: list[str]) -> None:
     language_path = ROOT / "references" / "LANGUAGE.md"
     metaontology_path = ROOT / "references" / "METAONTOLOGY.md"
@@ -470,6 +617,22 @@ def validate_migration_contract(errors: list[str]) -> None:
     ):
         if marker not in text:
             errors.append(f"v0.1-to-v0.2.md: отсутствует migration marker {marker!r}")
+    if not MIGRATION_V2_TO_V3.is_file():
+        errors.append("нет templates/migrations/v0.2-to-v0.3.md")
+        return
+    text_v3 = MIGRATION_V2_TO_V3.read_text(encoding="utf-8")
+    for marker in (
+        "Отдельная копия v0.3",
+        "stable IDs",
+        "Отклонения",
+        "Гипотезы",
+        "Эксперименты",
+        "source/target reconciliation",
+        "исходную неизменённую v0.2",
+        "migrate_template_v0_2_to_v0_3.py",
+    ):
+        if marker not in text_v3:
+            errors.append(f"v0.2-to-v0.3.md: отсутствует migration marker {marker!r}")
 
 
 def validate() -> list[str]:
@@ -491,6 +654,7 @@ def validate() -> list[str]:
     validate_migration_contract(errors)
     validate_template(errors)
     validate_v2_schema(errors)
+    validate_v3_schema(errors)
 
     for name in sorted(EXPECTED_SKILLS):
         skill_dir = skills_root / name
@@ -563,12 +727,27 @@ def validate() -> list[str]:
                 "запустите scripts/sync_references.py"
             )
 
+        bundled_schema_v3 = skill_dir / "references" / "TEMPLATE-SCHEMA-v0.3.json"
+        if not bundled_schema_v3.is_file():
+            errors.append(f"{name}: нет локальной копии references/TEMPLATE-SCHEMA-v0.3.json")
+        elif bundled_schema_v3.read_bytes() != TEMPLATE_SCHEMA_V3.read_bytes():
+            errors.append(
+                f"{name}: TEMPLATE-SCHEMA-v0.3.json расходится с templates/template-schema-v0.3.json; "
+                "запустите scripts/sync_references.py"
+            )
+
         bundled_migration = skill_dir / "references" / "MIGRATION-v0.1-to-v0.2.md"
         canonical_migration = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
         if not bundled_migration.is_file():
             errors.append(f"{name}: нет локальной migration map")
         elif bundled_migration.read_bytes() != canonical_migration.read_bytes():
             errors.append(f"{name}: migration map расходится с канонической")
+
+        bundled_migration_v3 = skill_dir / "references" / "MIGRATION-v0.2-to-v0.3.md"
+        if not bundled_migration_v3.is_file():
+            errors.append(f"{name}: нет локальной migration map v0.2-to-v0.3")
+        elif bundled_migration_v3.read_bytes() != MIGRATION_V2_TO_V3.read_bytes():
+            errors.append(f"{name}: migration map v0.2-to-v0.3 расходится с канонической")
 
         if name in {"model-production-system", "maintain-production-system", "audit-production-system"}:
             for relative, canonical in (
@@ -577,6 +756,8 @@ def validate() -> list[str]:
                 ("bpmn/validate.py", ROOT / "scripts" / "bpmn" / "validate.py"),
                 ("versioning/resolve.py", ROOT / "scripts" / "versioning" / "resolve.py"),
                 ("build_template_v0_2.py", ROOT / "scripts" / "build_template_v0_2.py"),
+                ("build_template_v0_3.py", ROOT / "scripts" / "build_template_v0_3.py"),
+                ("migrate_template_v0_2_to_v0_3.py", ROOT / "scripts" / "migrate_template_v0_2_to_v0_3.py"),
             ):
                 bundled = skill_dir / "scripts" / relative
                 if not bundled.is_file():
@@ -602,6 +783,18 @@ def validate() -> list[str]:
     package_snapshot = re.search(r"^\s{2}snapshot:\s*([^\n]+)$", manifest, re.MULTILINE)
     if not package_snapshot or package_snapshot.group(1).strip().strip("\"'") != "templates/production-system-model-template-v0.2.xlsx":
         errors.append("skill-package.yaml должен ссылаться на текущий XLSX v0.2")
+    package_markers = (
+        'version: "0.3.0-rc.1"',
+        'template_schema_base: templates/template-schema-v0.2.json',
+        'template_schema_overlay: templates/template-schema-v0.3.json',
+        'published_version: "0.2"',
+        'candidate_version: "0.3"',
+        'candidate_status: local_release_candidate',
+        'migration_v2_to_v3: templates/migrations/v0.2-to-v0.3.md',
+    )
+    for marker in package_markers:
+        if marker not in manifest:
+            errors.append(f"skill-package.yaml: отсутствует marker release candidate {marker!r}")
     if "identified_assigned_human:" in manifest:
         errors.append("skill-package.yaml не должен трактовать assignment как permission")
     if "assignment: фиксирует атрибуцию, но не является permission или RBAC" not in manifest:
@@ -649,7 +842,7 @@ def main() -> int:
 
     print("[OK] Ровно 4 скилла")
     print("[OK] Frontmatter, UI-метаданные и общие references согласованы")
-    print("[OK] Google Sheets-ссылка и XLSX-снимок шаблона согласованы")
+    print("[OK] Публичные Google Sheets и XLSX v0.2 согласованы; локальный review v0.3 содержит 32 листа")
     print("[OK] TODO, битые относительные ссылки и типовые секреты не найдены")
     return 0
 

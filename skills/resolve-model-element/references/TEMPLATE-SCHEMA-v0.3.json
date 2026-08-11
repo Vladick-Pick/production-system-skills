@@ -1,0 +1,407 @@
+{
+  "schema_version": "0.3",
+  "base_schema": "template-schema-v0.2.json",
+  "sheet_count": 32,
+  "insert_after": "Изменения модели",
+  "sheet_order_additions": [
+    "Отклонения",
+    "Гипотезы",
+    "Эксперименты"
+  ],
+  "sheet_overrides": {
+    "Рабочая панель": {
+      "dashboard_layout": "v0.3-connected-process",
+      "sections": [
+        "паспорт системы",
+        "продукты системы",
+        "паспорт процесса",
+        "вложенные процессы",
+        "действия",
+        "связи действий",
+        "переходы состояний",
+        "объект и состояния",
+        "материалы процесса",
+        "внешние компоненты и контракты",
+        "проверки",
+        "BPMN/SVG",
+        "развитие выбранного процесса",
+        "развитие системы"
+      ]
+    }
+  },
+  "enums": {
+    "development_scope_type": [
+      "действие",
+      "процесс",
+      "производственная система",
+      "продукт",
+      "показатель"
+    ],
+    "deviation_status": [
+      "кандидат",
+      "подтверждено",
+      "в устранении",
+      "проверяется",
+      "закрыто",
+      "не подтверждено"
+    ],
+    "deviation_type": [
+      "инструментальное",
+      "операционное",
+      "системное",
+      "не определено"
+    ],
+    "evidence_channel": [
+      "интерфейс исполнения",
+      "коммуникация"
+    ],
+    "cause_status": [
+      "предполагается",
+      "подтверждена",
+      "не подтверждена"
+    ],
+    "verification_status": [
+      "не проверено",
+      "проверяется",
+      "подтверждено",
+      "не подтверждено"
+    ],
+    "hypothesis_status": [
+      "кандидат",
+      "сформулирована",
+      "проверяется",
+      "проверена",
+      "закрыта"
+    ],
+    "evidence_result": [
+      "поддержана",
+      "опровергнута",
+      "неопределённо"
+    ],
+    "development_decision": [
+      "внедрить",
+      "проверить ещё",
+      "отклонить"
+    ],
+    "experiment_status": [
+      "кандидат",
+      "подготовлен",
+      "разрешён",
+      "выполняется",
+      "завершён",
+      "остановлен"
+    ],
+    "experiment_basis_type": [
+      "отклонение",
+      "гипотеза"
+    ]
+  },
+  "sheets": {
+    "Отклонения": {
+      "kind": "development_registry",
+      "columns": [
+        "deviation_id",
+        "deviation_title",
+        "deviation_status",
+        "deviation_type",
+        "scope_type",
+        "scope_element_id",
+        "scope_element_selector",
+        "additional_impacts",
+        "applicable_version_id",
+        "applicable_version_selector",
+        "norm_element_id",
+        "norm_element_selector",
+        "norm_source_id",
+        "norm_source_selector",
+        "norm_source_locator",
+        "expected_behavior",
+        "observed_fact",
+        "evidence_channel",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "additional_evidence",
+        "observed_from",
+        "observed_to",
+        "occurrence_count",
+        "impact",
+        "correction",
+        "cause",
+        "cause_status",
+        "cause_evidence",
+        "system_change",
+        "responsible_position_id",
+        "responsible_position_selector",
+        "verification_status",
+        "verification_evidence",
+        "confirmation_decision_id",
+        "confirmation_decision_selector",
+        "closure_decision_id",
+        "closure_decision_selector",
+        "next_step",
+        "due_date",
+        "opened_at",
+        "closed_at",
+        "notes"
+      ],
+      "required": [
+        "deviation_id",
+        "deviation_title",
+        "deviation_status",
+        "observed_fact",
+        "evidence_channel",
+        "source_id",
+        "source_locator",
+        "next_step"
+      ],
+      "types": {
+        "observed_from": "datetime",
+        "observed_to": "datetime",
+        "occurrence_count": "integer",
+        "due_date": "date",
+        "opened_at": "datetime",
+        "closed_at": "datetime"
+      },
+      "enums": {
+        "deviation_status": "deviation_status",
+        "deviation_type": "deviation_type",
+        "scope_type": "development_scope_type",
+        "evidence_channel": "evidence_channel",
+        "cause_status": "cause_status",
+        "verification_status": "verification_status"
+      },
+      "foreign_keys": {
+        "applicable_version_id": "Версии.version_id",
+        "norm_source_id": "Источники.source_id",
+        "source_id": "Источники.source_id",
+        "responsible_position_id": "Позиции.position_id",
+        "confirmation_decision_id": "Решения.decision_id",
+        "closure_decision_id": "Решения.decision_id"
+      },
+      "polymorphic_foreign_keys": {
+        "scope_element_id": "scope_type",
+        "norm_element_id": "model_element"
+      },
+      "selectors": {
+        "scope_element_id": "scope_element_selector",
+        "applicable_version_id": "applicable_version_selector",
+        "norm_element_id": "norm_element_selector",
+        "norm_source_id": "norm_source_selector",
+        "source_id": "source_selector",
+        "responsible_position_id": "responsible_position_selector",
+        "confirmation_decision_id": "confirmation_decision_selector",
+        "closure_decision_id": "closure_decision_selector"
+      },
+      "constraints": [
+        "candidate_minimum",
+        "confirmed_requires_active_norm_and_fact",
+        "confirmed_type_cannot_be_undefined",
+        "close_without_verified_result_warns",
+        "human_confirmation_and_closure"
+      ]
+    },
+    "Гипотезы": {
+      "kind": "development_registry",
+      "columns": [
+        "hypothesis_id",
+        "hypothesis_title",
+        "hypothesis_status",
+        "external_change",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "new_opportunity",
+        "scope_type",
+        "scope_element_id",
+        "scope_element_selector",
+        "additional_impacts",
+        "proposed_change",
+        "mechanism",
+        "primary_metric_id",
+        "primary_metric_selector",
+        "baseline",
+        "expected_target",
+        "effect_horizon",
+        "support_criterion",
+        "refutation_criterion",
+        "inconclusive_criterion",
+        "secondary_positive_effects",
+        "secondary_negative_effects",
+        "soft_guardrails",
+        "responsible_position_id",
+        "responsible_position_selector",
+        "evidence_result",
+        "owner_decision",
+        "owner_decision_id",
+        "owner_decision_selector",
+        "resulting_version_id",
+        "resulting_version_selector",
+        "next_step",
+        "due_date",
+        "opened_at",
+        "formulated_at",
+        "tested_at",
+        "closed_at",
+        "notes"
+      ],
+      "required": [
+        "hypothesis_id",
+        "hypothesis_title",
+        "hypothesis_status",
+        "next_step"
+      ],
+      "types": {
+        "due_date": "date",
+        "opened_at": "datetime",
+        "formulated_at": "datetime",
+        "tested_at": "datetime",
+        "closed_at": "datetime"
+      },
+      "enums": {
+        "hypothesis_status": "hypothesis_status",
+        "scope_type": "development_scope_type",
+        "evidence_result": "evidence_result",
+        "owner_decision": "development_decision"
+      },
+      "foreign_keys": {
+        "source_id": "Источники.source_id",
+        "primary_metric_id": "Элементы модели.element_id",
+        "responsible_position_id": "Позиции.position_id",
+        "owner_decision_id": "Решения.decision_id",
+        "resulting_version_id": "Версии.version_id"
+      },
+      "polymorphic_foreign_keys": {
+        "scope_element_id": "scope_type"
+      },
+      "selectors": {
+        "source_id": "source_selector",
+        "scope_element_id": "scope_element_selector",
+        "primary_metric_id": "primary_metric_selector",
+        "responsible_position_id": "responsible_position_selector",
+        "owner_decision_id": "owner_decision_selector",
+        "resulting_version_id": "resulting_version_selector"
+      },
+      "constraints": [
+        "candidate_minimum",
+        "formulated_requires_external_change_source_and_metric_contract",
+        "evidence_result_separate_from_owner_decision",
+        "human_owner_decision"
+      ]
+    },
+    "Эксперименты": {
+      "kind": "development_registry",
+      "columns": [
+        "experiment_id",
+        "experiment_title",
+        "experiment_status",
+        "basis_type",
+        "deviation_id",
+        "deviation_selector",
+        "hypothesis_id",
+        "hypothesis_selector",
+        "base_version_id",
+        "base_version_selector",
+        "scope_type",
+        "scope_element_id",
+        "scope_element_selector",
+        "additional_impacts",
+        "temporary_change",
+        "instances_or_volume",
+        "comparison_method",
+        "primary_metric_id",
+        "primary_metric_selector",
+        "baseline",
+        "success_criterion",
+        "secondary_effects",
+        "soft_guardrails",
+        "planned_start",
+        "planned_end",
+        "actual_start",
+        "actual_end",
+        "responsible_position_id",
+        "responsible_position_selector",
+        "launch_decision_id",
+        "launch_decision_selector",
+        "stop_condition",
+        "rollback_plan",
+        "result_channel",
+        "result_source_id",
+        "result_source_selector",
+        "result_source_locator",
+        "additional_evidence",
+        "actual_result",
+        "conclusion",
+        "implementation_decision",
+        "implementation_decision_id",
+        "implementation_decision_selector",
+        "resulting_version_id",
+        "resulting_version_selector",
+        "next_step",
+        "due_date",
+        "notes"
+      ],
+      "required": [
+        "experiment_id",
+        "experiment_title",
+        "experiment_status",
+        "basis_type",
+        "next_step"
+      ],
+      "computed": [
+        "basis_type"
+      ],
+      "computed_formulas": {
+        "basis_type": "=IF($A{row}=\"\",\"\",IF(AND($E{row}<>\"\",$G{row}=\"\"),\"отклонение\",IF(AND($E{row}=\"\",$G{row}<>\"\"),\"гипотеза\",\"\")))"
+      },
+      "types": {
+        "planned_start": "date",
+        "planned_end": "date",
+        "actual_start": "datetime",
+        "actual_end": "datetime",
+        "due_date": "date"
+      },
+      "enums": {
+        "experiment_status": "experiment_status",
+        "basis_type": "experiment_basis_type",
+        "scope_type": "development_scope_type",
+        "result_channel": "evidence_channel",
+        "implementation_decision": "development_decision"
+      },
+      "foreign_keys": {
+        "deviation_id": "Отклонения.deviation_id",
+        "hypothesis_id": "Гипотезы.hypothesis_id",
+        "base_version_id": "Версии.version_id",
+        "primary_metric_id": "Элементы модели.element_id",
+        "responsible_position_id": "Позиции.position_id",
+        "launch_decision_id": "Решения.decision_id",
+        "result_source_id": "Источники.source_id",
+        "implementation_decision_id": "Решения.decision_id",
+        "resulting_version_id": "Версии.version_id"
+      },
+      "polymorphic_foreign_keys": {
+        "scope_element_id": "scope_type"
+      },
+      "selectors": {
+        "deviation_id": "deviation_selector",
+        "hypothesis_id": "hypothesis_selector",
+        "base_version_id": "base_version_selector",
+        "scope_element_id": "scope_element_selector",
+        "primary_metric_id": "primary_metric_selector",
+        "responsible_position_id": "responsible_position_selector",
+        "launch_decision_id": "launch_decision_selector",
+        "result_source_id": "result_source_selector",
+        "implementation_decision_id": "implementation_decision_selector",
+        "resulting_version_id": "resulting_version_selector"
+      },
+      "constraints": [
+        "exactly_one_basis",
+        "candidate_minimum",
+        "prepared_requires_minimum_design",
+        "authorized_requires_human_launch_decision",
+        "completed_or_stopped_requires_human_conclusion",
+        "implementation_requires_human_decision"
+      ]
+    }
+  }
+}

@@ -18,6 +18,9 @@ FIXTURES = {
             "одновременно активен ровно один вопрос",
             "package_hash",
             "существующая модель не изменена этим скиллом",
+            "причина отклонения",
+            "подтверждённое отклонение",
+            "maintain-production-system",
         ],
     },
     "model-production-system": {
@@ -27,6 +30,8 @@ FIXTURES = {
             "одну ответственную позицию",
             "одной идемпотентной transaction",
             "bpmn, svg и manifest",
+            "не создавать строки `отклонения`",
+            "пробел модели",
         ],
     },
     "maintain-production-system": {
@@ -41,6 +46,10 @@ FIXTURES = {
             "исходная v0.1-книга остаётся неизменной",
             "успешный отдельный пакет не равен успешной миграции",
             "что осталось неизвестным или не перенесённым",
+            "режим миграции v0.2 → v0.3",
+            "контур развития системы",
+            "ровно одно основание",
+            "гипотеза развития",
         ],
     },
     "audit-production-system": {
@@ -50,6 +59,8 @@ FIXTURES = {
             "разреженные версии",
             "проиграть минимум",
             "bpmn/svg lineage",
+            "проверить контур развития",
+            "лёгкую карточку кандидата",
         ],
     },
 }
@@ -91,6 +102,8 @@ def main() -> int:
             "run_versioning_fixtures.py",
             "run_bpmn_fixtures.py",
             "test_template_builder.py",
+            "test_template_builder_v0_3.py",
+            "test_migration_v0_2_to_v0_3.py",
             "test_install_codex.py",
         )
         if run_fixture(script) != 0

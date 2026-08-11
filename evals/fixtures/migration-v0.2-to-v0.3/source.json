@@ -1,0 +1,111 @@
+{
+  "schema_version": "0.2",
+  "spreadsheet_id": "fixture-v02-production-system",
+  "build_fingerprint": "fixture-v02-build-001",
+  "sheet_order": [
+    "Инструкция",
+    "Система",
+    "Схема шаблона",
+    "Источники",
+    "Версии",
+    "Исполнители",
+    "Позиции",
+    "Назначения",
+    "Контрагенты",
+    "Продукты",
+    "Материалы",
+    "Процессы",
+    "Действия",
+    "Связи действий",
+    "Объекты",
+    "Состояния",
+    "Переходы",
+    "Элементы модели",
+    "Контракты",
+    "Позиции контрактов",
+    "Интерфейсы передачи",
+    "Связи модели",
+    "Решения",
+    "Изменения модели",
+    "Срез модели",
+    "Проверки",
+    "Реестр процессов",
+    "Рабочая панель",
+    "Диаграммы"
+  ],
+  "sheets": {
+    "Инструкция": [],
+    "Система": [
+      {"system_id": "ps-attraction", "version_id": "ver-v02", "system_name": "Привлечение"}
+    ],
+    "Схема шаблона": [],
+    "Источники": [
+      {"source_id": "src-001", "title": "Интервью владельца"}
+    ],
+    "Версии": [
+      {"version_id": "ver-v02", "version_status": "действует"}
+    ],
+    "Исполнители": [
+      {"performer_id": "person-001", "performer_name": "Иван Петров"}
+    ],
+    "Позиции": [
+      {"position_id": "pos-owner", "position_name": "Владелец системы"}
+    ],
+    "Назначения": [
+      {"assignment_id": "asg-001", "performer_id": "person-001", "position_id": "pos-owner"}
+    ],
+    "Контрагенты": [
+      {"counterparty_id": "cp-supplier", "counterparty_name": "Поставщик"}
+    ],
+    "Продукты": [
+      {"product_id": "prd-qualified-lead", "version_id": "ver-v02", "product_name": "Квалифицированный лид"}
+    ],
+    "Материалы": [
+      {"material_id": "mat-script", "version_id": "ver-v02", "material_name": "Скрипт квалификации"}
+    ],
+    "Процессы": [
+      {"process_id": "proc-qualify", "version_id": "ver-v02", "process_name": "Квалификация лида"}
+    ],
+    "Действия": [
+      {"action_id": "act-call", "version_id": "ver-v02", "process_id": "proc-qualify", "action_name": "Позвонить лиду"}
+    ],
+    "Связи действий": [],
+    "Объекты": [
+      {"object_id": "obj-lead", "version_id": "ver-v02", "object_name": "Лид"}
+    ],
+    "Состояния": [
+      {"state_id": "state-qualified", "version_id": "ver-v02", "object_id": "obj-lead", "state_name": "Квалифицирован"}
+    ],
+    "Переходы": [
+      {"transition_id": "tr-qualified", "version_id": "ver-v02", "action_id": "act-call", "to_state_id": "state-qualified"}
+    ],
+    "Элементы модели": [
+      {"element_id": "metric-cycle-time", "version_id": "ver-v02", "element_type": "показатель"}
+    ],
+    "Контракты": [
+      {"contract_id": "ctr-supplier", "version_id": "ver-v02", "document_url": "https://example.invalid/contract"}
+    ],
+    "Позиции контрактов": [
+      {"contract_item_id": "item-lead", "version_id": "ver-v02", "product_id": "prd-qualified-lead"}
+    ],
+    "Интерфейсы передачи": [
+      {"interface_id": "int-lead", "version_id": "ver-v02", "acceptance_action_id": "act-call"}
+    ],
+    "Связи модели": [
+      {"link_id": "link-script", "version_id": "ver-v02", "from_entity_id": "act-call", "relation_type": "использует", "to_entity_id": "mat-script"}
+    ],
+    "Решения": [
+      {"decision_id": "dec-001", "transaction_id": "tx-001", "decision_text": "Принять модель"}
+    ],
+    "Изменения модели": [
+      {"change_id": "chg-001", "transaction_id": "tx-001", "stable_id": "proc-qualify"}
+    ],
+    "Срез модели": [],
+    "Проверки": [],
+    "Реестр процессов": [],
+    "Рабочая панель": [],
+    "Диаграммы": [
+      {"diagram_id": "dia-001", "process_id": "proc-qualify", "version_id": "ver-v02"}
+    ]
+  }
+}

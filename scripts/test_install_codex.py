@@ -54,7 +54,9 @@ def main() -> int:
                 "SKILL.md",
                 "references/LANGUAGE.md",
                 "references/TEMPLATE-SCHEMA-v0.2.json",
+                "references/TEMPLATE-SCHEMA-v0.3.json",
                 "references/MIGRATION-v0.1-to-v0.2.md",
+                "references/MIGRATION-v0.2-to-v0.3.md",
             ):
                 if not (skill / relative).is_file():
                     raise AssertionError(f"{name}: нет {relative}")
@@ -65,6 +67,8 @@ def main() -> int:
                 "scripts/bpmn/generate.py",
                 "scripts/bpmn/validate.py",
                 "scripts/build_template_v0_2.py",
+                "scripts/build_template_v0_3.py",
+                "scripts/migrate_template_v0_2_to_v0_3.py",
             ):
                 if not (target / name / relative).is_file():
                     raise AssertionError(f"{name}: нет {relative}")

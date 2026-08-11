@@ -1,4 +1,4 @@
 interface:
   display_name: "Разрешение элемента модели"
   short_description: "Разрешает смысл элемента без записи в модель"
-  default_prompt: "Используй $resolve-model-element, чтобы собрать semantic-resolution package спорного элемента без изменения существующей модели."
+  default_prompt: "Используй $resolve-model-element, чтобы собрать semantic-resolution package спорного элемента или сигнала развития без изменения существующей модели и рабочих реестров."

@@ -1,5 +1,5 @@
 name: production-system-skills
-version: "0.2.0-dev"
+version: "0.3.0-rc.1"
 language: ru
 license: MIT
 summary: Четыре скилла для работы агента с производственной системой.
@@ -15,14 +15,19 @@ references:
   metaontology: references/METAONTOLOGY.md
   interview: references/INTERVIEW-CONTRACT.md
   template: references/TEMPLATE-CONTRACT.md
-  template_schema: templates/template-schema-v0.2.json
+  template_schema_base: templates/template-schema-v0.2.json
+  template_schema_overlay: templates/template-schema-v0.3.json
   projections: references/PROJECTION-CONTRACT.md
 
 model_template:
+  published_version: "0.2"
+  candidate_version: "0.3"
+  candidate_status: local_release_candidate
   spreadsheet_id: 1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k
   copy_url: https://docs.google.com/spreadsheets/d/1L9fHH5r7RG7a5uVaktZLjgFzixnalMM4_Z6_Pi7Er3k/copy
   snapshot: templates/production-system-model-template-v0.2.xlsx
   manifest: templates/template-manifest.yaml
+  migration_v2_to_v3: templates/migrations/v0.2-to-v0.3.md
 
 truth_gate:
   agent: исследует, предлагает, моделирует и проверяет
