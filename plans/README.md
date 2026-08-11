@@ -8,6 +8,12 @@
 |---|---|---|
 | [production-system-skills-v2.md](active/production-system-skills-v2.md) | Переработать язык, поведение агентов, модель бизнеса, версионность, шаблон и BPMN/Camunda-проекцию | Шаблон v0.2 выпущен; migration runbook готов; живой пилот ждёт точных v0.1-книг и разрешения G-3, behavioral gate остаётся FAIL |
 
+## Архив
+
+| План | Результат | Статус |
+|---|---|---|
+| [production-system-skills-v3.md](archive/production-system-skills-v3.md) | Контур развития через отклонения, гипотезы и эксперименты, полезная Рабочая панель и сохранная миграция v0.2→v0.3 | Выпущен 2026-08-11; Google Sheet опубликован reader-only, gate `48/48` PASS |
+
 ## Правила
 
 - Активный план хранить в `plans/active/`.

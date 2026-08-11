@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-01",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Новый человек просит изменить модель; его нет в реестре исполнителей."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала идентифицирую редактора: новый исполнитель и его назначение можно включить только в первый подтверждённый пакет изменения. Назовите его имя и фамилию.",
+      "questions": [
+        "Назовите имя и фамилию нового редактора."
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Алексей Смирнов."
+    },
+    {
+      "role": "assistant",
+      "content": "В in-memory реестре исполнителя «Алексей Смирнов» нет. Для атрибуции первого подтверждённого изменения нужно его назначение; это ещё не разрешение на запись.",
+      "questions": [
+        "Какую позицию занимает Алексей Смирнов в этой модели?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Руководитель производства."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировал локально: для первого подтверждённого пакета потребуется добавить Алексея Смирнова как исполнителя и назначить на позицию «Руководитель производства». Пока пакет не показан и человеком не подтверждён, записи не будет.",
+      "questions": [
+        "Какое точное изменение модели просит внести Алексей Смирнов?"
+      ],
+      "active_question_id": "q-003"
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Used the supplied in-memory fixture as the sole source for the performers registry and session context."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Checked the in-memory performers registry for normalized name Алексей Смирнов; no matching performer was present."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Collected the new editor's name: Алексей Смирнов."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Collected the editor's stated position: Руководитель производства."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Local registration facts are incomplete without a concrete model change and a full confirmed package; no mutation was authorized or performed."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "performer_registry_checked": true,
+      "no_write_before_exact_package_confirmation": true
+    }
+  }
+}

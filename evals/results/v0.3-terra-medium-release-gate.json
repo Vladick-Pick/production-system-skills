@@ -1,0 +1,682 @@
+{
+  "generated_at": "2026-08-11T14:23:53.102891+00:00",
+  "harness_failures": [],
+  "mode": "release_gate",
+  "passed": true,
+  "release_gate_failures": [],
+  "reports": [
+    {
+      "case_id": "audit-no-write",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/audit-no-write-01.json",
+      "trial_id": "audit-no-write-01"
+    },
+    {
+      "case_id": "audit-no-write",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/audit-no-write-02.json",
+      "trial_id": "audit-no-write-02"
+    },
+    {
+      "case_id": "audit-no-write",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/audit-no-write-03.json",
+      "trial_id": "audit-no-write-03"
+    },
+    {
+      "case_id": "bpmn-projection-lineage",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/bpmn-projection-lineage-05.json",
+      "trial_id": "bpmn-projection-lineage-05"
+    },
+    {
+      "case_id": "bpmn-projection-lineage",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/bpmn-projection-lineage-06.json",
+      "trial_id": "bpmn-projection-lineage-06"
+    },
+    {
+      "case_id": "bpmn-projection-lineage",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/bpmn-projection-lineage-07.json",
+      "trial_id": "bpmn-projection-lineage-07"
+    },
+    {
+      "case_id": "compaction-recovery",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/compaction-recovery-01.json",
+      "trial_id": "compaction-recovery-01"
+    },
+    {
+      "case_id": "compaction-recovery",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/compaction-recovery-02.json",
+      "trial_id": "compaction-recovery-02"
+    },
+    {
+      "case_id": "compaction-recovery",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/compaction-recovery-04.json",
+      "trial_id": "compaction-recovery-04"
+    },
+    {
+      "case_id": "development-handoff-no-write",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/development-handoff-no-write-01.json",
+      "trial_id": "development-handoff-no-write-01"
+    },
+    {
+      "case_id": "development-handoff-no-write",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/development-handoff-no-write-02.json",
+      "trial_id": "development-handoff-no-write-02"
+    },
+    {
+      "case_id": "development-handoff-no-write",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/development-handoff-no-write-03.json",
+      "trial_id": "development-handoff-no-write-03"
+    },
+    {
+      "case_id": "development-hypothesis-contract",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/development-hypothesis-contract-01.json",
+      "trial_id": "development-hypothesis-contract-01"
+    },
+    {
+      "case_id": "development-hypothesis-contract",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/development-hypothesis-contract-02.json",
+      "trial_id": "development-hypothesis-contract-02"
+    },
+    {
+      "case_id": "development-hypothesis-contract",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/development-hypothesis-contract-03.json",
+      "trial_id": "development-hypothesis-contract-03"
+    },
+    {
+      "case_id": "deviation-active-norm",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/deviation-active-norm-04.json",
+      "trial_id": "deviation-active-norm-04"
+    },
+    {
+      "case_id": "deviation-active-norm",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/deviation-active-norm-09.json",
+      "trial_id": "deviation-active-norm-09"
+    },
+    {
+      "case_id": "deviation-active-norm",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/deviation-active-norm-10.json",
+      "trial_id": "deviation-active-norm-10"
+    },
+    {
+      "case_id": "deviation-type-and-cause",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/deviation-type-and-cause-02.json",
+      "trial_id": "deviation-type-and-cause-02"
+    },
+    {
+      "case_id": "deviation-type-and-cause",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/deviation-type-and-cause-03.json",
+      "trial_id": "deviation-type-and-cause-03"
+    },
+    {
+      "case_id": "deviation-type-and-cause",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/deviation-type-and-cause-04.json",
+      "trial_id": "deviation-type-and-cause-04"
+    },
+    {
+      "case_id": "editor-registration",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/editor-registration-01.json",
+      "trial_id": "editor-registration-01"
+    },
+    {
+      "case_id": "editor-registration",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/editor-registration-02.json",
+      "trial_id": "editor-registration-02"
+    },
+    {
+      "case_id": "editor-registration",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/editor-registration-03.json",
+      "trial_id": "editor-registration-03"
+    },
+    {
+      "case_id": "experiment-one-basis",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/experiment-one-basis-02.json",
+      "trial_id": "experiment-one-basis-02"
+    },
+    {
+      "case_id": "experiment-one-basis",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/experiment-one-basis-04.json",
+      "trial_id": "experiment-one-basis-04"
+    },
+    {
+      "case_id": "experiment-one-basis",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/experiment-one-basis-05.json",
+      "trial_id": "experiment-one-basis-05"
+    },
+    {
+      "case_id": "external-component-contract",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-r4/external-component-contract-01.json",
+      "trial_id": "external-component-contract-01"
+    },
+    {
+      "case_id": "external-component-contract",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/external-component-contract-02.json",
+      "trial_id": "external-component-contract-02"
+    },
+    {
+      "case_id": "external-component-contract",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/external-component-contract-04.json",
+      "trial_id": "external-component-contract-04"
+    },
+    {
+      "case_id": "identity-lead-lifecycle",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-r4/identity-lead-lifecycle-01.json",
+      "trial_id": "identity-lead-lifecycle-01"
+    },
+    {
+      "case_id": "identity-lead-lifecycle",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/identity-lead-lifecycle-02.json",
+      "trial_id": "identity-lead-lifecycle-02"
+    },
+    {
+      "case_id": "identity-lead-lifecycle",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/identity-lead-lifecycle-03.json",
+      "trial_id": "identity-lead-lifecycle-03"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-r4/interview-confirm-commit-01.json",
+      "trial_id": "interview-confirm-commit-01"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/interview-confirm-commit-02.json",
+      "trial_id": "interview-confirm-commit-02"
+    },
+    {
+      "case_id": "interview-confirm-commit",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/interview-confirm-commit-03.json",
+      "trial_id": "interview-confirm-commit-03"
+    },
+    {
+      "case_id": "material-not-data",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-r4/material-not-data-01.json",
+      "trial_id": "material-not-data-01"
+    },
+    {
+      "case_id": "material-not-data",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/material-not-data-02.json",
+      "trial_id": "material-not-data-02"
+    },
+    {
+      "case_id": "material-not-data",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/material-not-data-03.json",
+      "trial_id": "material-not-data-03"
+    },
+    {
+      "case_id": "migration-v2-to-v3-preserves-model",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/migration-v2-to-v3-preserves-model-02.json",
+      "trial_id": "migration-v2-to-v3-preserves-model-02"
+    },
+    {
+      "case_id": "migration-v2-to-v3-preserves-model",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/migration-v2-to-v3-preserves-model-04.json",
+      "trial_id": "migration-v2-to-v3-preserves-model-04"
+    },
+    {
+      "case_id": "migration-v2-to-v3-preserves-model",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/migration-v2-to-v3-preserves-model-05.json",
+      "trial_id": "migration-v2-to-v3-preserves-model-05"
+    },
+    {
+      "case_id": "source-conflict-stop",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/source-conflict-stop-03.json",
+      "trial_id": "source-conflict-stop-03"
+    },
+    {
+      "case_id": "source-conflict-stop",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/source-conflict-stop-08.json",
+      "trial_id": "source-conflict-stop-08"
+    },
+    {
+      "case_id": "source-conflict-stop",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/source-conflict-stop-09.json",
+      "trial_id": "source-conflict-stop-09"
+    },
+    {
+      "case_id": "version-inheritance-exclude",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-r4/version-inheritance-exclude-01.json",
+      "trial_id": "version-inheritance-exclude-01"
+    },
+    {
+      "case_id": "version-inheritance-exclude",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/version-inheritance-exclude-02.json",
+      "trial_id": "version-inheritance-exclude-02"
+    },
+    {
+      "case_id": "version-inheritance-exclude",
+      "critical_violations": [],
+      "failures": [],
+      "passed": true,
+      "provenance": "fresh_agent",
+      "scores": {
+        "agent_behavior": 10.0,
+        "artifact_quality": 10.0,
+        "skill_harness": 10.0
+      },
+      "source": "evals/runs/v0.3-terra-medium-2026-08-11-final/version-inheritance-exclude-03.json",
+      "trial_id": "version-inheritance-exclude-03"
+    }
+  ],
+  "schema_version": 1
+}

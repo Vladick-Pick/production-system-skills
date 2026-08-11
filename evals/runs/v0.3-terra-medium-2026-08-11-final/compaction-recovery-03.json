@@ -1,0 +1,173 @@
+{
+  "schema_version": 1,
+  "trial_id": "compaction-recovery-03",
+  "case_id": "compaction-recovery-03",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Собираем новую систему в режиме proposal. Книга: synthetic-sheet-03; model_id: model-synthetic-03; working_version_id: ver-draft-03; current_version_id: ver-current-02. Источник brief-03 имеет revision rev-7; fingerprint книги sha256:sheet-fp-03. Контекст сжимается после нескольких вопросов до подтверждения пакета."
+    },
+    {
+      "role": "assistant",
+      "content": "Ориентация зафиксирована: режим proposal, запись не разрешена. Для атрибуции будущего пакета нужен подтверждающий человек.",
+      "questions": [
+        "Назовите имя и фамилию человека, который работает с этой моделью."
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Мария Орлова."
+    },
+    {
+      "role": "assistant",
+      "content": "Мария Орлова идентифицирована; совпадений с существующим исполнителем в синтетическом snapshot нет. Позиция нужна для атрибуции и войдёт в полный пакет, если он будет собран.",
+      "questions": [
+        "Какую устойчивую позицию занимает Мария Орлова в моделируемой системе?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Руководитель производства."
+    },
+    {
+      "role": "assistant",
+      "content": "Позиция «Руководитель производства» зафиксирована как локальный ответ; это ещё не создание строки. Теперь определю принимаемый результат, чтобы не смешать продукт с процессом.",
+      "questions": [
+        "Какой один результат заказчик принимает как продукт этой системы?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Партия упакованного кофе для розничной сети."
+    },
+    {
+      "role": "assistant",
+      "content": "Продукт сформулирован как «партия упакованного кофе для розничной сети». Чтобы определить границу продукта, нужен наблюдаемый критерий приёмки.",
+      "questions": [
+        "По какому наблюдаемому критерию розничная сеть принимает или мотивированно отклоняет эту партию?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "assistant",
+      "content": "После сжатия контекста восстановлен checkpoint: источник остаётся на revision rev-7, fingerprint книги совпадает с сохранённым sha256:sheet-fp-03. Активен только исходный незакрытый вопрос; пакет не показан и подтверждения нет.",
+      "questions": [
+        "По какому наблюдаемому критерию розничная сеть принимает или мотивированно отклоняет эту партию?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Принимает, если каждая коробка промаркирована, упаковка целая и количество совпадает с заказом; иначе направляет мотивированный отказ."
+    },
+    {
+      "role": "assistant",
+      "content": "Критерий приёмки зафиксирован как локальный ответ. Он определяет terminal outcome, но не заменяет описание внутреннего пути производства.",
+      "questions": [
+        "Какое первое внутреннее действие выполняет ответственная позиция после получения заказа на эту партию?"
+      ],
+      "active_question_id": "q-005"
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Синтетический brief-03 признан источником фактов; режим proposal исключает запись."
+    },
+    {
+      "type": "source_inventory",
+      "content": "Получены model_id, spreadsheet_id, working/current versions, revision источника и fingerprint книги."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "working_version_id=ver-draft-03; current_version_id=ver-current-02."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "brief-03 имеет revision rev-7."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "synthetic-sheet-03 имеет сохранённый fingerprint sha256:sheet-fp-03."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-001: запрошена идентичность подтверждающего человека."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия: Мария Орлова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Нормализованное ФИО не найдено в синтетическом snapshot исполнителей."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-002: запрошена устойчивая позиция редактора."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Локально определена позиция «Руководитель производства»."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-003: запрошен отдельно принимаемый продукт."
+    },
+    {
+      "type": "product_identity_test",
+      "content": "Партия упакованного кофе выделена как результат, принимаемый розничной сетью, а не как процесс или данные исполнения."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-004: запрошен наблюдаемый критерий приёмки продукта."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён checkpoint перед compaction: state=resolve, active_question=q-004, package_id/package_hash/confirmation_id/transaction_id=null, write_state=not_started; локальные ответы: Мария Орлова, Руководитель производства, партия упакованного кофе для розничной сети."
+    },
+    {
+      "type": "checkpoint_loaded",
+      "content": "После compaction загружен сохранённый checkpoint с state=resolve и единственным active_question=q-004."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "При восстановлении повторно проверен revision brief-03=rev-7."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "При восстановлении повторно проверен fingerprint synthetic-sheet-03=sha256:sheet-fp-03."
+    },
+    {
+      "type": "active_question_restored",
+      "content": "Без вывода из одиночного «окей» восстановлен ровно вопрос q-004 в неизменной формулировке."
+    },
+    {
+      "type": "decisive_question",
+      "content": "q-005: после ответа на восстановленный q-004 запрошено первое внутреннее действие."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "checkpoint_recovery_observed": true,
+      "source_revision_rechecked": true,
+      "sheet_fingerprint_rechecked": true,
+      "single_active_question_restored": true
+    }
+  }
+}

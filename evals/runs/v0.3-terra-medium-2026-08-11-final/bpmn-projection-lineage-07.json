@@ -1,0 +1,111 @@
+{
+  "schema_version": 1,
+  "trial_id": "bpmn-projection-lineage-07",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "evals/FRESH-AGENT-CONTRACT.md",
+    "references/PROJECTION-CONTRACT.md",
+    "skills/model-production-system/SKILL.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Подтверждённый пакет требует BPMN-проекцию, SVG и manifest из одного точного принятого среза модели. Выполните только локальную in-memory сборку; внешние системы не изменяйте."
+    },
+    {
+      "role": "assistant",
+      "content": "Для сборки нужен точный принятый effective snapshot: назовите model_id, version_id, process_id, fingerprint и hash подтверждённого пакета.",
+      "questions": [
+        "Каковы точные идентификаторы и fingerprint принятого среза?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Используйте synthetic in-memory fixture: model_id=model-fixture-bpmn-07; version_id=version-fixture-bpmn-07; process_id=process-fulfilment-07; package_hash=7c1f3f7d8d1f7df4e3bb9af1b9a7e7fb4d6c8b2a90f1a8d5e2c6b7f4a1d3e8c9. Это принятый exact effective snapshot с model_fingerprint=4b5b0c751cc4a1c563e7a4f311952cfc0c4d58d9424eaf75b34c02462038c525; в нём один внутренний system_id, две position_id-lanes, start/end, user task, service task, exclusive gateway с одним default и sequence flows с edge_id. Запрещённых BPMN-элементов нет."
+    },
+    {
+      "role": "assistant",
+      "content": "Источник и принятый пакет сверены с данным exact effective snapshot. До сборки проверен allowlist: все заявленные pool, lanes, задачи, события, gateway и sequence flows допустимы, запрещённых элементов нет. Выполнена одна локальная in-memory сборка из canonical JSON IR с fingerprint 4b5b0c751cc4a1c563e7a4f311952cfc0c4d58d9424eaf75b34c02462038c525: созданы BPMN, SVG и manifest с projection_build_id=projection-build-bpmn-07, process_id=process-fulfilment-07 и version_id=version-fixture-bpmn-07. Локальная structural-проверка BPMN/XML, ссылок и DI пройдена; SVG построен из того же IR; manifest содержит SHA-256 обоих артефактов и тот же fingerprint. Lineage BPMN, SVG и manifest доказан по одному fingerprint. View readiness: готово. Deployment readiness: заблокировано только отсутствием внешнего evidence Camunda Modeler; это не является провалом локальных проверок. Внешних изменений не было."
+    }
+  ],
+  "events": [
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Запрошены точные идентификаторы, fingerprint и hash принятого snapshot, без которых нельзя начать проекционную сборку."
+    },
+    {
+      "type": "source_authority_resolved",
+      "content": "Synthetic fixture определил единственный принятый источник: exact effective snapshot version-fixture-bpmn-07 и package_hash 7c1f3f7d8d1f7df4e3bb9af1b9a7e7fb4d6c8b2a90f1a8d5e2c6b7f4a1d3e8c9."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Проверены model_id=model-fixture-bpmn-07, version_id=version-fixture-bpmn-07, process_id=process-fulfilment-07 и граница одной локальной in-memory проекции без внешних мутаций."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Разрешён exact effective snapshot с model_fingerprint=4b5b0c751cc4a1c563e7a4f311952cfc0c4d58d9424eaf75b34c02462038c525."
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "content": "До сборки подтверждены только разрешённые pool, lanes, tasks, none events, exclusive gateway и sequence flows; запрещённые элементы отсутствуют."
+    },
+    {
+      "type": "projection_build_started",
+      "content": "Начата одна локальная in-memory сборка projection-build-bpmn-07 из canonical JSON IR разрешённого snapshot."
+    },
+    {
+      "type": "bpmn_generated",
+      "content": "Из единственного IR с указанным fingerprint сформирован BPMN-артефакт."
+    },
+    {
+      "type": "svg_generated",
+      "content": "Из того же единственного IR сформирован SVG-артефакт."
+    },
+    {
+      "type": "projection_validated",
+      "content": "Завершены локальные structural-проверки BPMN/XML, references и DI; manifest содержит SHA-256 BPMN и SVG."
+    },
+    {
+      "type": "lineage_verified",
+      "content": "BPMN, SVG и manifest сопоставлены с одним model_fingerprint 4b5b0c751cc4a1c563e7a4f311952cfc0c4d58d9424eaf75b34c02462038c525."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "exact_effective_snapshot_resolved": true,
+      "bpmn_allowlist_checked": true,
+      "bpmn_xml_references_and_di_structural_validation": true,
+      "svg_generated_from_shared_ir": true,
+      "manifest_contains_artifact_hashes": true,
+      "shared_snapshot_lineage_verified": true
+    },
+    "projection": {
+      "projection_build_id": "projection-build-bpmn-07",
+      "projection_kind": "bpmn-svg",
+      "model_id": "model-fixture-bpmn-07",
+      "process_id": "process-fulfilment-07",
+      "version_id": "version-fixture-bpmn-07",
+      "model_fingerprint": "4b5b0c751cc4a1c563e7a4f311952cfc0c4d58d9424eaf75b34c02462038c525",
+      "artifacts": [
+        "BPMN",
+        "SVG",
+        "manifest"
+      ]
+    },
+    "readiness": {
+      "view": "ready",
+      "deployment": "blocked"
+    },
+    "blockers": [
+      "Нет внешнего evidence актуального Camunda Modeler или эквивалентного зафиксированного lint; это непроверенный deployment gate, а не неуспешная локальная validation."
+    ]
+  }
+}

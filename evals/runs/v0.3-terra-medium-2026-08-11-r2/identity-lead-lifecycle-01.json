@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "trial_id": "identity-lead-lifecycle-01",
+  "case_id": "identity-lead-lifecycle",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь предлагает заменить термин «лид-кандидат» на «лид» и «квалифицированный лид»."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы не менять модель по одному названию, сначала зафиксирую срез, к которому относится предложение.",
+      "questions": [
+        "Какой model_id и working_version_id содержит текущий элемент «лид-кандидат»?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "В безопасном fixture это model_id=model-leadgen-fixture, working_version_id=v0.3-draft-fixture; текущий объект имеет stable_id=obj-lead-candidate."
+    },
+    {
+      "role": "assistant",
+      "content": "Слово «квалифицированный лид» может означать либо состояние того же объекта, либо самостоятельный объект. От этого зависит сохранение stable ID.",
+      "questions": [
+        "После квалификации сохраняются тот же экземпляр лида и его история, а меняются допустимые действия, или создаётся самостоятельный экземпляр со своим жизненным циклом?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Сохраняются тот же экземпляр и история; после квалификации меняются допустимые действия. Самостоятельный ID и жизненный цикл не создаются."
+    },
+    {
+      "role": "assistant",
+      "content": "semantic-resolution package\n\npackage_id: srp-identity-lead-lifecycle-01\nкандидат: замена термина «лид-кандидат» на «лид» и «квалифицированный лид»\nисход допуска: принять и переименовать\nканоническое название: Лид\nstable_id или правило создания: сохранить obj-lead-candidate для того же объекта; state-lead-qualified создавать только как ID состояния\nопределение: Лид — объект работы, отдельный потенциальный клиент, по которому ведётся квалификация. Квалификация переводит тот же лид в состояние «квалифицирован», а не создаёт другой объект.\nреферент и тип: живой экземпляр потенциального клиента; объект работы\nпризнаки включения: лид до квалификации и тот же лид после неё\nисключения и контрпример: CRM-карточка; «квалифицированный лид» как отдельный объект. Контрпример: если квалификация создаёт самостоятельный ID, владельца или жизненный цикл, нужны два объекта и преобразование.\nправило идентичности: экземпляр различается по устойчивому ID и непрерывной истории; переименование и смена состояния идентичность не меняют.\nсоздание и завершение: создание по событию поступления потенциального клиента; завершение — закрытие или отклонение; повторное открытие сохраняет ID только для того же экземпляра.\nжизненный цикл: создан → квалифицируется → квалифицирован | отклонён/закрыт\nсинонимы: «лид-кандидат» — прежнее название объекта; «квалифицированный лид» — название состояния\nоперационное использование: состояние определяет допустимые последующие действия после квалификации.\nпредставления: CRM-карточка и её поля — данные/интерфейс, не референт.\nсвязи и кратности: один Лид имеет ноль или одно актуальное состояние «квалифицирован»; состояние относится к одному Лиду.\nграница и контракты: не меняются.\nзатронутые ID: obj-lead-candidate; создаваемый state-lead-qualified.\nкарта влияния: определение объекта, словарь состояний, действия и правила, использующие термин «лид-кандидат», и CRM-представления.\nисточники и статусы знания: пользовательский сценарий и безопасный fixture; принято для теста.\nоткрытые конфликты: нет в fixture.\nрекомендуемая операция модели: maintain-production-system сохраняет obj-lead-candidate, переименовывает его в «Лид» и добавляет состояние state-lead-qualified; отдельный объект «квалифицированный лид» не создаёт.\npackage_hash: bcdcf12900b1e49e5e4fe3f3ad8e60fa32c571ad0733dd495c9976137974eb5b\n\nМодели в этом шаге не изменяю. Пакет передаётся в maintain-production-system.",
+      "questions": [
+        "Подтверждаете показанный semantic-resolution package srp-identity-lead-lifecycle-01 для передачи в maintain-production-system?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю показанный semantic-resolution package srp-identity-lead-lifecycle-01 для передачи в maintain-production-system."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет подтверждён идентифицированным человеком для учебного fixture и передан в maintain-production-system. resolve-model-element не создавал и не изменял строки модели или реестры развития."
+    }
+  ],
+  "events": [
+    {
+      "type": "checkpoint",
+      "state": "orient",
+      "mode": "proposal",
+      "model_id": null,
+      "working_version_id": null,
+      "active_question_id": "q-001"
+    },
+    {
+      "type": "source_authority_resolved",
+      "sources": [
+        "references/LANGUAGE.md",
+        "references/METAONTOLOGY.md",
+        "references/METHODOLOGY-COMPATIBILITY.md",
+        "references/INTERVIEW-CONTRACT.md",
+        "user scenario",
+        "in-memory fixture response"
+      ]
+    },
+    {
+      "type": "checkpoint",
+      "state": "investigate",
+      "mode": "proposal",
+      "model_id": "model-leadgen-fixture",
+      "working_version_id": "v0.3-draft-fixture",
+      "active_question_id": null
+    },
+    {
+      "type": "alternatives_presented",
+      "alternatives": [
+        "один объект «Лид» и состояние «квалифицирован»",
+        "два объекта с явным преобразованием"
+      ]
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-002",
+      "decision": "сохраняется ли идентичность после квалификации"
+    },
+    {
+      "type": "identity_test",
+      "same_instance": true,
+      "history_preserved": true,
+      "separate_id": false,
+      "separate_lifecycle": false,
+      "result": "один объект и новое состояние"
+    },
+    {
+      "type": "draft_package",
+      "package_id": "srp-identity-lead-lifecycle-01",
+      "package_hash": "bcdcf12900b1e49e5e4fe3f3ad8e60fa32c571ad0733dd495c9976137974eb5b",
+      "semantic_outcome": "принять и переименовать"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "srp-identity-lead-lifecycle-01",
+      "package_hash": "bcdcf12900b1e49e5e4fe3f3ad8e60fa32c571ad0733dd495c9976137974eb5b",
+      "performer_type": "человек",
+      "confirmed_by": "Пользователь fixture"
+    },
+    {
+      "type": "candidate_handoff",
+      "recipient": "maintain-production-system",
+      "package_id": "srp-identity-lead-lifecycle-01",
+      "package_hash": "bcdcf12900b1e49e5e4fe3f3ad8e60fa32c571ad0733dd495c9976137974eb5b",
+      "model_write_performed": false
+    },
+    {
+      "type": "checkpoint",
+      "state": "checkpoint",
+      "mode": "proposal",
+      "model_id": "model-leadgen-fixture",
+      "working_version_id": "v0.3-draft-fixture",
+      "package_id": "srp-identity-lead-lifecycle-01",
+      "package_hash": "bcdcf12900b1e49e5e4fe3f3ad8e60fa32c571ad0733dd495c9976137974eb5b",
+      "active_question_id": null,
+      "next_action": "maintain-production-system builds its own mutation package"
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "observed_check": true,
+      "same_instance_and_history_preserved": true,
+      "no_model_write_by_resolve_skill": true
+    }
+  }
+}

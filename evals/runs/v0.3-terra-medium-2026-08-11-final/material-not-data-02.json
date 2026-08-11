@@ -1,0 +1,172 @@
+{
+  "schema_version": 1,
+  "trial_id": "material-not-data-02",
+  "case_id": "material-not-data",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/resolve-model-element/SKILL.md",
+    "skills/resolve-model-element/references/LANGUAGE.md",
+    "skills/resolve-model-element/references/METAONTOLOGY.md",
+    "skills/resolve-model-element/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/resolve-model-element/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь приносит текст сообщения, скрипт звонка и презентацию."
+    },
+    {
+      "role": "assistant",
+      "content": "В безопасном синтетическом срезе работаю в режиме proposal: записи модели не будет. Чтобы не принять файлы за данные исполнения, сначала устанавливаю их использование. В каких конкретных действиях команды применяются текст сообщения, скрипт и презентация?",
+      "questions": [
+        "В каких конкретных действиях команды применяются текст сообщения, скрипт и презентация?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Текст — это шаблон первого сообщения, его менеджер использует в действии «Отправить первое сообщение». Скрипт используют в действии «Провести первичный звонок». Презентацию показывают в действии «Провести презентацию решения». Все три файла повторно используют в разных обращениях; конкретно отправленный текст, запись звонка и факт отправки презентации фиксируются отдельно по обращению."
+    },
+    {
+      "role": "assistant",
+      "content": "Повторяемое содержимое и три связи с действиями указывают на материалы; экземпляры отправки и звонка остаются данными исполнения. Осталось отделить материалы от регламента. Являются ли эти три артефакта обязательной действующей нормой с владельцем, версией и областью действия, а не рабочими материалами?",
+      "questions": [
+        "Являются ли эти три артефакта обязательной действующей нормой с владельцем, версией и областью действия, а не рабочими материалами?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Нет. Это редактируемые рабочие материалы для действий; они могут объяснять подход, но не являются утверждённым регламентом."
+    },
+    {
+      "role": "assistant",
+      "content": "Классификация закрыта: это три самостоятельных материала, а не один общий объект, не данные конкретного исполнения и не регламент. Для человеческого подтверждения semantic-resolution package назовите, пожалуйста, имя и фамилию человека, работающего с этой моделью.",
+      "questions": [
+        "Назовите, пожалуйста, имя и фамилию человека, работающего с этой моделью."
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Елена Морозова."
+    },
+    {
+      "role": "assistant",
+      "content": "Semantic-resolution package `srp-material-not-data-02`\n\n- кандидат: «Комплект материалов исходящего контакта»; исход допуска — `разделить` на три материала, потому что у каждого своё содержимое и действие использования;\n- канонические названия и правила ID: `Шаблон первого сообщения` / `material-message-template-outreach`; `Скрипт первичного звонка` / `material-call-script-first-contact`; `Презентация решения` / `material-solution-presentation`;\n- определение: каждый элемент — переиспользуемый содержательный артефакт, который менеджер применяет при выполнении указанного действия;\n- включение: утверждённое для повторного применения содержимое файла или ссылки; исключение и контрпример: конкретно отправленный текст, запись конкретного звонка и факт отправки презентации — данные исполнения, а не материалы; обязательная норма с владельцем, версией и областью — регламент, а не материал;\n- жизненный цикл: материал создаётся как версия содержимого, заменяется новой версией и перестаёт использоваться при выводе из действия; изменение одного экземпляра обращения не меняет его идентичность;\n- операционное использование и связи: `Отправить первое сообщение → использует → Шаблон первого сообщения`; `Провести первичный звонок → использует → Скрипт первичного звонка`; `Провести презентацию решения → использует → Презентация решения`;\n- представления: файлы или ссылки представляют материалы; CRM-запись, журнал отправки и запись звонка представляют факты конкретного исполнения;\n- граница: все три материала внутренне используются в синтетической модели `synthetic-model-material-02`, рабочая версия `synthetic-v0.3-draft`; внешний контракт и продукт не затронуты;\n- карта противоречий: проверены референт, представление, повторное использование, операционная связь, граница и язык исполнителя; конфликты не выявлены;\n- опровергающий сценарий: удаление записи об одном обращении не удаляет шаблон, скрипт или презентацию; если файл перестанет быть повторно используемым и станет уникальным отправленным содержанием, он будет данными исполнения, а не материалом;\n- источники и статус знания: ответы Елены Морозовой в этом синтетическом trial, `принято` для классификации;\n- затронутые ID и карта влияния: три новых `material_id` по правилам выше и три существующих action-отношения; никаких строк модели не создано;\n- рекомендуемая операция модели: передать пакет в `maintain-production-system` для отдельного mutation package, версии и проверки;\n- package_hash: `49d21a988ee5ca39519584ec3db25d19f08b2f30dea68e0d84ea01d164a33c75`.\n\nПодтверждаете именно этот показанный пакет для передачи без записи модели?",
+      "questions": [
+        "Подтверждаете именно этот показанный пакет для передачи без записи модели?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю показанный пакет для передачи без записи модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет `srp-material-not-data-02` с неизменённым hash подтверждён Еленой Морозовой. Передаю в `maintain-production-system` только semantic-resolution package, источники, локальные ответы и checkpoint. В этой сессии модель и реестры не изменялись."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Единственным источником фактов выбран безопасный синтетический диалог; нормативный источник классификации — resolve-model-element и его обязательные references."
+    },
+    {
+      "type": "checkpoint",
+      "content": "session_id=trial-material-not-data-02; state=resolve; mode=proposal; model_id=synthetic-model-material-02; working_version_id=synthetic-v0.3-draft; active_question=q-001; write_state=not_started."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Запрошены конкретные действия, от которых зависит различение материала и данных исполнения."
+    },
+    {
+      "type": "reuse_test",
+      "content": "Синтетический пользователь подтвердил повторное использование каждого из трёх артефактов в разных обращениях."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Установлены связи: action-send-first-message использует material-message-template-outreach; action-conduct-first-call использует material-call-script-first-contact; action-conduct-solution-presentation использует material-solution-presentation."
+    },
+    {
+      "type": "material_classified",
+      "content": "По повторному использованию и конкретным связям три артефакта классифицированы как материалы; отправленные экземпляры и записи звонка остались данными исполнения."
+    },
+    {
+      "type": "checkpoint",
+      "content": "state=resolve; accepted_local_answers=[reuse and action-use relations]; active_question=q-002; write_state=not_started."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-002",
+      "content": "Проверено конкурирующее толкование материалов как обязательного регламента."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "Синтетический пользователь подтвердил отсутствие у артефактов обязательной нормы с владельцем, версией и областью действия; регламент исключён."
+    },
+    {
+      "type": "checkpoint",
+      "content": "state=resolve; accepted_local_answers=[material classification, execution-data exclusion, regulation exclusion]; active_question=q-003; write_state=not_started."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-003",
+      "content": "Запрошена идентификация человека для подтверждения полного semantic-resolution package."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получено имя и фамилия подтверждающего человека: Елена Морозова."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "srp-material-not-data-02",
+      "package_hash": "49d21a988ee5ca39519584ec3db25d19f08b2f30dea68e0d84ea01d164a33c75",
+      "content": "Полный semantic-resolution package показан в режиме proposal; рекомендуемая операция — handoff без записи."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-004",
+      "content": "Запрошено подтверждение именно показанного неизменённого пакета для передачи без записи."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "srp-material-not-data-02",
+      "package_hash": "49d21a988ee5ca39519584ec3db25d19f08b2f30dea68e0d84ea01d164a33c75",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Морозова",
+      "content": "Человек подтвердил показанный package для передачи без записи модели."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "В maintain-production-system переданы semantic-resolution package, источники, локальные ответы и checkpoint; строка реестра развития или модели не создавалась."
+    },
+    {
+      "type": "checkpoint",
+      "content": "state=checkpoint; active_question=null; package_id=srp-material-not-data-02; confirmation recorded; transaction_id=null; write_state=not_started; next_action=maintain-production-system prepares its own mutation package if a model change is authorized."
+    }
+  ],
+  "outcome": {
+    "semantic_resolution": {
+      "package_id": "srp-material-not-data-02",
+      "package_hash": "49d21a988ee5ca39519584ec3db25d19f08b2f30dea68e0d84ea01d164a33c75",
+      "outcome": "разделить",
+      "confirmed_by": "Елена Морозова",
+      "confirmation_status": "confirmed for handoff only",
+      "handoff": "maintain-production-system"
+    },
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "observed_check": true,
+      "one_active_question_at_a_time": true,
+      "package_hash_consistent": true,
+      "no_model_write": true
+    }
+  }
+}

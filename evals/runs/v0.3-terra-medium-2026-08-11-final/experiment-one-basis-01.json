@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "trial_id": "experiment-one-basis-01",
+  "case_id": "experiment-one-basis",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь хочет одним экспериментом одновременно проверить фикс отклонения и независимую рыночную гипотезу."
+    },
+    {
+      "role": "assistant",
+      "content": "Один эксперимент не может иметь два основания: он проверяет либо устранение отклонения, либо гипотезу развития. Это разные неопределённости и потребуют отдельных экспериментов, связанных позже только решением. Какое одно основание выбираем для этого эксперимента?",
+      "questions": [
+        "Какое одно основание выбираем для этого эксперимента?"
+      ],
+      "active_question_id": "q-001-experiment-basis"
+    },
+    {
+      "role": "user",
+      "content": "Выбираем устранение подтверждённого отклонения; независимую рыночную гипотезу ведём отдельно."
+    },
+    {
+      "role": "assistant",
+      "content": "Основание разрешено: эксперимент проверяет только устранение подтверждённого отклонения; рыночная гипотеза не входит ни в основание, ни в критерии этого прогона. Минимальный дизайн подготовлен на действующей базовой версии: временно применить фикс только в области отклонения, сравнить результат с исходным способом на основном показателе отклонения, зафиксировать baseline и заранее заданный критерий успеха, провести в ограниченный срок, остановить при повторном нарушении нормы или недостоверности измерения и вернуть прежний способ при stop-условии. Ответственная позиция — владелец затронутого процесса. Экспериментальную версию модели не создаём; при принятии результата изменение оформляется обычным жизненным циклом версии. Нужен явный человеческий launch decision от владельца производственной системы: разрешаете запуск этого показанного эксперимента?",
+      "questions": [
+        "Разрешаете запуск этого показанного эксперимента?"
+      ],
+      "active_question_id": "q-002-human-launch-decision"
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Поведение определено по maintain-production-system и его обязательным методологическим контрактам; trial работает без внешней записи."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001-experiment-basis",
+      "content": "Запрошен выбор единственного основания, потому что оно меняет допустимый эксперимент и его пакет."
+    },
+    {
+      "type": "experiment_basis_resolved",
+      "basis_type": "deviation",
+      "content": "Пользователь выбрал устранение подтверждённого отклонения; независимая рыночная гипотеза исключена из этого эксперимента."
+    },
+    {
+      "type": "minimum_design_built",
+      "content": "Подготовлены действующая базовая версия, временное изменение, ограниченная область, сравнение, основной показатель с baseline и критерием успеха, срок, stop-условие, rollback и ответственная позиция."
+    },
+    {
+      "type": "human_launch_decision_requested",
+      "question_id": "q-002-human-launch-decision",
+      "content": "Запрошено явное решение человека о запуске; ИИ его не принимает."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "single_experiment_basis": true,
+      "minimum_design_complete": true,
+      "human_launch_decision_pending": true,
+      "external_mutation_absent": true
+    }
+  }
+}

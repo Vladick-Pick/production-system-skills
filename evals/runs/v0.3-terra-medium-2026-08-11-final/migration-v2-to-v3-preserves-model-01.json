@@ -1,0 +1,251 @@
+{
+  "schema_version": 1,
+  "trial_id": "migration-v2-to-v3-preserves-model-01",
+  "case_id": "migration-v2-to-v3-preserves-model",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/MIGRATION-v0.2-to-v0.3.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v0.2 уже заполнены объекты, процессы, действия, материалы, контракты, решения и история; knowledge_status содержит «гипотеза», а часть object_type — «вход/выход». Нужно перейти на v0.3."
+    },
+    {
+      "role": "assistant",
+      "content": "Работаю только с детерминированной копией fixture. Источник `source-v02-fixture-01` имеет schema 0.2, подтверждённый build fingerprint, 29 листов в точном порядке и неизменяемую резервную точку. В inventory: model_id `model-fixture-01`, working/current version `ver-02-draft`/`ver-02-active`; сохранены 2 объекта, 1 процесс, 2 действия, 1 материал, 1 контракт, 2 решения и 2 исторические записи изменений. Найдены три авторских `knowledge_status=гипотеза`, которые однозначно станут `предположение`; stable IDs и референты будут сохранены. Остановка остаётся только по объектам: `obj-in-01` сейчас имеет тип «вход». В v0.3 это не допустимый собственный тип, поэтому нельзя угадать преобразование. Какой собственный тип выбрать для `obj-in-01`: «данные», «документ», «ресурс» или «объект работы»?",
+      "questions": [
+        "Какой собственный тип выбрать для obj-in-01: «данные», «документ», «ресурс» или «объект работы»?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Для obj-in-01 выберите «данные»."
+    },
+    {
+      "role": "assistant",
+      "content": "Принято локальное семантическое решение: `obj-in-01` сохранит stable ID и референты, а его `object_type` будет преобразован из «вход» в «данные». Второй независимый stop-gate: `obj-out-01` сейчас имеет тип «выход». Какой собственный тип выбрать для `obj-out-01`: «данные», «документ», «ресурс» или «объект работы»?",
+      "questions": [
+        "Какой собственный тип выбрать для obj-out-01: «данные», «документ», «ресурс» или «объект работы»?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Для obj-out-01 выберите «документ»."
+    },
+    {
+      "role": "assistant",
+      "content": "Собран один пакет `mig-v2-v3-fixture-01` (hash `3d76b8a0de6c16fe7637a5309b3b7c6394bfe4ce0ae9ee3aa19e285c1f7a9f64`). Он создаст отдельную in-memory v0.3-копию `target-v03-fixture-01`, не меняя `source-v02-fixture-01`; сохранит все 29 исходных листов и авторские значения, stable IDs, референты, версии, решения и историю; преобразует ровно три `гипотеза → предположение`, `obj-in-01: вход → данные` и `obj-out-01: выход → документ`; построит 32 листа в порядке schema v0.3; оставит пустыми «Отклонения», «Гипотезы» и «Эксперименты»; пересоберёт «Инструкция», «Схема шаблона», «Срез модели», «Проверки», «Реестр процессов» и «Рабочая панель». Перед приёмкой будут сверены source fingerprint, точные авторские значения после только этих пяти преобразований, selectors версий и отсутствие формульных ошибок. Откат — продолжить работу в неизменённом v0.2-источнике. Подтверждаете запись показанного пакета `mig-v2-v3-fixture-01` в отдельную in-memory копию?",
+      "questions": [
+        "Подтверждаете запись показанного пакета mig-v2-v3-fixture-01 в отдельную in-memory копию?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет применён только к отдельной in-memory копии и перечитан. Цель содержит 32 листа в schema-порядке; все 18 сохранённых authoring/identity/governance/history строк, stable IDs, референты и version selectors совпали с источником после пяти объявленных преобразований. Новые реестры пусты, шесть служебных листов пересобраны без формульных ошибок, а source fingerprint до и после совпадает. Копией можно пользоваться для дальнейшей проверки; rollback — исходная неизменённая v0.2-книга."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "source_spreadsheet_id": "source-v02-fixture-01",
+      "schema_version": "0.2",
+      "mode": "write",
+      "execution": "in_memory_only"
+    },
+    {
+      "type": "source_inventory",
+      "spreadsheet_id": "source-v02-fixture-01",
+      "sheet_count": 29,
+      "model_id": "model-fixture-01",
+      "working_version_id": "ver-02-draft",
+      "current_version_id": "ver-02-active",
+      "authoring_counts": {
+        "Объекты": 2,
+        "Процессы": 1,
+        "Действия": 2,
+        "Материалы": 1,
+        "Контракты": 1,
+        "Решения": 2,
+        "Изменения модели": 2
+      },
+      "editor": {
+        "performer_id": "perf-fixture-01",
+        "display_name": "Елена Миронова",
+        "assignment_id": "assign-fixture-01",
+        "performer_type": "человек"
+      }
+    },
+    {
+      "type": "source_fingerprint_verified",
+      "build_fingerprint": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "content_fingerprint": "56a3d872ff0706e6160d5d15cd4c657d2a67b1ce6d5954e66808b37a51f836aa",
+      "backup_locator": "in-memory://source-v02-fixture-01/rollback",
+      "source_unchanged": true
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "automatic_transformations": {
+        "knowledge_status": {
+          "гипотеза": "предположение",
+          "row_count": 3
+        }
+      },
+      "stop_gate_object_ids": [
+        "obj-in-01",
+        "obj-out-01"
+      ]
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "object_id": "obj-in-01",
+      "source_value": "вход"
+    },
+    {
+      "type": "ambiguous_object_roles_resolved",
+      "question_id": "q-001",
+      "object_id": "obj-in-01",
+      "source_value": "вход",
+      "target_value": "данные",
+      "decision_source": "human_answer"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-002",
+      "object_id": "obj-out-01",
+      "source_value": "выход"
+    },
+    {
+      "type": "ambiguous_object_roles_resolved",
+      "question_id": "q-002",
+      "object_id": "obj-out-01",
+      "source_value": "выход",
+      "target_value": "документ",
+      "decision_source": "human_answer"
+    },
+    {
+      "type": "migration_plan_built",
+      "migration_id": "mig-v2-v3-fixture-01",
+      "source_fingerprint": "56a3d872ff0706e6160d5d15cd4c657d2a67b1ce6d5954e66808b37a51f836aa",
+      "target_sheet_count": 32,
+      "new_registries": [
+        "Отклонения",
+        "Гипотезы",
+        "Эксперименты"
+      ],
+      "exact_preservation": true
+    },
+    {
+      "type": "draft_package",
+      "package_id": "mig-v2-v3-fixture-01",
+      "package_hash": "3d76b8a0de6c16fe7637a5309b3b7c6394bfe4ce0ae9ee3aa19e285c1f7a9f64",
+      "target_spreadsheet_id": "target-v03-fixture-01"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "mig-v2-v3-fixture-01",
+      "package_hash": "3d76b8a0de6c16fe7637a5309b3b7c6394bfe4ce0ae9ee3aa19e285c1f7a9f64",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Миронова",
+      "performer_id": "perf-fixture-01",
+      "assignment_id": "assign-fixture-01"
+    },
+    {
+      "type": "full_version_copy",
+      "source_spreadsheet_id": "source-v02-fixture-01",
+      "target_spreadsheet_id": "target-v03-fixture-01",
+      "execution": "in_memory_only"
+    },
+    {
+      "type": "target_copy_verified",
+      "target_spreadsheet_id": "target-v03-fixture-01",
+      "execution_inventory_verified": true,
+      "numeric_sheet_ids_verified": true,
+      "named_range_ids_verified": true
+    },
+    {
+      "type": "migration_batch_built",
+      "migration_id": "mig-v2-v3-fixture-01",
+      "target_spreadsheet_id": "target-v03-fixture-01",
+      "request_sequence": "builder_v03_then_sparse_restore",
+      "applied_to_source": false,
+      "execution": "in_memory_only"
+    },
+    {
+      "type": "authoring_values_preserved",
+      "preserved_row_count": 18,
+      "stable_ids_preserved": true,
+      "referents_preserved": true,
+      "history_preserved": true,
+      "declared_transformations_only": true
+    },
+    {
+      "type": "new_registries_empty",
+      "registries": [
+        "Отклонения",
+        "Гипотезы",
+        "Эксперименты"
+      ],
+      "all_empty": true
+    },
+    {
+      "type": "migration_reconciliation",
+      "migration_id": "mig-v2-v3-fixture-01",
+      "source_sheet_count": 29,
+      "target_sheet_count": 32,
+      "source_fingerprint_unchanged": true,
+      "target_fingerprint": "79f41307ac7d3f070d12459b15ed70a0a06cc582519dd69234330cae32a4e554",
+      "selectors_resolved_to_same_versions": true,
+      "rebuilt_surfaces_without_formula_errors": true,
+      "accepted": true
+    },
+    {
+      "type": "checkpoint",
+      "migration_id": "mig-v2-v3-fixture-01",
+      "state": "verified",
+      "mode": "write",
+      "write_state": "verified",
+      "external_mutations": false
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "kind": "in_memory_migration_batch",
+        "migration_id": "mig-v2-v3-fixture-01",
+        "target_spreadsheet_id": "target-v03-fixture-01",
+        "source_spreadsheet_id": "source-v02-fixture-01",
+        "source_modified": false,
+        "target_verified": true
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "source_schema_verified": true,
+      "source_fingerprint_unchanged": true,
+      "target_copy_verified": true,
+      "sheet_order_29_to_32_verified": true,
+      "authoring_values_preserved": true,
+      "semantic_transformations_exact": true,
+      "new_registries_empty": true,
+      "rebuilt_surfaces_valid": true,
+      "reconciliation_passed": true
+    }
+  }
+}

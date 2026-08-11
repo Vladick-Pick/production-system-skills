@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "trial_id": "deviation-type-and-cause-04",
+  "case_id": "deviation-type-and-cause",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "evals/FRESH-AGENT-CONTRACT.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "skills/audit-production-system/SKILL.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "SLA требует завершать обработку лида за 3 дня. В интерфейсе исполнения показан экземпляр с обработкой за 5 дней; действует явная норма наблюдаемости, требующая фиксировать timestamp обработки. Нужен read-only разбор."
+    },
+    {
+      "role": "assistant",
+      "content": "Каналом проверяемого факта принимаю интерфейс исполнения: показанный экземпляр и зафиксированный в нём timestamp обработки. SLA — действующая норма исполнения с пределом 3 дня; требование timestamp — отдельная действующая норма наблюдаемости. Авторитетны эти активные нормы для ожидаемого состояния, а интерфейс — для факта экземпляра.\n\nСвидетельство: у экземпляра в интерфейсе есть timestamp, по которому длительность обработки составляет 5 дней. Ожидаемое значение по SLA — не более 3 дней.\n\nТипы не смешиваю: инструментальным было бы отсутствие обязательного timestamp или ненадёжность канала; здесь timestamp есть, поэтому такая норма не нарушена. Системным было бы исполнение технологии по норме при недостижимости требуемого результата; этого не показано. Наблюдаемый факт нарушает выполнимую норму SLA, поэтому это подтверждённое операционное отклонение.\n\nПричина не установлена и остаётся отдельным полем со статусом «неизвестно»; я не называю её гипотезой развития. Коррекция конкретного экземпляра и возможное системное изменение также требуют отдельных решений. Формирую только read-only карточку-кандидат для передачи в maintain-production-system; записей модели и внешних действий не будет."
+    }
+  ],
+  "events": [
+    {
+      "type": "evidence_channel_resolved",
+      "channel": "интерфейс исполнения",
+      "locator": "показанный экземпляр лида с timestamp обработки",
+      "fact": "длительность обработки 5 дней"
+    },
+    {
+      "type": "source_authority_resolved",
+      "authoritative_sources": [
+        "действующий SLA: обработка лида не более 3 дней",
+        "действующая норма наблюдаемости: timestamp обработки обязателен"
+      ],
+      "fact_source": "интерфейс исполнения"
+    },
+    {
+      "type": "active_norm_checked",
+      "norm": "SLA обработки лида не более 3 дней",
+      "observed_value": "5 дней",
+      "result": "нарушена"
+    },
+    {
+      "type": "observability_norm_checked",
+      "norm": "обязательный timestamp обработки",
+      "observed_value": "timestamp доступен в интерфейсе исполнения",
+      "result": "соблюдена"
+    },
+    {
+      "type": "evidence_ledger_created",
+      "claim": "обработка экземпляра нарушает SLA",
+      "expected": "не более 3 дней",
+      "observed": "5 дней по timestamp в интерфейсе исполнения",
+      "uncertainty": "причина превышения срока не установлена"
+    },
+    {
+      "type": "deviation_types_distinguished",
+      "instrumental": "не подтверждено: обязательный timestamp доступен",
+      "operational": "подтверждено: наблюдаемый факт 5 дней нарушает SLA 3 дня",
+      "systemic": "не подтверждено: нет свидетельства, что технология исполнена правильно, но результат недостижим"
+    },
+    {
+      "type": "cause_kept_separate",
+      "cause_status": "неизвестно",
+      "not_a_development_hypothesis": true
+    },
+    {
+      "type": "candidate_handoff",
+      "candidate": "операционное отклонение SLA обработки лида",
+      "evidence": "интерфейс исполнения, timestamp обработки, 5 дней против SLA 3 дня",
+      "handoff_to": "maintain-production-system",
+      "writes_performed": false
+    },
+    {
+      "type": "read_only_check",
+      "result": "модель, реестры и внешние системы не изменялись"
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_valid": true,
+      "trial_contract_shape_checked": true
+    },
+    "handoff": {
+      "skill": "maintain-production-system",
+      "classification": "операционное отклонение",
+      "status": "подтверждённое read-only свидетельство",
+      "evidence_channel": "интерфейс исполнения",
+      "evidence": "timestamp обработки показывает 5 дней при действующем SLA не более 3 дней",
+      "cause": {
+        "status": "неизвестно",
+        "separate_from_development_hypothesis": true
+      },
+      "non_findings": {
+        "instrumental": "не подтверждено: норма наблюдаемости timestamp соблюдена",
+        "systemic": "не подтверждено: нет свидетельства правильного исполнения технологии при недостижимости результата"
+      }
+    }
+  }
+}

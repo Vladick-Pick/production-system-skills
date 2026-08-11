@@ -1,0 +1,210 @@
+{
+  "schema_version": 1,
+  "trial_id": "external-component-contract-01",
+  "case_id": "external-component-contract",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Поставщик продаёт два разных продукта и отдельно передаёт переиспользуемый материал; компоненты используются в нескольких действиях внутренней системы."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы разделить продукты по самостоятельной приёмке, назовите первый продукт поставщика и его критерий приёмки.",
+      "questions": [
+        "Какой первый отдельно принимаемый продукт поставляет контрагент и по какому критерию он принимается?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Поставщик «Внешний поставщик» передаёт «Набор контактов»: принимаем по количеству валидных контактов."
+    },
+    {
+      "role": "assistant",
+      "content": "Первый продукт установлен. Теперь нужно отделить второй независимо принимаемый результат от варианта первого.",
+      "questions": [
+        "Какой второй отдельно принимаемый продукт поставляется и по какому критерию он принимается?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Второй продукт — «Отчёт по сегменту»; принимаем, если в нём есть согласованные поля сегмента и рекомендации."
+    },
+    {
+      "role": "assistant",
+      "content": "Это два продукта, потому что их принимают по разным устойчивым критериям. Осталось определить отдельный переиспользуемый компонент.",
+      "questions": [
+        "Что именно передаётся как переиспользуемый материал, а не как данные конкретного исполнения?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Это «Шаблон первого письма» — текстовый шаблон, который сотрудники многократно используют, а не отправленное конкретному контакту письмо."
+    },
+    {
+      "role": "assistant",
+      "content": "Материал установлен: конкретная отправка останется данными исполнения. Для каждой поставки нужен способ пересечения границы и приёмка.",
+      "questions": [
+        "Какой канал передачи и какой результат приёмки предусмотрены для трёх компонентов по контракту?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Все три позиции одного договора поставщик передаёт через защищённую папку; ответственная позиция «Менеджер кампании» принимает или мотивированно отклоняет каждую позицию и возвращает на исправление."
+    },
+    {
+      "role": "assistant",
+      "content": "Контракт имеет три позиции: две продуктовые и одну материальную; у каждой будет свой интерфейс с тем же единственным компонентом. Теперь фиксирую внутреннее использование, а не устройство поставщика.",
+      "questions": [
+        "В каких конкретных внутренних действиях используется каждый из трёх компонентов?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "«Набор контактов» используют в действиях «Проверить контакты» и «Запустить рассылку»; «Отчёт по сегменту» — в «Настроить сегмент» и «Проверить контакты»; «Шаблон первого письма» — в «Подготовить письмо» и «Запустить рассылку»."
+    },
+    {
+      "role": "assistant",
+      "content": "Связи с действиями определены. Для атрибуции in-memory записи нужен идентифицированный человек-редактор.",
+      "questions": [
+        "Кто из людей работает с этой моделью и подтверждает запись пакета?"
+      ],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова, технолог систематизации; в fixture у неё performer_id performer-anna-smirnova и активное назначение assignment-anna-technologist."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет model-package-external-component-contract-01 для черновика fixture-v0.3: внешний «Внешний поставщик» остаётся контрагентом; добавляются продукты product-contact-set и product-segment-report с внешним происхождением через две позиции контракта, материал material-first-email-template, три позиции контракта и три согласованных интерфейса передачи, а также шесть relation rows к внутренним действиям. Внешняя производственная система не создаётся. Для каждого contract item и интерфейса заполнен ровно один компонент: product_id либо material_id. Запись включает решение, изменения модели, authoring rows, пересборку in-memory snapshot и проверку FK/selectors. package_hash: 5398354b481275cf669f37969b6e4ac78208b98d2a237921a4335048f9b4cbc3.",
+      "questions": [
+        "Подтверждаете запись показанного пакета model-package-external-component-contract-01 в черновик модели?"
+      ],
+      "active_question_id": "q-007"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю запись показанного пакета в черновик модели."
+    },
+    {
+      "role": "assistant",
+      "content": "В in-memory fixture выполнена одна transaction txn-external-component-contract-01; перечитаны её строки, срез и связи компонентов с действиями. Внешних изменений не выполнялось."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "In-memory fixture is the only model source; the supplied scenario is the interview source."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The supplier is outside the modeled internal system and is represented only as a counterparty."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Fixture model_id fixture-model-external-components, working_version_id fixture-v0.3-draft, current_version_id fixture-v0.2-current, mode write."
+    },
+    {
+      "type": "editor_identified",
+      "performer_id": "performer-anna-smirnova",
+      "assignment_id": "assignment-anna-technologist",
+      "content": "Анна Смирнова is an identified human editor with an active fixture assignment."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Established the first independently accepted supplier product."
+    },
+    {
+      "type": "product_identity_test",
+      "content": "Набор контактов and Отчёт по сегменту have distinct acceptance criteria and are separate products."
+    },
+    {
+      "type": "counterparty_resolved",
+      "content": "Внешний поставщик is a counterparty; no supplier production system was modeled."
+    },
+    {
+      "type": "component_type_resolved",
+      "content": "Набор контактов and Отчёт по сегменту are products; Шаблон первого письма is a reusable material; a sent message is execution data."
+    },
+    {
+      "type": "material_classified",
+      "material_id": "material-first-email-template",
+      "content": "The text template is reusable across actions and is not a record of a particular sending."
+    },
+    {
+      "type": "contract_items_resolved",
+      "content": "One contract has three independently accepted items, each with exactly one component reference."
+    },
+    {
+      "type": "transfer_interface_resolved",
+      "content": "Each component has a protected-folder transfer interface with acceptance, motivated rejection, return, and fallback to correction."
+    },
+    {
+      "type": "consumer_actions_linked",
+      "content": "Six action-to-component relations link the three external components to the named internal actions."
+    },
+    {
+      "type": "product_origin_linked",
+      "content": "Both products have external origins through their contract items."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "model-package-external-component-contract-01",
+      "package_hash": "5398354b481275cf669f37969b6e4ac78208b98d2a237921a4335048f9b4cbc3",
+      "content": "Full mutation package shown after all component classifications, contract items, interfaces, and consumer-action relations were resolved."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "5398354b481275cf669f37969b6e4ac78208b98d2a237921a4335048f9b4cbc3",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова",
+      "content": "The identified human explicitly confirmed the exact displayed package."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-external-component-contract-01",
+      "content": "One in-memory transaction wrote the decision, model rows, change rows, and rebuilt fixture snapshot."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-external-component-contract-01",
+      "content": "Readback matched the transaction package, including single-component contract items/interfaces and action relations."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-external-component-contract-01",
+      "content": "Fixture state is verified; no external mutation occurred."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-external-component-contract-01",
+        "decision_rows": 1,
+        "change_rows": 16,
+        "model_rows": 16
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "one_active_question_per_assistant_turn": true,
+      "supplier_remained_external_counterparty": true,
+      "two_products_have_independent_acceptance": true,
+      "material_is_reusable_not_execution_data": true,
+      "contract_items_have_exactly_one_component": true,
+      "interfaces_match_contract_components": true,
+      "consumer_actions_linked": true,
+      "exact_human_confirmation_before_write": true,
+      "in_memory_readback_matched_package": true
+    }
+  }
+}

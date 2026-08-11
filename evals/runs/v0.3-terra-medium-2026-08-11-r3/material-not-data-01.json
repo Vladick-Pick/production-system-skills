@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "trial_id": "material-not-data-01",
+  "case_id": "material-not-data",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/resolve-model-element/SKILL.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
+    "references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь приносит текст сообщения, скрипт звонка и презентацию."
+    },
+    {
+      "role": "assistant",
+      "content": "По доступному контексту это могут быть либо переиспользуемые материалы, либо данные конкретных исполнений. Для типа важна их функция: материал используют при действии, а данные фиксируют факт уже произошедшего исполнения. Это различие определит, направлять ли их в связь «действие → использует → материал» или считать данными исполнения.",
+      "questions": [
+        "Эти три артефакта предназначены для повторного использования при будущих сообщениях, звонках и показах, а не для фиксации одного уже совершённого контакта?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Да. Это переиспользуемые заготовки для будущей работы; они не фиксируют один конкретный отправленный текст, состоявшийся звонок или показ презентации."
+    },
+    {
+      "role": "assistant",
+      "content": "Локальный смысл разрешён: текст сообщения, скрипт звонка и презентация — материалы, а не данные исполнения. Контрпример: конкретно отправленный текст, факт звонка или факт показа с их временем были бы данными исполнения. Полный semantic-resolution package не требуется: нет конкурирующих референтов или типов, а `resolve-model-element` не является основным workflow для однозначных новых элементов. В следующем полном пакете `model-production-system` или `maintain-production-system` каждый материал следует допустить со своим `material_id`, версией и связью с конкретным действием; существующая модель не изменялась. Checkpoint: mode=proposal, state=checkpoint, active_question=null, next_action=передать классификацию в полный пакет моделирования."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Нормативные определения материала и данных взяты из обязательных reference-файлов выбранного скилла; сценарий является источником фактов о трёх артефактах."
+    },
+    {
+      "type": "source_inventory",
+      "content": "Учтены три представленных артефакта: текст сообщения, скрипт звонка и презентация."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Проверено, что отдельный semantic-resolution workflow требуется только при смысловой неоднозначности; для однозначного нового материала основной маршрут — полный пакет моделирования или сопровождения."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Задан один вопрос, различающий переиспользуемые материалы и данные конкретного исполнения."
+    },
+    {
+      "type": "material_classified",
+      "content": "Ответ симулятора подтвердил: все три артефакта используются повторно и не являются записью конкретного исполнения."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранён read-only результат без полного пакета и без записи: mode=proposal; state=checkpoint; active_question=null; next_action=включить материалы в следующий полный пакет."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "event_trace_reconciled": true,
+      "json_syntax_valid": true
+    }
+  }
+}

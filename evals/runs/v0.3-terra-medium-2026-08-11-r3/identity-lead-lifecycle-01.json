@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "trial_id": "identity-lead-lifecycle-01",
+  "case_id": "identity-lead-lifecycle",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/resolve-model-element/SKILL.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
+    "references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь предлагает заменить термин «лид-кандидат» на «лид» и «квалифицированный лид»."
+    },
+    {
+      "role": "assistant",
+      "content": "Это не простая замена слов: нужно различить объект работы и его состояние. Предварительно рекомендую один объект «Лид» и состояние «квалифицирован», если сохраняются тот же экземпляр и его история; сильная альтернатива — два объекта с явным преобразованием, если после квалификации создаётся самостоятельная сущность. Одновременно не создаю «лид-кандидат» ради симметрии.\n\nОдин вопрос: после квалификации сохраняются тот же экземпляр лида и его история, а меняются допустимые действия, или создаётся отдельный экземпляр со своим жизненным циклом и самостоятельным использованием?",
+      "questions": [
+        "После квалификации сохраняются тот же экземпляр лида и его история, а меняются допустимые действия, или создаётся отдельный экземпляр со своим жизненным циклом и самостоятельным использованием?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Детерминированный симулятор: после квалификации это тот же лид с той же историей; меняется только набор допустимых следующих действий. Отдельный экземпляр не создаётся."
+    },
+    {
+      "role": "assistant",
+      "content": "Semantic-resolution package\n\npackage_id: srp-lead-lifecycle-01\nкандидат: замена употребления «лид-кандидат»\nисход допуска: принять и переименовать\nканоническое название: Лид\nstable_id или правило создания: сохранить существующий stable ID только после сверки авторитетного снимка; новое значение не создавать\nопределение: Лид — объект работы, сохраняющий идентичность и историю от создания до завершения. «Квалифицирован» — состояние лида после проверки, которое меняет допустимые следующие действия.\nреферент и тип: один объект работы и его состояние; CRM-карточка и её поля являются представлением/данными, а не доказательством отдельного объекта.\nпризнаки включения: экземпляр продолжает жить с той же историей; квалификация меняет допустимые действия.\nисключения и контрпример: если квалификация создаёт самостоятельный экземпляр со своим ID, жизненным циклом или отдельным использованием, это два объекта и явное преобразование.\nправило идентичности: сохраняется, пока непрерывно распознаётся тот же лид; смена состояния не создаёт новый экземпляр.\nсоздание и завершение: не установлены — нужны авторитетный снимок модели и операционное свидетельство.\nжизненный цикл: как минимум до квалификации и «квалифицирован»; полный набор состояний не установлен.\nсинонимы: «лид-кандидат» — прежнее употребление, подлежащее замене после проверки снимка; «квалифицированный лид» — название состояния, не отдельного объекта.\nоперационное использование: квалификация определяет допустимые последующие действия с тем же лидом.\nпредставления: CRM-карточка, её ID и стадия — данные/интерфейс исполнения.\nсвязи и кратности: один лид может переходить в состояние «квалифицирован»; отдельной связи преобразования объектов нет.\nграница и контракты: не затронуты.\nзатронутые ID: не установлены без снимка модели.\nкарта влияния: потребуется проверить определения объекта, состояния, переходы и действия, использующие прежний термин.\nисточники и статусы знания: ответ детерминированного симулятора — факт для identity test; идентификаторы, версия и модель — неизвестно.\nоткрытые конфликты: нет конкурирующего референта после identity test; отсутствует авторитетный snapshot для точного stable ID и карты влияния.\nрекомендуемая операция модели: передать подтверждённый пакет в maintain-production-system только после сверки модели/версии и подтверждения идентифицированным человеком.\npackage_hash: 75bbdbdd107a55ec8f3f42784526aeedf687aaa77e3d16d1a9ff09df4a872de9\n\nПакет не может быть подтверждён или передан на изменение: в безопасном fixture нет идентифицированного человека, model_id, version_id и авторитетного snapshot. Запись в модель не выполнялась."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "The skill and its required reference contracts were treated as the methodological authority; no business-model snapshot was available."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The trial remained an in-memory, read-only semantic-resolution exercise with no external systems or model registers modified."
+    },
+    {
+      "type": "alternatives_presented",
+      "content": "The dialogue presented one continuing Lead object with a qualified state against the alternative of two independently living objects."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Asked whether qualification preserves the same instance and history or creates an independent instance."
+    },
+    {
+      "type": "identity_test",
+      "content": "The simulator established that the same lead and history continue through qualification while permitted next actions change."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "The resolution was checked against the required object/state and representation distinctions in the supplied contracts."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "srp-lead-lifecycle-01",
+      "package_hash": "75bbdbdd107a55ec8f3f42784526aeedf687aaa77e3d16d1a9ff09df4a872de9",
+      "content": "A read-only semantic-resolution package was assembled with outcome 'принять и переименовать'."
+    },
+    {
+      "type": "checkpoint",
+      "content": "State=draft; confirmation and handoff are blocked until an identified human, authoritative model snapshot, model_id, and version_id are available."
+    }
+  ],
+  "outcome": {
+    "resolution": "принять и переименовать",
+    "package_id": "srp-lead-lifecycle-01",
+    "package_hash": "75bbdbdd107a55ec8f3f42784526aeedf687aaa77e3d16d1a9ff09df4a872de9",
+    "confirmation_status": "blocked: no identified human or authoritative model/version snapshot in the safe fixture",
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "identity_test_performed": true,
+      "canonical_event_reconciliation_performed": true,
+      "json_syntax_validated": true
+    }
+  }
+}

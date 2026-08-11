@@ -1,0 +1,166 @@
+{
+  "schema_version": 1,
+  "trial_id": "deviation-active-norm-05",
+  "case_id": "deviation-active-norm",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/PROJECTION-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "references/INTERVIEW-CONTRACT.md",
+    "references/LANGUAGE.md",
+    "references/METAONTOLOGY.md",
+    "references/METHODOLOGY-COMPATIBILITY.md",
+    "references/PROJECTION-CONTRACT.md",
+    "references/TEMPLATE-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "На встрече сообщили, что лид обрабатывается пять дней; в целевой модели написано три дня, но действующая норма не названа."
+    },
+    {
+      "role": "assistant",
+      "content": "Зафиксировал границу in-memory fixture: модель model-eval-deviation-active-norm, действующая версия version-active-002 и черновик version-draft-003. Сообщение встречи — наблюдаемый факт, а запись «три дня» в целевой модели пока не доказывает действующую норму. Какая действующая норма обработки лида утверждена для version-active-002?",
+      "questions": [
+        "Какая действующая норма обработки лида утверждена для version-active-002?"
+      ],
+      "active_question_id": "q-001-active-norm"
+    },
+    {
+      "role": "user",
+      "content": "В version-active-002 действующая норма срока обработки лида не определена. Три дня указаны только в целевой модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Пять дней — проверяемый факт исполнения, но без действующей нормы его нельзя подтвердить как отклонение. Кандидат: «пробел модели — не определена действующая норма обработки лида». Ближайшая отвергнутая классификация: «отклонение», потому что три дня — целевой ориентир, а не активная норма. Предлагаю прорабатывать направление: добавить норму в черновик, не создавая отклонение и не меняя живое исполнение. Подтверждаете направление проработки?",
+      "questions": [
+        "Подтверждаете направление проработки?"
+      ],
+      "active_question_id": "q-002-direction"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю направление проработки пробела модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Полный пакет pkg-deviation-active-norm-05. Цель и граница: в model-eval-deviation-active-norm добавить в черновик version-draft-003 правило «Обработка лида не позднее 3 календарных дней с момента поступления; способ фиксации момента поступления и ответственный за контроль подлежат утверждению при вводе версии». Base version: version-active-002; редактор: Анна Методист, performer-eval-anna-methodist, назначение assignment-eval-methodologist. Точная операция: лист «Правила», stable_id rule-lead-processing-3-days, before: отсутствует, after: показанное правило, операция «применить». Источник: встреча — факт «лид обрабатывается пять дней»; целевая модель — предложение, не действующая норма. Классификация: пробел модели; отклонение отвергнуто. Решение: записать предложение нормы в черновик, не подтверждать отклонение и не вводить норму в действие. Влияние: «Правила», «Действия», «Рабочая панель», «Срез модели»; активные экземпляры автоматически не мигрировать; проекцию не пересобирать. Предусловия: fixture не изменён, version-draft-003 остаётся черновиком, активной нормы нет, transaction tx-deviation-active-norm-05 отсутствует. Записи одной in-memory transaction: 1 строка «Решения», 1 строка «Изменения модели», 1 разреженная строка модели; затем readback и checkpoint. package_hash: a7bc07c22390a51ba149435665d50bed2c1001703477b917af2b954bfcb33e6a. Подтверждаете запись показанного пакета pkg-deviation-active-norm-05 в черновик модели?",
+      "questions": [
+        "Подтверждаете запись показанного пакета pkg-deviation-active-norm-05 в черновик модели?"
+      ],
+      "active_question_id": "q-003-exact-package"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись показанного пакета pkg-deviation-active-norm-05 в черновик модели."
+    },
+    {
+      "role": "assistant",
+      "content": "Выполнил одну in-memory transaction tx-deviation-active-norm-05: записаны решение, изменение модели и разреженная редакция правила. Readback совпал с неизменённым пакетом; checkpoint сохранён. Отклонение не создано и не подтверждено, действующая версия не менялась, внешних мутаций нет."
+    }
+  ],
+  "events": [
+    {
+      "type": "scope_checked",
+      "model_id": "model-eval-deviation-active-norm",
+      "working_version_id": "version-draft-003",
+      "current_version_id": "version-active-002",
+      "mode": "write",
+      "fixture": "in-memory"
+    },
+    {
+      "type": "source_authority_resolved",
+      "observed_fact_source": "встреча",
+      "target_source": "целевая модель",
+      "resolution": "целевая модель не является действующей нормой"
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001-active-norm",
+      "purpose": "установить наличие действующей нормы и различить отклонение с пробелом модели"
+    },
+    {
+      "type": "active_norm_checked",
+      "active_norm": null,
+      "target_value": "3 дня",
+      "observed_value": "5 дней",
+      "result": "действующая норма отсутствует"
+    },
+    {
+      "type": "deviation_types_distinguished",
+      "result": "без действующей нормы наблюдаемый факт не является подтверждённым отклонением"
+    },
+    {
+      "type": "development_candidate_classified",
+      "candidate_type": "пробел модели",
+      "rejected_alternative": "отклонение"
+    },
+    {
+      "type": "candidate_direction_confirmed",
+      "question_id": "q-002-direction",
+      "confirmed_by": "Анна Методист",
+      "scope": "проработка добавления нормы в черновик без записи"
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-deviation-active-norm-05",
+      "package_hash": "a7bc07c22390a51ba149435665d50bed2c1001703477b917af2b954bfcb33e6a",
+      "transaction_id": "tx-deviation-active-norm-05"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "pkg-deviation-active-norm-05",
+      "package_hash": "a7bc07c22390a51ba149435665d50bed2c1001703477b917af2b954bfcb33e6a",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Методист",
+      "confirmation_id": "confirm-deviation-active-norm-05"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-deviation-active-norm-05",
+      "target": "in-memory fixture",
+      "result": "созданы решение, изменение модели и разреженная редакция правила; отклонение не создано"
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-deviation-active-norm-05",
+      "result": "три записанные строки и package_hash совпадают с подтверждённым пакетом"
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-deviation-active-norm-05",
+      "state": "verified",
+      "next_action": "отдельно принять и ввести норму в действие либо оставить черновик"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-deviation-active-norm-05",
+        "target": "in-memory fixture",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 1,
+        "deviation_rows": 0
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "active_norm_absence_checked": true,
+      "deviation_not_confirmed_without_active_norm": true,
+      "package_hash_matches_confirmation": true,
+      "in_memory_preconditions_checked": true,
+      "transaction_readback_matches_package": true,
+      "checkpoint_saved": true
+    }
+  }
+}

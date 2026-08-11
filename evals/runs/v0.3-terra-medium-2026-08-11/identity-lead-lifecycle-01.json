@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "trial_id": "identity-lead-lifecycle-01",
+  "case_id": "identity-lead-lifecycle",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь предлагает заменить термин \"лид-кандидат\" на \"лид\" и \"квалифицированный лид\"."
+    },
+    {
+      "role": "assistant",
+      "content": "В in-memory модели есть объект `object-lead-candidate` в текущей версии и черновик для предложения; режим — proposal, запись не выполняется. Рекомендация: если после квалификации сохраняются тот же экземпляр и его история, оставить один объект «Лид», а «квалифицированный лид» оформить состоянием. Сильная альтернатива — два объекта с преобразованием — нужна только при самостоятельном создании и жизненном цикле второго. После квалификации создаётся отдельная сущность со своим ID и историей или у того же лида сохраняются ID и история?",
+      "questions": [
+        "После квалификации создаётся отдельная сущность со своим ID и историей или у того же лида сохраняются ID и история?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Сохраняются тот же ID и вся история. Меняется только статус и после него менеджер может выполнять другие действия; отдельной сущности не создаём."
+    },
+    {
+      "role": "assistant",
+      "content": "Собран semantic-resolution package `srp-identity-lead-lifecycle-01` (hash `63e816846d4c4fe28d1b24da9fec11a5f2ed8a5cad5adecc9737e79db6bd4785`).\n\nКандидат: замена термина «лид-кандидат» на «лид» и «квалифицированный лид».\nИсход допуска: принять и переименовать.\nКаноническое название и stable ID: `Лид`, `object-lead-candidate`; ID сохраняется, потому что экземпляр и его история непрерывны.\nОпределение: лид — объект работы, отдельно распознаваемый потенциальный клиент, по которому ведётся процесс привлечения. «Квалифицированный лид» — состояние `квалифицирован` того же лида, меняющее допустимые действия.\nВключение: потенциальный клиент с самостоятельной карточкой исполнения, историей и жизненным циклом.\nИсключение и контрпример: CRM-карточка и её поля — представление и данные; отдельно созданная сущность со своим ID и жизненным циклом была бы вторым объектом, но в fixture её нет.\nСоздание и завершение: создаётся при появлении потенциального клиента; завершается отказом, закрытием без результата или иным конечным состоянием процесса.\nЖизненный цикл: новый → квалифицирован → дальнейшие состояния процесса; действие квалификации выполняет переход.\nСинонимы: «лид-кандидат» — устаревшее название объекта; «квалифицированный лид» — название состояния, не синоним объекта.\nОперационное использование: после перехода в `квалифицирован` доступны действия дальнейшей обработки.\nПредставления: CRM-карточка лида, stable ID, история и поле состояния.\nСвязи: один лид имеет одно текущее состояние; состояние относится ко множеству лидов.\nГраница: внутренний объект модели привлечения; внешние контракты не затронуты.\nЗатронутые ID: `object-lead-candidate`, новый/уточняемый `state-lead-qualified`.\nКарта влияния: переименовать отображаемое название объекта с сохранением ID, добавить или уточнить состояние и обновить ссылки действий квалификации и представления, использующие старое слово.\nИсточники и статус знания: in-memory fixture и локальный ответ пользователя; принято локально для этого пакета. Открытых конфликтов нет.\nРекомендуемая операция: передать пакет в `maintain-production-system` для отдельного mutation package в рабочей версии; `resolve-model-element` ничего не записывает.\n\nПодтверждаете именно этот semantic-resolution package для передачи в `maintain-production-system`?"
+    },
+    {
+      "role": "user",
+      "content": "Подтверждаю этот пакет для передачи."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет `srp-identity-lead-lifecycle-01` подтверждён идентифицированным человеком для передачи. Checkpoint: `state=checkpoint`, `mode=proposal`, записи в модели не было; следующий шаг — `maintain-production-system` должен собрать собственный mutation package и отдельно запросить подтверждение записи."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "In-memory fixture is the source for existing IDs and version context; the simulated identified human is the source for the observed qualification behavior."
+    },
+    {
+      "type": "base_version_resolved",
+      "model_id": "fixture-model-lead-lifecycle",
+      "current_version_id": "fixture-v0.2-current",
+      "working_version_id": "fixture-v0.3-draft",
+      "mode": "proposal"
+    },
+    {
+      "type": "checkpoint",
+      "state": "investigate",
+      "session_id": "fresh-agent-identity-lead-lifecycle-01",
+      "active_question": null,
+      "write_state": "not_started"
+    },
+    {
+      "type": "identity_test",
+      "content": "The pending distinction is one continuous lead with a new state versus a separately created qualified-lead object."
+    },
+    {
+      "type": "alternatives_presented",
+      "content": "Presented one-object-plus-state as the recommendation and two objects with transformation as the alternative contingent on independent creation and lifecycle."
+    },
+    {
+      "type": "decisive_question",
+      "question_id": "q-001",
+      "content": "Asked whether qualification preserves the same ID and history or creates an independent entity."
+    },
+    {
+      "type": "checkpoint",
+      "state": "resolve",
+      "session_id": "fresh-agent-identity-lead-lifecycle-01",
+      "active_question": "q-001",
+      "accepted_local_answers": []
+    },
+    {
+      "type": "identity_test",
+      "content": "Simulated human reported that ID and history persist and only status and permissible actions change; this resolves the candidate as one object and a state."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "srp-identity-lead-lifecycle-01",
+      "package_hash": "63e816846d4c4fe28d1b24da9fec11a5f2ed8a5cad5adecc9737e79db6bd4785",
+      "content": "Full semantic-resolution package displayed with outcome 'принять и переименовать', retained object ID, and a qualified state."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "srp-identity-lead-lifecycle-01",
+      "package_hash": "63e816846d4c4fe28d1b24da9fec11a5f2ed8a5cad5adecc9737e79db6bd4785",
+      "performer_type": "человек",
+      "confirmed_by": "Ирина Соколова",
+      "content": "The deterministic simulated identified human confirmed the displayed package for handoff, not a model write."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "Confirmed semantic-resolution package handed off conceptually to maintain-production-system; no mutation package or transaction was created."
+    },
+    {
+      "type": "checkpoint",
+      "state": "checkpoint",
+      "session_id": "fresh-agent-identity-lead-lifecycle-01",
+      "active_question": null,
+      "package_id": "srp-identity-lead-lifecycle-01",
+      "package_hash": "63e816846d4c4fe28d1b24da9fec11a5f2ed8a5cad5adecc9737e79db6bd4785",
+      "write_state": "not_started",
+      "next_action": "maintain-production-system creates its own mutation package if a model change is authorized."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "observed_check": true
+    }
+  }
+}

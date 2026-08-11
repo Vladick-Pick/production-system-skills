@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "trial_id": "audit-no-write-01",
+  "case_id": "audit-no-write",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/audit-production-system/SKILL.md",
+    "skills/audit-production-system/references/LANGUAGE.md",
+    "skills/audit-production-system/references/METAONTOLOGY.md",
+    "skills/audit-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/audit-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/audit-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Пользователь просит оценить модель и объяснить, что не так."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы не смешать версии, назовите, пожалуйста, проверяемую версию модели; без неё нельзя честно определить срез и готовность."
+      ,"questions": [
+        "Какую версию модели проверить?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Проверьте синтетическую книгу model-demo-01: версия v0.2-demo-01, статус «действует», predecessor v0.2-demo-00, snapshot_fingerprint sha256:demo-v02, без BPMN/SVG-сборки. В ней 29 листов v0.2 в нормативном порядке; IDs и selectors уникальны; один процесс p-intake с действиями a-receive и a-qualify, ответственная позиция pos-sales, нормальный и отказной пути заканчиваются. Журнал живого исполнения, записи отклонений, гипотез и экспериментов, а также доказательство Camunda Modeler не предоставлены."
+    },
+    {
+      "role": "assistant",
+      "content": "Проверил предоставленный синтетический срез в read-only режиме.\n\nScope: model_id model-demo-01; version_id v0.2-demo-01; статус «действует»; predecessor v0.2-demo-00; snapshot_fingerprint sha256:demo-v02; projection build отсутствует. Цель — оценить модель, не ввод в действие BPMN.\n\nEvidence ledger: (1) состав v0.2: заявлены 29 листов в нормативном порядке; проверка — сверка с TEMPLATE-SCHEMA-v0.2; вывод: структурная поверхность проходит в пределах fixture. (2) p-intake/a-receive/a-qualify/pos-sales: заявлены ответственные, normal и rejection paths с terminal outcome; проверка — проигрывание описанных путей; вывод: базовая исполнимость заявлена, но не наблюдалась в живом журнале. (3) отсутствуют журналы исполнения и реестры развития; это ограничение доказательств, а не доказательство отсутствия отклонений или гипотез. (4) BPMN/SVG и Modeler evidence отсутствуют; проекцию и deployment-readiness проверить нельзя.\n\nFindings: MED-001 (medium): фактическое исполнение p-intake не доказано журналом или наблюдением. Следствие: модель нельзя считать подтверждённой живой практикой. Handoff: maintain-production-system только после появления проверяемого факта, если потребуется исправление. MED-002 (medium): нет BPMN/SVG build, поэтому lineage, hashes и готовность представления не установлены. Следствие: нельзя заявлять готовность к просмотру проекции или к deployment. Handoff: model-production-system для воспроизводимой сборки, если она нужна.\n\nВердикты: schema — «пройдена по synthetic fixture»; history — «частично подтверждена: указаны версия и predecessor, независимое разрешение snapshot не выполнено»; semantics — «не доказана полностью: fixture не содержит определений и референтов для семи тестов»; execution — «логическая достижимость заявлена, фактическое исполнение не доказано»; contracts/development — «не оценены: соответствующие факты не предоставлены»; projection — «не оценена: build отсутствует».\n\nОценка трёх поверхностей результата: 1) доказательность — 1/3, потому что есть только синтетические утверждения, без первичных строк и журналов; 2) модельный контур — 2/3, потому что базовая структура и два пути описаны, но семантика и snapshot не воспроизведены независимо; 3) ввод/проекция — 0/3, потому что нет build, hashes и Modeler evidence.\n\nReadiness: «не готова к вводу». Она может быть «готова к просмотру» только после разрешения snapshot и отдельной проверяемой BPMN/SVG-сборки; это не требует и не получает записи от аудита. Остаточная неопределённость: отсутствуют первичные строки книги, логи исполнения, реестры развития и артефакты проекции. Я ничего не изменял и не подтверждал бизнес-истину."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Нормативными источниками аудита определены bundled references; синтетический ответ пользователя признан единственным evidence source для проверяемого среза."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Задан один вопрос q-001 о версии, поскольку аудит не может молча выбрать version_id."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Зафиксированы model-demo-01, v0.2-demo-01, predecessor v0.2-demo-00, fingerprint sha256:demo-v02 и отсутствие projection build."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Синтетический источник заявил fingerprint sha256:demo-v02; независимая материализация snapshot недоступна и отражена как uncertainty."
+    },
+    {
+      "type": "source_inventory",
+      "content": "Учтены утверждения о 29 листах, p-intake, a-receive, a-qualify и pos-sales; отсутствуют строки книги, логи, реестры развития и projection artifacts."
+    },
+    {
+      "type": "evidence_ledger_created",
+      "content": "Для каждого вывода в отчёте указаны locator, observed value, contract check, inference и ограничение evidence."
+    },
+    {
+      "type": "semantic_compatibility_checked",
+      "content": "Версия оценивалась по legacy v0.2 contract; отсутствие v0.3-реестров не выдано за дефект v0.2."
+    },
+    {
+      "type": "active_norm_checked",
+      "content": "Для отсутствующих записей отклонений действующая норма и проверяемый факт не предоставлены; отклонения не объявлялись."
+    },
+    {
+      "type": "read_only_check",
+      "content": "Аудит не записывал строки модели, решения, статусы, комментарии, projection files или migration plan."
+    },
+    {
+      "type": "three_surfaces_scored",
+      "content": "Оценены доказательность 1/3, модельный контур 2/3 и ввод/проекция 0/3."
+    },
+    {
+      "type": "uncertainty_reported",
+      "content": "Отдельно названы отсутствие первичных строк, журналов исполнения, реестров развития и BPMN/SVG/Modeler evidence."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "bundled_schema_v0_2_json_parsed": true,
+      "bundled_schema_v0_3_json_parsed": true,
+      "trial_json_validated": true,
+      "contract_consistency_validated": true
+    }
+  }
+}

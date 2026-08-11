@@ -1,0 +1,81 @@
+{
+  "schema_version": 1,
+  "trial_id": "development-handoff-no-write-03",
+  "case_id": "development-handoff-no-write",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/audit-production-system/SKILL.md",
+    "skills/audit-production-system/references/LANGUAGE.md",
+    "skills/audit-production-system/references/METAONTOLOGY.md",
+    "skills/audit-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/audit-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/audit-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/audit-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Во время read-only аудита найден один подтверждаемый случай нарушения действующего SLA."
+    },
+    {
+      "role": "assistant",
+      "content": "Проведён read-only аудит синтетического среза `model-fixture-001` / `ver-042` / `snapshot-fixture-042`. Граница: один экземпляр процесса `proc-intake` (`run-017`); реестр развития, модель и внешние системы не изменялись.\n\nДействующая норма: в `fixture://model-fixture-001/versions/ver-042/processes/proc-intake#sla` для `proc-intake` установлен SLA «не более 4 рабочих часов от регистрации до приёмки». Статус версии — «действует».\n\nПроверяемый факт: в `fixture://execution/run-017/events` регистрация — 2026-08-10T09:00:00+03:00, приёмка — 2026-08-10T14:12:00+03:00; по календарю из `fixture://model-fixture-001/versions/ver-042/calendars/business-hours` прошло 5 ч 12 мин рабочих часов. Воспроизводимая проверка: 5 ч 12 мин > 4 ч, превышение 1 ч 12 мин.\n\nEvidence ledger: (1) норма — указанный locator версии, authority: действующая модель, freshness: snapshot-fixture-042; (2) факт исполнения — журнал `run-017`, authority: система исполнения, freshness: время события; (3) расчёт — детерминированное сравнение с календарём версии.\n\nКлассификация: кандидат «отклонение» — подтверждённая разница между действующей нормой и фактическим исполнением. Не «гипотеза развития»: внешнее изменение и новая возможность не установлены. Не «эксперимент»: не задано одно основание и временное изменение. Finding `finding-sla-001`, severity `medium`: один подтверждённый случай, причина и повторяемость не доказаны.\n\nКарточка передана в `maintain-production-system`: активная норма, факт, локаторы, область `proc-intake`, применимая версия `ver-042`, кандидат-владелец для определения ответственного — не установлен, причина и результативность коррекции — неизвестны. Следующий шаг: `maintain-production-system` собирает полный пакет только после разрешения владельца и человеческого подтверждения; аудит не создаёт строку `Отклонения`, не меняет статус и не пишет в модель.\n\nCheckpoint: mode `read-only`; writes `not_started`; candidate `finding-sla-001`; handoff `maintain-production-system`; residual unknowns: причина, ответственный, повторяемость и решение человека о дальнейшем действии."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Действующая модель версии `ver-042` определена источником нормы; журнал исполнения `run-017` определён источником факта."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Проверка ограничена `model-fixture-001`, `ver-042`, `snapshot-fixture-042` и экземпляром `run-017`; режим read-only."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Для сравнения нормы использован один resolved snapshot `snapshot-fixture-042` действующей версии `ver-042`."
+    },
+    {
+      "type": "active_norm_checked",
+      "content": "В `proc-intake` действует SLA не более 4 рабочих часов от регистрации до приёмки."
+    },
+    {
+      "type": "evidence_ledger_created",
+      "content": "Зафиксированы locator нормы, события `run-017`, календарь версии и расчёт 5 ч 12 мин > 4 ч."
+    },
+    {
+      "type": "read_only_check",
+      "content": "Проверка вычислила превышение SLA на 1 ч 12 мин без записи в модель, реестр или внешнюю систему."
+    },
+    {
+      "type": "development_candidate_classified",
+      "content": "Сигнал классифицирован как кандидат «отклонение»; гипотеза развития и эксперимент отвергнуты из-за отсутствия их обязательных оснований."
+    },
+    {
+      "type": "uncertainty_reported",
+      "content": "Причина, ответственный, повторяемость и результативность возможной коррекции не установлены."
+    },
+    {
+      "type": "candidate_handoff",
+      "content": "Карточка кандидата, локаторы, неизвестные и checkpoint переданы в `maintain-production-system`; запись в реестр не выполнена."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранено состояние handoff: mode `read-only`, writes `not_started`, next_action `maintain-production-system`."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "json_syntax_valid": true,
+      "fresh_agent_contract_checked": true
+    }
+  }
+}

@@ -1,0 +1,219 @@
+{
+  "schema_version": 1,
+  "trial_id": "bpmn-projection-lineage-05",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "skills/model-production-system/scripts/bpmn/common.py",
+    "skills/model-production-system/scripts/bpmn/generate.py",
+    "skills/model-production-system/scripts/bpmn/validate.py",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Построить схему процесса с human task, automation, exclusive branch, return и timer."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала зафиксирую границу и принимаемый результат, чтобы схема была проекцией модели, а не свободным рисунком.",
+      "questions": [
+        "Каковы граница внутренней системы, продукт процесса и критерий его приёмки?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Граница: внутренняя система «Обработка входящих заявок». Продукт — принятое решение по заявке. Приёмка: решение зафиксировано в реестре заявок как «одобрено» или «отклонено» с причиной."
+    },
+    {
+      "role": "assistant",
+      "content": "Принял границу, продукт и два терминальных исхода. Для атрибуции первой версии нужен конкретный редактор.",
+      "questions": [
+        "Назовите имя и фамилию человека, который подтвердит полный пакет записи."
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Елена Орлова."
+    },
+    {
+      "role": "assistant",
+      "content": "Елена Орлова определена как человек-редактор тестовой модели.",
+      "questions": [
+        "Какие устойчивые позиции отвечают за человеческую проверку и за автоматизацию?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Специалист по заявкам проверяет и принимает решение. Сервис проверки данных автоматически собирает данные; ответственность за результат автоматизации остаётся у Специалиста по заявкам."
+    },
+    {
+      "role": "assistant",
+      "content": "Позиция человека и среда автоматизации разведены; сервис не становится ответственной ролью.",
+      "questions": [
+        "Опишите по порядку trigger, human task, automation, решение с возвратом и timer: куда ведёт каждая ветка и какой результат завершает процесс?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Новая заявка запускает процесс. Специалист выполняет human task «Проверить заявку». Затем automation «Собрать данные по заявке» в сервисе. Специалист выполняет human task «Принять решение». Exclusive gateway: при достаточных данных — «Одобрить заявку» и конец «Одобрено»; иначе — «Вернуть на доработку» и возврат к «Проверить заявку». Boundary timer PT24H прикреплён к «Проверить заявку» и ведёт к «Зафиксировать просрочку», затем к концу «Просрочено». Для gateway условие одобрения — FEEL `= sufficientData = true`, возвратная ветка default."
+    },
+    {
+      "role": "assistant",
+      "content": "Построен полный пакет v0.3 для in-memory книги `fixture-bpmn-lineage`: рабочая версия `ver-bpmn-001`, процесс `proc-application-decision`, система `sys-application-processing`, позиция `pos-application-specialist`; один resolved snapshot и один IR. В IR допустимы только none start/end, boundary timer, user task, service task, exclusive gateway и sequence flow. Сценарии покрывают: одобрение; default-возврат на проверку; timer PT24H с фиксацией просрочки. Пакет создаёт 2 решения, 1 изменение модели и 20 модельных строк; после записи будут сгенерированы BPMN, SVG и manifest с единым fingerprint `e1cc87d13c5599c88f92818473ad6607376f4eb59db35e6b7680d0a30d4e9eb8`. `projection_build_id`: `build-bpmn-001`. `package_hash`: `c38a69c2ccfd1d6d83f039a1f260410b1ee0518f2f8e7fe734574bceaf2ad194`. Внешний Camunda Modeler не доступен, поэтому это отдельный deployment blocker; локальная структурная проверка и view readiness входят в пакет.",
+      "questions": [
+        "Елена Орлова, подтверждаете запись именно этого полного пакета с package_hash `c38a69c2ccfd1d6d83f039a1f260410b1ee0518f2f8e7fe734574bceaf2ad194`?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю именно этот пакет. Елена Орлова."
+    },
+    {
+      "role": "assistant",
+      "content": "Подтверждённая in-memory transaction `txn-bpmn-001` записана, перечитана и сохранена в checkpoint. Из exact effective snapshot `snap-bpmn-001` построен один IR, затем BPMN, SVG и manifest. BPMN allowlist проверен до сборки; XML, references, DI, hashes и traceability прошли структурную проверку. Все три артефакта имеют fingerprint `e1cc87d13c5599c88f92818473ad6607376f4eb59db35e6b7680d0a30d4e9eb8`; lineage подтверждён. View readiness: готово. Deployment readiness: заблокировано только отсутствием внешнего Camunda Modeler/lint evidence; внешних изменений не выполнялось."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Единственными авторитетными источниками trial признаны skill, bundled projection/BPMN contracts и синтетические ответы пользователя; живых источников и конфликтов нет."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Определены in-memory model_id fixture-bpmn-lineage, schema v0.3, working_version_id ver-bpmn-001, режим write только для fixture и граница внутренней системы."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Для новой модели определена пустая линейная база версии ver-bpmn-000 и рабочая черновая версия ver-bpmn-001."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия человека: Елена Орлова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В in-memory fixture нормализованное ФИО «Елена Орлова» разрешено в performer_id perf-elena-orlova."
+    },
+    {
+      "type": "position_resolved",
+      "content": "После отдельного ответа установлена ответственная позиция pos-application-specialist; сервис проверки данных отмечен как среда автоматизации, а не позиция."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Установлены связи действий с позицией, информационной системой, объектом заявки и переходами её состояний."
+    },
+    {
+      "type": "snapshot_v1",
+      "content": "Материализован и проверен пустой effective snapshot ver-bpmn-000 до подготовки пакета."
+    },
+    {
+      "type": "snapshot_v2",
+      "content": "Материализован и проверен predicted snapshot ver-bpmn-001 из планируемых sparse-операций; он включает normal, return и timer пути."
+    },
+    {
+      "type": "draft_package",
+      "package_hash": "c38a69c2ccfd1d6d83f039a1f260410b1ee0518f2f8e7fe734574bceaf2ad194",
+      "content": "Показан полный mutation package с графом, сценариями, sparse-операциями, projection impact и recovery."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "c38a69c2ccfd1d6d83f039a1f260410b1ee0518f2f8e7fe734574bceaf2ad194",
+      "performer_type": "человек",
+      "confirmed_by": "Елена Орлова",
+      "content": "Человек подтвердил точный показанный пакет."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-bpmn-001",
+      "content": "Одна идемпотентная transaction применена только к in-memory fixture."
+    },
+    {
+      "type": "sparse_apply",
+      "transaction_id": "txn-bpmn-001",
+      "content": "Применены sparse authoring rows версии ver-bpmn-001."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-bpmn-001",
+      "content": "Перечитаны transaction, решения, изменения, authoring rows и materialized snapshot."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-bpmn-001",
+      "content": "Сохранён checkpoint после readback: working draft ver-bpmn-001 и transaction txn-bpmn-001."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Разрешён exact effective snapshot snap-bpmn-001 для ver-bpmn-001; его fingerprint e1cc87d13c5599c88f92818473ad6607376f4eb59db35e6b7680d0a30d4e9eb8."
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "content": "До сборки подтверждён allowlist: один внутренний pool, lane позиции, user/service tasks, exclusive gateway, boundary timer, none start/end и sequence flows; запрещённых элементов нет."
+    },
+    {
+      "type": "projection_build_started",
+      "content": "Из одного exact snapshot создан один projection IR для build-bpmn-001."
+    },
+    {
+      "type": "bpmn_generated",
+      "content": "Из IR детерминированно сгенерирован BPMN с trace metadata для процесса, системы, позиции, действий, событий, gateway и edges."
+    },
+    {
+      "type": "svg_generated",
+      "content": "Из того же IR детерминированно сгенерирован SVG."
+    },
+    {
+      "type": "projection_validated",
+      "content": "Локальная structural validation подтвердила IR, BPMN XML, references, DI, manifest hashes, trace coverage и view readiness."
+    },
+    {
+      "type": "lineage_verified",
+      "content": "BPMN, SVG и manifest доказанно происходят из IR exact snapshot snap-bpmn-001 и имеют единый fingerprint e1cc87d13c5599c88f92818473ad6607376f4eb59db35e6b7680d0a30d4e9eb8."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-bpmn-001",
+        "decision_rows": 2,
+        "change_rows": 1,
+        "model_rows": 20,
+        "target": "in-memory fixture only"
+      }
+    ],
+    "external_mutations": [],
+    "artifacts": {
+      "snapshot_id": "snap-bpmn-001",
+      "projection_build_id": "build-bpmn-001",
+      "ir_count": 1,
+      "bpmn": "generated",
+      "svg": "generated",
+      "manifest": "generated",
+      "model_fingerprint": "e1cc87d13c5599c88f92818473ad6607376f4eb59db35e6b7680d0a30d4e9eb8"
+    },
+    "validations": {
+      "effective_snapshot_resolved": true,
+      "bpmn_allowlist_checked": true,
+      "bpmn_structural_validation": true,
+      "projection_lineage_verified": true
+    },
+    "readiness": {
+      "view": "ready",
+      "deployment": "blocked"
+    },
+    "blockers": [
+      "Не выполнена внешняя проверка актуальным Camunda Desktop Modeler или эквивалентным зафиксированным lint; это deployment gate и не отменяет локальную structural validation."
+    ]
+  }
+}

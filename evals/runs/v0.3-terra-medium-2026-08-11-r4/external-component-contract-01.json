@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "trial_id": "external-component-contract-01",
+  "case_id": "external-component-contract",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/LANGUAGE.md",
+    "skills/model-production-system/references/METAONTOLOGY.md",
+    "skills/model-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Поставщик продаёт два разных продукта и отдельно передаёт переиспользуемый материал; компоненты используются в нескольких действиях внутренней системы."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала зафиксирую границу и безопасный режим, чтобы не моделировать поставщика как внутреннюю систему.",
+      "questions": ["Как называется моделируемый внутренний бизнес и в каком режиме безопасного fixture ведём работу: read-only, proposal или write?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Моделируем внутренний бизнес «Альфа-сборка» в in-memory режиме write; внешние системы поставщика не входят в границу."
+    },
+    {
+      "role": "assistant",
+      "content": "Граница и write-режим fixture установлены. Для атрибуции будущей transaction нужен человек, а не подтверждение агента.",
+      "questions": ["Кто является текущим человеком-редактором и какая у него активная позиция?"],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Елена Смирнова, performer_id perf-elena-smirnova, активное назначение assign-owner-01 на позицию «Владелец производственной системы»."
+    },
+    {
+      "role": "assistant",
+      "content": "Редактор и активное назначение установлены. Проверяю, являются ли названные результаты отдельными продуктами, а не вариантами одного продукта.",
+      "questions": ["Какие именно два результата поставщика принимаются отдельно и по каким различающимся критериям?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "«Набор деталей Standard» принимается по комплектности 10 деталей, а «Набор деталей Premium» — по комплектности 10 деталей и сертификату материала; их заказывают и оплачивают отдельно."
+    },
+    {
+      "role": "assistant",
+      "content": "Это два отдельных продукта: у них самостоятельные приёмка и расчёт. Теперь отделю переиспользуемый материал от данных конкретной поставки.",
+      "questions": ["Что именно поставщик передаёт как переиспользуемый материал: текст или URL, и меняется ли он в каждом конкретном сообщении?"],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Материал — URL на постоянную инструкцию по сборке; он используется многократно, а конкретные сообщения с URL являются данными исполнения."
+    },
+    {
+      "role": "assistant",
+      "content": "URL — материал; сообщения о передаче не становятся новыми материалами. Для контракта нужны внешний контрагент и отдельные позиции компонентов.",
+      "questions": ["Назовите внешнего контрагента и подтвердите: один контракт содержит три отдельные позиции — Standard, Premium и инструкцию?"],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Внешний контрагент — «Бета-поставка»; да, договор C-01 содержит три позиции: Standard, Premium и URL-инструкция, каждая с отдельной ценой и приёмкой."
+    },
+    {
+      "role": "assistant",
+      "content": "Контрагент остаётся внешним; договору соответствуют три позиции, каждая с ровно одним компонентом. Зафиксирую интерфейсы передачи до внутренних связей использования.",
+      "questions": ["Для каждой из трёх позиций укажите триггер, канал, формат, пакет и действие приёмки или мотивированного отказа."],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "По заказу: Standard и Premium приходят курьером в коробке с накладной, кладовщик сверяет комплектность и возвращает при несоответствии; URL приходит письмом после заказа, координатор открывает ссылку и отклоняет письмо с нерабочей ссылкой."
+    },
+    {
+      "role": "assistant",
+      "content": "Интерфейсы передачи определены. Осталось связать каждый компонент с конкретными внутренними действиями, а не с поставщиком как системой.",
+      "questions": ["Какие действия внутреннего процесса используют Standard, Premium и URL-инструкцию, и какая позиция отвечает за каждое действие?"],
+      "active_question_id": "q-007"
+    },
+    {
+      "role": "user",
+      "content": "Кладовщик принимает оба набора; сборщик собирает изделие из Standard или Premium; контролёр проверяет собранное изделие по URL-инструкции; координатор проверяет URL при получении."
+    },
+    {
+      "role": "assistant",
+      "content": "Связи использования получены: material связывается с действиями «проверить URL-инструкцию» и «проверить изделие», а продукты — с приёмкой и сборкой. Для полного пути нужен единый основной объект и терминальные результаты ветвей.",
+      "questions": ["Какой один объект работы проходит процесс и каковы конечные результаты нормального пути, отказа поставки и возврата на исправление?"],
+      "active_question_id": "q-008"
+    },
+    {
+      "role": "user",
+      "content": "Объект — заказ на сборку; нормальный результат — принятое собранное изделие, отказ — заказ возвращён поставщику на замену, исправление — изделие возвращено сборщику и затем повторно проверяется."
+    },
+    {
+      "role": "assistant",
+      "content": "Полный in-memory package сформирован: граница «Альфа-сборки»; черновик ver-fixture-draft-01 без предшественника; Елена Смирнова / perf-elena-smirnova / assign-owner-01; внутренняя система, четыре позиции, объект «заказ на сборку» и его состояния; два отдельно принимаемых продукта с внешним происхождением; материал URL-инструкция; контрагент «Бета-поставка»; договор C-01 с тремя позициями и тремя интерфейсами; процесс с приёмкой, сборкой, контролем, отказом поставки и возвратом на исправление; relations «действие → использует → компонент»; одна строка решения, 29 строк изменений и 47 authoring rows. Будут материализованы snapshot и projection IR; BPMN/SVG останутся view-ready, но deployment-ready заблокирован отсутствием worker/form contracts. package_id pkg-ext-component-01, package_hash 7f9bb484df474144612f55285a11edcf70af2557f50e9446d2250d1f4e3ff55d. Preconditions: тот же model_id model-fixture-01, тот же черновик, нет transaction txn-ext-component-01, fixture не изменён. Recovery: при неизвестном результате сначала read-back по txn-ext-component-01; при частичной записи — дописать тот же пакет только при сохранённых preconditions.",
+      "questions": ["Елена Смирнова, подтверждаете запись показанного полного пакета pkg-ext-component-01 в черновик модели?"],
+      "active_question_id": "q-009"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись показанного полного пакета pkg-ext-component-01 в черновик модели."
+    },
+    {
+      "role": "assistant",
+      "content": "In-memory transaction txn-ext-component-01 записана и перечитана: все 47 authoring rows, решение и 29 изменений совпали с пакетом; resolved snapshot имеет достижимые terminal outcomes для normal, refusal и return paths. Projection IR, BPMN и SVG построены из одного fingerprint; view readiness подтверждена, deployment readiness остаётся blocked из-за неизвестных worker/form contracts. Внешних изменений не было."
+    }
+  ],
+  "events": [
+    {"type": "source_authority_resolved", "content": "Selected skill, its directly required bundled references, and the fresh-agent contract were used as authority."},
+    {"type": "scope_checked", "content": "The boundary is the internal business Альфа-сборка; Бета-поставка remains an external counterparty; the fixture is in-memory write mode."},
+    {"type": "editor_identified", "content": "Елена Смирнова is the identified human editor with performer_id perf-elena-smirnova and assignment_id assign-owner-01."},
+    {"type": "performer_lookup", "content": "The synthetic fixture supplied the active owner assignment for the identified performer."},
+    {"type": "product_identity_test", "content": "Standard and Premium are separately ordered, accepted, and paid products with distinct acceptance criteria."},
+    {"type": "component_type_resolved", "content": "The reusable URL instruction is a material; concrete delivery messages are execution data."},
+    {"type": "counterparty_resolved", "content": "Бета-поставка was resolved as an external counterparty, not an invented internal production system."},
+    {"type": "contract_items_resolved", "content": "Contract C-01 has three single-component items: Standard product, Premium product, and URL material."},
+    {"type": "transfer_interface_resolved", "content": "Trigger, channel, format/package, acceptance, rejection, and return were defined for each contract item before internal-use linkage."},
+    {"type": "consumer_actions_linked", "content": "Both products were linked to receiving and assembly actions; the material was linked to URL checking and product control actions."},
+    {"type": "relation_resolved", "content": "Canonical action-to-component use relations and the order object lifecycle were resolved."},
+    {"type": "product_origin_linked", "content": "Each product has external origin through its Contract C-01 item."},
+    {"type": "draft_package", "package_id": "pkg-ext-component-01", "package_hash": "7f9bb484df474144612f55285a11edcf70af2557f50e9446d2250d1f4e3ff55d", "content": "The full mutation package was shown before confirmation."},
+    {"type": "exact_package_confirmation", "package_id": "pkg-ext-component-01", "package_hash": "7f9bb484df474144612f55285a11edcf70af2557f50e9446d2250d1f4e3ff55d", "performer_type": "человек", "confirmed_by": "Елена Смирнова", "content": "The identified human explicitly confirmed the exact displayed package."},
+    {"type": "model_write", "transaction_id": "txn-ext-component-01", "content": "One in-memory transaction wrote the decision, 29 change rows, 47 authoring rows, resolved snapshot, and projection IR."},
+    {"type": "readback", "transaction_id": "txn-ext-component-01", "content": "The transaction, journals, authoring rows, snapshot, selectors, graph paths, and projection artifacts were reread against the package."},
+    {"type": "checkpoint", "transaction_id": "txn-ext-component-01", "content": "Verified in-memory checkpoint saved after transaction readback."},
+    {"type": "projection_build_started", "content": "Projection IR build was started from the exact resolved snapshot."},
+    {"type": "bpmn_generated", "content": "BPMN was generated in memory from the projection IR."},
+    {"type": "svg_generated", "content": "SVG was generated in memory from the same projection IR."},
+    {"type": "projection_validated", "content": "BPMN and SVG shared one fingerprint and passed view-readiness checks; deployment readiness is blocked by unknown worker/form contracts."}
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-ext-component-01",
+        "decision_rows": 1,
+        "change_rows": 29,
+        "model_rows": 47,
+        "mode": "in-memory"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "package_hash_matched_confirmation": true,
+      "transaction_readback_matched_package": true,
+      "schema_fk_and_selector_checks_passed": true,
+      "graph_reachability_passed": true,
+      "three_scenarios_completed": true,
+      "projection_fingerprint_matched": true,
+      "external_mutations_absent": true
+    }
+  }
+}

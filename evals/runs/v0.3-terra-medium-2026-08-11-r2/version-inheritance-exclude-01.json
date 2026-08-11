@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "trial_id": "version-inheritance-exclude-01",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent; allowed_files=skills/maintain-production-system/SKILL.md,skills/maintain-production-system/references/LANGUAGE.md,skills/maintain-production-system/references/METAONTOLOGY.md,skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md,skills/maintain-production-system/references/INTERVIEW-CONTRACT.md,skills/maintain-production-system/references/TEMPLATE-CONTRACT.md,skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json,skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json,skills/maintain-production-system/references/PROJECTION-CONTRACT.md,skills/maintain-production-system/references/MIGRATION-v0.2-to-v0.3.md,evals/FRESH-AGENT-CONTRACT.md",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "isolated": true,
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v2 меняется определение лида, один процесс исключается, остальные элементы не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "Сначала зафиксирую точную модель, версию и редактора: это нужно, чтобы новая редакция не перезаписала действующую историю.",
+      "questions": ["Какие книга, model_id, действующая и рабочая версии, а также кто идентифицированный редактор с активным назначением?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Это безопасная in-memory книга «Продажи», model_id model-sales. Действует ver-v1, единственный черновик ver-v2 с predecessor ver-v1. Редактор — Анна Смирнова, perf-anna-smirnova, активное назначение assign-analyst."
+    },
+    {
+      "role": "assistant",
+      "content": "Версии образуют допустимую линейную цепочку. Изменение определения требует новой редакции stable ID, если идентичность лида сохраняется.",
+      "questions": ["Каково точное новое определение лида и сохраняет ли квалифицированный лид тот же stable ID и историю?"],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Новое определение: «Лид — контакт или организация с подтверждённой потребностью, допущенный к квалификации». Квалифицированный лид сохраняет тот же ID и историю; это не новый объект."
+    },
+    {
+      "role": "assistant",
+      "content": "Это целевое изменение одного объекта, а не разделение объекта и состояния.",
+      "questions": ["Какой именно process_id исключается, есть ли у него зависимые authoring rows или активные экземпляры, и по какому правилу они будут обработаны?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Исключается независимый процесс proc-cold-outreach; в fixture у него нет зависимых authoring rows и активных экземпляров. Остальные stable IDs и связи наследуются без изменений."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет pkg-version-inheritance-exclude-01 для ver-v2: (1) применить новую редакцию obj-lead только с изменённым определением; (2) добавить для proc-cold-outreach строку version_operation=исключить; (3) не копировать остальные строки из ver-v1, а разрешить их через predecessor; (4) записать решение и две строки Изменения модели, пересобрать срез и затронутые представления. Основание — целевое решение; активных экземпляров для миграции нет; rollback — продолжить работу в ver-v1. package_hash: 989595d9c635aabf6d46cdc0f8d0d7e59c5d27590fa0d9015ff7f36e9e3db35d.",
+      "questions": ["Анна Смирнова, подтверждаете запись показанного пакета pkg-version-inheritance-exclude-01 в черновик модели?"],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан только в in-memory outcome одной transaction txn-version-inheritance-exclude-01. Срез ver-v2 берёт obj-lead из ver-v2, не включает proc-cold-outreach и наследует все остальные элементы из ver-v1; исходная ver-v1 не менялась. Перечитаны transaction, срез и проверки; версия остаётся черновиком, поэтому в живое исполнение она не введена."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "In-memory model metadata and the v1 authoring snapshot are the authority for the proposed v2 delta."
+    },
+    {
+      "type": "editor_identified",
+      "performer_id": "perf-anna-smirnova",
+      "assignment_id": "assign-analyst"
+    },
+    {
+      "type": "base_version_resolved",
+      "base_version_id": "ver-v1",
+      "working_version_id": "ver-v2"
+    },
+    {
+      "type": "predecessor_resolved",
+      "version_id": "ver-v2",
+      "predecessor_version_id": "ver-v1"
+    },
+    {
+      "type": "snapshot_resolved",
+      "version_id": "ver-v1",
+      "content": "The effective v1 snapshot was read before drafting the successor delta."
+    },
+    {
+      "type": "identity_test",
+      "stable_id": "obj-lead",
+      "content": "Qualification preserves the lead ID and history, so it is a state of the same object rather than a new object."
+    },
+    {
+      "type": "scope_checked",
+      "content": "proc-cold-outreach is independent in the fixture and has no dependent authoring rows or active instances."
+    },
+    {
+      "type": "sparse_apply",
+      "stable_id": "obj-lead",
+      "version_id": "ver-v2",
+      "content": "Only the revised definition is applied in the successor version."
+    },
+    {
+      "type": "sparse_exclude",
+      "stable_id": "proc-cold-outreach",
+      "version_id": "ver-v2",
+      "content": "The process is omitted from the effective successor snapshot by an exclusion row."
+    },
+    {
+      "type": "inheritance_proved",
+      "content": "All other stable IDs resolve from ver-v1 through the verified predecessor chain; no full-version copy is made."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-version-inheritance-exclude-01",
+      "package_hash": "989595d9c635aabf6d46cdc0f8d0d7e59c5d27590fa0d9015ff7f36e9e3db35d"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "989595d9c635aabf6d46cdc0f8d0d7e59c5d27590fa0d9015ff7f36e9e3db35d",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова"
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-version-inheritance-exclude-01",
+      "content": "One in-memory transaction wrote the decision, the obj-lead apply revision, the proc-cold-outreach exclusion, change history, and rebuilt derived views."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-version-inheritance-exclude-01",
+      "content": "The in-memory transaction, effective v2 snapshot, and structural checks were reread."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-version-inheritance-exclude-01",
+      "content": "Verified v2 remains a draft; the next distinct human decision would be version acceptance, not a rewrite of this transaction."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-version-inheritance-exclude-01",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "predecessor_chain_valid": true,
+      "lead_identity_preserved": true,
+      "sparse_delta_only": true,
+      "excluded_process_omitted": true,
+      "inherited_elements_resolved": true,
+      "transaction_readback_verified": true
+    }
+  }
+}

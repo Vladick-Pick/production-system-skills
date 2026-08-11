@@ -1,0 +1,196 @@
+{
+  "schema_version": 1,
+  "trial_id": "interview-confirm-commit-01",
+  "case_id": "interview-confirm-commit",
+  "provenance": "fresh_agent",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Хочу описать новый процесс: мы принимаем заявки на обучение, проверяем их и либо зачисляем человека, либо просим исправить данные."
+    },
+    {
+      "role": "assistant",
+      "content": "Для черновой модели v0.3 нужен один первичный контур. Сначала зафиксирую продукт и получателя, потому что это определит границу процесса.",
+      "questions": [
+        "Что именно получатель может отдельно принять как результат процесса: подтверждённое зачисление, проверенную заявку или другой результат?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Результат для поступающего — подтверждённое зачисление на программу; его принимают письмом с номером зачисления."
+    },
+    {
+      "role": "assistant",
+      "content": "Фиксирую кандидата продукта «подтверждённое зачисление на программу». При ошибке в документах результат не принимается и заявка возвращается на исправление.",
+      "questions": [
+        "Правильно ли, что заявка сохраняет тот же идентификатор после возврата на исправление, а меняется только её состояние?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Да."
+    },
+    {
+      "role": "assistant",
+      "content": "Локальный ответ принят: это один объект «заявка» со сменой состояния; запись в модель ещё не разрешена.",
+      "questions": [
+        "Какое событие создаёт экземпляр процесса и какая внутренняя позиция первой проверяет заявку?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Экземпляр создаёт отправка формы поступающим. Первой заявку проверяет специалист приёмной комиссии."
+    },
+    {
+      "role": "assistant",
+      "content": "Понял старт и первую ответственность. Для полного графа нужно определить решение и оба конечных исхода.",
+      "questions": [
+        "После проверки специалист принимает решение сам: при комплектных данных зачисляет, а при неполных возвращает ту же заявку поступающему на исправление?"
+      ],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Да. После исправления поступающий снова отправляет заявку, и специалист проверяет её повторно."
+    },
+    {
+      "role": "assistant",
+      "content": "Фиксирую возвратную ветку «запросить исправление → получить исправленную заявку → повторно проверить». Это второй локальный ответ, а не подтверждение пакета.",
+      "questions": [
+        "Кто является идентифицированным редактором этой модели и какую позицию он занимает?"
+      ],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Я Анна Смирнова, руководитель приёмной комиссии."
+    },
+    {
+      "role": "assistant",
+      "content": "Полный пакет `pkg-admissions-001` для in-memory черновика v0.3: граница — внутренняя приёмная комиссия; внешний контрагент — поступающий. Новый продукт `product-confirmed-enrollment` принимается поступающим письмом с номером зачисления. Новый объект `object-application` имеет состояния `submitted`, `under-review`, `correction-requested`, `resubmitted`, `enrolled`, `rejected`; возвращённая заявка сохраняет ID. Добавляются система `system-admissions`, позиция `position-admissions-specialist`, процесс `process-application-review`, действия `receive-application`, `review-application`, `request-correction`, `receive-corrected-application`, `confirm-enrollment` и `reject-application`, их последовательные, условные и возвратные edges. Поступающий остаётся внешним контрагентом; вход передаётся через форму, выход — письмом; внутренние процессы поступающего не моделируются. Анна Смирнова добавляется как performer и назначается на позицию руководителя приёмной комиссии для атрибуции решения. Операции — только `применить` в рабочую версию `version-draft-001`; переход статуса версии не входит. Предусловия: schema v0.3, неизменные fixture IDs, нет transaction `tx-admissions-001`. Проверки: FK, selectors, линейное наследование, достижимость всех ветвей, три сценария и разрешённый snapshot; recovery — read-back по transaction ID. Проекция: BPMN/SVG view-ready после сборки из snapshot, deployment readiness не заявляется без Camunda implementation contracts. package_hash: `80cee7d85a0d38cd6487cc66e4995433ccd37e8bea2418c9842d3cd7b4df6fcb`.",
+      "questions": [
+        "Подтверждаете запись показанного пакета `pkg-admissions-001` в черновик модели?"
+      ],
+      "active_question_id": "q-006"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю запись показанного пакета в черновик."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет записан одной in-memory transaction `tx-admissions-001`, затем перечитан. Черновой snapshot согласован: нормальный путь заканчивается принятым зачислением; неполные данные ведут к мотивированному запросу исправления; повторная подача возвращает тот же объект к проверке. BPMN и SVG построены из одного snapshot для просмотра; внешних изменений не выполнено."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Использован безопасный in-memory fixture schema v0.3; пользовательские ответы являются источником фактов о новом контуре."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "Определены model-demo-001, working_version_id version-draft-001 и current_version_id version-current-001."
+    },
+    {
+      "type": "scope_checked",
+      "content": "В границу включена внутренняя приёмная комиссия; поступающий остаётся внешним контрагентом."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Подтверждающий человек: Анна Смирнова, руководитель приёмной комиссии; performer и assignment включены в пакет."
+    },
+    {
+      "type": "identity_test",
+      "content": "Локальное «да» по q-002 установило, что возвращённая заявка сохраняет идентичность и меняет состояние; записи не было."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Первое действие и решение закреплены за позицией специалиста приёмной комиссии."
+    },
+    {
+      "type": "counterparty_resolved",
+      "content": "Поступающий смоделирован внешним контрагентом без выдуманной внешней производственной системы."
+    },
+    {
+      "type": "product_origin_linked",
+      "content": "Продукт подтверждённого зачисления связан с внутренней системой приёмной комиссии как производителем."
+    },
+    {
+      "type": "transfer_interface_resolved",
+      "content": "Определены передача заявки через форму и передача подтверждения письмом, включая приёмку и возврат на исправление."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Связаны действия, состояния заявки, нормальная, отказная и возвратная ветви процесса."
+    },
+    {
+      "type": "draft_package",
+      "package_id": "pkg-admissions-001",
+      "package_hash": "80cee7d85a0d38cd6487cc66e4995433ccd37e8bea2418c9842d3cd7b4df6fcb",
+      "content": "Полный неизменённый пакет показан до запроса подтверждения."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_id": "pkg-admissions-001",
+      "package_hash": "80cee7d85a0d38cd6487cc66e4995433ccd37e8bea2418c9842d3cd7b4df6fcb",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова",
+      "content": "Явное подтверждение последовало непосредственно на вопрос о записи полного пакета."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "tx-admissions-001",
+      "content": "Одна идемпотентная in-memory transaction записала performer/assignment, решение, authoring rows, изменения модели и materialized snapshot."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "tx-admissions-001",
+      "content": "Перечитаны transaction, решение, authoring rows, изменения и resolved snapshot."
+    },
+    {
+      "type": "bpmn_generated",
+      "content": "BPMN построен из exact in-memory snapshot."
+    },
+    {
+      "type": "svg_generated",
+      "content": "SVG построен из того же projection IR."
+    },
+    {
+      "type": "projection_validated",
+      "content": "View readiness проверена; deployment readiness не заявлена."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "tx-admissions-001",
+      "content": "write_state=verified; следующий шаг — передать последующие изменения в maintain-production-system."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-admissions-001",
+        "decision_rows": 1,
+        "change_rows": 18,
+        "model_rows": 25
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "schema_v03": true,
+      "foreign_keys_resolved": true,
+      "selectors_resolved": true,
+      "single_draft": true,
+      "graph_reachable": true,
+      "normal_path_scenario": true,
+      "rejection_scenario": true,
+      "return_and_reopen_scenario": true,
+      "snapshot_readback_matches_package": true,
+      "projection_view_ready": true
+    }
+  }
+}

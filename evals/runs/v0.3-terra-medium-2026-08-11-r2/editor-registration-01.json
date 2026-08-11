@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "trial_id": "editor-registration-01",
+  "case_id": "editor-registration",
+  "provenance": "fresh_agent; allowed_files: skills/maintain-production-system/SKILL.md, skills/maintain-production-system/references/LANGUAGE.md, skills/maintain-production-system/references/METAONTOLOGY.md, skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md, skills/maintain-production-system/references/INTERVIEW-CONTRACT.md, skills/maintain-production-system/references/TEMPLATE-CONTRACT.md, skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json, skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json, skills/maintain-production-system/references/PROJECTION-CONTRACT.md, evals/FRESH-AGENT-CONTRACT.md",
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "isolated": true,
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Я новый человек и хочу изменить модель. Меня нет в реестре исполнителей."
+    },
+    {
+      "role": "assistant",
+      "content": "Чтобы включить вас в первый подтверждённый пакет изменения, укажите вашу позицию в этой модели.",
+      "questions": [
+        "Какую позицию вы занимаете в этой модели?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Операционный менеджер."
+    },
+    {
+      "role": "assistant",
+      "content": "Позиция существует в модели и может быть включена в новое назначение. Теперь уточню саму правку.",
+      "questions": [
+        "Что именно нужно изменить в модели?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "В черновике версии переименуйте действие act-review-request с «Проверить заявку» на «Первично проверить заявку». Логика, ответственный, входы, выходы и активные экземпляры не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "Показан пакет mp-editor-registration-01 для черновика model-v03-draft: зарегистрировать исполнителя «Ирина Смирнова» как performer-irina-smirnova, создать её активное назначение assignment-irina-smirnova-operations-manager на существующую позицию pos-operations-manager с 2026-08-11 и создать разреженную редакцию act-review-request с новым названием. Изменяются только название действия, записи исполнителя и назначения, одна запись решения и одна запись журнала изменений; версия, логика процесса, связи и активные экземпляры не меняются. После записи пересобирается затронутая проекция с новым названием действия, без изменения её графа. Проверки: исходная редакция и рабочий черновик не изменились, внешние ключи назначения разрешены, effective snapshot содержит новое название, затронутая проекция согласована. Восстановление: при несовпадении предусловий пакет не записывается. package_hash: a3872546477dfa6b96a8e9a8da690fb31c48487890012ec75e1595e7da701300.",
+      "questions": [
+        "Подтверждаете запись показанного пакета mp-editor-registration-01 в черновик модели?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывайте показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "В in-memory transaction tx-editor-registration-01 зарегистрированы исполнитель и назначение, добавлена разреженная редакция действия, решение и журнал изменения. Read-back подтвердил состав транзакции, срез и проверки. Внешних систем не изменялось."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "In-memory fixture: model-v03, schema v0.3, writable draft model-v03-draft and existing position pos-operations-manager."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "Normalized name Ирина Смирнова has no existing performer_id in the fixture."
+    },
+    {
+      "type": "editor_identified",
+      "content": "The requesting editor is the human Ирина Смирнова; registration is deferred to the first confirmed transaction."
+    },
+    {
+      "type": "position_resolved",
+      "content": "The supplied position maps to existing pos-operations-manager."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The requested change is a title-only revision of act-review-request; process logic, relationships, version transition, active instances, and the BPMN graph are out of scope, while the affected projection label must be rebuilt."
+    },
+    {
+      "type": "base_version_resolved",
+      "content": "The working version is model-v03-draft with its unchanged resolved predecessor snapshot."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "The effective snapshot contains act-review-request with its existing responsible position and unchanged relations."
+    },
+    {
+      "type": "draft_package",
+      "content": "Package mp-editor-registration-01 includes the new performer, assignment, sparse action revision, one decision row, one change row, validation, and recovery conditions.",
+      "package_hash": "a3872546477dfa6b96a8e9a8da690fb31c48487890012ec75e1595e7da701300"
+    },
+    {
+      "type": "exact_package_confirmation",
+      "content": "The identified human confirmed the unchanged displayed package.",
+      "package_hash": "a3872546477dfa6b96a8e9a8da690fb31c48487890012ec75e1595e7da701300",
+      "performer_type": "человек",
+      "confirmed_by": "Ирина Смирнова"
+    },
+    {
+      "type": "model_write",
+      "content": "In-memory transaction wrote performer-irina-smirnova, assignment-irina-smirnova-operations-manager, and the sparse revision of act-review-request before the decision and change journals were verified.",
+      "transaction_id": "tx-editor-registration-01"
+    },
+    {
+      "type": "readback",
+      "content": "The in-memory transaction, decision row, change row, foreign keys, and resolved snapshot were reread successfully.",
+      "transaction_id": "tx-editor-registration-01"
+    },
+    {
+      "type": "checkpoint",
+      "content": "The verified in-memory transaction is complete; no further active question remains.",
+      "transaction_id": "tx-editor-registration-01"
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-editor-registration-01",
+        "decision_rows": 1,
+        "change_rows": 1,
+        "model_rows": 3
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "preconditions_verified": true,
+      "assignment_foreign_key_verified": true,
+      "snapshot_resolved": true,
+      "transaction_readback_verified": true,
+      "projection_consistency_verified": true
+    }
+  }
+}

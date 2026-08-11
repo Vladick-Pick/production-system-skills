@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "trial_id": "bpmn-projection-lineage-02",
+  "case_id": "bpmn-projection-lineage",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/LANGUAGE.md",
+    "skills/model-production-system/references/METAONTOLOGY.md",
+    "skills/model-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/model-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/model-production-system/references/PROJECTION-CONTRACT.md",
+    "skills/model-production-system/scripts/bpmn/common.py",
+    "skills/model-production-system/scripts/bpmn/generate.py",
+    "skills/model-production-system/scripts/bpmn/validate.py",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Построить схему процесса с human task, automation, exclusive branch, return и timer."
+    },
+    {
+      "role": "assistant",
+      "content": "Работаю только с безопасным in-memory контуром: внешнюю книгу не изменяю. Чтобы определить границу и исполнимый путь, назовите внутреннюю систему, результат с критерием приёмки, одну ответственную позицию и смысл двух исходов решения.",
+      "questions": [
+        "Каковы эти четыре факта для процесса?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Система «Обработка запросов». Результат — отправленный заявителю результат рассмотрения, принятый при успешной доставке. Ответственна позиция «Оператор». Оператор проверяет запрос и фиксирует решение: одобренный запрос отправляется автоматически, иначе запрос возвращается оператору на доработку. На проверку даётся 24 часа; по истечении срока ветка завершается исходом «Срок истёк»."
+    },
+    {
+      "role": "assistant",
+      "content": "Граница определена: один внутренний процесс, human task «Проверить запрос и зафиксировать решение», service task «Отправить результат автоматически», exclusive gateway с FEEL-веткой одобрения и default-возвратом, interrupting boundary timer PT24H. Для атрибуции решения назовите имя, фамилию и активную позицию редактора.",
+      "questions": [
+        "Кто подтверждает пакет как человек-редактор?"
+      ],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова, активная позиция «Оператор»."
+    },
+    {
+      "role": "assistant",
+      "content": "Подготовлен полный in-memory package pkg-bpmn-projection-lineage-02 для новой черновой версии v0.3-trial. Он создаёт систему system-request-handling, позицию position-operator, процесс process-request-review, действия action-review-request и action-send-result, exclusive gateway gateway-request-approved, start/end/timer events и шесть трассируемых edges. Путь одобрения имеет FEEL `= approved = true`; единственный default edge возвращает к human task; timer привязан к human task и ведёт к отдельному end. Продуктовый результат — доставленный результат рассмотрения с приёмкой успешной доставки. package_hash: 0c406f1ae11e9c6d57b879be00a5dcf02258cd4d9c23f80fb7a542e9e49b8e8b. Подтверждение запишет только этот полный пакет в безопасный in-memory fixture.",
+      "questions": [
+        "Анна Смирнова, подтверждаете точный пакет с этим hash?"
+      ],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "Да, подтверждаю точный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "Пакет применён только в in-memory fixture одной transaction txn-bpmn-projection-lineage-02 и перечитан. Из одного exact snapshot собраны BPMN и SVG. Allowlist пройден; XML и SVG распарсены, fingerprint совпадает. Статус: готова к просмотру. Deployment не заявлен: нет внешнего доказательства открытия точного BPMN hash в Camunda Desktop Modeler. Внешних изменений нет."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Выбран model-production-system; нормативны его bundled references и контракт fresh-agent trial."
+    },
+    {
+      "type": "scope_checked",
+      "content": "Trial ограничен синтетическим in-memory fixture; внешняя книга и другие системы не изменяются."
+    },
+    {
+      "type": "decisive_question",
+      "active_question_id": "q-001",
+      "content": "Запрошены граница, продуктовый результат, приёмка, позиция и исходы, определяющие граф."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранено состояние orient с ожидаемыми фактами q-001."
+    },
+    {
+      "type": "relation_resolved",
+      "content": "Установлены связи: оператор выполняет human task; сервисная автоматизация отправляет результат; gateway маршрутизирует одобрение или возврат; timer прерывает проверку."
+    },
+    {
+      "type": "decisive_question",
+      "active_question_id": "q-002",
+      "content": "Запрошены идентичность и активное назначение человека, который может подтвердить mutation package."
+    },
+    {
+      "type": "editor_identified",
+      "content": "Получены имя и фамилия: Анна Смирнова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "В in-memory registry выполнен поиск нормализованного ФИО; создано разрешаемое performer_id performer-anna-smirnova."
+    },
+    {
+      "type": "position_resolved",
+      "content": "Подтверждено активное назначение performer-anna-smirnova на position-operator."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Сохранены редактор, позиция, граница и полный граф перед подготовкой пакета."
+    },
+    {
+      "type": "draft_package",
+      "package_hash": "0c406f1ae11e9c6d57b879be00a5dcf02258cd4d9c23f80fb7a542e9e49b8e8b",
+      "content": "Собран полный пакет pkg-bpmn-projection-lineage-02 с одной новой черновой версией и projection impact."
+    },
+    {
+      "type": "decisive_question",
+      "active_question_id": "q-003",
+      "content": "Запрошено точное человеческое подтверждение показанного mutation package."
+    },
+    {
+      "type": "exact_package_confirmation",
+      "package_hash": "0c406f1ae11e9c6d57b879be00a5dcf02258cd4d9c23f80fb7a542e9e49b8e8b",
+      "performer_type": "человек",
+      "confirmed_by": "Анна Смирнова",
+      "content": "Подтверждён именно показанный пакет."
+    },
+    {
+      "type": "model_write",
+      "transaction_id": "txn-bpmn-projection-lineage-02",
+      "content": "Одна идемпотентная transaction применена только к in-memory fixture."
+    },
+    {
+      "type": "readback",
+      "transaction_id": "txn-bpmn-projection-lineage-02",
+      "content": "Перечитана записанная in-memory transaction, её authoring rows, решение и изменения модели."
+    },
+    {
+      "type": "checkpoint",
+      "transaction_id": "txn-bpmn-projection-lineage-02",
+      "content": "После readback сохранён checkpoint verified draft."
+    },
+    {
+      "type": "snapshot_resolved",
+      "content": "Из подтверждённой transaction материализован один exact snapshot v0.3-trial для projection IR."
+    },
+    {
+      "type": "projection_build_started",
+      "content": "BPMN/SVG build начат из единственного projection IR exact snapshot."
+    },
+    {
+      "type": "bpmn_allowlist_checked",
+      "content": "Проверены допустимые элементы: user task, service task, exclusive gateway, none start/end и boundary timer; запрещённых элементов нет."
+    },
+    {
+      "type": "bpmn_generated",
+      "content": "В памяти собран BPMN с sha256 2d7c5e6f05c31747174669803de36621baba8dad8135506b10c3dc3b4a610c8a."
+    },
+    {
+      "type": "svg_generated",
+      "content": "В памяти собран SVG с sha256 9f1bf0107b384b53e88048aba09c8dc7b186397366cc753211f17a5884991881."
+    },
+    {
+      "type": "projection_validated",
+      "content": "IR allowlist, достижимость, default exclusive edge, FEEL, timer attachment и XML/SVG parsing проверены; view blockers отсутствуют."
+    },
+    {
+      "type": "lineage_verified",
+      "content": "BPMN и SVG имеют fingerprint одного IR; результат готов к просмотру. Единственный deployment blocker — отсутствие доказательства Camunda Desktop Modeler для точного BPMN hash."
+    }
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "txn-bpmn-projection-lineage-02",
+        "decision_rows": 1,
+        "change_rows": 18,
+        "model_rows": 22,
+        "scope": "in-memory fixture only"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "json_contract_only": true,
+      "bpmn_allowlist_checked": true,
+      "projection_view_ready": true,
+      "bpmn_svg_lineage_verified": true,
+      "external_mutations_absent": true
+    }
+  }
+}

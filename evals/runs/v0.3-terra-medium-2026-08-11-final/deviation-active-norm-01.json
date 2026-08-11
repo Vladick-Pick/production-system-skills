@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "trial_id": "deviation-active-norm-01",
+  "case_id": "deviation-active-norm",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "На встрече сообщили, что лид обрабатывается пять дней; в целевой модели написано три дня, но действующая норма не названа."
+    },
+    {
+      "role": "assistant",
+      "content": "Пять дней — свидетельство текущего исполнения из коммуникации, а три дня в целевой модели описывают будущее устройство. Пока это не подтверждённое отклонение: нужна действующая норма, с которой можно сравнить факт.",
+      "questions": [
+        "Какая действующая норма обработки лида установлена сейчас и где находится её проверяемый источник?"
+      ],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Действующая норма и её источник не установлены; доступны только сведения со встречи и целевая модель с тремя днями."
+    },
+    {
+      "role": "assistant",
+      "content": "Отклонение не подтверждаю. Факт пяти дней можно оставить кандидатом наблюдения, а отсутствие действующей нормы — пробелом модели. Разница с целевыми тремя днями является целевым разрывом; для подтверждения отклонения сначала нужно установить и проверить действующую норму. Внешних записей не выполнялось."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Сведения со встречи определены как коммуникационный канал факта исполнения; целевая модель определена как источник будущего устройства, а не как действующая норма."
+    },
+    {
+      "type": "decisive_question",
+      "active_question_id": "q-001",
+      "content": "Запрошены действующая норма обработки лида и её проверяемый источник; ответ определяет, возможно ли сравнение с наблюдаемым фактом."
+    },
+    {
+      "type": "active_norm_checked",
+      "content": "Симулятор подтвердил, что действующая норма и её проверяемый источник не установлены."
+    },
+    {
+      "type": "development_candidate_classified",
+      "content": "Сигнал классифицирован как пробел модели; разница между текущим фактом и целевой моделью отмечена как целевой разрыв, не как подтверждённое отклонение."
+    },
+    {
+      "type": "uncertainty_reported",
+      "content": "Для подтверждения отклонения остаётся неизвестной действующая норма обработки лида."
+    },
+    {
+      "type": "checkpoint",
+      "content": "Режим read-only; активный вопрос закрыт; следующий шаг — установить действующую норму и её источник до нового сравнения."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "active_norm_checked": true,
+      "deviation_not_confirmed_without_active_norm": true
+    }
+  }
+}

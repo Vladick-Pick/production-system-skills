@@ -17,13 +17,16 @@ SKILLS = (
 REFERENCES = (
     "LANGUAGE.md",
     "METAONTOLOGY.md",
+    "METHODOLOGY-COMPATIBILITY.md",
     "INTERVIEW-CONTRACT.md",
     "TEMPLATE-CONTRACT.md",
     "PROJECTION-CONTRACT.md",
 )
 EXTRA_BUNDLED_FILES = (
     (ROOT / "templates" / "template-schema-v0.2.json", "TEMPLATE-SCHEMA-v0.2.json"),
+    (ROOT / "templates" / "template-schema-v0.3.json", "TEMPLATE-SCHEMA-v0.3.json"),
     (ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md", "MIGRATION-v0.1-to-v0.2.md"),
+    (ROOT / "templates" / "migrations" / "v0.2-to-v0.3.md", "MIGRATION-v0.2-to-v0.3.md"),
 )
 RUNTIME_SKILLS = {
     "model-production-system",
@@ -36,6 +39,8 @@ RUNTIME_FILES = (
     (ROOT / "scripts" / "bpmn" / "validate.py", Path("bpmn/validate.py")),
     (ROOT / "scripts" / "versioning" / "resolve.py", Path("versioning/resolve.py")),
     (ROOT / "scripts" / "build_template_v0_2.py", Path("build_template_v0_2.py")),
+    (ROOT / "scripts" / "build_template_v0_3.py", Path("build_template_v0_3.py")),
+    (ROOT / "scripts" / "migrate_template_v0_2_to_v0_3.py", Path("migrate_template_v0_2_to_v0_3.py")),
 )
 
 

@@ -1,0 +1,127 @@
+{
+  "schema_version": 1,
+  "trial_id": "version-inheritance-exclude-02",
+  "case_id": "version-inheritance-exclude",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "skills/maintain-production-system/SKILL.md",
+    "skills/maintain-production-system/references/LANGUAGE.md",
+    "skills/maintain-production-system/references/METAONTOLOGY.md",
+    "skills/maintain-production-system/references/METHODOLOGY-COMPATIBILITY.md",
+    "skills/maintain-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-CONTRACT.md",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.2.json",
+    "skills/maintain-production-system/references/TEMPLATE-SCHEMA-v0.3.json",
+    "skills/maintain-production-system/references/PROJECTION-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "В v2 меняется определение лида, один процесс исключается, остальные элементы не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "Для атрибуции будущего пакета назовите, пожалуйста, имя и фамилию человека, который работает с этой моделью.",
+      "questions": ["Как вас зовут (имя и фамилия)?"],
+      "active_question_id": "q-001"
+    },
+    {
+      "role": "user",
+      "content": "Анна Смирнова."
+    },
+    {
+      "role": "assistant",
+      "content": "В синтетической книге нормализованное ФИО «Анна Смирнова» найдено как performer_id perf-anna-smirnova. Для атрибуции решения нужна её активная позиция.",
+      "questions": ["Какую позицию Анна занимает в этой модели?"],
+      "active_question_id": "q-002"
+    },
+    {
+      "role": "user",
+      "content": "Технолог систематизации; assignment_id asg-tech-01 активен."
+    },
+    {
+      "role": "assistant",
+      "content": "Ориентация: model_id model-demo-01, режим write, действующая v1, единственный черновик v2. Проверил линейную цепочку: predecessor v2 — v1; база v1 не имеет незавершённой transaction. Чтобы не менять смысл лида по догадке, уточню точную новую редакцию.",
+      "questions": ["Каково новое определение stable_id object-lead в v2?"],
+      "active_question_id": "q-003"
+    },
+    {
+      "role": "user",
+      "content": "«Лид — идентифицированный потенциальный клиент с подтверждённым каналом связи; один и тот же лид сохраняет ID и историю при квалификации»."
+    },
+    {
+      "role": "assistant",
+      "content": "Это редакция того же объекта object-lead: идентичность сохраняется, квалификация остаётся состоянием, а не новым объектом. В v1 определение было «потенциальный клиент, по которому есть контактные данные». Теперь нужно точно определить единственный исключаемый процесс.",
+      "questions": ["Какой stable_id процесса нужно исключить из v2?"],
+      "active_question_id": "q-004"
+    },
+    {
+      "role": "user",
+      "content": "Исключить process-nurture: «Прогрев лида». Активных экземпляров этого процесса нет; остальные элементы, включая process-qualification и action-qualify-lead, не меняются."
+    },
+    {
+      "role": "assistant",
+      "content": "До подтверждения материализовал effective snapshot v1: object-lead с прежним определением, process-qualification, action-qualify-lead и process-nurture. В безопасном расчёте применил к predecessor v1 только две планируемые sparse-операции для v2 и материализовал predicted snapshot v2: object-lead взят из v2 с новой редакцией; process-nurture отсутствует; process-qualification и action-qualify-lead унаследованы из v1. Тем самым v1 сохранена, исключение действует, а неизменённые элементы доказанно не копируются.\n\nПакет pkg-version-inheritance-exclude-02:\n- база: v1; черновик: v2; predecessor: v1; редактор: Анна Смирнова, Технолог систематизации;\n- применить: object-lead, только поле definition: «потенциальный клиент, по которому есть контактные данные» → «идентифицированный потенциальный клиент с подтверждённым каналом связи; один и тот же лид сохраняет ID и историю при квалификации»;\n- исключить: process-nurture («Прогрев лида»);\n- наследовать без строк v2: process-qualification, action-qualify-lead и остальные элементы v1;\n- влияние: срез модели и Реестр процессов исключат process-nurture; BPMN/SVG для него не строятся; активных экземпляров для миграции нет;\n- preconditions: v2 остаётся единственным черновиком, predecessor и base snapshot не изменились, FK predicted snapshot целостны;\n- recovery: при неизвестном результате сначала искать transaction tx-version-inheritance-exclude-02; частичный результат не считать успехом.\n\npackage_hash: 7bfeb1d3dc5628a2d5c5dbd339e8c0a29b0282b12e2e2e41a9137d7c7e49f711.",
+      "questions": ["Подтверждаете запись показанного пакета pkg-version-inheritance-exclude-02 в черновик модели?"],
+      "active_question_id": "q-005"
+    },
+    {
+      "role": "user",
+      "content": "Да, записывай показанный пакет."
+    },
+    {
+      "role": "assistant",
+      "content": "В одной безопасной in-memory transaction tx-version-inheritance-exclude-02 записаны решение с подтверждением и hash, редакция «применить» object-lead, редакция «исключить» process-nurture и две строки истории изменений. Выполнен read-back: v1 неизменна; v2 содержит только эти две sparse-операции; resolved snapshot v2 содержит наследуемые process-qualification и action-qualify-lead и не содержит process-nurture. Checkpoint сохранён. Внешних систем не изменялось."
+    }
+  ],
+  "events": [
+    {"type": "editor_identified", "performer_name": "Анна Смирнова"},
+    {"type": "performer_lookup", "performer_id": "perf-anna-smirnova", "normalized_name": "анна смирнова"},
+    {"type": "decisive_question", "question_id": "q-002", "subject": "active position"},
+    {"type": "position_resolved", "position": "Технолог систематизации", "assignment_id": "asg-tech-01"},
+    {"type": "source_authority_resolved", "model_id": "model-demo-01", "mode": "write"},
+    {"type": "base_version_resolved", "current_version_id": "v1", "working_version_id": "v2"},
+    {"type": "predecessor_resolved", "version_id": "v2", "predecessor_version_id": "v1"},
+    {"type": "decisive_question", "question_id": "q-003", "subject": "definition of object-lead"},
+    {"type": "identity_test", "stable_id": "object-lead", "result": "same object; identity and history persist through qualification"},
+    {"type": "decisive_question", "question_id": "q-004", "subject": "process to exclude"},
+    {"type": "scope_checked", "changed_stable_ids": ["object-lead", "process-nurture"], "unchanged_stable_ids": ["process-qualification", "action-qualify-lead"]},
+    {"type": "snapshot_v1", "version_id": "v1", "materialized": true, "validated": true},
+    {"type": "snapshot_v2", "version_id": "v2", "kind": "predicted", "materialized": true, "validated": true},
+    {"type": "inheritance_proved", "evidence": "v1 preserved; process-nurture omitted; unchanged IDs resolved from v1 without v2 rows"},
+    {"type": "draft_package", "package_id": "pkg-version-inheritance-exclude-02", "package_hash": "7bfeb1d3dc5628a2d5c5dbd339e8c0a29b0282b12e2e2e41a9137d7c7e49f711"},
+    {"type": "exact_package_confirmation", "package_hash": "7bfeb1d3dc5628a2d5c5dbd339e8c0a29b0282b12e2e2e41a9137d7c7e49f711", "performer_type": "человек", "confirmed_by": "Анна Смирнова"},
+    {"type": "sparse_apply", "transaction_id": "tx-version-inheritance-exclude-02", "stable_id": "object-lead"},
+    {"type": "sparse_exclude", "transaction_id": "tx-version-inheritance-exclude-02", "stable_id": "process-nurture"},
+    {"type": "model_write", "transaction_id": "tx-version-inheritance-exclude-02", "mode": "in-memory"},
+    {"type": "readback", "transaction_id": "tx-version-inheritance-exclude-02", "validated": true},
+    {"type": "checkpoint", "transaction_id": "tx-version-inheritance-exclude-02", "state": "complete"}
+  ],
+  "outcome": {
+    "writes": [
+      {
+        "transaction_id": "tx-version-inheritance-exclude-02",
+        "decision_rows": 1,
+        "change_rows": 2,
+        "model_rows": 2,
+        "operations": ["применить object-lead", "исключить process-nurture"],
+        "storage": "in-memory"
+      }
+    ],
+    "external_mutations": [],
+    "validations": {
+      "predecessor_linear": true,
+      "base_snapshot_materialized": true,
+      "predicted_snapshot_materialized": true,
+      "inheritance_proved": true,
+      "package_confirmation_hash_matched": true,
+      "sparse_operations_only": true,
+      "readback_passed": true,
+      "checkpoint_saved": true,
+      "external_system_unchanged": true
+    }
+  }
+}

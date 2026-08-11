@@ -1,0 +1,181 @@
+{
+  "schema_version": 1,
+  "trial_id": "compaction-recovery-02",
+  "case_id": "compaction-recovery",
+  "provenance": "fresh_agent",
+  "allowed_files": [
+    "AGENTS.md",
+    "skills/model-production-system/SKILL.md",
+    "skills/model-production-system/references/INTERVIEW-CONTRACT.md",
+    "skills/model-production-system/references/TEMPLATE-CONTRACT.md",
+    "evals/FRESH-AGENT-CONTRACT.md"
+  ],
+  "model": "gpt-5.6-terra",
+  "reasoning_effort": "medium",
+  "transcript": [
+    {
+      "role": "user",
+      "content": "Нужно собрать в безопасном in-memory fixture новый контур «Внутренняя обработка заказов». Книга: sheet-order-fixture-001, модель: model-order-001, schema v0.3, working_version_id: ver-order-002, current_version_id: ver-order-001, режим: proposal. Прочитанные источники неизменны: source-orders-001@rev-7 и source-policy-001@rev-3. Fingerprint книги: fp-7a2f. Граница — только внутренняя обработка заказов; нецель — моделирование систем покупателя или курьера. Продукт — «подтверждённый заказ», получатель — покупатель, приёмка — подтверждены состав, адрес и время; мотивированный отказ — невозможность подтвердить состав. Система-производитель — «Обработка заказов». Триггер — новый заказ; объект — заказ, состояния: новый → проверяется → подтверждён / требуется уточнение / отклонён. Менеджер проверяет состав и адрес, при уточнении связывается с покупателем и повторно проверяет, затем подтверждает либо отклоняет заказ. Внешние стороны остаются контрагентами; новых материалов и контрактов нет."
+    },
+    {
+      "role": "assistant",
+      "content": "Для атрибуции будущего пакета нужно идентифицировать редактора; запись в этом прогоне не выполняется.",
+      "questions": [
+        "Каковы имя и фамилия человека, работающего с этой моделью?"
+      ],
+      "active_question_id": "q-001-editor"
+    },
+    {
+      "role": "user",
+      "content": "Мария Орлова."
+    },
+    {
+      "role": "assistant",
+      "content": "По fixture совпадений исполнителя с нормализованным именем нет; новый исполнитель может войти только в полный пакет.",
+      "questions": [
+        "Какую устойчивую позицию занимает Мария Орлова в этом контуре?"
+      ],
+      "active_question_id": "q-002-position"
+    },
+    {
+      "role": "user",
+      "content": "Менеджер по заказам; назначение действует с 2026-08-01."
+    },
+    {
+      "role": "assistant",
+      "content": "Это задаёт ответственную позицию для проверок и коммуникации с покупателем.",
+      "questions": [
+        "Когда состав подтверждён, а адрес отсутствует, правильный исход — «требуется уточнение» с возвратом к проверке, а не мотивированный отказ?"
+      ],
+      "active_question_id": "q-003-missing-address"
+    },
+    {
+      "role": "user",
+      "content": "Да: требуется уточнение, затем повторная проверка."
+    },
+    {
+      "role": "assistant",
+      "content": "Локальное «да» принято только как правило ветвления; оно не подтверждает пакет и не разрешает запись.",
+      "questions": [
+        "При отказе по составу покупатель получает мотивированное уведомление от менеджера по заказам?"
+      ],
+      "active_question_id": "q-004-rejection-notice"
+    },
+    {
+      "role": "assistant",
+      "content": "После сжатия контекста восстановлен сохранённый checkpoint. Ревизии обоих источников и fingerprint книги совпали с checkpoint; активен только сохранённый вопрос.",
+      "questions": [
+        "При отказе по составу покупатель получает мотивированное уведомление от менеджера по заказам?"
+      ],
+      "active_question_id": "q-004-rejection-notice"
+    },
+    {
+      "role": "user",
+      "content": "Да, менеджер по заказам направляет покупателю мотивированное уведомление."
+    },
+    {
+      "role": "assistant",
+      "content": "Собран пакет-кандидат pkg-order-002 для черновой версии ver-order-002: система «Обработка заказов»; продукт «подтверждённый заказ»; объект «заказ» с состояниями и переходами; процесс с действиями проверки, запроса уточнения, повторной проверки, подтверждения, отклонения и уведомления; исполнитель Мария Орлова и назначение «Менеджер по заказам». Источники: source-orders-001@rev-7, source-policy-001@rev-3. package_hash: ddd9b2f932fd0cd84bcba990d0c67c6968cfd83ec4404ff9b9dfe64507752a0f. Режим proposal: пакет сохранён как кандидат без запроса подтверждения и без записи модели."
+    }
+  ],
+  "events": [
+    {
+      "type": "source_authority_resolved",
+      "content": "Fixture sources and their read revisions were established before interviewing."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "source-orders-001@rev-7 and source-policy-001@rev-3 were recorded as the source baseline."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "sheet-order-fixture-001 fingerprint fp-7a2f was recorded as the fixture baseline."
+    },
+    {
+      "type": "scope_checked",
+      "content": "The modeled boundary is internal order processing; buyer and courier systems are outside it."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Asked q-001-editor to identify the human editor.",
+      "active_question_id": "q-001-editor"
+    },
+    {
+      "type": "editor_identified",
+      "content": "The user identified Мария Орлова."
+    },
+    {
+      "type": "performer_lookup",
+      "content": "The in-memory normalized-name lookup found no existing performer."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Asked q-002-position to resolve the editor's accountable position.",
+      "active_question_id": "q-002-position"
+    },
+    {
+      "type": "position_resolved",
+      "content": "Мария Орлова has the position Менеджер по заказам, active from 2026-08-01."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Asked q-003-missing-address to choose between correction and rejection paths.",
+      "active_question_id": "q-003-missing-address"
+    },
+    {
+      "type": "relation_resolved",
+      "content": "A missing address leads to requires-clarification and then repeat verification."
+    },
+    {
+      "type": "decisive_question",
+      "content": "Asked q-004-rejection-notice; it became the sole active question.",
+      "active_question_id": "q-004-rejection-notice"
+    },
+    {
+      "type": "checkpoint",
+      "content": "Persisted checkpoint cp-order-002: state=resolve, mode=proposal, model_id=model-order-001, spreadsheet_id=sheet-order-fixture-001, working_version_id=ver-order-002, current_version_id=ver-order-001, editor=Мария Орлова, active_question=q-004-rejection-notice, package_id=null, package_hash=null, confirmation_id=null, transaction_id=null, write_state=not_started, next_action=ask q-004-rejection-notice."
+    },
+    {
+      "type": "checkpoint_loaded",
+      "content": "A fresh in-memory agent loaded cp-order-002 after simulated compaction."
+    },
+    {
+      "type": "source_revisions_verified",
+      "content": "After loading cp-order-002, source-orders-001 remained rev-7 and source-policy-001 remained rev-3."
+    },
+    {
+      "type": "sheet_fingerprint_verified",
+      "content": "After loading cp-order-002, sheet-order-fixture-001 remained fingerprint fp-7a2f."
+    },
+    {
+      "type": "active_question_restored",
+      "content": "Restored exactly q-004-rejection-notice; no answer was inferred from the compacted context.",
+      "active_question_id": "q-004-rejection-notice"
+    },
+    {
+      "type": "relation_resolved",
+      "content": "The rejection path includes a motivated notice from Менеджер по заказам to the buyer."
+    },
+    {
+      "type": "draft_package",
+      "content": "Prepared proposal-only package pkg-order-002 without a mutation request.",
+      "package_hash": "ddd9b2f932fd0cd84bcba990d0c67c6968cfd83ec4404ff9b9dfe64507752a0f"
+    },
+    {
+      "type": "checkpoint",
+      "content": "Persisted checkpoint cp-order-003: state=draft, mode=proposal, package_id=pkg-order-002, package_hash=ddd9b2f932fd0cd84bcba990d0c67c6968cfd83ec4404ff9b9dfe64507752a0f, confirmation_id=null, transaction_id=null, write_state=not_started, next_action=obtain explicit confirmation only if the session is changed to write mode."
+    }
+  ],
+  "outcome": {
+    "writes": [],
+    "external_mutations": [],
+    "validations": {
+      "checkpoint_loaded": true,
+      "source_revisions_verified_after_compaction": true,
+      "sheet_fingerprint_verified_after_compaction": true,
+      "one_active_question_restored": true,
+      "no_model_write": true,
+      "no_external_mutation": true
+    }
+  }
+}
