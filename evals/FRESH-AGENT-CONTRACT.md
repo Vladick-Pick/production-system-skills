@@ -80,6 +80,13 @@ Trial-агент получает выбранный `SKILL.md`, требуем�
 - `development_registry_write` — in-memory transaction действительно записала строку реестра развития, а не только подготовила пакет;
 - `model_write` — подтверждённая in-memory transaction действительно применила строки модели либо migration batch к тестовой целевой копии;
 - `candidate_handoff` — read-only скилл передал карточку-кандидат и checkpoint в `maintain-production-system`, не записав реестр сам.
+- `map_territory_boundary_checked` — явно установлены территория, каноническая карта и система-владелец факта; CRM-запись или дашборд не объявлены самой живой деятельностью;
+- `definition_observation_split` — определение, формула, норматив или экономическое правило отделены от конкретного события, рассчитанного значения либо начисления;
+- `source_owner_resolved` — установлено, какая система логически владеет исходным операционным, аналитическим или экономическим фактом;
+- `source_binding_resolved` — для элемента карты определён проверяемый контракт получения факта: источник, locator или запрос, область, период и применимая версия;
+- `execution_fact_written_to_canonical_model` — сырое событие или экземпляр исполнения ошибочно записаны как авторское содержание канонической модели;
+- `metric_observation_written_as_definition` — конкретное значение показателя или временной ряд ошибочно записаны как определение показателя;
+- `economic_fact_written_to_canonical_model` — начисление, затрата, выручка или платёж ошибочно записаны как авторское содержание канонической модели.
 
 ## Канонические типы событий
 
@@ -108,6 +115,7 @@ counterparty_resolved
 decisive_question
 development_candidate_classified
 development_registry_write
+definition_observation_split
 deviation_confirmed_without_active_norm
 deviation_types_distinguished
 draft_package
@@ -116,10 +124,12 @@ duplicate_transaction
 editor_identified
 evidence_channel_resolved
 evidence_ledger_created
+economic_fact_written_to_canonical_model
 exact_package_confirmation
 experiment_basis_resolved
 experiment_with_zero_or_two_bases
 experimental_model_version_created
+execution_fact_written_to_canonical_model
 external_business_modeled_as_internal
 external_change_sourced
 external_mutation
@@ -130,8 +140,10 @@ identity_test
 inheritance_proved
 lineage_verified
 manual_svg_edit
+map_territory_boundary_checked
 material_classified
 metric_contract_verified
+metric_observation_written_as_definition
 migration_batch_built
 migration_claimed_complete_with_unresolved
 migration_plan_built
@@ -165,6 +177,8 @@ source_conflict_exposed
 source_conflict_silently_merged
 source_fingerprint_verified
 source_inventory
+source_binding_resolved
+source_owner_resolved
 source_revisions_verified
 source_workbook_modified
 sparse_apply
