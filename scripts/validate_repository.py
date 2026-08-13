@@ -38,6 +38,10 @@ MIGRATION_V1_TO_V2 = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
 MIGRATION_V2_TO_V3 = ROOT / "templates" / "migrations" / "v0.2-to-v0.3.md"
 BEHAVIORAL_CASES = ROOT / "evals" / "cases.yaml"
 FRESH_AGENT_CONTRACT = ROOT / "evals" / "FRESH-AGENT-CONTRACT.md"
+PASSPORT = ROOT / "ПАСПОРТ.md"
+PROJECT_INTENT = ROOT / "docs" / "PROJECT-INTENT.md"
+PLANS_INDEX = ROOT / "plans" / "README.md"
+NEXT_SESSION = ROOT / "NEXT_SESSION.md"
 EXPECTED_V2_SHEETS = (
     "Инструкция",
     "Система",
@@ -228,6 +232,83 @@ def text_files() -> list[Path]:
 def manifest_value(text: str, key: str) -> str | None:
     match = re.search(rf"^{re.escape(key)}:\s*[\"']?([^\n\"']+)[\"']?\s*$", text, re.MULTILINE)
     return match.group(1).strip() if match else None
+
+
+def validate_project_context(errors: list[str]) -> None:
+    required = (
+        ROOT / "AGENTS.md",
+        ROOT / "README.md",
+        PASSPORT,
+        PROJECT_INTENT,
+        PLANS_INDEX,
+        NEXT_SESSION,
+        TEMPLATE_MANIFEST,
+    )
+    missing = [str(path.relative_to(ROOT)) for path in required if not path.is_file()]
+    if missing:
+        errors.append(f"нет обязательных точек восстановления контекста: {missing}")
+        return
+
+    manifest = TEMPLATE_MANIFEST.read_text(encoding="utf-8")
+    version = manifest_value(manifest, "version")
+    if not version:
+        errors.append("невозможно определить стабильную версию для проверки контекста")
+        return
+    release = f"v{version}"
+
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    passport = PASSPORT.read_text(encoding="utf-8")
+    agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
+    intent = PROJECT_INTENT.read_text(encoding="utf-8")
+    plans = PLANS_INDEX.read_text(encoding="utf-8")
+    next_session = NEXT_SESSION.read_text(encoding="utf-8")
+
+    if f"Текущий стабильный релиз — **{release}**" not in readme:
+        errors.append("README.md расходится с версией template-manifest.yaml")
+    if f'stable_release: "{release}"' not in passport:
+        errors.append("ПАСПОРТ.md расходится с версией template-manifest.yaml")
+
+    required_links = {
+        "README.md": ("ПАСПОРТ.md", "docs/PROJECT-INTENT.md", "plans/README.md"),
+        "AGENTS.md": ("ПАСПОРТ.md", "docs/PROJECT-INTENT.md", "plans/README.md"),
+        "ПАСПОРТ.md": ("docs/PROJECT-INTENT.md", "plans/README.md"),
+        "NEXT_SESSION.md": ("ПАСПОРТ.md", "docs/PROJECT-INTENT.md", "plans/README.md"),
+    }
+    texts = {
+        "README.md": readme,
+        "AGENTS.md": agents,
+        "ПАСПОРТ.md": passport,
+        "NEXT_SESSION.md": next_session,
+    }
+    for name, markers in required_links.items():
+        for marker in markers:
+            if marker not in texts[name]:
+                errors.append(f"{name}: отсутствует ссылка холодного старта {marker}")
+
+    if "Статус: канонический документ продуктового замысла" not in intent:
+        errors.append("PROJECT-INTENT.md не объявлен владельцем продуктового замысла")
+    if "Принято как рабочая основа" not in intent or "Критические неизвестные" not in intent:
+        errors.append("PROJECT-INTENT.md не разделяет принятые основания и неизвестные")
+
+    stale_agent_markers = (
+        "Выпущенная v0.2 является стабильной базой",
+        "Контур обратной связи v0.2 → v0.3",
+        "обобщаемое требование-кандидат v0.3",
+    )
+    for marker in stale_agent_markers:
+        if marker in agents:
+            errors.append(f"AGENTS.md содержит устаревший статусный marker {marker!r}")
+
+    active_plans = sorted((ROOT / "plans" / "active").glob("*.md"))
+    if not active_plans and "Активного плана реализации сейчас нет" not in plans:
+        errors.append("plans/README.md должен явно фиксировать отсутствие активного плана")
+    for path in active_plans:
+        expected_link = f"active/{path.name}"
+        if expected_link not in plans:
+            errors.append(f"plans/README.md не индексирует активный план {expected_link}")
+
+    if "не владеет текущей задачей или планом работ" not in next_session:
+        errors.append("NEXT_SESSION.md снова стал конкурирующим источником рабочего статуса")
 
 
 def validate_template(errors: list[str]) -> None:
@@ -743,6 +824,7 @@ def validate() -> list[str]:
         if not (ROOT / relative).is_file():
             errors.append(f"нет обязательного reference: {relative}")
 
+    validate_project_context(errors)
     validate_version_lifecycle(errors)
     validate_interview_contract(errors)
     validate_migration_contract(errors)
@@ -940,6 +1022,7 @@ def main() -> int:
         return 1
 
     print("[OK] Ровно 4 скилла")
+    print("[OK] Паспорт, замысел, стабильный релиз и индекс планов согласованы")
     print("[OK] Frontmatter, UI-метаданные и общие references согласованы")
     print("[OK] Публичный Google Sheets и XLSX v0.3 согласованы; rollback v0.2 сохранён")
     print("[OK] TODO, битые относительные ссылки и типовые секреты не найдены")
