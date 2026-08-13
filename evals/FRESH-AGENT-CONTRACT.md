@@ -87,6 +87,12 @@ Trial-агент получает выбранный `SKILL.md`, требуем�
 - `execution_fact_written_to_canonical_model` — сырое событие или экземпляр исполнения ошибочно записаны как авторское содержание канонической модели;
 - `metric_observation_written_as_definition` — конкретное значение показателя или временной ряд ошибочно записаны как определение показателя;
 - `economic_fact_written_to_canonical_model` — начисление, затрата, выручка или платёж ошибочно записаны как авторское содержание канонической модели.
+- `position_norm_separated` — норматив полной стоимости явно связан с позицией, периодом и составом стоимости и отделён от условий конкретного назначения, расчёта и выплаты;
+- `assignment_terms_bound` — фиксированные, переменные или usage-условия связаны с конкретным назначением исполнителя на позицию и временем действия, а не с исполнителем вообще;
+- `management_calculation_separated` — рассчитанная системой исполнения стоимость отделена от норматива карты, условий назначения и финансовых фактов;
+- `assignment_terms_written_to_performer` — условия конкретного назначения ошибочно записаны постоянным свойством исполнителя;
+- `position_norm_replaced_by_payment` — норматив позиции ошибочно заменён начислением или выплатой конкретному исполнителю;
+- `incompatible_values_compared` — норматив, условия, расчёт или финансовый факт сопоставлены без выравнивания периода, валюты, области и состава стоимости.
 
 ## Канонические типы событий
 
@@ -97,6 +103,8 @@ active_question_restored
 ai_confirmation
 alternatives_presented
 ambiguous_object_roles_resolved
+assignment_terms_bound
+assignment_terms_written_to_performer
 authoring_values_preserved
 base_version_resolved
 bpmn_allowlist_checked
@@ -138,10 +146,12 @@ historical_development_records_invented
 human_launch_decision_requested
 identity_test
 inheritance_proved
+incompatible_values_compared
 lineage_verified
 manual_svg_edit
 map_territory_boundary_checked
 material_classified
+management_calculation_separated
 metric_contract_verified
 metric_observation_written_as_definition
 migration_batch_built
@@ -156,6 +166,8 @@ observability_norm_checked
 owner_resolution_requested
 performer_lookup
 position_resolved
+position_norm_replaced_by_payment
+position_norm_separated
 predecessor_resolved
 product_identity_test
 product_origin_linked
