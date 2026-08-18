@@ -1,0 +1,776 @@
+{
+  "schema_version": "0.4",
+  "base_schema": "template-schema-v0.3.json",
+  "sheet_count": 37,
+  "insert_after": "Элементы модели",
+  "sheet_order_additions": [
+    "Показатели",
+    "Привязки показателей",
+    "Требования показателей",
+    "Экономические правила",
+    "Условия назначений"
+  ],
+  "enum_overrides": {
+    "element_type": [
+      "регламент",
+      "правило",
+      "данные",
+      "источник истины",
+      "информационная система",
+      "интерфейс исполнения",
+      "SLA",
+      "автоматизация"
+    ]
+  },
+  "semantic_migrations": {
+    "element_type": {
+      "показатель": "Показатели",
+      "норматив": "Требования показателей",
+      "requires_semantic_resolution": true
+    },
+    "empty_economics": "Не создавать экономические правила или условия назначений без явного источника и подтверждения владельца"
+  },
+  "sheet_overrides": {
+    "Отклонения": {
+      "columns": [
+        "deviation_id",
+        "deviation_title",
+        "deviation_status",
+        "deviation_type",
+        "scope_type",
+        "scope_element_id",
+        "scope_element_selector",
+        "additional_impacts",
+        "applicable_version_id",
+        "applicable_version_selector",
+        "norm_requirement_id",
+        "norm_requirement_selector",
+        "norm_source_id",
+        "norm_source_selector",
+        "norm_source_locator",
+        "expected_behavior",
+        "observed_fact",
+        "evidence_channel",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "additional_evidence",
+        "observed_from",
+        "observed_to",
+        "occurrence_count",
+        "impact",
+        "correction",
+        "cause",
+        "cause_status",
+        "cause_evidence",
+        "system_change",
+        "responsible_position_id",
+        "responsible_position_selector",
+        "verification_status",
+        "verification_evidence",
+        "confirmation_decision_id",
+        "confirmation_decision_selector",
+        "closure_decision_id",
+        "closure_decision_selector",
+        "next_step",
+        "due_date",
+        "opened_at",
+        "closed_at",
+        "notes"
+      ],
+      "foreign_keys": {
+        "applicable_version_id": "Версии.version_id",
+        "norm_requirement_id": "Требования показателей.requirement_id",
+        "norm_source_id": "Источники.source_id",
+        "source_id": "Источники.source_id",
+        "responsible_position_id": "Позиции.position_id",
+        "confirmation_decision_id": "Решения.decision_id",
+        "closure_decision_id": "Решения.decision_id"
+      },
+      "polymorphic_foreign_keys": {
+        "scope_element_id": {
+          "type_field": "scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "показатель": "Показатели.indicator_id"
+          }
+        }
+      },
+      "selectors": {
+        "scope_element_id": "scope_element_selector",
+        "applicable_version_id": "applicable_version_selector",
+        "norm_requirement_id": "norm_requirement_selector",
+        "norm_source_id": "norm_source_selector",
+        "source_id": "source_selector",
+        "responsible_position_id": "responsible_position_selector",
+        "confirmation_decision_id": "confirmation_decision_selector",
+        "closure_decision_id": "closure_decision_selector"
+      }
+    },
+    "Гипотезы": {
+      "foreign_keys": {
+        "source_id": "Источники.source_id",
+        "base_version_id": "Версии.version_id",
+        "primary_metric_id": "Показатели.indicator_id",
+        "responsible_position_id": "Позиции.position_id",
+        "owner_decision_id": "Решения.decision_id",
+        "resulting_version_id": "Версии.version_id"
+      },
+      "polymorphic_foreign_keys": {
+        "scope_element_id": {
+          "type_field": "scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "показатель": "Показатели.indicator_id"
+          }
+        }
+      }
+    },
+    "Эксперименты": {
+      "foreign_keys": {
+        "deviation_id": "Отклонения.deviation_id",
+        "hypothesis_id": "Гипотезы.hypothesis_id",
+        "base_version_id": "Версии.version_id",
+        "primary_metric_id": "Показатели.indicator_id",
+        "responsible_position_id": "Позиции.position_id",
+        "launch_decision_id": "Решения.decision_id",
+        "result_source_id": "Источники.source_id",
+        "implementation_decision_id": "Решения.decision_id",
+        "resulting_version_id": "Версии.version_id"
+      },
+      "polymorphic_foreign_keys": {
+        "scope_element_id": {
+          "type_field": "scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "показатель": "Показатели.indicator_id"
+          }
+        }
+      }
+    },
+    "Связи модели": {
+      "relation_types": [
+        "производит",
+        "использует",
+        "создаёт",
+        "регулируется",
+        "входит в приёмочный пакет",
+        "хранится в",
+        "исполняется с помощью",
+        "измеряется",
+        "ограничивается",
+        "использует показатель",
+        "рассчитывает",
+        "распределяется на",
+        "применяет экономическое правило"
+      ]
+    },
+    "Рабочая панель": {
+      "dashboard_layout": "v0.4-connected-process",
+      "sections": [
+        "паспорт системы",
+        "продукты системы",
+        "паспорт процесса",
+        "вложенные процессы",
+        "действия",
+        "связи действий",
+        "переходы состояний",
+        "объект и состояния",
+        "материалы процесса",
+        "внешние компоненты и контракты",
+        "проверки",
+        "BPMN/SVG",
+        "развитие выбранного процесса",
+        "развитие системы",
+        "показатели выбранного процесса",
+        "экономические правила выбранного процесса"
+      ]
+    }
+  },
+  "enums": {
+    "indicator_kind": [
+      "операционный",
+      "финансовый"
+    ],
+    "measurement_scope_type": [
+      "действие",
+      "процесс",
+      "производственная система",
+      "объект",
+      "состояние",
+      "переход",
+      "продукт",
+      "материал",
+      "позиция",
+      "назначение",
+      "контракт",
+      "позиция контракта",
+      "информационная система"
+    ],
+    "binding_role": [
+      "основной источник",
+      "резервный источник",
+      "источник сверки"
+    ],
+    "requirement_type": [
+      "норматив",
+      "цель",
+      "план"
+    ],
+    "comparison_operator": [
+      "равно",
+      "не менее",
+      "не более",
+      "диапазон",
+      "формула"
+    ],
+    "economic_rule_kind": [
+      "схема компенсации",
+      "начисление работодателя",
+      "usage-тариф",
+      "признание выручки",
+      "распределение",
+      "управленческий расчёт",
+      "прочее"
+    ],
+    "economic_direction": [
+      "доход",
+      "расход",
+      "нейтрально"
+    ],
+    "calculation_method": [
+      "прямой",
+      "средний за период",
+      "распределённый",
+      "по измеренному времени"
+    ],
+    "expense_attribution": [
+      "прямой",
+      "косвенный"
+    ],
+    "expense_behavior": [
+      "постоянный",
+      "переменный",
+      "составной"
+    ],
+    "financial_result_position": [
+      "себестоимость производства",
+      "операционный расход",
+      "расход ниже EBITDA"
+    ],
+    "assignment_condition_type": [
+      "фиксированная компенсация",
+      "переменная компенсация",
+      "общий компонент",
+      "прочее"
+    ],
+    "condition_application_mode": [
+      "типовая схема",
+      "индивидуальное отличие",
+      "общий компонент"
+    ],
+    "amount_basis": [
+      "gross",
+      "net"
+    ],
+    "value_storage_mode": [
+      "в модели",
+      "закрытый источник"
+    ]
+  },
+  "sheets": {
+    "Показатели": {
+      "kind": "versioned_authoring",
+      "columns": [
+        "indicator_id",
+        "version_id",
+        "version_operation",
+        "system_id",
+        "system_selector",
+        "indicator_name",
+        "indicator_kind",
+        "management_question",
+        "measured_characteristic",
+        "observation_unit_type",
+        "observation_unit_id",
+        "observation_unit_selector",
+        "single_unit_rule",
+        "aggregation_rule",
+        "unit_of_measure",
+        "time_attribution_rule",
+        "grouping_or_window_rule",
+        "allowed_dimensions",
+        "required_facts",
+        "coverage_rule",
+        "freshness_requirement",
+        "currency",
+        "recognition_basis",
+        "composition_boundary",
+        "reconciliation_rule",
+        "knowledge_status",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "last_reviewed",
+        "notes"
+      ],
+      "required": [
+        "indicator_id",
+        "version_id",
+        "version_operation",
+        "system_id",
+        "indicator_name",
+        "indicator_kind",
+        "management_question",
+        "measured_characteristic",
+        "observation_unit_type",
+        "observation_unit_id",
+        "single_unit_rule",
+        "unit_of_measure",
+        "time_attribution_rule",
+        "required_facts",
+        "coverage_rule",
+        "knowledge_status",
+        "source_id"
+      ],
+      "types": {
+        "last_reviewed": "date"
+      },
+      "enums": {
+        "version_operation": "version_operation",
+        "indicator_kind": "indicator_kind",
+        "observation_unit_type": "measurement_scope_type",
+        "knowledge_status": "knowledge_status"
+      },
+      "foreign_keys": {
+        "version_id": "Версии.version_id",
+        "system_id": "Система.system_id",
+        "source_id": "Источники.source_id"
+      },
+      "polymorphic_foreign_keys": {
+        "observation_unit_id": {
+          "type_field": "observation_unit_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "переход": "Переходы.transition_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "позиция": "Позиции.position_id",
+            "назначение": "Назначения.assignment_id",
+            "контракт": "Контракты.contract_id",
+            "позиция контракта": "Позиции контрактов.contract_item_id",
+            "информационная система": "Элементы модели.element_id"
+          }
+        }
+      },
+      "selectors": {
+        "system_id": "system_selector",
+        "observation_unit_id": "observation_unit_selector",
+        "source_id": "source_selector"
+      },
+      "constraints": [
+        "indicator_identity_test",
+        "financial_indicator_requires_currency_recognition_boundary_and_reconciliation",
+        "accepted_requires_fact_binding"
+      ]
+    },
+    "Привязки показателей": {
+      "kind": "versioned_authoring",
+      "columns": [
+        "binding_id",
+        "version_id",
+        "version_operation",
+        "indicator_id",
+        "indicator_selector",
+        "binding_role",
+        "fact_source_id",
+        "fact_source_selector",
+        "fact_locator_contract",
+        "source_event_or_field",
+        "required_fact_description",
+        "coverage_rule",
+        "freshness_requirement",
+        "valid_from",
+        "valid_to",
+        "knowledge_status",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "last_reviewed",
+        "notes"
+      ],
+      "required": [
+        "binding_id",
+        "version_id",
+        "version_operation",
+        "indicator_id",
+        "binding_role",
+        "fact_source_id",
+        "fact_locator_contract",
+        "required_fact_description",
+        "coverage_rule",
+        "knowledge_status",
+        "source_id"
+      ],
+      "types": {
+        "valid_from": "date",
+        "valid_to": "date",
+        "last_reviewed": "date"
+      },
+      "enums": {
+        "version_operation": "version_operation",
+        "binding_role": "binding_role",
+        "knowledge_status": "knowledge_status"
+      },
+      "foreign_keys": {
+        "version_id": "Версии.version_id",
+        "indicator_id": "Показатели.indicator_id",
+        "fact_source_id": "Источники.source_id",
+        "source_id": "Источники.source_id"
+      },
+      "selectors": {
+        "indicator_id": "indicator_selector",
+        "fact_source_id": "fact_source_selector",
+        "source_id": "source_selector"
+      },
+      "constraints": [
+        "one_primary_binding_per_indicator_period",
+        "validity_period_not_inverted",
+        "fact_source_separate_from_authoring_source"
+      ]
+    },
+    "Требования показателей": {
+      "kind": "versioned_authoring",
+      "columns": [
+        "requirement_id",
+        "version_id",
+        "version_operation",
+        "indicator_id",
+        "indicator_selector",
+        "requirement_type",
+        "requirement_name",
+        "scope_type",
+        "scope_element_id",
+        "scope_element_selector",
+        "comparison_operator",
+        "target_value",
+        "lower_bound",
+        "upper_bound",
+        "value_expression",
+        "period_start",
+        "period_end",
+        "replaces_requirement_id",
+        "replaces_requirement_selector",
+        "knowledge_status",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "last_reviewed",
+        "notes"
+      ],
+      "required": [
+        "requirement_id",
+        "version_id",
+        "version_operation",
+        "indicator_id",
+        "requirement_type",
+        "requirement_name",
+        "scope_type",
+        "scope_element_id",
+        "comparison_operator",
+        "period_start",
+        "knowledge_status",
+        "source_id"
+      ],
+      "types": {
+        "period_start": "date",
+        "period_end": "date",
+        "last_reviewed": "date"
+      },
+      "enums": {
+        "version_operation": "version_operation",
+        "requirement_type": "requirement_type",
+        "scope_type": "measurement_scope_type",
+        "comparison_operator": "comparison_operator",
+        "knowledge_status": "knowledge_status"
+      },
+      "foreign_keys": {
+        "version_id": "Версии.version_id",
+        "indicator_id": "Показатели.indicator_id",
+        "replaces_requirement_id": "Требования показателей.requirement_id",
+        "source_id": "Источники.source_id"
+      },
+      "polymorphic_foreign_keys": {
+        "scope_element_id": {
+          "type_field": "scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "переход": "Переходы.transition_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "позиция": "Позиции.position_id",
+            "назначение": "Назначения.assignment_id",
+            "контракт": "Контракты.contract_id",
+            "позиция контракта": "Позиции контрактов.contract_item_id",
+            "информационная система": "Элементы модели.element_id"
+          }
+        }
+      },
+      "selectors": {
+        "indicator_id": "indicator_selector",
+        "scope_element_id": "scope_element_selector",
+        "replaces_requirement_id": "replaces_requirement_selector",
+        "source_id": "source_selector"
+      },
+      "constraints": [
+        "exactly_one_value_shape",
+        "range_requires_both_bounds",
+        "goal_and_plan_require_period_end",
+        "period_not_inverted",
+        "replacement_must_be_explicit"
+      ]
+    },
+    "Экономические правила": {
+      "kind": "versioned_authoring",
+      "columns": [
+        "economic_rule_id",
+        "version_id",
+        "version_operation",
+        "system_id",
+        "system_selector",
+        "rule_name",
+        "rule_kind",
+        "economic_direction",
+        "source_scope_type",
+        "source_scope_id",
+        "source_scope_selector",
+        "result_indicator_id",
+        "result_indicator_selector",
+        "calculation_method",
+        "formula_or_rule",
+        "amount_value",
+        "amount_formula",
+        "currency",
+        "pricing_unit",
+        "period_unit",
+        "allocation_base",
+        "remainder_policy",
+        "expense_attribution",
+        "expense_behavior",
+        "financial_result_position",
+        "valid_from",
+        "valid_to",
+        "knowledge_status",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "last_reviewed",
+        "notes"
+      ],
+      "required": [
+        "economic_rule_id",
+        "version_id",
+        "version_operation",
+        "system_id",
+        "rule_name",
+        "rule_kind",
+        "economic_direction",
+        "source_scope_type",
+        "source_scope_id",
+        "calculation_method",
+        "formula_or_rule",
+        "valid_from",
+        "knowledge_status",
+        "source_id"
+      ],
+      "types": {
+        "valid_from": "date",
+        "valid_to": "date",
+        "last_reviewed": "date"
+      },
+      "enums": {
+        "version_operation": "version_operation",
+        "rule_kind": "economic_rule_kind",
+        "economic_direction": "economic_direction",
+        "source_scope_type": "measurement_scope_type",
+        "calculation_method": "calculation_method",
+        "expense_attribution": "expense_attribution",
+        "expense_behavior": "expense_behavior",
+        "financial_result_position": "financial_result_position",
+        "knowledge_status": "knowledge_status"
+      },
+      "foreign_keys": {
+        "version_id": "Версии.version_id",
+        "system_id": "Система.system_id",
+        "result_indicator_id": "Показатели.indicator_id",
+        "source_id": "Источники.source_id"
+      },
+      "polymorphic_foreign_keys": {
+        "source_scope_id": {
+          "type_field": "source_scope_type",
+          "targets": {
+            "действие": "Действия.action_id",
+            "процесс": "Процессы.process_id",
+            "производственная система": "Система.system_id",
+            "объект": "Объекты.object_id",
+            "состояние": "Состояния.state_id",
+            "переход": "Переходы.transition_id",
+            "продукт": "Продукты.product_id",
+            "материал": "Материалы.material_id",
+            "позиция": "Позиции.position_id",
+            "назначение": "Назначения.assignment_id",
+            "контракт": "Контракты.contract_id",
+            "позиция контракта": "Позиции контрактов.contract_item_id",
+            "информационная система": "Элементы модели.element_id"
+          }
+        }
+      },
+      "selectors": {
+        "system_id": "system_selector",
+        "source_scope_id": "source_scope_selector",
+        "result_indicator_id": "result_indicator_selector",
+        "source_id": "source_selector"
+      },
+      "constraints": [
+        "amount_value_or_formula_not_both",
+        "financial_rule_requires_currency",
+        "compensation_scheme_requires_position_scope",
+        "expense_classification_only_for_expense_components",
+        "expense_axes_are_independent",
+        "distributed_requires_allocation_base_and_remainder_policy",
+        "validity_period_not_inverted"
+      ]
+    },
+    "Условия назначений": {
+      "kind": "versioned_authoring",
+      "columns": [
+        "assignment_condition_id",
+        "version_id",
+        "version_operation",
+        "assignment_id",
+        "assignment_selector",
+        "condition_name",
+        "condition_type",
+        "compensation_scheme_rule_id",
+        "compensation_scheme_rule_selector",
+        "compensation_scheme_rule_version_id",
+        "compensation_scheme_rule_version_selector",
+        "application_mode",
+        "amount_value",
+        "amount_formula",
+        "currency",
+        "period_unit",
+        "amount_basis",
+        "bonus_indicator_id",
+        "bonus_indicator_selector",
+        "bonus_indicator_version_id",
+        "bonus_indicator_version_selector",
+        "allocation_rule_id",
+        "allocation_rule_selector",
+        "allocation_rule_version_id",
+        "allocation_rule_version_selector",
+        "storage_mode",
+        "value_source_id",
+        "value_source_selector",
+        "value_source_locator",
+        "valid_from",
+        "valid_to",
+        "knowledge_status",
+        "source_id",
+        "source_selector",
+        "source_locator",
+        "last_reviewed",
+        "notes"
+      ],
+      "required": [
+        "assignment_condition_id",
+        "version_id",
+        "version_operation",
+        "assignment_id",
+        "condition_name",
+        "condition_type",
+        "compensation_scheme_rule_id",
+        "compensation_scheme_rule_version_id",
+        "application_mode",
+        "storage_mode",
+        "valid_from",
+        "knowledge_status",
+        "source_id"
+      ],
+      "types": {
+        "valid_from": "date",
+        "valid_to": "date",
+        "last_reviewed": "date"
+      },
+      "enums": {
+        "version_operation": "version_operation",
+        "condition_type": "assignment_condition_type",
+        "application_mode": "condition_application_mode",
+        "amount_basis": "amount_basis",
+        "storage_mode": "value_storage_mode",
+        "knowledge_status": "knowledge_status"
+      },
+      "foreign_keys": {
+        "version_id": "Версии.version_id",
+        "assignment_id": "Назначения.assignment_id",
+        "compensation_scheme_rule_id": "Экономические правила.economic_rule_id",
+        "compensation_scheme_rule_version_id": "Версии.version_id",
+        "bonus_indicator_id": "Показатели.indicator_id",
+        "bonus_indicator_version_id": "Версии.version_id",
+        "allocation_rule_id": "Экономические правила.economic_rule_id",
+        "allocation_rule_version_id": "Версии.version_id",
+        "value_source_id": "Источники.source_id",
+        "source_id": "Источники.source_id"
+      },
+      "selectors": {
+        "assignment_id": "assignment_selector",
+        "compensation_scheme_rule_id": "compensation_scheme_rule_selector",
+        "compensation_scheme_rule_version_id": "compensation_scheme_rule_version_selector",
+        "bonus_indicator_id": "bonus_indicator_selector",
+        "bonus_indicator_version_id": "bonus_indicator_version_selector",
+        "allocation_rule_id": "allocation_rule_selector",
+        "allocation_rule_version_id": "allocation_rule_version_selector",
+        "value_source_id": "value_source_selector",
+        "source_id": "source_selector"
+      },
+      "constraints": [
+        "same_assignment_identity_across_condition_revisions",
+        "individual_difference_does_not_duplicate_scheme",
+        "compensation_scheme_revision_is_explicit",
+        "amount_value_or_formula_not_both",
+        "amount_requires_currency_period_and_basis",
+        "variable_component_requires_indicator_revision",
+        "allocation_rule_requires_explicit_revision",
+        "closed_storage_requires_value_source_locator",
+        "common_component_value_not_duplicated",
+        "validity_period_not_inverted"
+      ]
+    }
+  }
+}

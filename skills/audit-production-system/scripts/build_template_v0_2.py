@@ -120,6 +120,19 @@ DASHBOARD_V3_SECTIONS = (
     ("Влияет на систему в целом", 169, 32, 7, ("Тип", "ID", "Название", "Статус", "Ответственный", "Следующий шаг", "Срок")),
 )
 
+DASHBOARD_V4_SECTIONS = DASHBOARD_V3_SECTIONS + (
+    ("Показатели выбранного процесса", 270, 0, 8, ("indicator_id", "Показатель", "Тип", "Управленческий вопрос", "Единица", "Время", "Система", "Статус")),
+    ("Экономические правила выбранного процесса", 420, 0, 8, ("economic_rule_id", "Правило", "Тип", "Направление", "Исходная область", "Метод", "Результат", "Статус")),
+)
+
+
+def has_connected_dashboard(schema: dict[str, Any]) -> bool:
+    return schema.get("schema_version") in {"0.3", "0.4"}
+
+
+def dashboard_sections(schema: dict[str, Any]) -> tuple[tuple[Any, ...], ...]:
+    return DASHBOARD_V4_SECTIONS if schema.get("schema_version") == "0.4" else DASHBOARD_V3_SECTIONS
+
 
 def load_schema() -> dict[str, Any]:
     return json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
@@ -504,15 +517,31 @@ def selected_metric_ids(schema: dict[str, Any]) -> str:
     link_from = field_range(schema, "Связи модели", "from_entity_id")
     link_relation = field_range(schema, "Связи модели", "relation_type")
     link_to = field_range(schema, "Связи модели", "to_entity_id")
+    local_ids = (
+        f'{{$E$5;{selected_process_field(schema, "work_object_id")};{selected_action_ids(schema)};'
+        f'{selected_state_ids(schema)};{selected_product_ids(schema)};{selected_material_ids(schema)}}}'
+    )
+    if "Показатели" in schema["sheets"]:
+        metric_ids = field_range(schema, "Показатели", "indicator_id")
+        observation_units = field_range(schema, "Показатели", "observation_unit_id")
+        linked_metric_ids = (
+            f'IFERROR(FILTER({link_to},{resolved_condition(schema, "Связи модели")},'
+            f'REGEXMATCH({link_relation},"^(измеряется|использует показатель)$"),'
+            f'ARRAYFORMULA(ISNUMBER(MATCH({link_from},{local_ids},0)))),"__none__")'
+        )
+        metric_condition = (
+            f'(ARRAYFORMULA(ISNUMBER(MATCH({observation_units},{local_ids},0)))+'
+            f'ARRAYFORMULA(ISNUMBER(MATCH({metric_ids},{linked_metric_ids},0))))>0'
+        )
+        return (
+            f'IFERROR(FILTER({metric_ids},{resolved_condition(schema, "Показатели")},'
+            f'{metric_condition}),"__none__")'
+        )
     element_ids = field_range(schema, "Элементы модели", "element_id")
     element_types = field_range(schema, "Элементы модели", "element_type")
     metric_ids = (
         f'IFERROR(FILTER({element_ids},{element_types}="показатель",'
         f'{resolved_condition(schema, "Элементы модели")}),"__none__")'
-    )
-    local_ids = (
-        f'{{$E$5;{selected_process_field(schema, "work_object_id")};{selected_action_ids(schema)};'
-        f'{selected_state_ids(schema)};{selected_product_ids(schema)};{selected_material_ids(schema)}}}'
     )
     return (
         f'IFERROR(FILTER({link_to},{resolved_condition(schema, "Связи модели")},{link_relation}="измеряется",'
@@ -648,17 +677,18 @@ def layout_requests(schema: dict[str, Any], sheet_name: str, sheet_id: int) -> l
     sheet = schema["sheets"][sheet_name]
     default = schema["default_table"]
     columns = sheet.get("columns", [])
-    dashboard_v3 = sheet_name == "Рабочая панель" and schema.get("schema_version") == "0.3"
-    column_count = 8 if sheet_name == "Инструкция" else 39 if dashboard_v3 else 14 if sheet_name == "Рабочая панель" else max(1, len(columns))
-    row_count = 260 if dashboard_v3 else 200 if sheet_name in {"Инструкция", "Рабочая панель"} else int(default["data_end_row"]) + 1
+    connected_dashboard = sheet_name == "Рабочая панель" and has_connected_dashboard(schema)
+    column_count = 8 if sheet_name == "Инструкция" else 39 if connected_dashboard else 14 if sheet_name == "Рабочая панель" else max(1, len(columns))
+    dashboard_rows = 560 if schema.get("schema_version") == "0.4" else 260
+    row_count = dashboard_rows if connected_dashboard else 200 if sheet_name in {"Инструкция", "Рабочая панель"} else int(default["data_end_row"]) + 1
     requests: list[dict[str, Any]] = [
         repeat_format(sheet_id, 0, row_count, 0, column_count, visual_format("#FFFFFF", vertical="TOP")),
     ]
 
     if sheet_name == "Инструкция":
-        instruction_v3 = schema.get("schema_version") == "0.3"
-        item_end_row = 12 if instruction_v3 else 11
-        colors_header_row = 13 if instruction_v3 else 12
+        extra_items = 2 if schema.get("schema_version") == "0.4" else 1 if schema.get("schema_version") == "0.3" else 0
+        item_end_row = 11 + extra_items
+        colors_header_row = 12 + extra_items
         colors_start_row = colors_header_row + 1
         colors_end_row = colors_start_row + 3
         important_row = colors_end_row + 1
@@ -697,7 +727,7 @@ def layout_requests(schema: dict[str, Any], sheet_name: str, sheet_id: int) -> l
         requests.extend(merge_range(sheet_id, row_index, row_index + 1, 2, 8) for row_index in range(colors_start_row, colors_end_row))
         return requests
 
-    if dashboard_v3:
+    if connected_dashboard:
         requests.extend(
             [
                 merge_range(sheet_id, 0, 1, 0, 39),
@@ -713,7 +743,7 @@ def layout_requests(schema: dict[str, Any], sheet_name: str, sheet_id: int) -> l
                 dimension_size(sheet_id, "ROWS", 2, 5, 36),
             ]
         )
-        for _title, section_row, section_column, section_width, headers in DASHBOARD_V3_SECTIONS:
+        for _title, section_row, section_column, section_width, headers in dashboard_sections(schema):
             requests.extend(
                 [
                     merge_range(sheet_id, section_row, section_row + 1, section_column, section_column + section_width),
@@ -846,22 +876,22 @@ def layout_requests(schema: dict[str, Any], sheet_name: str, sheet_id: int) -> l
 
 
 def dashboard_v3_rows(schema: dict[str, Any]) -> list[dict[str, Any]]:
-    """Связная панель v0.3; формулы используют только выбранный resolved snapshot."""
+    """Связная панель v0.3+; формулы используют только выбранный resolved snapshot."""
     width = 39
-    height = 260
+    height = 560 if schema.get("schema_version") == "0.4" else 260
     grid: list[list[dict[str, Any]]] = [[cell() for _ in range(width)] for _ in range(height)]
 
     def put(row_index: int, column_index: int, value: Any = None, *, formula: str | None = None) -> None:
         grid[row_index][column_index] = cell(value, formula=formula)
 
     version_labels, version_ids = selector_range_names(schema, "Версии")
-    if schema.get("schema_version") == "0.3":
+    if has_connected_dashboard(schema):
         system_labels, system_ids = "dashboard_system_labels_v03", "dashboard_system_ids_v03"
         process_labels, process_ids = "dashboard_process_labels_v03", "dashboard_process_ids_v03"
     else:
         system_labels, system_ids = selector_range_names(schema, "Система")
         process_labels, process_ids = selector_range_names(schema, "Процессы")
-    put(0, 0, "Рабочая панель модели бизнеса v0.3")
+    put(0, 0, f"Рабочая панель модели бизнеса v{schema.get('schema_version', '0.3')}")
     put(1, 0, "Выберите версию, систему и процесс. Ниже показан единый связный срез; ID остаются открытыми рядом с читаемыми названиями.")
     put(2, 0, "Версия")
     put(2, 1, "")
@@ -876,7 +906,7 @@ def dashboard_v3_rows(schema: dict[str, Any]) -> list[dict[str, Any]]:
     put(4, 3, "selected_process_id")
     put(4, 4, formula=id_formula(1, 5, process_labels, process_ids))
 
-    for title, section_row, section_column, _section_width, headers in DASHBOARD_V3_SECTIONS:
+    for title, section_row, section_column, _section_width, headers in dashboard_sections(schema):
         put(section_row, section_column, title)
         for offset, header in enumerate(headers):
             put(section_row + 1, section_column + offset, header)
@@ -1116,6 +1146,63 @@ def dashboard_v3_rows(schema: dict[str, Any]) -> list[dict[str, Any]]:
     put(66, 32, formula=development_rows_formula(schema, system_wide=False, limit=100))
     put(171, 32, formula=development_rows_formula(schema, system_wide=True, limit=87))
 
+    if schema.get("schema_version") == "0.4":
+        metric_ids = selected_metric_ids(schema)
+        metric_condition = (
+            f'ARRAYFORMULA(ISNUMBER(MATCH({field_range(schema, "Показатели", "indicator_id")},'
+            f'{metric_ids},0)))'
+        )
+        put(
+            272,
+            0,
+            formula=dashboard_filter_formula(
+                schema,
+                "Показатели",
+                (
+                    "indicator_id",
+                    "indicator_name",
+                    "indicator_kind",
+                    "management_question",
+                    "unit_of_measure",
+                    "time_attribution_rule",
+                    "system_selector",
+                    "knowledge_status",
+                ),
+                metric_condition,
+                140,
+                required_selector="$E$5",
+            ),
+        )
+        local_ids = (
+            f'{{$E$5;{selected_process_field(schema, "work_object_id")};{selected_action_ids(schema)};'
+            f'{selected_state_ids(schema)};{selected_product_ids(schema)};{selected_material_ids(schema)}}}'
+        )
+        economic_condition = (
+            f'ARRAYFORMULA(ISNUMBER(MATCH({field_range(schema, "Экономические правила", "source_scope_id")},'
+            f'{local_ids},0)))'
+        )
+        put(
+            422,
+            0,
+            formula=dashboard_filter_formula(
+                schema,
+                "Экономические правила",
+                (
+                    "economic_rule_id",
+                    "rule_name",
+                    "rule_kind",
+                    "economic_direction",
+                    "source_scope_selector",
+                    "calculation_method",
+                    "result_indicator_selector",
+                    "knowledge_status",
+                ),
+                economic_condition,
+                130,
+                required_selector="$E$5",
+            ),
+        )
+
     return [{"values": values} for values in grid]
 
 
@@ -1142,14 +1229,19 @@ def sheet_static_rows(schema: dict[str, Any], sheet_name: str, sheet: dict[str, 
             row([]),
             row(["Важно", "Не вставляйте значения поверх формульных ID-столбцов. При ошибке сначала проверьте выбранное значение, рабочую версию и лист «Проверки»."]),
         ]
-        if schema_version == "0.3":
+        if schema_version in {"0.3", "0.4"}:
             values.insert(
                 11,
                 row(["8", "Развитие системы", "Отклонения возвращают систему к действующей норме, гипотезы используют новые внешние возможности, а эксперименты проверяют изменение до принятия как нормы."]),
             )
+        if schema_version == "0.4":
+            values.insert(
+                12,
+                row(["9", "Измеримость и экономика", "Показатели, требования и экономические правила описывают карту расчёта. Наблюдения, временные ряды, начисления и платежи остаются в системах исполнения и финансовых системах."]),
+            )
         return values
     if sheet_name == "Рабочая панель":
-        if schema_version == "0.3":
+        if schema_version in {"0.3", "0.4"}:
             return dashboard_v3_rows(schema)
         version_labels, version_ids = selector_range_names(schema, "Версии")
         system_labels, system_ids = selector_range_names(schema, "Система")
@@ -1251,7 +1343,7 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
     rows.append(values("CHK-MATERIAL-CONTENT", "материалы", "у материала есть текст или URL", f'=COUNTIFS(\'Материалы\'!A5:A1004,"<>",\'Материалы\'!{material_content_col}5:{material_content_col}1004,"",\'Материалы\'!{material_url_col}5:{material_url_col}1004,"")', "Заполнить content_text или url"))
     rows.append(values("CHK-VERSION-POINTER", "версии", "working_version_id задан", '=IF(\'Система\'!B4="",1,0)', "Выбрать рабочую версию из списка"))
     rows.append(values("CHK-SNAPSHOT", "версии", "срез построен для рабочей версии", '=IF(OR(\'Система\'!B4="",COUNTIF(\'Срез модели\'!A5:A1004,\'Система\'!B4)>0),0,1)', "Запустить scripts/versioning/resolve.py и записать Срез модели"))
-    if schema.get("schema_version") == "0.3":
+    if has_connected_dashboard(schema):
         deviations = schema["sheets"]["Отклонения"]["columns"]
         hypotheses = schema["sheets"]["Гипотезы"]["columns"]
         experiments = schema["sheets"]["Эксперименты"]["columns"]
@@ -1352,25 +1444,45 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
             metric_column: str,
             active_statuses: str,
         ) -> str:
-            element = lambda field: field_range(schema, "Элементы модели", field)
+            indicator_sheet = "Показатели" if "Показатели" in schema["sheets"] else "Элементы модели"
+            element = lambda field: field_range(schema, indicator_sheet, field)
             snapshot_version = field_range(schema, "Срез модели", "selected_version_id")
             snapshot_type = field_range(schema, "Срез модели", "entity_type")
             snapshot_id = field_range(schema, "Срез модели", "stable_id")
             snapshot_source_version = field_range(schema, "Срез модели", "source_version_id")
             source_revision = (
                 f'IFERROR(XLOOKUP(v&"|"&m,FILTER({snapshot_version}&"|"&{snapshot_id},'
-                f'{snapshot_type}="Элементы модели"),FILTER({snapshot_source_version},'
-                f'{snapshot_type}="Элементы модели"),""),"")'
+                f'{snapshot_type}="{indicator_sheet}"),FILTER({snapshot_source_version},'
+                f'{snapshot_type}="{indicator_sheet}"),""),"")'
             )
-            required_ranges = (
-                (element("element_type"), '"показатель"'),
-                (element("definition"), '"<>"'),
-                (element("owner_position_id"), '"<>"'),
-                (element("formula_or_rule"), '"<>"'),
-                (element("unit_or_format"), '"<>"'),
-                (element("source_id"), '"<>"'),
-            )
-            count_args = [element("element_id"), "m", element("version_id"), "mv", element("version_operation"), '"применить"']
+            if indicator_sheet == "Показатели":
+                required_ranges = tuple(
+                    (element(field), '"<>"')
+                    for field in (
+                        "system_id",
+                        "management_question",
+                        "measured_characteristic",
+                        "observation_unit_id",
+                        "single_unit_rule",
+                        "unit_of_measure",
+                        "time_attribution_rule",
+                        "required_facts",
+                        "coverage_rule",
+                        "source_id",
+                    )
+                )
+                stable_field = "indicator_id"
+            else:
+                required_ranges = (
+                    (element("element_type"), '"показатель"'),
+                    (element("definition"), '"<>"'),
+                    (element("owner_position_id"), '"<>"'),
+                    (element("formula_or_rule"), '"<>"'),
+                    (element("unit_or_format"), '"<>"'),
+                    (element("source_id"), '"<>"'),
+                )
+                stable_field = "element_id"
+            count_args = [element(stable_field), "m", element("version_id"), "mv", element("version_operation"), '"применить"']
             for item_range, criterion in required_ranges:
                 count_args.extend((item_range, criterion))
             status = f"{quoted_sheet(sheet_name)}!${status_column}$5:${status_column}$1004"
@@ -1394,11 +1506,12 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
             snapshot_type = field_range(schema, "Срез модели", "entity_type")
             snapshot_id = field_range(schema, "Срез модели", "stable_id")
             snapshot_status = field_range(schema, "Срез модели", "resolution_status")
+            metric_sheet = "Показатели" if "Показатели" in schema["sheets"] else "Элементы модели"
             type_cases = (
                 '"действие","Действия","процесс","Процессы",'
                 '"производственная система","Система","объект","Объекты",'
                 '"состояние","Состояния","продукт","Продукты",'
-                '"материал","Материалы","показатель","Элементы модели"'
+                f'"материал","Материалы","показатель","{metric_sheet}"'
             )
             prefix = quoted_sheet(sheet_name)
             status = f"{prefix}!${status_column}$5:${status_column}$1004"
@@ -1416,7 +1529,10 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
         dev_type = col(deviations, "deviation_type")
         dev_scope = col(deviations, "scope_element_id")
         dev_version = col(deviations, "applicable_version_id")
-        dev_norm = col(deviations, "norm_element_id")
+        dev_norm = col(
+            deviations,
+            "norm_requirement_id" if "norm_requirement_id" in deviations else "norm_element_id",
+        )
         dev_norm_source = col(deviations, "norm_source_id")
         dev_expected = col(deviations, "expected_behavior")
         dev_responsible = col(deviations, "responsible_position_id")
@@ -1505,7 +1621,7 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "гипотезы",
                 "основной показатель имеет полный контракт в базовой версии",
                 metric_contract_formula("Гипотезы", hyp_status, hyp_base_version, hyp_metric, "^(сформулирована|проверяется|проверена|закрыта)$"),
-                "Определить показатель, формулу, единицу, владельца и источник в базовой версии",
+                "Определить показатель, формулу, единицу, систему-владельца и источник фактов в базовой версии",
             )
         )
         hyp_evidence = col(hypotheses, "evidence_result")
@@ -1573,7 +1689,7 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "эксперименты",
                 "основной показатель имеет полный контракт в базовой версии",
                 metric_contract_formula("Эксперименты", exp_status, exp_base_version, exp_metric, "^(подготовлен|разрешён|выполняется|завершён|остановлен)$"),
-                "Определить показатель, формулу, единицу, владельца и источник в базовой версии",
+                "Определить показатель, формулу, единицу, систему-владельца и источник фактов в базовой версии",
             )
         )
         prepared_fields = [
@@ -1658,6 +1774,256 @@ def check_rows(schema: dict[str, Any], sheet: dict[str, Any]) -> list[dict[str, 
                 "Связать implementation decision; для внедрения создать и указать обычную версию модели",
             )
         )
+        if schema.get("schema_version") == "0.4":
+            indicators = schema["sheets"]["Показатели"]["columns"]
+            bindings = schema["sheets"]["Привязки показателей"]["columns"]
+            requirements = schema["sheets"]["Требования показателей"]["columns"]
+            economic_rules = schema["sheets"]["Экономические правила"]["columns"]
+            conditions = schema["sheets"]["Условия назначений"]["columns"]
+
+            ind_id = col(indicators, "indicator_id")
+            ind_operation = col(indicators, "version_operation")
+            ind_kind = col(indicators, "indicator_kind")
+            ind_status = col(indicators, "knowledge_status")
+            indicator_required = [
+                col(indicators, field)
+                for field in (
+                    "system_id",
+                    "management_question",
+                    "measured_characteristic",
+                    "observation_unit_type",
+                    "observation_unit_id",
+                    "single_unit_rule",
+                    "unit_of_measure",
+                    "time_attribution_rule",
+                    "required_facts",
+                    "coverage_rule",
+                    "source_id",
+                )
+            ]
+            missing_indicator = "+".join(
+                f'(\'Показатели\'!{letter}5:{letter}1004="")' for letter in indicator_required
+            )
+            rows.append(
+                values(
+                    "CHK-INDICATOR-CONTRACT",
+                    "показатели",
+                    "принятый показатель имеет полный смысловой контракт",
+                    f'=SUMPRODUCT(N(\'Показатели\'!{ind_id}5:{ind_id}1004<>""),N(\'Показатели\'!{ind_operation}5:{ind_operation}1004="применить"),N(\'Показатели\'!{ind_status}5:{ind_status}1004="принято"),N(({missing_indicator})>0))',
+                    "Уточнить управленческий вопрос, измеряемый смысл, единицу наблюдения, правило, время, факты, покрытие, владельца и источник",
+                )
+            )
+
+            ind_currency = col(indicators, "currency")
+            ind_recognition = col(indicators, "recognition_basis")
+            ind_boundary = col(indicators, "composition_boundary")
+            ind_reconciliation = col(indicators, "reconciliation_rule")
+            rows.append(
+                values(
+                    "CHK-FINANCIAL-INDICATOR",
+                    "показатели",
+                    "финансовый показатель задаёт валюту, признание, границу и сверку",
+                    f'=SUMPRODUCT(N(\'Показатели\'!{ind_id}5:{ind_id}1004<>""),N(\'Показатели\'!{ind_operation}5:{ind_operation}1004="применить"),N(\'Показатели\'!{ind_kind}5:{ind_kind}1004="финансовый"),N(((\'Показатели\'!{ind_currency}5:{ind_currency}1004="")+(\'Показатели\'!{ind_recognition}5:{ind_recognition}1004="")+(\'Показатели\'!{ind_boundary}5:{ind_boundary}1004="")+(\'Показатели\'!{ind_reconciliation}5:{ind_reconciliation}1004=""))>0))',
+                    "Заполнить валюту денежного результата, основание признания, границу состава и правило сверки",
+                )
+            )
+
+            bind_indicator = col(bindings, "indicator_id")
+            bind_role = col(bindings, "binding_role")
+            bind_status = col(bindings, "knowledge_status")
+            resolved_bindings = resolved_condition(schema, "Привязки показателей", "'Система'!$B$4")
+            primary_binding_ids = (
+                f'IFERROR(FILTER(\'Привязки показателей\'!{bind_indicator}5:{bind_indicator}1004,'
+                f'{resolved_bindings},\'Привязки показателей\'!{bind_role}5:{bind_role}1004="основной источник",'
+                f'\'Привязки показателей\'!{bind_status}5:{bind_status}1004="принято"),"__none__")'
+            )
+            resolved_indicators = resolved_condition(schema, "Показатели", "'Система'!$B$4")
+            rows.append(
+                values(
+                    "CHK-INDICATOR-BINDING",
+                    "показатели",
+                    "у принятого показателя есть основной binding фактов",
+                    f'=SUMPRODUCT(N(\'Показатели\'!{ind_id}5:{ind_id}1004<>""),N({resolved_indicators}),N(\'Показатели\'!{ind_status}5:{ind_status}1004="принято"),N(NOT(ISNUMBER(MATCH(\'Показатели\'!{ind_id}5:{ind_id}1004,{primary_binding_ids},0)))))',
+                    "Добавить принятую привязку к системе-владельцу фактов с locator, покрытием и свежестью",
+                )
+            )
+
+            req_id = col(requirements, "requirement_id")
+            req_operation = col(requirements, "version_operation")
+            req_type = col(requirements, "requirement_type")
+            req_operator = col(requirements, "comparison_operator")
+            req_target = col(requirements, "target_value")
+            req_lower = col(requirements, "lower_bound")
+            req_upper = col(requirements, "upper_bound")
+            req_expression = col(requirements, "value_expression")
+            req_start = col(requirements, "period_start")
+            req_end = col(requirements, "period_end")
+            direct_operator = f'REGEXMATCH(\'Требования показателей\'!{req_operator}5:{req_operator}1004,"^(равно|не менее|не более)$")'
+            invalid_value_shape = (
+                f'(({direct_operator})*((\'Требования показателей\'!{req_target}5:{req_target}1004="")+'
+                f'(\'Требования показателей\'!{req_lower}5:{req_lower}1004<>"")+'
+                f'(\'Требования показателей\'!{req_upper}5:{req_upper}1004<>"")+'
+                f'(\'Требования показателей\'!{req_expression}5:{req_expression}1004<>"")))+'
+                f'((\'Требования показателей\'!{req_operator}5:{req_operator}1004="диапазон")*((\'Требования показателей\'!{req_lower}5:{req_lower}1004="")+'
+                f'(\'Требования показателей\'!{req_upper}5:{req_upper}1004="")+'
+                f'(\'Требования показателей\'!{req_target}5:{req_target}1004<>"")+'
+                f'(\'Требования показателей\'!{req_expression}5:{req_expression}1004<>"")))+'
+                f'((\'Требования показателей\'!{req_operator}5:{req_operator}1004="формула")*((\'Требования показателей\'!{req_expression}5:{req_expression}1004="")+'
+                f'(\'Требования показателей\'!{req_target}5:{req_target}1004<>"")+'
+                f'(\'Требования показателей\'!{req_lower}5:{req_lower}1004<>"")+'
+                f'(\'Требования показателей\'!{req_upper}5:{req_upper}1004<>""))))>0'
+            )
+            rows.append(
+                values(
+                    "CHK-REQUIREMENT-VALUE",
+                    "требования показателей",
+                    "форма значения соответствует оператору сравнения",
+                    f'=SUMPRODUCT(N(\'Требования показателей\'!{req_id}5:{req_id}1004<>""),N(\'Требования показателей\'!{req_operation}5:{req_operation}1004="применить"),N({invalid_value_shape}))',
+                    "Для равно/границы заполнить target_value; для диапазона — обе границы; для формулы — только выражение",
+                )
+            )
+            rows.append(
+                values(
+                    "CHK-REQUIREMENT-PERIOD",
+                    "требования показателей",
+                    "требование имеет допустимый период",
+                    f'=SUMPRODUCT(N(\'Требования показателей\'!{req_id}5:{req_id}1004<>""),N(\'Требования показателей\'!{req_operation}5:{req_operation}1004="применить"),N(((\'Требования показателей\'!{req_start}5:{req_start}1004="")+(REGEXMATCH(\'Требования показателей\'!{req_type}5:{req_type}1004,"^(цель|план)$")*(\'Требования показателей\'!{req_end}5:{req_end}1004=""))+((\'Требования показателей\'!{req_end}5:{req_end}1004<>"")*(\'Требования показателей\'!{req_end}5:{req_end}1004<\'Требования показателей\'!{req_start}5:{req_start}1004)))>0))',
+                    "Указать начало; для цели и плана — конец/срок; конец не может быть раньше начала",
+                )
+            )
+
+            econ_id = col(economic_rules, "economic_rule_id")
+            econ_version = col(economic_rules, "version_id")
+            econ_operation = col(economic_rules, "version_operation")
+            econ_status = col(economic_rules, "knowledge_status")
+            econ_kind = col(economic_rules, "rule_kind")
+            econ_direction = col(economic_rules, "economic_direction")
+            econ_method = col(economic_rules, "calculation_method")
+            econ_formula = col(economic_rules, "formula_or_rule")
+            econ_scope_type = col(economic_rules, "source_scope_type")
+            econ_scope = col(economic_rules, "source_scope_id")
+            econ_currency = col(economic_rules, "currency")
+            econ_attribution = col(economic_rules, "expense_attribution")
+            econ_behavior = col(economic_rules, "expense_behavior")
+            econ_result_position = col(economic_rules, "financial_result_position")
+            econ_allocation = col(economic_rules, "allocation_base")
+            econ_remainder = col(economic_rules, "remainder_policy")
+            econ_from = col(economic_rules, "valid_from")
+            econ_to = col(economic_rules, "valid_to")
+            rows.append(
+                values(
+                    "CHK-ECONOMIC-RULE-CORE",
+                    "экономика",
+                    "принятое экономическое правило имеет расчётный контракт",
+                    f'=SUMPRODUCT(N(\'Экономические правила\'!{econ_id}5:{econ_id}1004<>""),N(\'Экономические правила\'!{econ_operation}5:{econ_operation}1004="применить"),N(\'Экономические правила\'!{econ_status}5:{econ_status}1004="принято"),N(((\'Экономические правила\'!{econ_scope}5:{econ_scope}1004="")+(\'Экономические правила\'!{econ_method}5:{econ_method}1004="")+(\'Экономические правила\'!{econ_formula}5:{econ_formula}1004="")+(\'Экономические правила\'!{econ_from}5:{econ_from}1004="")+((\'Экономические правила\'!{econ_kind}5:{econ_kind}1004="схема компенсации")*(\'Экономические правила\'!{econ_scope_type}5:{econ_scope_type}1004<>"позиция"))+((\'Экономические правила\'!{econ_direction}5:{econ_direction}1004<>"нейтрально")*(\'Экономические правила\'!{econ_currency}5:{econ_currency}1004=""))+((\'Экономические правила\'!{econ_to}5:{econ_to}1004<>"")*(\'Экономические правила\'!{econ_to}5:{econ_to}1004<\'Экономические правила\'!{econ_from}5:{econ_from}1004)))>0))',
+                    "Заполнить область, метод, формулу, дату действия и валюту денежного правила; схема компенсации относится к позиции; проверить период",
+                )
+            )
+            rows.append(
+                values(
+                    "CHK-EXPENSE-AXES",
+                    "экономика",
+                    "расходный компонент классифицирован по трём независимым осям",
+                    f'=SUMPRODUCT(N(\'Экономические правила\'!{econ_id}5:{econ_id}1004<>""),N(\'Экономические правила\'!{econ_operation}5:{econ_operation}1004="применить"),N(\'Экономические правила\'!{econ_direction}5:{econ_direction}1004="расход"),N(((\'Экономические правила\'!{econ_attribution}5:{econ_attribution}1004="")+(\'Экономические правила\'!{econ_behavior}5:{econ_behavior}1004="")+(\'Экономические правила\'!{econ_result_position}5:{econ_result_position}1004=""))>0))',
+                    "Независимо указать прямой/косвенный, постоянный/переменный/составной и место в финансовом результате",
+                )
+            )
+            rows.append(
+                values(
+                    "CHK-ECONOMIC-ALLOCATION",
+                    "экономика",
+                    "распределённый метод имеет базу и остаток",
+                    f'=SUMPRODUCT(N(\'Экономические правила\'!{econ_id}5:{econ_id}1004<>""),N(\'Экономические правила\'!{econ_method}5:{econ_method}1004="распределённый"),N(((\'Экономические правила\'!{econ_allocation}5:{econ_allocation}1004="")+(\'Экономические правила\'!{econ_remainder}5:{econ_remainder}1004=""))>0))',
+                    "Указать принятую базу распределения и правило остатка; не угадывать доли",
+                )
+            )
+
+            condition_id = col(conditions, "assignment_condition_id")
+            condition_operation = col(conditions, "version_operation")
+            condition_type = col(conditions, "condition_type")
+            condition_mode = col(conditions, "application_mode")
+            condition_scheme = col(conditions, "compensation_scheme_rule_id")
+            condition_scheme_version = col(conditions, "compensation_scheme_rule_version_id")
+            condition_value = col(conditions, "amount_value")
+            condition_formula = col(conditions, "amount_formula")
+            condition_currency = col(conditions, "currency")
+            condition_period = col(conditions, "period_unit")
+            condition_basis = col(conditions, "amount_basis")
+            condition_indicator = col(conditions, "bonus_indicator_id")
+            condition_indicator_version = col(conditions, "bonus_indicator_version_id")
+            condition_allocation = col(conditions, "allocation_rule_id")
+            condition_allocation_version = col(conditions, "allocation_rule_version_id")
+            condition_storage = col(conditions, "storage_mode")
+            condition_value_source = col(conditions, "value_source_id")
+            condition_value_locator = col(conditions, "value_source_locator")
+            invalid_condition = (
+                f'((\'Условия назначений\'!{condition_scheme}5:{condition_scheme}1004="")+'
+                f'(\'Условия назначений\'!{condition_scheme_version}5:{condition_scheme_version}1004="")+'
+                f'(((\'Условия назначений\'!{condition_allocation}5:{condition_allocation}1004<>"")+'
+                f'(\'Условия назначений\'!{condition_allocation_version}5:{condition_allocation_version}1004<>""))=1)+'
+                f'(((\'Условия назначений\'!{condition_value}5:{condition_value}1004<>"")+'
+                f'(\'Условия назначений\'!{condition_formula}5:{condition_formula}1004<>""))>1)+'
+                f'((((\'Условия назначений\'!{condition_value}5:{condition_value}1004<>"")+'
+                f'(\'Условия назначений\'!{condition_formula}5:{condition_formula}1004<>""))>0)*'
+                f'((\'Условия назначений\'!{condition_currency}5:{condition_currency}1004="")+'
+                f'(\'Условия назначений\'!{condition_period}5:{condition_period}1004="")+'
+                f'(\'Условия назначений\'!{condition_basis}5:{condition_basis}1004="")))+'
+                f'((\'Условия назначений\'!{condition_type}5:{condition_type}1004="переменная компенсация")*'
+                f'((\'Условия назначений\'!{condition_indicator}5:{condition_indicator}1004="")+'
+                f'(\'Условия назначений\'!{condition_indicator_version}5:{condition_indicator_version}1004="")))+'
+                f'((\'Условия назначений\'!{condition_storage}5:{condition_storage}1004="закрытый источник")*'
+                f'((\'Условия назначений\'!{condition_value_source}5:{condition_value_source}1004="")+'
+                f'(\'Условия назначений\'!{condition_value_locator}5:{condition_value_locator}1004="")))+'
+                f'((\'Условия назначений\'!{condition_mode}5:{condition_mode}1004="общий компонент")*'
+                f'((\'Условия назначений\'!{condition_value}5:{condition_value}1004<>"")+'
+                f'(\'Условия назначений\'!{condition_formula}5:{condition_formula}1004<>""))))>0'
+            )
+            rows.append(
+                values(
+                    "CHK-ASSIGNMENT-CONDITION",
+                    "экономика",
+                    "условие назначения не дублирует и не теряет экономический смысл",
+                    f'=SUMPRODUCT(N(\'Условия назначений\'!{condition_id}5:{condition_id}1004<>""),N(\'Условия назначений\'!{condition_operation}5:{condition_operation}1004="применить"),N({invalid_condition}))',
+                    "Указать точную редакцию схемы позиции; оставить одну сумму или формулу; указать валюту, период и gross/net; переменный компонент связать с редакцией показателя; правило распределения использовать только вместе с его редакцией; закрытое значение — с источником; общий компонент хранить в правиле один раз",
+                )
+            )
+            rows.append(
+                values(
+                    "CHK-ASSIGNMENT-RULE-REVISION",
+                    "экономика",
+                    "условие назначения ссылается на существующие редакции правил и показателя",
+                    f'=SUM(MAP(\'Условия назначений\'!{condition_id}5:{condition_id}1004,'
+                    f'\'Условия назначений\'!{condition_scheme}5:{condition_scheme}1004,'
+                    f'\'Условия назначений\'!{condition_scheme_version}5:{condition_scheme_version}1004,'
+                    f'\'Условия назначений\'!{condition_allocation}5:{condition_allocation}1004,'
+                    f'\'Условия назначений\'!{condition_allocation_version}5:{condition_allocation_version}1004,'
+                    f'\'Условия назначений\'!{condition_indicator}5:{condition_indicator}1004,'
+                    f'\'Условия назначений\'!{condition_indicator_version}5:{condition_indicator_version}1004,'
+                    f'LAMBDA(c,s,sv,a,av,i,iv,IF(c="",0,'
+                    f'N(COUNTIFS(\'Экономические правила\'!{econ_id}5:{econ_id}1004,s,'
+                    f'\'Экономические правила\'!{econ_version}5:{econ_version}1004,sv,'
+                    f'\'Экономические правила\'!{econ_operation}5:{econ_operation}1004,"применить")<>1)+'
+                    f'IF(a="",0,N(COUNTIFS(\'Экономические правила\'!{econ_id}5:{econ_id}1004,a,'
+                    f'\'Экономические правила\'!{econ_version}5:{econ_version}1004,av,'
+                    f'\'Экономические правила\'!{econ_operation}5:{econ_operation}1004,"применить")<>1))+'
+                    f'IF(i="",0,N(COUNTIFS(\'Показатели\'!{ind_id}5:{ind_id}1004,i,'
+                    f'\'Показатели\'!{col(indicators, "version_id")}5:{col(indicators, "version_id")}1004,iv,'
+                    f'\'Показатели\'!{ind_operation}5:{ind_operation}1004,"применить")<>1))))))',
+                    "Исправить stable ID и version ID схемы позиции, правила распределения или бонусного показателя; новая редакция не подставляется автоматически",
+                )
+            )
+
+            legacy_elements = schema["sheets"]["Элементы модели"]["columns"]
+            legacy_type = col(legacy_elements, "element_type")
+            rows.append(
+                values(
+                    "CHK-LEGACY-MEASUREMENT-ELEMENT",
+                    "миграция",
+                    "показатели и нормативы вынесены из общего каталога",
+                    f'=COUNTIF(\'Элементы модели\'!{legacy_type}5:{legacy_type}1004,"показатель")+COUNTIF(\'Элементы модели\'!{legacy_type}5:{legacy_type}1004,"норматив")',
+                    "Разрешить семантику и перенести строки в Показатели и Требования показателей по миграции v0.3→v0.4",
+                )
+            )
     return rows
 
 
@@ -1715,10 +2081,10 @@ def build(
         helper_column = max(len(columns) + 2, 36)
         helper_columns[sheet_name] = helper_column
         required_columns = enum_base + len(schema["enums"]) + 2 if sheet_name == "Система" else helper_column + 2
-        dashboard_v3 = sheet_name == "Рабочая панель" and schema.get("schema_version") == "0.3"
-        if dashboard_v3:
+        connected_dashboard = sheet_name == "Рабочая панель" and has_connected_dashboard(schema)
+        if connected_dashboard:
             required_columns = max(required_columns, 44)
-        row_count = int(default["data_end_row"]) + 1 if dashboard_v3 else 200 if sheet_name in {"Инструкция", "Рабочая панель"} else int(default["data_end_row"]) + 1
+        row_count = int(default["data_end_row"]) + 1 if connected_dashboard else 200 if sheet_name in {"Инструкция", "Рабочая панель"} else int(default["data_end_row"]) + 1
         requests.append(
             {
                 "addSheet": {
@@ -1763,7 +2129,7 @@ def build(
             }
         }
     )
-    if schema.get("schema_version") == "0.3":
+    if has_connected_dashboard(schema):
         empty_column = enum_base + len(schema["enums"]) + 1
         requests.append(
             {
@@ -1918,14 +2284,14 @@ def build(
             requests.append({"addNamedRange": {"namedRange": {"name": selector_name, "range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 1}}}})
             requests.append({"addNamedRange": {"namedRange": {"name": selector_id_name, "range": {"sheetId": sheet_id, "startRowIndex": start_row_number - 1, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column + 1, "endColumnIndex": helper_column + 2}}}})
 
-    if schema.get("schema_version") == "0.3":
+    if has_connected_dashboard(schema):
         dashboard_id = sheet_ids["Рабочая панель"]
         helper_column = 40
         helper_row = 4
         dependent_formulas = dashboard_selector_catalog_formulas(schema)
         requests.append(update_block(dashboard_id, helper_row, helper_column, [row([cell(formula=formula) for formula in dependent_formulas])]))
         requests.append({"updateDimensionProperties": {"range": {"sheetId": dashboard_id, "dimension": "COLUMNS", "startIndex": helper_column, "endIndex": helper_column + 4}, "properties": {"hiddenByUser": True}, "fields": "hiddenByUser"}})
-        requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": dashboard_id, "startRowIndex": helper_row, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 4}, "description": "Зависимые каталоги версии, системы и процесса v0.3", "warningOnly": True}}})
+        requests.append({"addProtectedRange": {"protectedRange": {"range": {"sheetId": dashboard_id, "startRowIndex": helper_row, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column, "endColumnIndex": helper_column + 4}, "description": f"Зависимые каталоги версии, системы и процесса v{schema.get('schema_version', '0.3')}", "warningOnly": True}}})
         for offset, name in enumerate(("dashboard_system_labels_v03", "dashboard_system_ids_v03", "dashboard_process_labels_v03", "dashboard_process_ids_v03")):
             requests.append({"addNamedRange": {"namedRange": {"name": name, "range": {"sheetId": dashboard_id, "startRowIndex": helper_row, "endRowIndex": int(default["data_end_row"]), "startColumnIndex": helper_column + offset, "endColumnIndex": helper_column + offset + 1}}}})
 
@@ -1983,8 +2349,8 @@ def build(
     dashboard_id = sheet_ids["Рабочая панель"]
     dashboard_ranges = (
         (2, selector_names["Версии"]),
-        (3, "dashboard_system_labels_v03" if schema.get("schema_version") == "0.3" else selector_names["Система"]),
-        (4, "dashboard_process_labels_v03" if schema.get("schema_version") == "0.3" else selector_names["Процессы"]),
+        (3, "dashboard_system_labels_v03" if has_connected_dashboard(schema) else selector_names["Система"]),
+        (4, "dashboard_process_labels_v03" if has_connected_dashboard(schema) else selector_names["Процессы"]),
     )
     for row_index, source_range in dashboard_ranges:
         requests.append({"setDataValidation": {"range": {"sheetId": dashboard_id, "startRowIndex": row_index, "endRowIndex": row_index + 1, "startColumnIndex": 1, "endColumnIndex": 2}, "rule": {"condition": {"type": "ONE_OF_RANGE", "values": [{"userEnteredValue": f"={source_range}"}]}, "strict": True, "showCustomUi": True}}})

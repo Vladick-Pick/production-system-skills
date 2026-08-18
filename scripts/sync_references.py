@@ -25,8 +25,10 @@ REFERENCES = (
 EXTRA_BUNDLED_FILES = (
     (ROOT / "templates" / "template-schema-v0.2.json", "TEMPLATE-SCHEMA-v0.2.json"),
     (ROOT / "templates" / "template-schema-v0.3.json", "TEMPLATE-SCHEMA-v0.3.json"),
+    (ROOT / "templates" / "template-schema-v0.4.json", "TEMPLATE-SCHEMA-v0.4.json"),
     (ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md", "MIGRATION-v0.1-to-v0.2.md"),
     (ROOT / "templates" / "migrations" / "v0.2-to-v0.3.md", "MIGRATION-v0.2-to-v0.3.md"),
+    (ROOT / "templates" / "migrations" / "v0.3-to-v0.4.md", "MIGRATION-v0.3-to-v0.4.md"),
 )
 RUNTIME_SKILLS = {
     "model-production-system",
@@ -40,7 +42,9 @@ RUNTIME_FILES = (
     (ROOT / "scripts" / "versioning" / "resolve.py", Path("versioning/resolve.py")),
     (ROOT / "scripts" / "build_template_v0_2.py", Path("build_template_v0_2.py")),
     (ROOT / "scripts" / "build_template_v0_3.py", Path("build_template_v0_3.py")),
+    (ROOT / "scripts" / "build_template_v0_4.py", Path("build_template_v0_4.py")),
     (ROOT / "scripts" / "migrate_template_v0_2_to_v0_3.py", Path("migrate_template_v0_2_to_v0_3.py")),
+    (ROOT / "scripts" / "migrate_template_v0_3_to_v0_4.py", Path("migrate_template_v0_3_to_v0_4.py")),
 )
 
 
