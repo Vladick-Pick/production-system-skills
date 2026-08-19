@@ -42,6 +42,7 @@ BEHAVIORAL_CASES = ROOT / "evals" / "cases.yaml"
 FRESH_AGENT_CONTRACT = ROOT / "evals" / "FRESH-AGENT-CONTRACT.md"
 PASSPORT = ROOT / "ПАСПОРТ.md"
 PROJECT_INTENT = ROOT / "docs" / "PROJECT-INTENT.md"
+PACKAGE_SCOPE = ROOT / "docs" / "PACKAGE-SCOPE.md"
 PLANS_INDEX = ROOT / "plans" / "README.md"
 NEXT_SESSION = ROOT / "NEXT_SESSION.md"
 EXPECTED_V2_SHEETS = (
@@ -276,6 +277,7 @@ def validate_project_context(errors: list[str]) -> None:
         ROOT / "README.md",
         PASSPORT,
         PROJECT_INTENT,
+        PACKAGE_SCOPE,
         PLANS_INDEX,
         NEXT_SESSION,
         TEMPLATE_MANIFEST,
@@ -296,6 +298,7 @@ def validate_project_context(errors: list[str]) -> None:
     passport = PASSPORT.read_text(encoding="utf-8")
     agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
     intent = PROJECT_INTENT.read_text(encoding="utf-8")
+    package_scope = PACKAGE_SCOPE.read_text(encoding="utf-8")
     plans = PLANS_INDEX.read_text(encoding="utf-8")
     next_session = NEXT_SESSION.read_text(encoding="utf-8")
 
@@ -305,10 +308,19 @@ def validate_project_context(errors: list[str]) -> None:
         errors.append("ПАСПОРТ.md расходится с версией template-manifest.yaml")
 
     required_links = {
-        "README.md": ("ПАСПОРТ.md", "docs/PROJECT-INTENT.md", "plans/README.md"),
-        "AGENTS.md": ("ПАСПОРТ.md", "docs/PROJECT-INTENT.md", "plans/README.md"),
-        "ПАСПОРТ.md": ("docs/PROJECT-INTENT.md", "plans/README.md"),
-        "NEXT_SESSION.md": ("ПАСПОРТ.md", "docs/PROJECT-INTENT.md", "plans/README.md"),
+        "README.md": (
+            "ПАСПОРТ.md",
+            "docs/PACKAGE-SCOPE.md",
+            "docs/PROJECT-INTENT.md",
+            "plans/README.md",
+        ),
+        "AGENTS.md": ("ПАСПОРТ.md", "docs/PACKAGE-SCOPE.md", "plans/README.md"),
+        "ПАСПОРТ.md": (
+            "docs/PACKAGE-SCOPE.md",
+            "docs/PROJECT-INTENT.md",
+            "plans/README.md",
+        ),
+        "NEXT_SESSION.md": ("ПАСПОРТ.md", "docs/PACKAGE-SCOPE.md", "plans/README.md"),
     }
     texts = {
         "README.md": readme,
@@ -321,10 +333,12 @@ def validate_project_context(errors: list[str]) -> None:
             if marker not in texts[name]:
                 errors.append(f"{name}: отсутствует ссылка холодного старта {marker}")
 
-    if "Статус: канонический документ продуктового замысла" not in intent:
-        errors.append("PROJECT-INTENT.md не объявлен владельцем продуктового замысла")
-    if "Принято как рабочая основа" not in intent or "Критические неизвестные" not in intent:
-        errors.append("PROJECT-INTENT.md не разделяет принятые основания и неизвестные")
+    if "business-ontology-platform" not in intent or "не дублируются здесь" not in intent:
+        errors.append("PROJECT-INTENT.md не указывает канонического владельца замысла")
+    if "Статус: канонический документ назначения и границы" not in package_scope:
+        errors.append("PACKAGE-SCOPE.md не объявлен владельцем границы пакета")
+    if "## Чем владеет репозиторий" not in package_scope or "## Чем репозиторий не владеет" not in package_scope:
+        errors.append("PACKAGE-SCOPE.md не фиксирует положительную и отрицательную границу")
 
     stale_agent_markers = (
         "Выпущенная v0.2 является стабильной базой",
