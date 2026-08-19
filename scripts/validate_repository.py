@@ -34,8 +34,10 @@ TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.3.
 ROLLBACK_TEMPLATE_SNAPSHOT = ROOT / "templates" / "production-system-model-template-v0.2.xlsx"
 TEMPLATE_SCHEMA_V2 = ROOT / "templates" / "template-schema-v0.2.json"
 TEMPLATE_SCHEMA_V3 = ROOT / "templates" / "template-schema-v0.3.json"
+TEMPLATE_SCHEMA_V4 = ROOT / "templates" / "template-schema-v0.4.json"
 MIGRATION_V1_TO_V2 = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
 MIGRATION_V2_TO_V3 = ROOT / "templates" / "migrations" / "v0.2-to-v0.3.md"
+MIGRATION_V3_TO_V4 = ROOT / "templates" / "migrations" / "v0.3-to-v0.4.md"
 BEHAVIORAL_CASES = ROOT / "evals" / "cases.yaml"
 FRESH_AGENT_CONTRACT = ROOT / "evals" / "FRESH-AGENT-CONTRACT.md"
 PASSPORT = ROOT / "ПАСПОРТ.md"
@@ -79,6 +81,14 @@ EXPECTED_V3_SHEETS = EXPECTED_V2_SHEETS[:24] + (
     "Гипотезы",
     "Эксперименты",
 ) + EXPECTED_V2_SHEETS[24:]
+_V4_ANCHOR = EXPECTED_V3_SHEETS.index("Элементы модели") + 1
+EXPECTED_V4_SHEETS = EXPECTED_V3_SHEETS[:_V4_ANCHOR] + (
+    "Показатели",
+    "Привязки показателей",
+    "Требования показателей",
+    "Экономические правила",
+    "Условия назначений",
+) + EXPECTED_V3_SHEETS[_V4_ANCHOR:]
 EXPECTED_VERSION_STATUSES = {
     "черновик",
     "принято",
@@ -176,6 +186,32 @@ ESSENTIAL_V3_COLUMNS = {
         "launch_decision_id",
         "conclusion",
         "implementation_decision",
+    },
+}
+ESSENTIAL_V4_COLUMNS = {
+    "Показатели": {
+        "indicator_id", "version_id", "system_id", "indicator_name", "indicator_kind",
+        "management_question", "measured_characteristic", "observation_unit_type",
+        "observation_unit_id", "single_unit_rule", "unit_of_measure",
+        "time_attribution_rule", "required_facts", "coverage_rule",
+    },
+    "Привязки показателей": {
+        "binding_id", "version_id", "indicator_id", "binding_role", "fact_source_id",
+        "fact_locator_contract", "required_fact_description", "coverage_rule", "valid_from",
+    },
+    "Требования показателей": {
+        "requirement_id", "version_id", "indicator_id", "requirement_type", "scope_type",
+        "scope_element_id", "comparison_operator", "period_start",
+    },
+    "Экономические правила": {
+        "economic_rule_id", "version_id", "system_id", "rule_kind", "economic_direction",
+        "source_scope_type", "source_scope_id", "calculation_method", "formula_or_rule",
+        "valid_from",
+    },
+    "Условия назначений": {
+        "assignment_condition_id", "version_id", "assignment_id", "condition_type",
+        "compensation_scheme_rule_id", "compensation_scheme_rule_version_id",
+        "application_mode", "storage_mode", "valid_from",
     },
 }
 
@@ -301,10 +337,7 @@ def validate_project_context(errors: list[str]) -> None:
         errors.append("PROJECT-INTENT.md не указывает канонического владельца замысла")
     if "Статус: канонический документ назначения и границы" not in package_scope:
         errors.append("PACKAGE-SCOPE.md не объявлен владельцем границы пакета")
-    if (
-        "## Чем владеет репозиторий" not in package_scope
-        or "## Чем репозиторий не владеет" not in package_scope
-    ):
+    if "## Чем владеет репозиторий" not in package_scope or "## Чем репозиторий не владеет" not in package_scope:
         errors.append("PACKAGE-SCOPE.md не фиксирует положительную и отрицательную границу")
 
     stale_agent_markers = (
@@ -669,6 +702,84 @@ def validate_v3_schema(errors: list[str]) -> None:
         errors.append("нет scripts/build_template_v0_3.py")
 
 
+def validate_v4_schema(errors: list[str]) -> None:
+    if not TEMPLATE_SCHEMA_V4.is_file():
+        errors.append("нет templates/template-schema-v0.4.json")
+        return
+    try:
+        overlay = json.loads(
+            TEMPLATE_SCHEMA_V4.read_text(encoding="utf-8"),
+            object_pairs_hook=reject_duplicate_json_keys,
+        )
+    except (json.JSONDecodeError, OSError, ValueError) as exc:
+        errors.append(f"template-schema-v0.4.json не читается: {exc}")
+        return
+
+    if overlay.get("schema_version") != "0.4" or overlay.get("base_schema") != "template-schema-v0.3.json":
+        errors.append("schema v0.4 должна быть версионным overlay точной schema v0.3")
+    additions = tuple(overlay.get("sheet_order_additions", ()))
+    expected_additions = EXPECTED_V4_SHEETS[_V4_ANCHOR:_V4_ANCHOR + 5]
+    if overlay.get("sheet_count") != 37 or additions != expected_additions:
+        errors.append("schema v0.4 должна добавлять пять принятых реестров и 37 листов")
+    if overlay.get("insert_after") != "Элементы модели":
+        errors.append("schema v0.4 должна вставлять новые реестры после Элементы модели")
+    order = list(EXPECTED_V3_SHEETS)
+    anchor = order.index("Элементы модели") + 1
+    order[anchor:anchor] = additions
+    if tuple(order) != EXPECTED_V4_SHEETS:
+        errors.append("итоговый порядок 37 листов v0.4 не соответствует контракту")
+
+    sheets = overlay.get("sheets", {})
+    if tuple(sheets) != additions:
+        errors.append("overlay v0.4 должен объявлять только пять новых листов в принятом порядке")
+    for sheet_name, required_columns in ESSENTIAL_V4_COLUMNS.items():
+        sheet = sheets.get(sheet_name, {})
+        columns = sheet.get("columns", [])
+        missing = required_columns - set(columns)
+        if missing:
+            errors.append(f"{sheet_name}: отсутствуют обязательные v0.4 колонки {sorted(missing)}")
+        if len(columns) != len(set(columns)):
+            errors.append(f"{sheet_name}: повторяющиеся колонки v0.4")
+        for field, selector in sheet.get("selectors", {}).items():
+            if field not in columns or selector not in columns:
+                errors.append(f"{sheet_name}: нарушена ID/selector пара {field} → {selector}")
+            elif columns.index(selector) != columns.index(field) + 1:
+                errors.append(f"{sheet_name}: selector {selector} должен идти сразу после {field}")
+
+    element_types = set(overlay.get("enum_overrides", {}).get("element_type", []))
+    if {"показатель", "норматив"} & element_types:
+        errors.append("v0.4 должна убрать legacy-показатель и норматив из Элементы модели")
+    migrations = overlay.get("semantic_migrations", {}).get("element_type", {})
+    if migrations.get("показатель") != "Показатели" or migrations.get("норматив") != "Требования показателей":
+        errors.append("v0.4 не объявляет миграцию legacy-показателя и норматива")
+    if migrations.get("requires_semantic_resolution") is not True:
+        errors.append("v0.4 должна останавливать неоднозначную семантическую миграцию")
+
+    forbidden = {"Наблюдения показателей", "Выполнения расчётов", "Финансовые факты"}
+    if forbidden & set(sheets):
+        errors.append("schema v0.4 не должна хранить факты территории в канонической книге")
+    required_overrides = {"Отклонения", "Гипотезы", "Эксперименты", "Связи модели", "Рабочая панель"}
+    if set(overlay.get("sheet_overrides", {})) != required_overrides:
+        errors.append("schema v0.4 содержит неожиданный набор sheet overrides")
+    deviation = overlay.get("sheet_overrides", {}).get("Отклонения", {})
+    if deviation.get("foreign_keys", {}).get("norm_requirement_id") != "Требования показателей.requirement_id":
+        errors.append("Отклонения v0.4 должны ссылаться на норматив из Требования показателей")
+    for sheet_name in ("Гипотезы", "Эксперименты"):
+        foreign_keys = overlay.get("sheet_overrides", {}).get(sheet_name, {}).get("foreign_keys", {})
+        if foreign_keys.get("primary_metric_id") != "Показатели.indicator_id":
+            errors.append(f"{sheet_name} v0.4 должны ссылаться на Показатели.indicator_id")
+
+    for relative in (
+        "scripts/build_template_v0_4.py",
+        "scripts/migrate_template_v0_3_to_v0_4.py",
+        "scripts/test_template_builder_v0_4.py",
+        "scripts/test_migration_v0_3_to_v0_4.py",
+        "templates/migrations/v0.3-to-v0.4.md",
+    ):
+        if not (ROOT / relative).is_file():
+            errors.append(f"нет обязательного v0.4 артефакта {relative}")
+
+
 def validate_version_lifecycle(errors: list[str]) -> None:
     language_path = ROOT / "references" / "LANGUAGE.md"
     metaontology_path = ROOT / "references" / "METAONTOLOGY.md"
@@ -783,6 +894,22 @@ def validate_migration_contract(errors: list[str]) -> None:
     ):
         if marker not in text_v3:
             errors.append(f"v0.2-to-v0.3.md: отсутствует migration marker {marker!r}")
+    if not MIGRATION_V3_TO_V4.is_file():
+        errors.append("нет templates/migrations/v0.3-to-v0.4.md")
+        return
+    text_v4 = MIGRATION_V3_TO_V4.read_text(encoding="utf-8")
+    for marker in (
+        "отдельная книга v0.4 из 37 листов",
+        "REQUIRES_INPUT",
+        "legacy-показатель",
+        "legacy-норматив",
+        "SLA не преобразуется автоматически",
+        "Экономические правила",
+        "source/target fingerprints",
+        "migrate_template_v0_3_to_v0_4.py",
+    ):
+        if marker not in text_v4:
+            errors.append(f"v0.3-to-v0.4.md: отсутствует migration marker {marker!r}")
 
 
 def validate_fresh_agent_contract(errors: list[str]) -> None:
@@ -848,6 +975,7 @@ def validate() -> list[str]:
     validate_template(errors)
     validate_v2_schema(errors)
     validate_v3_schema(errors)
+    validate_v4_schema(errors)
     validate_fresh_agent_contract(errors)
 
     for name in sorted(EXPECTED_SKILLS):
@@ -932,6 +1060,15 @@ def validate() -> list[str]:
                 "запустите scripts/sync_references.py"
             )
 
+        bundled_schema_v4 = skill_dir / "references" / "TEMPLATE-SCHEMA-v0.4.json"
+        if not bundled_schema_v4.is_file():
+            errors.append(f"{name}: нет локальной копии references/TEMPLATE-SCHEMA-v0.4.json")
+        elif bundled_schema_v4.read_bytes() != TEMPLATE_SCHEMA_V4.read_bytes():
+            errors.append(
+                f"{name}: TEMPLATE-SCHEMA-v0.4.json расходится с templates/template-schema-v0.4.json; "
+                "запустите scripts/sync_references.py"
+            )
+
         bundled_migration = skill_dir / "references" / "MIGRATION-v0.1-to-v0.2.md"
         canonical_migration = ROOT / "templates" / "migrations" / "v0.1-to-v0.2.md"
         if not bundled_migration.is_file():
@@ -945,6 +1082,12 @@ def validate() -> list[str]:
         elif bundled_migration_v3.read_bytes() != MIGRATION_V2_TO_V3.read_bytes():
             errors.append(f"{name}: migration map v0.2-to-v0.3 расходится с канонической")
 
+        bundled_migration_v4 = skill_dir / "references" / "MIGRATION-v0.3-to-v0.4.md"
+        if not bundled_migration_v4.is_file():
+            errors.append(f"{name}: нет локальной migration map v0.3-to-v0.4")
+        elif bundled_migration_v4.read_bytes() != MIGRATION_V3_TO_V4.read_bytes():
+            errors.append(f"{name}: migration map v0.3-to-v0.4 расходится с канонической")
+
         if name in {"model-production-system", "maintain-production-system", "audit-production-system"}:
             for relative, canonical in (
                 ("bpmn/common.py", ROOT / "scripts" / "bpmn" / "common.py"),
@@ -953,7 +1096,9 @@ def validate() -> list[str]:
                 ("versioning/resolve.py", ROOT / "scripts" / "versioning" / "resolve.py"),
                 ("build_template_v0_2.py", ROOT / "scripts" / "build_template_v0_2.py"),
                 ("build_template_v0_3.py", ROOT / "scripts" / "build_template_v0_3.py"),
+                ("build_template_v0_4.py", ROOT / "scripts" / "build_template_v0_4.py"),
                 ("migrate_template_v0_2_to_v0_3.py", ROOT / "scripts" / "migrate_template_v0_2_to_v0_3.py"),
+                ("migrate_template_v0_3_to_v0_4.py", ROOT / "scripts" / "migrate_template_v0_3_to_v0_4.py"),
             ):
                 bundled = skill_dir / "scripts" / relative
                 if not bundled.is_file():
@@ -1042,6 +1187,7 @@ def main() -> int:
     print("[OK] Паспорт, замысел, стабильный релиз и индекс планов согласованы")
     print("[OK] Frontmatter, UI-метаданные и общие references согласованы")
     print("[OK] Публичный Google Sheets и XLSX v0.3 согласованы; rollback v0.2 сохранён")
+    print("[OK] Локальный контракт кандидата v0.4, builder и миграция v0.3→v0.4 согласованы")
     print("[OK] TODO, битые относительные ссылки и типовые секреты не найдены")
     return 0
 

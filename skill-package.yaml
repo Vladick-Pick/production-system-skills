@@ -29,6 +29,15 @@ model_template:
   rollback_version: "0.2"
   rollback_snapshot: templates/production-system-model-template-v0.2.xlsx
 
+release_candidate:
+  version: "0.4.0-rc.1"
+  status: local_validation
+  template_schema_overlay: templates/template-schema-v0.4.json
+  builder: scripts/build_template_v0_4.py
+  migration_v3_to_v4: templates/migrations/v0.3-to-v0.4.md
+  published: false
+  stable_fallback: "0.3"
+
 truth_gate:
   agent: исследует, предлагает, моделирует и проверяет
   identified_human: подтверждает бизнес-истину и ввод изменений

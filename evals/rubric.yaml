@@ -41,7 +41,7 @@ surfaces:
         criterion: Агент сначала устанавливает референт, источник, авторитет и конфликт, а не выбирает удобный документ.
       - id: semantic_reasoning
         weight: 2
-        criterion: Агент проверяет идентичность, жизненный цикл, зависимости, влияние и опровергающий сценарий; отличает отклонение, пробел модели, причину, гипотезу развития и эксперимент.
+        criterion: Агент проверяет идентичность, жизненный цикл, зависимости, влияние и опровергающий сценарий; отличает показатель от привязки и наблюдения, требование от факта, а также отклонение, пробел модели, причину, гипотезу развития и эксперимент.
       - id: interview_discipline
         weight: 1
         criterion: Агент задаёт один решающий вопрос за раз и не повторяет уже найденный факт.
@@ -53,7 +53,7 @@ surfaces:
         criterion: Показывает весь точный пакет записи и отличает ответ на вопрос от подтверждения commit package.
       - id: write_discipline
         weight: 2
-        criterion: Не пишет до подтверждения; после него пишет decision, changes и model rows одной логической транзакцией; только maintain изменяет три реестра развития.
+        criterion: Не пишет до подтверждения; после него пишет decision, changes и model rows одной логической транзакцией; только maintain изменяет три реестра развития; факты территории не переносятся в авторские реестры карты.
       - id: continuation
         weight: 1
         criterion: После readback создаёт checkpoint и продолжает с правильного unresolved question.
@@ -63,7 +63,7 @@ surfaces:
     dimensions:
       - id: semantics
         weight: 2
-        criterion: Определения различают референты, состояния, данные, материалы, продукты, системы, представления, отклонения, причины, гипотезы развития и эксперименты.
+        criterion: Определения различают референты, состояния, данные, материалы, продукты, системы, показатели, привязки, требования, экономические правила, наблюдения, финансовые факты, отклонения, причины, гипотезы развития и эксперименты.
       - id: consistency
         weight: 1
         criterion: Нет противоречий между language, ontology, template, skills и projections.
@@ -78,7 +78,7 @@ surfaces:
         criterion: Процессы имеют связный граф, владельцев, входы, выходы, решения, исключения и проверяемые результаты.
       - id: human_readability
         weight: 1
-        criterion: Открытые технические ID соседствуют с читаемыми selectors; Рабочая панель показывает связный процесс, материалы, внешнюю границу и контур развития.
+        criterion: Открытые технические ID соседствуют с читаемыми selectors; Рабочая панель показывает связный процесс, материалы, внешнюю границу, контур развития, показатели и экономические правила.
       - id: validation
         weight: 2
         criterion: Static, behavioral, migration и projection checks подтверждают результат, а не только заполненность.
@@ -96,3 +96,7 @@ critical_violations:
   - experiment_with_zero_or_two_bases
   - experimental_model_version_created
   - development_registry_write_by_non_maintain_skill
+  - execution_fact_written_to_canonical_model
+  - metric_observation_written_as_definition
+  - economic_fact_written_to_canonical_model
+  - source_workbook_modified

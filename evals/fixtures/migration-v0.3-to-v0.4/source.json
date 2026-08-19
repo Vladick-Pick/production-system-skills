@@ -1,0 +1,290 @@
+{
+  "schema_version": "0.3",
+  "spreadsheet_id": "sheet-v03-fixture",
+  "spreadsheet_title": "Модель бизнеса v0.3 fixture",
+  "build_fingerprint": "fixture-v03-fingerprint",
+  "settings": {
+    "model_id": "mdl-fixture",
+    "working_version_id": "ver-v03",
+    "working_version_selector": "Текущая модель v0.3",
+    "current_version_id": "ver-v03",
+    "current_version_selector": "Текущая модель v0.3"
+  },
+  "sheet_ids": {
+    "Инструкция": 301,
+    "Система": 302,
+    "Схема шаблона": 303,
+    "Источники": 304,
+    "Версии": 305,
+    "Исполнители": 306,
+    "Позиции": 307,
+    "Назначения": 308,
+    "Контрагенты": 309,
+    "Продукты": 310,
+    "Материалы": 311,
+    "Процессы": 312,
+    "Действия": 313,
+    "Связи действий": 314,
+    "Объекты": 315,
+    "Состояния": 316,
+    "Переходы": 317,
+    "Элементы модели": 318,
+    "Контракты": 319,
+    "Позиции контрактов": 320,
+    "Интерфейсы передачи": 321,
+    "Связи модели": 322,
+    "Решения": 323,
+    "Изменения модели": 324,
+    "Отклонения": 325,
+    "Гипотезы": 326,
+    "Эксперименты": 327,
+    "Срез модели": 328,
+    "Проверки": 329,
+    "Реестр процессов": 330,
+    "Рабочая панель": 331,
+    "Диаграммы": 332
+  },
+  "named_range_ids": [
+    "nr-v03-001",
+    "nr-v03-002"
+  ],
+  "semantic_resolutions": {
+    "v0.4": {
+      "indicators": {
+        "el-conversion": {
+          "decision_id": "dec-mig-indicator-001",
+          "indicator_kind": "операционный",
+          "management_question": "Какая доля созданных сделок стала выигранной?",
+          "measured_characteristic": "Доля сделок, перешедших в выигранное состояние",
+          "observation_unit_type": "процесс",
+          "observation_unit_id": "proc-sales",
+          "single_unit_rule": "Для каждой сделки значение 1, если она выиграна, иначе 0",
+          "aggregation_rule": "Сумма значений делится на число сделок когорты",
+          "unit_of_measure": "процент",
+          "time_attribution_rule": "Сделка относится к когорте по дате создания",
+          "grouping_or_window_rule": "Когорта по месяцу создания, результат по месяцу закрытия",
+          "allowed_dimensions": "продукт; ответственный; канал",
+          "required_facts": "ID сделки, дата создания, дата закрытия, итоговое состояние",
+          "coverage_rule": "Все сделки, созданные в выбранной когорте",
+          "freshness_requirement": "не позднее следующего дня",
+          "fact_binding": {
+            "binding_id": "bind-conversion-crm",
+            "binding_role": "основной источник",
+            "fact_source_id": "src-crm",
+            "fact_locator_contract": "crm.deals where created_at in cohort",
+            "source_event_or_field": "deal.created_at, deal.closed_at, deal.status",
+            "required_fact_description": "Создание и итоговое состояние каждой сделки",
+            "coverage_rule": "Все сделки без удалённых тестовых записей",
+            "freshness_requirement": "D+1",
+            "source_id": "src-method",
+            "source_locator": "Решение dec-mig-indicator-001"
+          }
+        }
+      },
+      "requirements": {
+        "el-conversion-norm": {
+          "decision_id": "dec-mig-requirement-001",
+          "indicator_id": "el-conversion",
+          "requirement_name": "Минимальная когортная конверсия",
+          "scope_type": "процесс",
+          "scope_element_id": "proc-sales",
+          "comparison_operator": "не менее",
+          "target_value": 0.2,
+          "period_start": "2026-01-01"
+        }
+      }
+    }
+  },
+  "sheet_order": [
+    "Инструкция",
+    "Система",
+    "Схема шаблона",
+    "Источники",
+    "Версии",
+    "Исполнители",
+    "Позиции",
+    "Назначения",
+    "Контрагенты",
+    "Продукты",
+    "Материалы",
+    "Процессы",
+    "Действия",
+    "Связи действий",
+    "Объекты",
+    "Состояния",
+    "Переходы",
+    "Элементы модели",
+    "Контракты",
+    "Позиции контрактов",
+    "Интерфейсы передачи",
+    "Связи модели",
+    "Решения",
+    "Изменения модели",
+    "Отклонения",
+    "Гипотезы",
+    "Эксперименты",
+    "Срез модели",
+    "Проверки",
+    "Реестр процессов",
+    "Рабочая панель",
+    "Диаграммы"
+  ],
+  "sheets": {
+    "Инструкция": [],
+    "Система": [],
+    "Схема шаблона": [],
+    "Источники": [
+      {
+        "source_id": "src-method",
+        "title": "Решения владельца модели",
+        "source_type": "решение",
+        "authority_level": "владелец",
+        "trust_floor": "принято",
+        "last_checked": "2026-08-18",
+        "active": "да"
+      },
+      {
+        "source_id": "src-crm",
+        "title": "CRM сделок",
+        "source_type": "система исполнения",
+        "authority_level": "система-владелец фактов",
+        "trust_floor": "принято",
+        "last_checked": "2026-08-18",
+        "active": "да"
+      }
+    ],
+    "Версии": [
+      {
+        "version_id": "ver-v03",
+        "version_label": "Текущая модель v0.3",
+        "version_status": "действует"
+      }
+    ],
+    "Исполнители": [],
+    "Позиции": [
+      {
+        "position_id": "pos-owner",
+        "version_id": "ver-v03",
+        "version_operation": "применить",
+        "system_id": "ps-sales",
+        "position_name": "Владелец продаж",
+        "responsibility": "Результат системы",
+        "expected_result": "Принятый продукт",
+        "system_owner": "да",
+        "knowledge_status": "принято",
+        "source_id": "src-method"
+      }
+    ],
+    "Назначения": [],
+    "Контрагенты": [],
+    "Продукты": [],
+    "Материалы": [],
+    "Процессы": [
+      {
+        "process_id": "proc-sales",
+        "version_id": "ver-v03",
+        "version_operation": "применить",
+        "system_id": "ps-sales",
+        "process_name": "Продажа",
+        "goal": "Поставить оплаченный продукт",
+        "trigger": "Создана сделка",
+        "process_input": "Сделка",
+        "process_output": "Принятый продукт",
+        "owner_position_id": "pos-owner",
+        "knowledge_status": "принято",
+        "source_id": "src-method"
+      }
+    ],
+    "Действия": [],
+    "Связи действий": [],
+    "Объекты": [],
+    "Состояния": [],
+    "Переходы": [],
+    "Элементы модели": [
+      {
+        "element_id": "el-conversion",
+        "version_id": "ver-v03",
+        "version_operation": "применить",
+        "system_id": "ps-sales",
+        "element_type": "показатель",
+        "element_name": "Когортная конверсия",
+        "definition": "Доля выигранных сделок из созданных в когорте",
+        "owner_position_id": "pos-owner",
+        "formula_or_rule": "Выигранные / созданные",
+        "unit_or_format": "%",
+        "knowledge_status": "принято",
+        "source_id": "src-method",
+        "source_locator": "Решение о показателе"
+      },
+      {
+        "element_id": "el-conversion-norm",
+        "version_id": "ver-v03",
+        "version_operation": "применить",
+        "system_id": "ps-sales",
+        "element_type": "норматив",
+        "element_name": "Норма конверсии",
+        "definition": "Минимальная допустимая конверсия",
+        "target_or_threshold": ">=20%",
+        "knowledge_status": "принято",
+        "source_id": "src-method",
+        "source_locator": "Решение о нормативе"
+      },
+      {
+        "element_id": "el-sla",
+        "version_id": "ver-v03",
+        "version_operation": "применить",
+        "system_id": "ps-sales",
+        "element_type": "SLA",
+        "element_name": "SLA ответа",
+        "definition": "Ответить в течение одного дня",
+        "knowledge_status": "принято",
+        "source_id": "src-method"
+      }
+    ],
+    "Контракты": [],
+    "Позиции контрактов": [],
+    "Интерфейсы передачи": [],
+    "Связи модели": [],
+    "Решения": [],
+    "Изменения модели": [],
+    "Отклонения": [
+      {
+        "deviation_id": "dev-conversion",
+        "deviation_title": "Конверсия ниже нормы",
+        "deviation_status": "подтверждено",
+        "applicable_version_id": "ver-v03",
+        "norm_element_id": "el-conversion-norm",
+        "norm_element_selector": "Норма конверсии",
+        "observed_fact": "Конверсия 15%",
+        "evidence_channel": "интерфейс исполнения",
+        "source_id": "src-crm",
+        "source_locator": "dashboard/cohort/2026-07",
+        "next_step": "Проверить причину"
+      }
+    ],
+    "Гипотезы": [
+      {
+        "hypothesis_id": "hyp-new-script",
+        "hypothesis_title": "Новый сценарий повысит конверсию",
+        "hypothesis_status": "сформулирована",
+        "primary_metric_id": "el-conversion",
+        "next_step": "Поставить эксперимент"
+      }
+    ],
+    "Эксперименты": [
+      {
+        "experiment_id": "exp-new-script",
+        "experiment_title": "Тест сценария",
+        "experiment_status": "подготовлен",
+        "hypothesis_id": "hyp-new-script",
+        "primary_metric_id": "el-conversion",
+        "next_step": "Получить решение о запуске"
+      }
+    ],
+    "Срез модели": [],
+    "Проверки": [],
+    "Реестр процессов": [],
+    "Рабочая панель": [],
+    "Диаграммы": []
+  }
+}
